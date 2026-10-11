@@ -1,0 +1,26 @@
+﻿# StockFlash - Git exclusions
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Dependencias
+/vendor/
+/node_modules/
+/.opencode/node_modules/
+
+# Archivos locales
+/.idea/
+/.phpunit.cache/
+/coverage/
+*.log
+*.sqlite
+
+# Laravel
+/public/build/
+/public/hot
+/public/storage
+/storage/*.key
