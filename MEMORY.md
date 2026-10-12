@@ -7,3 +7,6 @@
 - Fuentes vigentes: docs/product/especificacion-v2.2-*CONSOLIDADO-EN-REVISION.md. v2.1 es histórica.
 - Arquitectura: Laravel + Vue 3/Inertia + MariaDB + hosting compartido cPanel, staging aislado, desarrollo en Warp/OpenCode.
 - No enviar secretos, ventas, RUT ni PII a agentes/modelos/Engram. Sin autorización para release ni cambios de contrato.
+- DOC-001: recibo interno no tributario desde `sales.sale_number`, nunca mediante `fiscal_documents` en modo external; tabla `sale_external_tax_records` lote 09.
+- BOOT-001 aprobado: Vue3+Inertia+TypeScript, ejecución por feature sin microautorizaciones; no migraciones ni deploy.
+- GitHub Actions: solo prueba SSH; la clave de cuenta cPanel `grupoint` no puede usarse para deploy hasta aislarla.
