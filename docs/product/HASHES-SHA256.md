@@ -9,4 +9,6 @@ Versiones v2.1 intactas en histórico. Las tres especificaciones v2.2 permanecen
 - `docs/product/especificacion-v2.2-anexo-CONSOLIDADO-EN-REVISION.md` SHA256 `5e897a484d34cae532f43fbc4ddaacc7fc0684135c792c87f4771ede22e8426e`
 - `docs/product/especificacion-v2.2-parte-2-CONSOLIDADO-EN-REVISION.md` SHA256 `45f79c6fb55557df3288c1d4d7505c3ffa507d8f8d7563046834b65e37c24543`
 
+Estas huellas corresponden a los **bytes canónicos LF guardados por Git**, no necesariamente a los bytes CRLF de una copia de trabajo en Windows. `scripts/check_contracts.py` normaliza exclusivamente CRLF → LF antes de calcular SHA-256; otras alteraciones de contenido siguen causando fallo. `.gitattributes` fija LF para nuevas copias de estos contratos.
+
 Los cambios posteriores de cualquiera de estas seis fuentes deben actualizar esta lista y volver a comprobar el índice de requisitos.
