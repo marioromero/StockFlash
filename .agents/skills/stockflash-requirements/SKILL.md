@@ -1,6 +1,6 @@
 ---
 name: stockflash-requirements
-description: Localiza IDs RN/POS/INV/LIC y evita releer todo el contrato v2.1.
+description: Localiza IDs RN/POS/INV/LIC y evita releer todo el contrato v2.2.
 compatibility: opencode
 metadata:
   product: stockflash
