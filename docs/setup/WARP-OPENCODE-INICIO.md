@@ -1,11 +1,13 @@
-# Warp + OpenCode, primer arranque (sin gasto innecesario de tokens)
-1. Abrir proyecto local con Git; no montar home SSH/cPanel dentro del workspace.
-2. Extraer ZIP y revisar `.opencode/`, `.agents/`, `AGENTS.md`, `opencode.json`.
-3. Confirmar `opencode --version` y `/models`; no instalar modelos de pago ni activar `--auto`.
-4. Elegir modelo gratuito disponible para lectura (ej. Muse Spark 1.3 si sus condiciones están aceptadas); no fijar ID de modelo inventado.
-5. Ejecutar `/sf-diagnostico` solo para resumir estructura/estado actual. Si propone implementar Laravel sin Feature Packet aprobado, detenerlo.
-6. Configurar selección final por agente cuando terminemos benchmark controlado.
-7. No ejecutar `/init` ni `engram setup opencode` antes de validar si sobrescriben configuración existente.
-8. No hacer push/deploy hasta tener la política CI/CD instalada y validada.
+# Warp + OpenCode — Inicio actualizado (2026-10-12)
 
-**Notas:** Windows Warp puede ejecutar PowerShell, CMD, WSL o Bash; no asumir que todos los comandos Bash funcionan en PowerShell. Los comandos de inspección remota se ejecutan en Terminal cPanel/SSH, no contra servidor desde el modelo.
+El repositorio Git y OpenCode CLI YA están configurados; no extraer ZIP de nuevo, ni ejecutar `git init` o `/init`.
+1. En Warp, abrir la raíz StockFlash.
+2. Revisar `git status --short --branch`; con árbol limpio, `git pull --ff-only origin main`.
+3. Abrir `opencode`, que ya reconoce `AGENTS.md` y su configuración.
+4. Consultar `docs/work/CURRENT.md`: BOOT-001 está aprobado y su plan ya fue revisado.
+5. Ejecutar `/sf-feature BOOT-001`: scaffold local de Laravel + Vue3 + Inertia + TypeScript, sin sobrescribir el harness. La ausencia de Laravel inicial es esperada.
+6. Permisos `ask` de herramientas siguen vigentes; solo escalar cambios fuera del Feature Packet o colisiones no previstas.
+7. Revisar pruebas, `git diff` y `/sf-review BOOT-001` antes de registrar versión.
+8. No instalar Engram/MCP adicionales ni exigir WSL2; no acceder a cPanel/DB, ni migrar/desplegar durante BOOT-001.
+
+Estado: PHP8.3 local/cPanel, Node24 local, Node20 en cPanel. CI futuro compila assets con Node24, no en cPanel.
