@@ -1,24 +1,48 @@
-# LEEME PRIMERO — StockFlash Harness v1.1 CORREGIDO
+# StockFlash — LEEME PRIMERO
 
-**Este paquete reemplaza íntegramente el ZIP inicial v1.0**, porque ese paquete contenía las specs v2.1 sin integrar las decisiones comerciales del owner. No fusionar ambos paquetes ciegamente.
+Este repositorio contiene el contrato documental y el entorno de agentes para desarrollar **StockFlash** con OpenCode CLI. No es todavía una aplicación Laravel instalable.
 
-## Qué se corrigió
-- `docs/product`: 3 especificaciones **v2.2 CONSOLIDADAS EN REVISIÓN** con cambios funcionales, de modelo y de integración (no son el PUNTO 0 final debido a decisiones abiertas).
-- `docs/product/historico-v2.1`: copias v2.1 ORIGINALES, preservadas byte a byte para trazabilidad.
-- `AGENTS.md`, constitución, memoria, índice y guías ahora dan PRECEDENCIA a v2.2 frente a v2.1.
-- `docs/product/StockFlash-Control-SPEC-v0.1.md`: alcance de panel central privado, suscripciones y pago manual.
-- `docs/governance/DECISIONES-ABIERTAS-v2.2.md`: políticas no resueltas que OpenCode no debe inventar.
+## Fuente de verdad
 
-## Qué NO afirma este ZIP
-- No configura cPanel, Laravel ni bases de datos; no instala Engram ni crea GitHub Actions.
-- No resuelve por arte de magia la política exacta de 500 ventas/mes, voucher/pagos mixtos ni tablas físicas de Control. Son decisiones estructurales abiertas.
-- No habilita publicación, push o cambios de BD productiva. No incluye secretos.
+1. `AGENTS.md` y `docs/governance/CONSTITUTION.md`: reglas de trabajo, permisos y escalamiento.
+2. `docs/product/especificacion-v2.2-parte-1-CONSOLIDADO-EN-REVISION.md`: requisitos y reglas de negocio.
+3. `docs/product/especificacion-v2.2-parte-2-CONSOLIDADO-EN-REVISION.md`: modelo de datos.
+4. `docs/product/especificacion-v2.2-anexo-CONSOLIDADO-EN-REVISION.md`: integraciones y operaciones.
+5. `docs/product/StockFlash-Control-SPEC-v0.1.md`: administración central de instalaciones, planes, licencias y suscripciones.
 
-## Instalación desde Windows/Warp
-1. Abre el repositorio clonado StockFlash (con `.git`). Si instalaste ZIP v1.0, respalda antes cualquier archivo local que hayas cambiado a mano.
-2. Descomprime **v1.1** en la raíz; acepta reemplazar archivos anteriores del harness (salvo cambios personales que debas preservar).
-3. Elimina manualmente **solo** `docs/product/especificacion-v2.1-*.md` del NIVEL PRINCIPAL `docs/product` si se encuentran por el paquete anterior. No borres `historico-v2.1/`.
-4. Confirma que `AGENTS.md` y `docs/product/especificacion-v2.2-...` están presentes, junto a `.agents/skills/` y `.opencode/agents/`.
-5. No ejecutes `/init` ni despliegues. El siguiente paso guiado será `/sf-diagnostico` y revisión de PHP/MariaDB/SSH/cPanel.
+Las tres especificaciones v2.2 están **consolidadas en revisión**, no representan un PUNTO 0 definitivo. Las versiones v2.1 dentro de `docs/product/historico-v2.1/` se conservan exclusivamente para trazabilidad y no sustituyen a v2.2.
 
-**Precaución:** si anteriormente pegaste contraseñas de FTP o BD en el chat, deben rotarse antes de un despliegue real y almacenarse fuera de repo/prompts.
+## Decisiones vigentes relevantes
+
+- Marca **StockFlash**, gris grafito `#303846` y etiquetas comerciales **POS, Bodega, SyncWP, Fiscal, Compras, Analítica**; **Control** es administración interna.
+- Productos contratables de forma independiente; sus componentes técnicos compartidos no dan acceso comercial a otros productos.
+- Demo de exhibición y plan gratuito persistente son modalidades distintas.
+- Plan gratuito: referencia inicial de **50 variantes vendibles activas** y **500 ventas mensuales**. La semántica de cómputo y bloqueo sigue abierta.
+- Suscripciones gestionadas centralmente, con cobro manual inicial.
+- POS inicial con inventario y caja; registro de ventas sin integración DTE, con referencia fiscal externa opcional y sin afirmar que un comprobante interno sea un documento tributario.
+- Venta en espera recuperable desde la estación correspondiente; interfaz híbrida táctil/teclado/lector.
+
+Revisar `docs/governance/DECISIONES-ABIERTAS-v2.2.md` antes de implementar una función dependiente de esas decisiones. Ningún agente puede inventarlas.
+
+## Estado del proyecto y siguiente trabajo
+
+- Repositorio privado GitHub `marioromero/StockFlash`, rama `main` vinculada localmente.
+- OpenCode CLI 1.19.0 instalado y `/sf-diagnostico` ejecutado satisfactoriamente.
+- En cPanel se comprobó PHP web 8.3, PHP CLI 8.3.35, Composer 2.8.10, Node.js 20.19.3, npm 10.8.2 y Git 2.56.0.
+- Staging `stockflash-dev.tusitioexpress.cl`: HTTPS habilitado; listado de directorios desactivado.
+- Rutas de staging: aplicación privada `/home/grupoint/stockflash-dev-app` y raíz pública `/home/grupoint/stockflash-dev.tusitioexpress.cl`.
+- Se creó una base de datos DEV separada. El acceso SSH por clave al puerto 2200 fue comprobado.
+- Se configuraron variables y secreto de GitHub Actions para staging; el workflow de verificación SSH se incorporó al repositorio.
+- **Laravel no está creado ni desplegado.** El siguiente trabajo de implementación requiere Feature Packet aprobado y activación en `docs/work/CURRENT.md`.
+
+## Uso con OpenCode
+
+1. Abrir Warp en la raíz del repositorio y ejecutar `opencode`.
+2. No ejecutar `/init`: el proyecto ya tiene `AGENTS.md` y configuración propia.
+3. Consultar `/sf-diagnostico` para diagnóstico y `/sf-plan <ID>` solo después de aprobar la Feature correspondiente.
+4. No permitir cambios a especificaciones, esquema de base de datos, licencias, reglas fiscales o dependencias sin decisión explícita documentada.
+5. No ejecutar migraciones ni desplegar hasta contar con código probado, configuración y plan de despliegue aprobado.
+
+## Seguridad
+
+No guardar contraseñas, tokens, llaves privadas, datos reales de clientes ni archivos `.env` en el repositorio o en prompts. Las credenciales históricamente compartidas deben rotarse antes de una puesta en servicio.
