@@ -1,0 +1,5 @@
+# Contratos versionados con saltos de linea LF independientes del sistema.
+# Los hashes de docs/product/HASHES-SHA256.md describen bytes LF de Git.
+docs/product/*.md text eol=lf
+docs/product/historico-v2.1/*.md text eol=lf
+docs/requirements/*.md text eol=lf
