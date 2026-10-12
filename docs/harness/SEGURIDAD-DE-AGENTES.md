@@ -7,7 +7,7 @@
 ## Separaciones obligatorias antes de automatizar
 1. Cuenta DEV MariaDB con permisos de app, distinta de cuenta read-only MCP; ninguna conecta a producción.
 2. Credenciales previas de FTP y BD rotadas; nuevas en secret manager del pipeline, no Git.
-3. Clave SSH del deploy aislada, preferible solo staging y directorios limitados por usuario/host; probar permisos y servidor real.
+3. **BLOQUEO VIGENTE A06:** el secreto SSH de Actions autentica como `grupoint`, usuario general de cPanel. Solo se autoriza el workflow read-only que emite `SSH_OK`. Ningún despliegue, migración o script remoto automático con esa credencial hasta tener usuario restringido, forced-command u otro aislamiento probado. Rotar/reemplazar la clave para release de mínimos privilegios.
 4. Copia de seguridad externa verificada; nunca alojar repo ni credenciales productivas dentro del webroot.
 5. Staging con datos falsos y acceso restringido; `APP_DEBUG=false` en ambientes públicos.
 6. Owner aprueba nuevas dependencias y cualquier operación destructiva.
