@@ -7,6 +7,6 @@
 - Fuente normativa: las tres especificaciones `docs/product/especificacion-v2.2-*CONSOLIDADO-EN-REVISION.md`, Parte 1 > Parte 2 > Anexo; fuentes v2.1 históricas preservadas intactas. Para Control aplicar `StockFlash-Control-SPEC-v0.1.md` exclusivamente en su alcance.
 - ADR-01..06 **abiertos**: límites Gratis (50 variantes/500 ventas), permisos Gratis, fiscal externo multireferencia, Fiscal autónomo, suspensión/gracia, Compras/Analítica. No bloquean BOOT-001 ni deben ser inventados.
 - Laravel aún no creado. PHP local 8.3.4, Composer 2.8.9, Node24.8.0; cPanel PHP8.3.35, Composer 2.8.10, Node20.19.3. CI proyecta build de assets Node24; el servidor no requiere compilar.
-- GitHub Actions actual: verificación SSH manual (`staging-ssh-check.yml`). **Sin workflow Laravel ni despliegue**. Staging HTTPS y BD DEV creados, nunca utilizados por OpenCode en BOOT.
+- GitHub Actions actual: verificación SSH manual (`staging-ssh-check.yml`) y comprobación de contratos (`contract-check.yml`, Python). **Sin workflow de tests Laravel, build Vue ni despliegue**. Staging HTTPS y BD DEV creados, nunca utilizados por OpenCode en BOOT.
 - **Bloqueo de deploy:** SSH en GitHub autentica como usuario general de cPanel `grupoint`; no usarlo para subir/ejecutar código hasta limitar privilegios y rotar/reemplazar credencial. Rotar otras credenciales compartidas antes de explotación real.
 - Próximo paso del propietario, solo tras validación final DOC-001: `git pull --ff-only origin main`, abrir OpenCode y `/sf-feature BOOT-001`. No migraciones ni efectos remotos.
