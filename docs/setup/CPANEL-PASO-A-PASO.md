@@ -11,7 +11,7 @@
 - Carpetas creadas: privada `/home/grupoint/stockflash-dev-app`; webroot `/home/grupoint/stockflash-dev.tusitioexpress.cl`.
 - PHP web 8.3 y CLI 8.3.35, Composer 2.8.10, Node 20.19.3, npm 10.8.2, Git 2.56.0.
 - Base DEV `grupoint_stockflash_dev` y usuario con permisos. Versión exacta MariaDB NO verificada automáticamente.
-- SSH puerto 2200, clave autenticada y fingerprint confirmado. En GitHub solo workflow de prueba SSH; **no CI ni deploy**.
+- SSH puerto 2200, clave autenticada y fingerprint confirmado. En GitHub existen prueba SSH y chequeo documental; **no tests/build Laravel ni deploy**.
 - Advertencia: clave SSH en Actions usa cuenta general `grupoint`; no usarla para despliegue sin aislamiento de privilegios.
 - Laravel aún no instalado. Rotar contraseñas FTP/DB históricamente compartidas antes de usar servicios reales.
 
