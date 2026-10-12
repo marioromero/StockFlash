@@ -14,4 +14,4 @@
 13. Cambios de reglas, columnas, contratos y dependencias no previstos en v2.2 requieren propuesta/ADR. Agentes implementadores no modifican estos contratos.
 14. Dudas: registrar solicitud de decisión (`docs/work/DECISION-REQUEST-TEMPLATE.md`) y detener SOLO la pieza afectada; owner+ChatGPT responden fuera de OpenCode. No existe conexión automática a este chat.
 15. No push, deploy, migraciones remotas, DB destructiva ni acceso a producción desde agentes. CI/deploy solo tras gates y credenciales aisladas.
-16. Skills bajo demanda `.agents/skills`; MEMORY es consultiva, no override. `LEEME-PRIMERO.md` + `/sf-diagnostico` al iniciar. No ejecutar `/init`.
+16. Skills bajo demanda `.agents/skills`; MEMORY es consultiva, no override. Leer `LEEME-PRIMERO.md` al iniciar trabajo nuevo. `/sf-diagnostico` se realiza una vez o ante cambios reales de entorno; no repetir un preflight ya completado ni finalizar por mera necesidad de permiso `ask`. No ejecutar `/init`.
