@@ -28,7 +28,7 @@ sale_section = p1.split('### 10.1 Venta directa', 1)[-1].split('### 10.2 ', 1)[0
 require('Solo con Fiscal `integrated`' in sale_section and 'en `external` no' in sale_section, 'Venta directa dispara documento fiscal indebidamente')
 require('simulación exclusivamente de demo/pruebas' in p1, 'FIS-01 incompatible con nueva modalidad')
 require('`sales.sale_number`' in p2, 'Modelo sin comprobante interno desde sales')
-require('`BOOT-001`' in content('docs/work/CURRENT.md'), 'BOOT-001 no figura como activo')
+require('BOOT-001' in content('docs/work/CURRENT.md'), 'BOOT-001 no figura como activo')
 require('ausencia de `artisan`' in content('.opencode/commands/sf-feature.md'), 'Bootstrap todavia bloquea ausencia de Laravel')
 require('staging-ssh-check.yml' in content('docs/harness/RELEASE-CI-CD-PLAN.md'), 'CI/CD declara estado obsoleto')
 require('grupoint' in content('docs/harness/SEGURIDAD-DE-AGENTES.md'), 'No consta riesgo de SSH general')
