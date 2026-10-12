@@ -122,7 +122,7 @@ Reemplaza la v2 y su documento de delta.
 | `cash_sessions` | cash_control | 08 | P0 | CSH-03, CSH-05 |
 | `cash_session_totals` | cash_control | 08 | P0 | CSH-05, CSH-06 |
 | `cash_movements` | cash_control | 08 | P0 | CSH-04 |
-| `sale_external_tax_records` | sales | 05 | P0 v2.2 | COM-05, COM-06 (referencia externa opcional, declarativa) |
+| `sale_external_tax_records` | sales | 09 | P0 v2.2 | COM-05, COM-06 (referencia externa opcional, declarativa) |
 | `sales` | sales | 09 | P0 | SAL-01…04, SAL-16, SAL-21 |
 | `sale_items` | sales | 09 | P0 | SAL-01, SAL-06 |
 | `sale_payments` | sales | 09 | P0 | SAL-05, SAL-20 |
@@ -158,7 +158,7 @@ Cada lote depende solo de lotes anteriores. Dentro de un lote, el orden de la li
 | 06 | `inventory` | `branch_variant_settings`, `current_stock`, `stock_reservations`, `stock_movements`, `stock_transfers`, `stock_transfer_items`, `stock_counts`, `stock_count_items` | `stock_reservations`→`sales_channels`(02); `stock_movements`→`stock_reservations`, `reason_codes` |
 | 07 | `purchasing` | `suppliers`, `purchase_orders`, `purchase_order_items`, `goods_receipts`, `goods_receipt_items` | →`branches`, `users`, `product_variants` |
 | 08 | `cash` | `cash_sessions`, `cash_session_totals`, `cash_movements` | →`pos_stations`, `authorization_overrides`, `payment_methods`(05) |
-| 09 | `sales` | `sales`, `sale_items`, `sale_payments`, `sale_returns`, `sale_return_items`, `sale_review_issues` | →`sales_channels`(02), `customers`/`sellers`(03), `promotions`(04), `payment_methods`(05), `cash_sessions`(08); `sale_review_issues`→`sales`, `sale_items`, `sale_returns` |
+| 09 | `sales` | `sales`, `sale_items`, `sale_payments`, `sale_returns`, `sale_return_items`, `sale_review_issues`, `sale_external_tax_records` | →`sales_channels`(02), `customers`/`sellers`(03), `promotions`(04), `payment_methods`(05), `cash_sessions`(08); `sale_review_issues`→`sales`, `sale_items`, `sale_returns`; `sale_external_tax_records`→`sales`, `users`(01) |
 | 10 | `fiscal` | `fiscal_documents`, `fiscal_document_attempts` | →`sales`, `sale_returns`(09) |
 | 11 | `channel_ops` | `channel_publications`, `channel_mappings`, `channel_remote_items`, `channel_payment_maps`, `channel_sync_events`, `webhook_receipts` | →`sales_channels`(02), `product_variants`(04), `payment_methods`(05) |
 | 12 | `reports` | las 6 tablas de resumen | →`branches`, `product_variants`, `payment_methods`, `sellers` |
@@ -239,7 +239,7 @@ Cada lote depende solo de lotes anteriores. Dentro de un lote, el orden de la li
 
 | Clave | Tipo | Defecto | Descripción |
 |---|---|---|---|
-| `fiscal_adapter` | string | `internal_receipt` | `internal_receipt` o el código del proveedor |
+| `fiscal_adapter` | string | `none` | `none` en modo externo; código del proveedor solo si Fiscal `integrated`; simulador solo en demo/pruebas |
 | `fiscal_provider_config` | json (secreto) | — | Credenciales, ambiente y **configuración por sucursal** del proveedor (RN-56) |
 | `fiscal_authority_confirmed` | bool | `false` | El Admin confirmó que toda emisión fiscal paralela está desactivada (RN-49); se audita |
 | `fiscal_failure_policy` | string | `allow_pending` | `allow_pending` o `block_sale` (RN-54) |
@@ -478,7 +478,7 @@ Una fila por tipo de documento y ámbito (RN-74).
 
 | Campo | Tipo | Restricciones | Descripción |
 |---|---|---|---|
-| doc_type | ENUM('ticket','sale','return','transfer','count','goods_receipt','cash_session','internal_receipt','purchase_order') | NOT NULL | Tipo (las cotizaciones usan la serie `ticket` con otro prefijo) |
+| doc_type | ENUM('ticket','sale','return','transfer','count','goods_receipt','cash_session','purchase_order') | NOT NULL | Tipo (las cotizaciones usan la serie `ticket` con otro prefijo) |
 | scope_type | ENUM('installation','branch') | NOT NULL | Ámbito |
 | scope_id | BIGINT UNSIGNED | NOT NULL, DEFAULT 0 | `0` en `installation`; el `branches.id` en `branch` |
 | prefix | VARCHAR(10) | NOT NULL, DEFAULT '' | Prefijo visible (por defecto, el código de la sucursal) |
@@ -1077,7 +1077,7 @@ Documento comercial **único** para cualquier origen (POS u online). Sin `delete
 | requested_document | ENUM('boleta','factura') | NULL | Lo que pide el cliente (`NULL` = por defecto) |
 | ticket_number | VARCHAR(30) | NULL | Número de ticket o cotización; único `(branch_id, ticket_number)` |
 | ticket_code | CHAR(8) | NULL, UNIQUE | Código corto para escanear |
-| sale_number | VARCHAR(30) | NULL | Número de venta (al cobrar); único `(branch_id, sale_number)` |
+| sale_number | VARCHAR(30) | NULL | Número de venta y comprobante interno no tributario (al cobrar); único `(branch_id, sale_number)`; no crea `fiscal_documents` |
 | hold_label | VARCHAR(60) | NULL | Etiqueta de venta en espera |
 | held_by_pos_station_id | BIGINT UNSIGNED | NULL, FK `pos_stations` SET NULL, INDEX | Estación propietaria de `held`; búsqueda y recuperación autenticadas exclusivamente por esta estación; no aplica tickets `two_step` |
 | external_order_id | VARCHAR(40) | NULL | ID del pedido en el canal |
@@ -1248,7 +1248,7 @@ El contribuyente (el comercio) es el emisor; el proveedor DTE es su infraestruct
 | branch_id | BIGINT UNSIGNED | NOT NULL, FK `branches` | Sucursal de la venta; el adaptador la traduce a la configuración del proveedor (RN-56) |
 | sale_id | BIGINT UNSIGNED | NULL, FK `sales` | Venta |
 | sale_return_id | BIGINT UNSIGNED | NULL, FK `sale_returns` | Devolución (nota de crédito) |
-| kind | ENUM('internal_receipt','boleta','boleta_exempt','factura','factura_exempt','credit_note','debit_note','dispatch_guide') | NOT NULL | Tipo |
+| kind | ENUM('boleta','boleta_exempt','factura','factura_exempt','credit_note','debit_note','dispatch_guide') | NOT NULL | Tipo |
 | sii_type_code | SMALLINT UNSIGNED | NULL | 39, 41, 33, 34, 61, 56, 52 (`NULL` en el comprobante interno) |
 | purpose | ENUM('sale','return','cancel','correction') | NOT NULL, DEFAULT 'sale' | Propósito |
 | revision | SMALLINT UNSIGNED | NOT NULL, DEFAULT 1 | Aumenta si se vuelve a emitir tras una nota de crédito |
@@ -1258,7 +1258,7 @@ El contribuyente (el comercio) es el emisor; el proveedor DTE es su infraestruct
 | idempotency_key | VARCHAR(100) | NOT NULL, UNIQUE | Clave de idempotencia de la solicitud (se envía como referencia externa si el proveedor lo permite) |
 | active_key | VARCHAR(100) | VIRTUAL `IF(status='rejected', NULL, CONCAT(IFNULL(sale_id,0),':',IFNULL(sale_return_id,0),':',kind,':',purpose,':',revision))`, UNIQUE | A lo más **un documento activo** por venta, tipo, propósito y revisión; solo `rejected` libera la clave |
 | folio | BIGINT UNSIGNED | NULL | Folio asignado (documentos con efecto tributario) |
-| internal_number | VARCHAR(30) | NULL | Correlativo del comprobante interno |
+| internal_number | VARCHAR(30) | NULL | Correlativo técnico del documento fiscal integrado; NO del comprobante de venta (usa `sales.sale_number`) |
 | provider_document_id | VARCHAR(100) | NULL | ID en el proveedor |
 | track_id | VARCHAR(50) | NULL | Seguimiento ante el SII |
 | references_document_id | BIGINT UNSIGNED | NULL, FK `fiscal_documents` | Documento al que corrige o referencia |
@@ -1687,7 +1687,7 @@ Puntos que dependen de una validación externa al documento:
 | `license_states` | `products_enabled JSON`, `max_monthly_sales INT` | No reportar ventas en heartbeat; migración con backfill para planes previos |
 | `plan_definitions` | `products_enabled JSON`, `max_monthly_sales INT`, seed `free` | Backfill y contratos de Control |
 | `sales` | `tax_documentation_mode`, nuevos estados fiscales, `held_by_pos_station_id` | Prueba de transiciones, stock y caja; diferenciar tickets `two_step` |
-| `sale_external_tax_records` | Nueva tabla después de `sales`, con FK a `sales` y `users` | No incluye ni sustituye XML fiscal; referencias voluntarias; DTE externos múltiples ABIERTOS |
+| `sale_external_tax_records` | Nueva tabla en lote 09 después de `sales`, FK a `sales` y `users` (01) | No incluye ni sustituye XML fiscal; referencias voluntarias; DTE externos múltiples ABIERTOS |
 | Consulta de mensualidad | Índice existente `sales.completed_at` debe evaluarse en EXPLAIN; procedimiento transaccional de guard queda pendiente | Nunca inventar qué cuenta, expiración o bloqueo sin ADR |
 | Control central | Esquema separado, sin FK con `sales` operacionales | Ver `StockFlash-Control-SPEC-v0.1.md` |
 
