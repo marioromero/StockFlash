@@ -1,6 +1,6 @@
 # Releases — política objetivo, no automatización ya instalada
 
-**Estado verificado (2026-10-12):** existe `.github/workflows/staging-ssh-check.yml`, disparo manual que verifica huella SSH y ejecuta exclusivamente `echo SSH_OK`. NO existe CI de Laravel, build, deploy ni rollback automatizado. La clave de Actions se autentica como el usuario general `grupoint`; no autorizar despliegues con ella hasta aislar sus privilegios. Se crearán pipelines después del bootstrap.
+**Estado verificado (2026-10-12):** existen `.github/workflows/staging-ssh-check.yml` (manual: huella SSH + `echo SSH_OK`) y `.github/workflows/contract-check.yml` (verifica especificaciones, índice y hashes). NO existe CI de Laravel, build Vue, deploy ni rollback automatizado. La clave de Actions se autentica como el usuario general `grupoint`; no autorizar despliegues con ella hasta aislar sus privilegios. Se crearán pipelines después del bootstrap.
 
 Flujo objetivo: feature aprobada -> tests locales -> reviewer -> commit/push por pipeline/script de release aprobado -> CI GitHub Actions (o runner local seguro) -> build -> migraciones controladas -> deploy STAGING -> health/smoke -> registrar release.
 Producción: tag/release revisado, autorización owner, respaldo+restore comprobado, ventana y rollback según RN-73; nunca automática por cada feature.
