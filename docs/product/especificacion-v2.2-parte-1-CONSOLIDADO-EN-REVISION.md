@@ -60,7 +60,7 @@ Si la obligación corresponde a procesos organizacionales del cliente, queda fue
 | 10 | Un solo mecanismo de precios: precio base + listas de precio |
 | 11 | Privacidad técnica mínima; sin módulos de compliance |
 | 12 | Seguridad base práctica (ASVS 1 general, nivel 2 selectivo); MFA para Admin |
-| 13 | Control central acotado, sin datos personales ni comerciales |
+| 13 | Control central separado: recibe datos comerciales administrativos del fabricante, pero no datos operacionales ni ventas individuales de los comercios |
 | 14 | Actualizador con paquete firmado; reversión automática solo mientras siga en mantenimiento |
 | 15 | Panel único de salud de integraciones (canal, DTE, licencia, respaldo) |
 | 16 | WooCommerce P1 se integra externamente por `wc/v3` + `wc-auth`; **no requiere plugin propio ni acceso directo a tablas de WordPress/WooCommerce** |
@@ -526,7 +526,8 @@ Solo el job `retention:prune` puede eliminar registros vencidos de tablas **AO-P
 | Conteo | Sucursal | `stock_counts (branch_id, number)` |
 | Recepción | Sucursal | `goods_receipts (branch_id, number)` |
 | Sesión de caja | Sucursal | `cash_sessions (branch_id, number)` |
-| Comprobante interno | Sucursal | `fiscal_documents (branch_id, internal_number)` |
+| Comprobante interno de venta (no tributario) | Sucursal | `sales (branch_id, sale_number)`; se usa la numeración de venta, sin crear documento fiscal |
+| Documento fiscal integrado (correlativo técnico) | Sucursal | `fiscal_documents (branch_id, internal_number)`; solo con Fiscal integrado |
 | Orden de compra | Instalación | `purchase_orders (number)` |
 
 ---
@@ -710,7 +711,7 @@ Solo el job `retention:prune` puede eliminar registros vencidos de tablas **AO-P
 
 | ID | Requerimiento | Prio | Ref |
 |---|---|:-:|---|
-| FIS-01 | Contrato `FiscalDocumentIssuer` y adaptador `internal_receipt` | P0 | |
+| FIS-01 | Contrato `FiscalDocumentIssuer` y simulación exclusivamente de demo/pruebas; el comprobante interno se imprime desde `sales`, no es un adaptador ni documento fiscal | P0 | |
 | FIS-02 | `fiscal_documents` y `fiscal_document_attempts` con restricciones de unicidad | P0 | RN-52 |
 | FIS-03 | `FiscalEngine`: evalúa el disparo de cada documento (RN-51), decide si corresponde emitir y qué tipo, y registra el `pending` en la misma transacción del evento que lo satisface | P1★ | RN-51 |
 | FIS-04 | Adaptador del proveedor #1: boleta 39 y 41, factura 33 y 34, nota de crédito 61 | P1★ | RN-57 |
@@ -965,8 +966,8 @@ Primer lanzamiento potencialmente comercializable: `core` + servicios mínimos d
 3. La vista previa calcula precios, promociones, topes y avisos.
 4. Si algo supera un tope o requiere precio manual, se abre la ventana de PIN.
 5. Se registran uno o más pagos; se calculan vuelto y redondeo.
-6. Se confirma: una transacción → venta `completed` → registro fiscal `pending` → eventos (stock, caja, agregados, publicación a canales).
-7. Se imprime el comprobante; el documento tributario se emite por el motor fiscal.
+6. Se confirma la venta `completed`, se asigna `sale_number` y se aplican sus efectos transaccionales de stock, caja y agregados. Solo con Fiscal `integrated` autorizado se evalúa RN-51 y, cuando corresponde, se crea `fiscal_documents(pending)`; en `external` no.
+7. El comprobante interno no tributario se genera desde `sales.sale_number`, líneas y pagos. En modo `external`, una referencia fiscal es voluntaria y StockFlash no afirma emisión tributaria; en `integrated` el FiscalEngine tramita el DTE.
 
 ### 10.2 Ticket → caja
 1. El vendedor arma el carrito y genera el **ticket** (`pending_payment`); se reserva stock por línea; se imprime con código corto y QR.
@@ -980,16 +981,16 @@ Primer lanzamiento potencialmente comercializable: `core` + servicios mínimos d
 3. Según el estado normalizado (RN-39): crea o actualiza la venta (con líneas idempotentes por `external_line_id`), la reserva (`channel` o `internal`) y el pago (`pending` o `confirmed`; un único pago principal).
 4. Si falta stock se abre `stock_shortage`; si hay un ítem sin vincular, `unlinked_item` (la línea se guarda sin variante y sin reserva); si la pasarela no tiene mapeo, `payment_mismatch`. Las incidencias pueden coexistir.
 5. Un supervisor o bodeguero prepara y despacha (`fulfillment_status`); al despachar se consume la reserva (`sale_online`).
-6. El estado vuelve al canal con una nota privada. El DTE se solicita cuando se satisface el disparo del método de pago (RN-51). Los reembolsos del pedido se reconcilian como recursos propios (10.9).
+6. El estado vuelve al canal con una nota privada. Solo cuando el producto Fiscal está habilitado y el modo es `integrated` se evalúa el disparo DTE (RN-51); en `external` no se crea `fiscal_documents`. Los reembolsos se reconcilian como recursos propios (10.9).
 
 ### 10.4 Emisión fiscal
-El `FiscalEngine` evalúa el disparo tras los eventos relevantes (venta POS pagada, pedido online pagado, pedido despachado o solicitud manual) → al satisfacerse, registra `fiscal_documents(pending)` en la **misma transacción de ese evento** → job tras confirmar → adaptador → `issued`. Si hay resultado incierto: `unknown` → consulta al proveedor por la referencia → resolver (nunca reemitir a ciegas). Si algo exige intervención, la venta queda `action_required`. Anular o devolver: nota de crédito **con aprobación**; el original permanece `issued`.
+**Solo con `tax_documentation_mode=integrated` y producto Fiscal habilitado**, el `FiscalEngine` evalúa los eventos relevantes y registra `fiscal_documents(pending)` en la misma transacción que satisface el disparo → job después del commit → adaptador → `issued`. Ante resultado incierto, `unknown` requiere consulta al proveedor antes de cualquier reintento. Las notas de crédito exigen aprobación y conservan el original `issued`. En `external` no se invoca FiscalEngine ni se crean `fiscal_documents`: la emisión tributaria corresponde al sistema externo del comercio.
 
 ### 10.5 Devolución
 1. Se busca la venta (número, ticket, RUT o escaneo).
 2. Se eligen líneas y cantidades, motivo, restock o merma y método de reembolso.
 3. Se validan el tope por rol y el plazo; si se exceden, PIN.
-4. Se crean movimientos, se descuenta de la caja si el reembolso es en efectivo y se solicita la nota de crédito.
+4. Se crean los movimientos físicos y de caja que correspondan. Solo si Fiscal está integrado se solicita, con aprobación, la nota de crédito. En modo `external`, se registra la devolución operativa y la regularización tributaria corresponde al emisor externo; StockFlash no declara emisión.
 
 ### 10.6 Cierre de caja
 1. El cajero pide el cierre; si es ciego, declara el efectivo sin ver el esperado.
@@ -998,7 +999,7 @@ El `FiscalEngine` evalúa el disparo tras los eventos relevantes (venta POS paga
 4. Se imprime el reporte Z con totales por método y **listado de todas las ventas**.
 
 ### 10.7 Contenido del comprobante interno
-Logo y nombre del comercio · RUT y dirección de la sucursal · cajero y estación · vendedor · número por sucursal · fecha y hora · líneas (cantidad, descripción, precio unitario, subtotal) · descuentos · neto, impuesto y tasa · total · medios de pago, vuelto y redondeo · leyenda "Este documento no es válido como boleta electrónica" (solo adaptador interno) · código de barras del comprobante para devoluciones.
+Logo y nombre del comercio · RUT y dirección de la sucursal · cajero y estación · vendedor · número por sucursal `sales.sale_number` · fecha y hora · líneas (cantidad, descripción, precio unitario, subtotal) · descuentos · neto, impuesto y tasa · total · medios de pago, vuelto y redondeo · leyenda «Comprobante interno: no es boleta ni factura electrónica» · código de barras para devoluciones. Se construye desde `sales` y sus líneas/pagos, sin crear `fiscal_documents`, con independencia del modo fiscal.
 
 ### 10.8 Activación de un módulo
 El Admin abre Configuración → Módulos; solo se listan los incluidos en la licencia; al activar se validan dependencias, se crean permisos y menús y se registran tareas programadas; al desactivar se valida que no haya dependientes y los datos se conservan.
@@ -1010,7 +1011,7 @@ El Admin abre Configuración → Módulos; solo se listan los incluidos en la li
 3. Cada refund nuevo se importa idempotentemente por `external_refund_id` → `sale_returns` (`source='channel'`, `pending_review`). Las cantidades e importes de producto se normalizan a magnitudes positivas y se conservan como `net_amount`, `tax_amount` y `line_amount`; una misma línea aparece a lo más una vez dentro de ese refund.
 4. Toda línea importada comienza con `restock=NULL`. El supervisor decide `1` (reingresa físicamente) o `0` (no reingresa/merma). Un refund del canal no puede cancelarse como si no hubiese ocurrido.
 5. Si `refund_amount` difiere de la suma de `line_amount` —por ejemplo, por despacho o fees— la incidencia `refund_review` permanece abierta y la nota de crédito automática queda bloqueada. P1 conserva la diferencia y exige resolución manual/fiscal; no inventa líneas de producto para cuadrarla.
-6. Cuando todas las líneas vinculadas tienen decisión física y no quedan diferencias fiscales pendientes, el retorno pasa a `completed`; se aplica stock solo a `restock=1` y el `FiscalEngine` solicita la nota de crédito. Las líneas aún no vinculadas conservan el hecho financiero y difieren únicamente el efecto físico.
+6. Cuando las líneas vinculadas tienen decisión física y no quedan diferencias de conciliación pendientes, el retorno pasa a `completed` y se aplica stock solo a `restock=1`. Solo en modo Fiscal `integrated` se solicita nota de crédito vía FiscalEngine; en `external` no se genera ni declara emitido un DTE. Las líneas no vinculadas conservan el hecho financiero y difieren el efecto físico.
 ---
 
 ### 10.9 Política de implementación de deltas v2.2
