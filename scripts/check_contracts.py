@@ -45,10 +45,22 @@ for key, number in entries:
 manifest = content('docs/product/HASHES-SHA256.md')
 hash_entries = re.findall(r'^- `([^`]+)` SHA256 `([a-f0-9]{64})`$', manifest, re.M)
 require(len(hash_entries) == 6, f'Hashes: esperados 6, encontrados {len(hash_entries)}')
+def canonical_git_bytes(path):
+    # Git registra estos archivos Markdown con LF. En Windows, core.autocrlf
+    # puede crear copias de trabajo CRLF sin cambiar el contenido versionado.
+    # Comparamos contra la representacion canonica LF, no bytes del checkout.
+    return path.read_bytes().replace(b'\r\n', b'\n')
+
+# Regresion explicita: el mismo documento LF y CRLF debe tener igual hash.
+fixture = b'linea 1\nlinea 2\n'
+require(hashlib.sha256(fixture).digest() ==
+        hashlib.sha256(fixture.replace(b'\n', b'\r\n').replace(b'\r\n', b'\n')).digest(),
+        'Normalizacion de saltos de linea no funciona')
+
 for relative, expected in hash_entries:
     path = ROOT / relative
-    require(path.is_file() and hashlib.sha256(path.read_bytes()).hexdigest() == expected,
-            f'SHA256 no coincide: {relative}')
+    require(path.is_file() and hashlib.sha256(canonical_git_bytes(path)).hexdigest() == expected,
+            f'SHA256 no coincide tras normalizar LF/CRLF: {relative}')
 
 if errors:
     for error in errors:
