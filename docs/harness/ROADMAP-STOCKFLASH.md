@@ -3,7 +3,7 @@
 
 | Etapa | Entregable | Gate antes de avanzar |
 |---|---|---|
-| R0 DOC-001 | Contratos externo/fiscal coherentes, lote 09 corregido, harness y matriz de auditoría | Índice y documentos verificables; ADR abiertos señalados |
+| R0 DOC-001 | Contratos externo/fiscal coherentes, lote 09 corregido, harness y matriz de auditoría | Índice/hash verificados por `scripts/check_contracts.py` y CI `contract-check.yml`; ADR abiertos señalados |
 | R1 BOOT-001 | Laravel compatible PHP8.3 + Vue3/Inertia/TypeScript + marca textual local | `composer validate`, pruebas, `npm run build`, ruta Vue en navegador, cero DB/migración |
 | R2 CI / staging seguro | CI PHP+Node24, artefactos, smoke; despliegue aislado | Pruebas CI, clave/usuario de privilegio mínimo, rollback; NO usar clave SSH general actual para deploy |
 | R3 Core | Instalador, usuarios/RBAC, sucursales, licencias técnicas, catálogo base y BD | Migraciones reproducibles en MariaDB >=10.6, autorización server-side y contratos de dominio probados |
