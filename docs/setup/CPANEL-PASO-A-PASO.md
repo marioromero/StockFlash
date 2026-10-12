@@ -6,7 +6,16 @@
 - Las contraseñas de FTP/BD se compartieron anteriormente. Considerarlas comprometidas y ROTAR antes de desplegar; si la cuenta es usada por algún servicio actual, actualizar dependencias coordinadamente para evitar caída.
 - Mantener claves nuevas fuera de chat, Git, herramientas IA y archivos de configuración incluidos en este ZIP.
 
-## PASO 1 — Preflight SIN MODIFICAR nada (hacer primero)
+## Estado real confirmado — 2026-10-12
+- Subdominio `stockflash-dev.tusitioexpress.cl` HTTPS operativo; listado del directorio deshabilitado (403 esperado).
+- Carpetas creadas: privada `/home/grupoint/stockflash-dev-app`; webroot `/home/grupoint/stockflash-dev.tusitioexpress.cl`.
+- PHP web 8.3 y CLI 8.3.35, Composer 2.8.10, Node 20.19.3, npm 10.8.2, Git 2.56.0.
+- Base DEV `grupoint_stockflash_dev` y usuario con permisos. Versión exacta MariaDB NO verificada automáticamente.
+- SSH puerto 2200, clave autenticada y fingerprint confirmado. En GitHub solo workflow de prueba SSH; **no CI ni deploy**.
+- Advertencia: clave SSH en Actions usa cuenta general `grupoint`; no usarla para despliegue sin aislamiento de privilegios.
+- Laravel aún no instalado. Rotar contraseñas FTP/DB históricamente compartidas antes de usar servicios reales.
+
+## PASO 1 — Diagnóstico histórico (no repetir pasos ya completados)
 Desde **cPanel > Software > MultiPHP Manager**, mirar versiones PHP disponibles y versión asignada al dominio principal. No cambiar todavía: una modificación al dominio actual puede afectar otros sitios.
 Desde **cPanel > Domains / Dominios**, verificar que puede crear un subdominio sin compartir document root. No crear aún.
 Desde **cPanel > Terminal** (si está habilitada) ejecutar solo lectura:
