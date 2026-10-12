@@ -12,7 +12,7 @@
 | A07 Stack/versiones y TypeScript | Compatibilidad registrada, selección Laravel en BOOT | Composer/lockfiles BOOT-001 |
 | A08 Node 20 del servidor | CI Node24 propuesto; servidor no compila assets | Build CI R2 |
 | A09 Los permisos OpenCode no son sandbox; autonomía por subtarea | Límites explicitados; autonomía por Feature Packet sin eludir ask | Probar herramientas/agentes en BOOT |
-| A10 Guías declaran CI inexistente | Corregidas: existe workflow SSH, NO CI Laravel ni deploy | Pipeline CI R2 |
+| A10 Guías declaran CI inexistente | Corregidas: existen workflow SSH y chequeo documental, NO CI Laravel ni deploy | Pipeline CI R2 |
 | A11 Pausas P0 vs carrito reload P1 vs favoritos P2 | Alcance delimitado, no modificadas prioridades | Feature UX POS R6 |
 | A12 Conflicto gracia/offline/suspensión | **Abierto**; no se resuelve en DOC-001 | ADR-05 antes de venta real |
 | A13 Guías obsoletas | LEEME original estaba corregido; guía Warp/CPANEL, release y skill requirements actualizadas | Comprobación periódica documental |
