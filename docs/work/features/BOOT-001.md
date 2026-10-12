@@ -51,7 +51,7 @@ Crear la base ejecutable **local** de StockFlash dentro del repositorio que ya c
 ## Procedimiento del agente
 1. Iniciar con `/sf-plan BOOT-001`; máximo 10 subtareas y verificar compatibilidad de versiones.
 2. Antes de `/sf-feature BOOT-001`, revisar el plan, riesgos y cualquier dependencia adicional.
-3. Implementar **una subtarea por vez**, con permisos del harness; pedir confirmación ante comandos bash que el proyecto marque como `ask`.
+3. Ejecutar las subtareas previstas con pruebas, sin reaprobar el plan ni bloquearse por la ausencia inicial de Laravel. Respetar permisos `ask`, preservar el repositorio y solicitar autorización solo antes de colisiones no previstas, dependencias adicionales o cambios fuera del Feature Packet.
 4. Evaluar con `/sf-review BOOT-001`. El estado VERIFIED solo se adopta tras evidencias concretas y revisión.
 
 ## Gates
