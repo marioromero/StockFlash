@@ -74,8 +74,12 @@ Nombres y tildes según `docs/branding/module-identity-map.md`: «Analítica» c
 
 ## 9. Uso, tamaños y accesibilidad
 
-- Vista conjunta local: `docs/work/BRAND-001-PREVIEW.html` (fondo claro `#F5F7FA`, ocho `<img>` relativos, sin dependencias).
-- Tamaños sugeridos para revisión: 210×48 (base) y hasta 210×48 equivalente en productos (viewBox `0 0 420 96` y `0 0 300 96`); escalado responsive sin recortes con márgenes internos.
+- Vista conjunta local: `docs/work/BRAND-001-PREVIEW.html` (fondo claro `#F5F7FA`, ocho `<img>` relativos, sin dependencias). La vista fija igual altura CSS en las 8 (p. ej. `height:48px; width:auto`) para escalado proporcional.
+- Reglas definitivas de proporción/escalado provisional (ciclo 2, 2026-10-14):
+  - Altura viewBox uniforme `96` en las 8; anchos ceñidos por variante: madre `224`, POS `344`, Bodega `386`, SyncWP `386`, Fiscal `372`, Compras `392`, Analítica `406`, Control `384` (margen lateral 16u a cada lado, sin espacio horizontal sobrante).
+  - Wordmark idéntico en las 8 (misma posición `x=16 y=60`, `font-size=36 bold`): a igual altura CSS el wordmark tiene igual tamaño visual en todas las variantes.
+  - Etiquetas con anchos distintos según texto (provisionales, sin vacíos excesivos); no alterar posiciones, colores ni tipografías salvo decisión visual del propietario.
+  - En HTML fijar solo `height` (`24px`, `32px` o `48px` según contexto de interfaz) y `width:auto`; nunca fijar ancho y alto independientes que deformen.
 - Accesibilidad: cada SVG trae `<title>`; al usar en HTML acompañar con `alt` equivalente (p. ej. `alt="StockFlash POS — logo provisional"`); contraste POS con texto oscuro; resto blanco sobre grafito.
 - Legibilidad verificada sobre fondo blanco y fondo claro; no usar sobre fondos oscuros sin validación de contraste.
 

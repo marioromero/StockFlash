@@ -10,9 +10,9 @@ garantías: este documento es propuesta para aprobación; no reutilizar como pac
 
 ## Bloqueo previo explícito
 
-- `docs/work/CURRENT.md` (2026-10-13) mantiene **BOOT-001 activo, NO VERIFIED y NO release**, con instrucción expresa: **«No implementar otra feature antes de este gate»**.
+- Histórico 2026-10-13 (superado el 2026-10-14 con BOOT-001 VERIFIED): `docs/work/CURRENT.md` mantenía **BOOT-001 activo, NO VERIFIED y NO release**, con instrucción expresa: **«No implementar otra feature antes de este gate»**.
 - Verificación local `/sf-verify` BOOT-001 = `GATES_PASS` (`docs/work/BOOT-001-VERIFY-20261013-213942.md`), pero **VERIFIED solo lo declara el owner/ChatGPT fuera de OpenCode**.
-- Por lo tanto BRAND-001 **NO se implementa** hasta: (1) BOOT-001 VERIFIED, (2) aprobación del propietario de este packet, (3) activación en `CURRENT.md`. No se modifica `CURRENT.md` desde este packet.
+- Bloqueo superado el 2026-10-14 (BOOT-001 VERIFIED, packet APPROVED, activación en `CURRENT.md`); la condición histórica era que BRAND-001 **NO se implementaba** hasta: (1) BOOT-001 VERIFIED, (2) aprobación del propietario de este packet, (3) activación en `CURRENT.md`. No se modifica `CURRENT.md` desde este packet.
 
 ## Qué / Por qué / No incluido
 
@@ -28,7 +28,7 @@ garantías: este documento es propuesta para aprobación; no reutilizar como pac
 ## Referencias precisas
 
 - Parte 1: §4.1 (arquitectura modular), §4.5 (estructura de código), §5 (stack); Parte 2: sin cambios de tablas/columnas; Anexo: n/a.
-- `docs/branding/brand-contract.md`: identidad canónica (Stock `#303846`, Flash `#0856FF`, turquesa POS `#03C6BE`); PNG oficiales prevalecen; sin PNG usar fallback textual; **«Nunca dibujar un nuevo logo por cuenta propia»** — la excepción para estos SVG provisionales la da la autorización del propietario registrada en este packet, pendiente de aprobación.
+- `docs/branding/brand-contract.md`: identidad canónica (Stock `#303846`, Flash `#0856FF`, turquesa POS `#03C6BE`); PNG oficiales prevalecen; sin PNG usar fallback textual; **«Nunca dibujar un nuevo logo por cuenta propia»** — la excepción para estos SVG provisionales la da la autorización del propietario registrada en este packet (APPROVED 2026-10-14).
 - `docs/branding/module-identity-map.md`: 8 identidades y nombres PNG previstos (`stockflash.png`, `stockflash-pos.png`, `stockflash-bodega.png`, `stockflash-syncwp.png`, `stockflash-fiscal.png`, `stockflash-compras.png`, `stockflash-analitica.png`, `stockflash-control.png`). Control = app privada del fabricante, no producto contratado.
 - `docs/ux/UI-UX-CONTRACT-v0.1.md`: tokens compartidos, sin librerías visuales nuevas por feature sin aprobación.
 - AGENTS.md regla 10: PNG oficiales en `public/images/brand/`; si no existen, identidad textual provisional.
@@ -49,7 +49,7 @@ garantías: este documento es propuesta para aprobación; no reutilizar como pac
 - CUANDO se implemente BRAND-001, EL SISTEMA DEBE contener exactamente los 8 SVG listados, válidos y autocontenidos.
 - CUANDO una tarea implique identidad visual, EL AGENTE DEBE consultar contrato → mapa → inventario, en ese orden.
 - CUANDO los PNG oficiales lleguen, EL INVENTARIO DEBE definir su sustitución; los SVG NO DEBEN presentarse como oficiales sin aprobación visual del propietario.
-- CUANDO falte aprobación de este packet o BOOT-001 siga sin VERIFIED, NO DEBE crearse ningún SVG ni modificarse skills/documentos.
+- CUANDO falte aprobación visual definitiva de los SVG, NO DEBEN presentarse como oficiales ni integrarse como fuente primaria; BOOT-001 está VERIFIED y este packet está APPROVED (2026-10-14), por lo que la creación de los 8 SVG provisionales está autorizada.
 
 ## Plan técnico mínimo por OpenCode
 

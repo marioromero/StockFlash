@@ -6,25 +6,83 @@
 <style>
 body { background: #F5F7FA; color: #303846; font-family: Arial, Helvetica, sans-serif; margin: 24px; }
 h1 { font-size: 20px; }
-p.note { font-size: 14px; color: #64748B; }
+h2 { font-size: 16px; margin-top: 28px; }
+p.note, li { font-size: 14px; color: #475569; }
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
 .card { background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; }
-.card img { width: 100%; height: auto; display: block; }
 .card figcaption { font-size: 13px; margin-top: 8px; }
+.uniform img { height: 48px; width: auto; display: block; }
+.sizes { display: flex; align-items: flex-end; gap: 24px; flex-wrap: wrap; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; }
+.sizes figure { margin: 0; text-align: center; }
+.sizes img { width: auto; display: block; margin: 0 auto; }
+.sizes .h24 img { height: 24px; }
+.sizes .h32 img { height: 32px; }
+.sizes .h48 img { height: 48px; }
+.sizes figcaption { font-size: 12px; margin-top: 6px; color: #64748B; }
+.guides { background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; }
+.guide-row { display: flex; gap: 16px; flex-wrap: wrap; align-items: stretch; }
+.guide-box { border: 1px dashed #0856FF; background: repeating-linear-gradient(to right, transparent 0 14px, rgba(8,86,255,.08) 14px 16px); padding: 8px; border-radius: 8px; }
+.guide-box img { height: 48px; width: auto; display: block; background: #FFFFFF; outline: 1px solid #03C6BE; outline-offset: -1px; }
+table { border-collapse: collapse; font-size: 13px; margin-top: 12px; }
+th, td { border: 1px solid #E2E8F0; padding: 6px 10px; text-align: left; }
+th { background: #F1F5F9; }
+code { font-size: 12.5px; }
 </style>
 </head>
 <body>
 <h1>BRAND-001 — SVG provisionales, solo revisión visual (no oficial)</h1>
-<p class="note">Fondo claro. Los PNG oficiales prevalecen cuando lleguen. Sin dependencias externas.</p>
-<div class="grid">
-<figure class="card"><img src="../../public/images/brand/stockflash.svg" alt="StockFlash — logo provisional" width="420" height="134"><figcaption>stockflash.svg — marca madre</figcaption></figure>
-<figure class="card"><img src="../../public/images/brand/stockflash-pos.svg" alt="StockFlash POS — logo provisional" width="420" height="96"><figcaption>stockflash-pos.svg — etiqueta turquesa</figcaption></figure>
-<figure class="card"><img src="../../public/images/brand/stockflash-bodega.svg" alt="StockFlash Bodega — logo provisional" width="420" height="96"><figcaption>stockflash-bodega.svg — neutra</figcaption></figure>
-<figure class="card"><img src="../../public/images/brand/stockflash-syncwp.svg" alt="StockFlash SyncWP — logo provisional" width="420" height="96"><figcaption>stockflash-syncwp.svg — neutra</figcaption></figure>
-<figure class="card"><img src="../../public/images/brand/stockflash-fiscal.svg" alt="StockFlash Fiscal — logo provisional" width="420" height="96"><figcaption>stockflash-fiscal.svg — neutra</figcaption></figure>
-<figure class="card"><img src="../../public/images/brand/stockflash-compras.svg" alt="StockFlash Compras — logo provisional" width="420" height="96"><figcaption>stockflash-compras.svg — neutra</figcaption></figure>
-<figure class="card"><img src="../../public/images/brand/stockflash-analitica.svg" alt="StockFlash Analítica — logo provisional" width="420" height="96"><figcaption>stockflash-analitica.svg — neutra</figcaption></figure>
-<figure class="card"><img src="../../public/images/brand/stockflash-control.svg" alt="StockFlash Control — logo provisional" width="420" height="96"><figcaption>stockflash-control.svg — neutra</figcaption></figure>
+<p class="note">Fondo claro. Los PNG oficiales prevalecen cuando lleguen. Sin dependencias externas. Todas las variantes se muestran a la misma altura CSS (escalado proporcional): el wordmark conserva igual tamaño visual en las 8.</p>
+
+<h2>1. Vista conjunta a altura uniforme (48px de alto)</h2>
+<div class="grid uniform">
+<figure class="card"><img src="../../public/images/brand/stockflash.svg" alt="StockFlash — logo provisional" style="height:48px;width:auto"><figcaption>stockflash.svg — marca madre — viewBox <code>0 0 224 96</code></figcaption></figure>
+<figure class="card"><img src="../../public/images/brand/stockflash-pos.svg" alt="StockFlash POS — logo provisional" style="height:48px;width:auto"><figcaption>stockflash-pos.svg — viewBox <code>0 0 344 96</code></figcaption></figure>
+<figure class="card"><img src="../../public/images/brand/stockflash-bodega.svg" alt="StockFlash Bodega — logo provisional" style="height:48px;width:auto"><figcaption>stockflash-bodega.svg — viewBox <code>0 0 386 96</code></figcaption></figure>
+<figure class="card"><img src="../../public/images/brand/stockflash-syncwp.svg" alt="StockFlash SyncWP — logo provisional" style="height:48px;width:auto"><figcaption>stockflash-syncwp.svg — viewBox <code>0 0 386 96</code></figcaption></figure>
+<figure class="card"><img src="../../public/images/brand/stockflash-fiscal.svg" alt="StockFlash Fiscal — logo provisional" style="height:48px;width:auto"><figcaption>stockflash-fiscal.svg — viewBox <code>0 0 372 96</code></figcaption></figure>
+<figure class="card"><img src="../../public/images/brand/stockflash-compras.svg" alt="StockFlash Compras — logo provisional" style="height:48px;width:auto"><figcaption>stockflash-compras.svg — viewBox <code>0 0 392 96</code></figcaption></figure>
+<figure class="card"><img src="../../public/images/brand/stockflash-analitica.svg" alt="StockFlash Analítica — logo provisional" style="height:48px;width:auto"><figcaption>stockflash-analitica.svg — viewBox <code>0 0 406 96</code></figcaption></figure>
+<figure class="card"><img src="../../public/images/brand/stockflash-control.svg" alt="StockFlash Control — logo provisional" style="height:48px;width:auto"><figcaption>stockflash-control.svg — viewBox <code>0 0 384 96</code></figcaption></figure>
+</div>
+
+<h2>2. Muestras a tamaños de interfaz (alto 24 / 32 / 48px, ancho automático)</h2>
+<div class="sizes">
+<figure class="h24"><img src="../../public/images/brand/stockflash.svg" alt="StockFlash a 24px" style="height:24px"><figcaption>madre 24px</figcaption></figure>
+<figure class="h32"><img src="../../public/images/brand/stockflash.svg" alt="StockFlash a 32px" style="height:32px"><figcaption>madre 32px</figcaption></figure>
+<figure class="h48"><img src="../../public/images/brand/stockflash.svg" alt="StockFlash a 48px" style="height:48px"><figcaption>madre 48px</figcaption></figure>
+<figure class="h24"><img src="../../public/images/brand/stockflash-pos.svg" alt="POS a 24px" style="height:24px"><figcaption>POS 24px</figcaption></figure>
+<figure class="h32"><img src="../../public/images/brand/stockflash-pos.svg" alt="POS a 32px" style="height:32px"><figcaption>POS 32px</figcaption></figure>
+<figure class="h48"><img src="../../public/images/brand/stockflash-pos.svg" alt="POS a 48px" style="height:48px"><figcaption>POS 48px</figcaption></figure>
+<figure class="h24"><img src="../../public/images/brand/stockflash-analitica.svg" alt="Analítica a 24px" style="height:24px"><figcaption>Analítica 24px</figcaption></figure>
+<figure class="h32"><img src="../../public/images/brand/stockflash-analitica.svg" alt="Analítica a 32px" style="height:32px"><figcaption>Analítica 32px</figcaption></figure>
+<figure class="h48"><img src="../../public/images/brand/stockflash-analitica.svg" alt="Analítica a 48px" style="height:48px"><figcaption>Analítica 48px</figcaption></figure>
+</div>
+<p class="note">Regla: fijar solo <code>height</code> en CSS y <code>width:auto</code> para escalado proporcional. No fijar ancho/alto distintos que deformen. Las 8 comparten altura 96 en viewBox, por lo que a igual altura CSS el wordmark mide lo mismo.</p>
+
+<h2>3. Guías de verificación de márgenes y alineación</h2>
+<div class="guides">
+<p class="note">Guía: recuadro punteado azul = zona de verificación; contorno turquesa = borde del SVG. Verificar: margen izquierdo 16u y derecho 16u en las 8; misma línea base del wordmark (y=60); etiqueta adosada a la derecha sin recortes; sin espacio horizontal sobrante.</p>
+<div class="guide-row">
+<div class="guide-box"><img src="../../public/images/brand/stockflash.svg" alt="Guía stockflash" style="height:48px;width:auto"></div>
+<div class="guide-box"><img src="../../public/images/brand/stockflash-pos.svg" alt="Guía POS" style="height:48px;width:auto"></div>
+<div class="guide-box"><img src="../../public/images/brand/stockflash-bodega.svg" alt="Guía Bodega" style="height:48px;width:auto"></div>
+<div class="guide-box"><img src="../../public/images/brand/stockflash-syncwp.svg" alt="Guía SyncWP" style="height:48px;width:auto"></div>
+<div class="guide-box"><img src="../../public/images/brand/stockflash-fiscal.svg" alt="Guía Fiscal" style="height:48px;width:auto"></div>
+<div class="guide-box"><img src="../../public/images/brand/stockflash-compras.svg" alt="Guía Compras" style="height:48px;width:auto"></div>
+<div class="guide-box"><img src="../../public/images/brand/stockflash-analitica.svg" alt="Guía Analítica" style="height:48px;width:auto"></div>
+<div class="guide-box"><img src="../../public/images/brand/stockflash-control.svg" alt="Guía Control" style="height:48px;width:auto"></div>
+</div>
+<table>
+<tr><th>Archivo</th><th>viewBox antes</th><th>viewBox después</th><th>Margen lat.</th></tr>
+<tr><td>stockflash.svg</td><td>0 0 300 96</td><td>0 0 224 96</td><td>16 / 16</td></tr>
+<tr><td>stockflash-pos.svg</td><td>0 0 420 96</td><td>0 0 344 96</td><td>16 / 16</td></tr>
+<tr><td>stockflash-bodega.svg</td><td>0 0 420 96</td><td>0 0 386 96</td><td>16 / 16</td></tr>
+<tr><td>stockflash-syncwp.svg</td><td>0 0 420 96</td><td>0 0 386 96</td><td>16 / 16</td></tr>
+<tr><td>stockflash-fiscal.svg</td><td>0 0 420 96</td><td>0 0 372 96</td><td>16 / 16</td></tr>
+<tr><td>stockflash-compras.svg</td><td>0 0 420 96</td><td>0 0 392 96</td><td>16 / 16</td></tr>
+<tr><td>stockflash-analitica.svg</td><td>0 0 420 96</td><td>0 0 406 96</td><td>16 / 16</td></tr>
+<tr><td>stockflash-control.svg</td><td>0 0 420 96</td><td>0 0 384 96</td><td>16 / 16</td></tr>
+</table>
 </div>
 </body>
 </html>
