@@ -1,17 +1,17 @@
-# BRAND-001 — Inventario operativo de SVG provisionales (revisión visual)
+# BRAND-001 — Inventario operativo de SVG provisionales (VERIFIED del prototipo)
 
-> Estado: **provisional, solo para revisión visual**. No son logos oficiales ni VERIFIED. Los PNG oficiales prevalecen cuando lleguen (ver `docs/branding/brand-contract.md`).
+> Estado: **VERIFIED como entregable gráfico provisional para referencia visual, NO oficial y NO integrado en la aplicación**. Los PNG oficiales prevalecen cuando lleguen (ver `docs/branding/brand-contract.md`).
 
 ## 1. Propósito
 
-Documentar los ocho SVG provisionales de StockFlash creados bajo BRAND-001 (APPROVED 2026-10-14) para revisión visual del propietario, sin activarlas en la aplicación ni declararlas arte definitivo.
+Documentar los ocho SVG provisionales de StockFlash creados bajo BRAND-001 (VERIFIED como prototipos el 2026-10-14), sin activarlos en la aplicación ni declararlos arte definitivo.
 
 ## 2. Estado provisional — no oficial
 
 - Alcance aprobado: ocho SVG **provisionales, únicamente para revisión visual** (decisión externa a OpenCode, activada en `docs/work/CURRENT.md`).
 - No sustituyen el fallback textual de las pantallas ni los PNG oficiales previstos.
 - No están integrados en layouts Laravel/Vue; la vista conjunta `docs/work/BRAND-001-PREVIEW.html` es solo para inspección local.
-- Prohibido presentarlos como oficiales sin aprobación visual del propietario. Estado final de esta entrega: **listo para revisión visual**.
+- Aprobados visualmente como **prototipos de referencia** por el propietario al autorizar el avance; prohibido presentarlos como oficiales. No sustituir los PNG oficiales ni el fallback textual sin una decisión contractual futura.
 
 ## 3. Tabla de los 8 SVG
 
@@ -105,7 +105,10 @@ Nombres y tildes según `docs/branding/module-identity-map.md`: «Analítica» c
 3. Conservar o eliminar los SVG solo con decisión del propietario; nunca mezclar PNG y SVG como si fueran equivalentes oficiales.
 4. Registrar la sustitución en este inventario y en el packet correspondiente.
 
-## 12. Revisión pendiente + propuesta de ajuste contractual
+## 12. Verificación del prototipo y decisión diferida
 
-- Pendiente del propietario (revisión visual): proporción wordmark/etiqueta, anchos de etiqueta por producto, radio de esquinas, pesos tipográficos, tilde en «Analítica», contraste POS en tablet táctil y escritorio, escalado pequeño.
-- Propuesta de ajuste contractual para owner + ChatGPT (no aplicada por el implementador): si estos SVG se aprueban visualmente, ¿pasan a ser fuente visual primaria temporal hasta los PNG/vectores oficiales, o se mantienen solo como referencia y las pantallas siguen con fallback textual? Registrar la decisión en `docs/branding/brand-contract.md` vía propuesta/ADR; este inventario no modifica contratos.
+- BRAND-001: VERIFIED como entregable gráfico provisional (2026-10-14); evidencia final en commit `cdc993f9008d913869b8ee8755a480e8034826c0`, GATES_PASS `VERIFY-20261014-173659`, QA APROBADO `REVIEW-20261014-174500` y conformidad de avance del propietario.
+- El separador wordmark-etiqueta pasó de 44u a 15u; se conserva la altura de viewBox 96u y todos los colores aprobados solo para referencia.
+- A 24px las etiquetas pueden perder legibilidad, por lo que no se exige su utilización en superficies pequeñas; conservar fallback textual accesible.
+- **Decisión pendiente, no bloqueante para VERIFIED del prototipo:** si los SVG alguna vez serán fuente visual temporal en pantallas o permanecerán solo como referencia hasta recibir PNG oficiales. Por defecto permanecen como referencia y se mantiene el fallback textual.
+- Cualquier autorización futura de integración o sustitución de assets requiere decisión externa y ajuste de `docs/branding/brand-contract.md` mediante el procedimiento protegido; este inventario no modifica contratos.

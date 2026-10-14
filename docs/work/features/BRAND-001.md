@@ -1,12 +1,12 @@
 # BRAND-001 — Sistema SVG provisional de StockFlash (8 logos + inventario)
 
-status: APPROVED
-owner_approval: APROBADA por propietario + ChatGPT el 2026-10-14 para ocho SVG provisionales solo para revisión visual (decisión externa a OpenCode); activada en CURRENT.md. No declara logos oficiales ni VERIFIED.
+status: VERIFIED
+owner_approval: APROBADA por propietario + ChatGPT el 2026-10-14 para ocho SVG provisionales solo para revisión visual (decisión externa a OpenCode); activada en CURRENT.md. Estado VERIFIED de los assets provisionales; no son logos oficiales ni se integran automáticamente en la aplicación.
 etapa: BRANDING
 responsable_implementacion: OpenCode (solo tras APPROVED + activación)
 revision: Independiente (`/sf-review BRAND-001`) antes de dar por VERIFIED.
 
-garantías: este documento es propuesta para aprobación; no reutilizar como packet aprobado ni ejecutar anticipadamente.
+garantías: alcance implementado y verificado únicamente como prototipos SVG aprobados para referencia visual. No son logos oficiales ni fuente primaria de identidad en la aplicación.
 
 ## Bloqueo previo explícito
 
@@ -76,3 +76,11 @@ garantías: este documento es propuesta para aprobación; no reutilizar como pac
 - [ ] responsive/táctil: legibilidad en escalado y fondo claro (revisión visual)
 - [ ] reviewer independiente (`/sf-review BRAND-001`)
 - [ ] Sin commit/push/deploy; logos NO aprobados (revisión visual pendiente del propietario)
+
+## Cierre visual y documental — 2026-10-14
+- **VERIFIED del entregable de prototipos SVG**, por conformidad del propietario al continuar hacia R2 y revisión técnica/visual de ChatGPT. No constituye certificación de la marca ni autorización de integración a las pantallas.
+- Arte final publicado en commit `cdc993f9008d913869b8ee8755a480e8034826c0`: ocho SVG, siete etiquetas cromáticas, separador wordmark-etiqueta reducido de 44 a 15 unidades.
+- Gates ejecutados: `docs/work/BRAND-001-VERIFY-20261014-173659.md` (GATES_PASS B1–B3). Revisión independiente: `docs/work/BRAND-001-REVIEW-20261014-174500.md` (APROBADO, cero bloqueantes).
+- Conformidad visual externa basada en inspección de las versiones previas y aceptación del ajuste final de espaciado; no afirmar que se ejecutó un nuevo navegador automatizado sobre el commit final.
+- **Estado de uso:** aprobados como REFERENCIA PROVISIONAL; mantener fallback textual en Laravel/Vue hasta una decisión posterior explícita. Los PNG del diseñador prevalecen en cuanto existan. No modificar `docs/branding/brand-contract.md` en este cierre.
+- No deploy, migraciones ni aprobación de producto comercial.
