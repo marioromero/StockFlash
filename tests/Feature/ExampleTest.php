@@ -12,6 +12,10 @@ class ExampleTest extends TestCase
      */
     public function test_the_application_returns_a_successful_response(): void
     {
+        // Los tests HTTP no requieren el manifiesto de Vite; el smoke CI
+        // comprueba la ruta con el frontend compilado por separado.
+        $this->withoutVite();
+
         $response = $this->get('/');
 
         $response->assertStatus(200);
