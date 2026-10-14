@@ -51,7 +51,8 @@
       "mariadb *": "deny",
       "php artisan migrate*": "deny",
       "php artisan db:*": "deny",
-      "php artisan tinker*": "deny"
+      "php artisan tinker*": "deny",
+      "py -3 scripts/safe_git_pull.py": "allow"
     },
     "external_directory": "deny",
     "webfetch": "ask",
