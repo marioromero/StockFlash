@@ -239,6 +239,17 @@ GATES_BY_PACKET: dict[str, list[dict]] = {
         {"id": "G4-http-root", "kind": "http_serve",
          "mandatory": True, "timeout_s": 90},
     ],
+    "HARNESS-001": [
+        {"id": "H1-harness-diff-check", "kind": "shell",
+         "cmd": ["git", "diff", "--check", "HEAD"],
+         "mandatory": True, "timeout_s": 120},
+        {"id": "H2-protected-intact", "kind": "shell",
+         "cmd": ["git", "diff", "--quiet", "HEAD", "--", "opencode.json", "AGENTS.md", "docs/governance/CONSTITUTION.md", "docs/product", "docs/branding/brand-contract.md", "docs/branding/module-identity-map.md"],
+         "mandatory": True, "timeout_s": 120},
+        {"id": "H3-harness-present", "kind": "shell",
+         "cmd": ["py", "-3", "-c", "import pathlib as P,sys;R=P.Path('.');req=['.opencode/agents/stockflash-orchestrator.md','.opencode/commands/sf-run.md'];miss=[f for f in req if not (R/f).exists()];t=(R/'docs/work/features/BRAND-001.md').read_text(encoding='utf-8');ok=not miss and 'status: DRAFT' in t;sys.exit(0 if ok else 1)"],
+         "mandatory": True, "timeout_s": 120},
+    ],
 }
 
 
