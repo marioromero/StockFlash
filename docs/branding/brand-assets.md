@@ -85,7 +85,7 @@ Nombres y tildes según `docs/branding/module-identity-map.md`: «Analítica» c
 
 - Vista conjunta local: `docs/work/BRAND-001-PREVIEW.html` (fondo claro `#F5F7FA`, ocho `<img>` relativos, sin dependencias). La vista fija igual altura CSS en las 8 (p. ej. `height:48px; width:auto`) para escalado proporcional.
 - Reglas definitivas de proporción/escalado provisional (ciclo 2, 2026-10-14):
-  - Altura viewBox uniforme `96` en las 8; anchos ceñidos por variante: madre `224`, POS `344`, Bodega `386`, SyncWP `386`, Fiscal `372`, Compras `392`, Analítica `406`, Control `384` (margen lateral 16u a cada lado, sin espacio horizontal sobrante).
+  - Altura viewBox uniforme `96` en las 8; anchos ceñidos por variante: madre `224`, POS `315`, Bodega `357`, SyncWP `357`, Fiscal `343`, Compras `363`, Analítica `377`, Control `355` (margen lateral 16u a cada lado, sin espacio horizontal sobrante; ajuste final: etiqueta en `x=223`, espacio wordmark-etiqueta ≈`15u`, desplazamiento −`29u` con viewBox ceñido −`29u`).
   - Wordmark idéntico en las 8 (misma posición `x=16 y=60`, `font-size=36 bold`): a igual altura CSS el wordmark tiene igual tamaño visual en todas las variantes.
   - Etiquetas con anchos distintos según texto (provisionales, sin vacíos excesivos); no alterar posiciones, colores ni tipografías salvo decisión visual del propietario.
   - En HTML fijar solo `height` (`24px`, `32px` o `48px` según contexto de interfaz) y `width:auto`; nunca fijar ancho y alto independientes que deformen.
