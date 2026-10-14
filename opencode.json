@@ -64,7 +64,21 @@
       "composer validate*": "allow",
       "php artisan test": "allow",
       "npm run build": "allow",
-      "py -3 scripts/sf_verify.py*": "allow"
+      "py -3 scripts/sf_verify.py*": "allow",
+      "Test-Path *": "allow",
+      "Get-Item *": "allow",
+      "Get-ChildItem *": "allow",
+      "Select-Object *": "allow",
+      "Format-Table *": "allow",
+      "echo *": "allow",
+      "Remove-Item*": "deny",
+      "Clear-Content*": "deny",
+      "Remove-ItemProperty*": "deny",
+      "del *": "deny",
+      "erase *": "deny",
+      "rmdir *": "deny",
+      "rd *": "deny",
+      "git add*": "deny"
     },
     "external_directory": "deny",
     "webfetch": "ask",
@@ -123,6 +137,36 @@
           "*publisher*": "deny",
           "stockflash-orchestrator": "deny",
           "*orchestrator*": "deny"
+        },
+        "edit": {
+          "*": "ask",
+          "app/*": "allow",
+          "bootstrap/*": "allow",
+          "config/*": "allow",
+          "database/*": "allow",
+          "resources/*": "allow",
+          "routes/*": "allow",
+          "tests/*": "allow",
+          "scripts/*": "allow",
+          "public/images/brand/*": "allow",
+          "docs/work/*": "allow",
+          "docs/harness/*": "allow",
+          ".opencode/commands/sf-run.md": "allow",
+          ".opencode/agents/stockflash-orchestrator.md": "allow",
+          ".gitignore": "allow",
+          "docs/work/features/*": "ask",
+          ".opencode/agents/stockflash-publisher.md": "deny",
+          ".opencode/commands/sf-publish.md": "deny",
+          "docs/product/*": "deny",
+          "docs/governance/CONSTITUTION.md": "deny",
+          "docs/branding/brand-contract.md": "deny",
+          "docs/branding/module-identity-map.md": "deny",
+          "AGENTS.md": "deny",
+          "opencode.json": "deny",
+          "*.env": "deny",
+          "*.env.*": "deny",
+          "*.pem": "deny",
+          "*.key": "deny"
         }
       }
     },
@@ -130,7 +174,20 @@
       "permission": {
         "bash": {
           "git commit*": "deny",
-          "git push*": "deny"
+          "git push*": "deny",
+          "Test-Path *": "allow",
+          "Get-Item *": "allow",
+          "Get-ChildItem *": "allow",
+          "Select-Object *": "allow",
+          "Format-Table *": "allow",
+          "echo *": "allow",
+          "Remove-Item*": "deny",
+          "Clear-Content*": "deny",
+          "Remove-ItemProperty*": "deny",
+          "del *": "deny",
+          "erase *": "deny",
+          "rmdir *": "deny",
+          "rd *": "deny"
         },
         "task": {
           "stockflash-publisher": "deny",
@@ -146,7 +203,7 @@
       "permission": {
         "edit": {
           "*": "deny",
-          "docs/work/.run/*": "ask"
+          "docs/work/.run/*": "allow"
         },
         "bash": {
           "*": "ask",
@@ -191,7 +248,20 @@
           "php artisan migrate*": "deny",
           "php artisan db:*": "deny",
           "php artisan tinker*": "deny",
-          "rm *": "deny"
+          "rm *": "deny",
+          "Test-Path *": "allow",
+          "Get-Item *": "allow",
+          "Get-ChildItem *": "allow",
+          "Select-Object *": "allow",
+          "Format-Table *": "allow",
+          "echo *": "allow",
+          "Remove-Item*": "deny",
+          "Clear-Content*": "deny",
+          "Remove-ItemProperty*": "deny",
+          "del *": "deny",
+          "erase *": "deny",
+          "rmdir *": "deny",
+          "rd *": "deny"
         },
         "task": {
           "*": "deny",

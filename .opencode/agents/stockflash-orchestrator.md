@@ -2,7 +2,9 @@
 description: Coordina una Feature Packet aprobada de punta a punta (implementer → gates → reviewer → publisher) en una sola instrucción.
 mode: all
 permission:
-  edit: ask
+  edit:
+    "*": deny
+    "docs/work/.run/*": allow
   bash:
     "*": ask
     "pwd": allow
@@ -47,6 +49,14 @@ permission:
     "php artisan db:*": deny
     "php artisan tinker*": deny
     "rm *": deny
+    "Remove-Item*": deny
+    "Clear-Content*": deny
+    "Test-Path *": allow
+    "Get-Item *": allow
+    "Get-ChildItem *": allow
+    "Select-Object *": allow
+    "Format-Table *": allow
+    "echo *": allow
   task:
     "*": deny
     "stockflash-implementer": allow
@@ -71,3 +81,6 @@ Ciclo (delegación solo por Task nativo; nunca simular comandos interactivos):
 Checkpoints (`docs/work/.run/F-XXXX.json`, ignorado en Git): `{packet, stage, files: {ruta: hash}, attempts, verify_report, review_file, commit_sha}`. Al reanudar: revalidar fingerprints con `git hash-object`; ante divergencia, repetir desde el último stage válido en vez de asumirlo. Nunca reutilizar QA/gates de un estado distinto.
 
 Prohibido: editar fuera del alcance del packet, tocar protegidos (`opencode.json`, `AGENTS.md`, `CONSTITUTION.md`, `docs/product/*`, brand-contract, module-identity-map), leer secretos/`.env`, migraciones/DB, deploy, staging/commit/push propios, force/clean/reset destructivo. Publicar no es VERIFIED.
+
+## Herramientas sin prompts repetidos
+Usar herramientas nativas de archivos `read`, `grep` y `glob` en lugar de lanzar `Select-String`, `Get-Content` o `py -3 -c` para inspección. No usar cadenas PowerShell con `;` o `|` para chequeos rutinarios: cada instrucción puede requerir una autorización. Crear y actualizar checkpoints `docs/work/.run/*` con `edit` o `write`, sin `Remove-Item` (marcar el cierre). Usar scripts verificadores deterministas `scripts/sf_verify.py` y `scripts/safe_git_pull.py`. No solicitar aprobaciones por conversación para acciones ya configuradas como `allow`. Mantener el aislamiento entre implementador, revisor y publisher.

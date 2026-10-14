@@ -20,3 +20,5 @@ Coordinar Feature Packet $ARGUMENTS con el agente `stockflash-orchestrator`:
 5. Solo se detiene ante decisiones contractuales, visuales, de seguridad o permisos del propietario. Cierre documental VERIFIED usa `/sf-publish` operación B, no `/sf-run`.
 
 Respetar permisos `ask` mediante el mecanismo real; no interpretar `ask` como bloqueo si el propietario autoriza. Ante `deny` administrativo, entregar bloqueo + parche sin eludir.
+
+**Higiene de permisos:** priorizar herramientas nativas de archivo y comandos únicos; evitar pipelines PowerShell que disparan aprobaciones por subcomando. Checkpoints mediante edición permitida, nunca borrado destructivo. No invocar auto-approve con credenciales o secretos accesibles.
