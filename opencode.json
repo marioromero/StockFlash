@@ -52,12 +52,28 @@
       "php artisan migrate*": "deny",
       "php artisan db:*": "deny",
       "php artisan tinker*": "deny",
-      "py -3 scripts/safe_git_pull.py": "allow"
+      "py -3 scripts/safe_git_pull.py": "allow",
+      "git ls-files*": "allow",
+      "git rev-parse*": "allow",
+      "git fetch origin main": "allow",
+      "git check-ignore*": "allow",
+      "git hash-object*": "allow",
+      "git ls-remote origin main": "allow",
+      "git show*": "allow",
+      "git merge-base*": "allow",
+      "composer validate*": "allow",
+      "php artisan test": "allow",
+      "npm run build": "allow",
+      "py -3 scripts/sf_verify.py*": "allow"
     },
     "external_directory": "deny",
     "webfetch": "ask",
     "websearch": "ask",
-    "skill": "allow"
+    "skill": "allow",
+    "task": {
+      "*publisher*": "deny",
+      "*orchestrator*": "deny"
+    }
   },
   "agent": {
     "stockflash-publisher": {
@@ -89,7 +105,9 @@
           "git push origin main": "ask"
         },
         "task": {
-          "*": "deny"
+          "*": "deny",
+          "stockflash-orchestrator": "deny",
+          "*orchestrator*": "deny"
         },
         "external_directory": "deny"
       }
@@ -101,7 +119,10 @@
           "git push*": "deny"
         },
         "task": {
-          "stockflash-publisher": "deny"
+          "stockflash-publisher": "deny",
+          "*publisher*": "deny",
+          "stockflash-orchestrator": "deny",
+          "*orchestrator*": "deny"
         }
       }
     },
@@ -112,8 +133,70 @@
           "git push*": "deny"
         },
         "task": {
-          "stockflash-publisher": "deny"
+          "stockflash-publisher": "deny",
+          "*publisher*": "deny",
+          "stockflash-orchestrator": "deny",
+          "*orchestrator*": "deny"
         }
+      }
+    },
+    "stockflash-orchestrator": {
+      "description": "Coordina Feature Packets aprobadas, gates, QA y publicación por agentes separados.",
+      "mode": "all",
+      "permission": {
+        "edit": "ask",
+        "bash": {
+          "*": "ask",
+          "pwd": "allow",
+          "git status*": "allow",
+          "git diff*": "allow",
+          "git log*": "allow",
+          "git ls-files*": "allow",
+          "git branch --show-current": "allow",
+          "git remote -v": "allow",
+          "git rev-parse*": "allow",
+          "git fetch origin main": "allow",
+          "git ls-remote origin main": "allow",
+          "git check-ignore*": "allow",
+          "git hash-object*": "allow",
+          "git show*": "allow",
+          "git merge-base*": "allow",
+          "composer validate*": "allow",
+          "php -v": "allow",
+          "php artisan test": "allow",
+          "composer --version": "allow",
+          "node --version": "allow",
+          "npm --version": "allow",
+          "npm run build": "allow",
+          "py -3 scripts/safe_git_pull.py": "allow",
+          "py -3 scripts/sf_verify.py*": "allow",
+          "git add*": "deny",
+          "git commit*": "deny",
+          "git push*": "deny",
+          "git reset --hard*": "deny",
+          "git clean*": "deny",
+          "git checkout -*": "deny",
+          "git branch -D*": "deny",
+          "git tag*": "deny",
+          "ssh *": "deny",
+          "scp *": "deny",
+          "sftp *": "deny",
+          "ftp *": "deny",
+          "lftp *": "deny",
+          "mysql *": "deny",
+          "mariadb *": "deny",
+          "php artisan migrate*": "deny",
+          "php artisan db:*": "deny",
+          "php artisan tinker*": "deny",
+          "rm *": "deny"
+        },
+        "task": {
+          "*": "deny",
+          "stockflash-implementer": "allow",
+          "stockflash-reviewer": "allow",
+          "stockflash-publisher": "allow"
+        },
+        "external_directory": "deny"
       }
     }
   },
