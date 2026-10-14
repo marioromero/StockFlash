@@ -274,6 +274,15 @@
         },
         "external_directory": "deny"
       }
+    },
+    "build": {
+      "permission": {
+        "task": {
+          "*publisher*": "deny",
+          "*orchestrator*": "deny",
+          "stockflash-orchestrator": "allow"
+        }
+      }
     }
   },
   "compaction": {
