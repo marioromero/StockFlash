@@ -1,7 +1,7 @@
 # BOOT-001 — Bootstrap Laravel + Vue 3 + Inertia
 
-status: APPROVED
-owner_approval: Aprobación del propietario en la conversación de StockFlash, 2026-10-12 (BOOT-001).
+status: VERIFIED
+owner_approval: Aprobación del propietario en la conversación de StockFlash, 2026-10-12 (BOOT-001). VERIFIED declarado por arquitecto ChatGPT + propietario el 2026-10-14 (decisión externa a OpenCode, no autoaprobación).
 etapa: BOOTSTRAP
 responsable_implementacion: OpenCode
 revision: Independiente, antes de dar por VERIFIED.
@@ -55,11 +55,18 @@ Crear la base ejecutable **local** de StockFlash dentro del repositorio que ya c
 4. Evaluar con `/sf-review BOOT-001`. El estado VERIFIED solo se adopta tras evidencias concretas y revisión.
 
 ## Gates
-- [ ] Versión Laravel elegida compatible y documentada
-- [ ] composer install / PHP pruebas pertinentes
-- [ ] npm install / npm run build
-- [ ] Inertia+Vue sirve una página local
-- [ ] Sin migraciones ni escrituras DB
-- [ ] Sin modificaciones a specs, contrato visual, .env ni secretos
-- [ ] Sin despliegue o commit de agentes
-- [ ] Reviewer independiente completado
+- [x] Versión Laravel elegida compatible y documentada
+- [x] composer install / PHP pruebas pertinentes
+- [x] npm install / npm run build
+- [x] Inertia+Vue sirve una página local
+- [x] Sin migraciones ni escrituras DB
+- [x] Sin modificaciones a specs, contrato visual, .env ni secretos
+- [x] Sin despliegue; publicación solo vía publisher autorizado post-QA
+- [x] Reviewer independiente completado
+
+## Cierre VERIFIED (2026-10-14)
+- Decisión externa del arquitecto ChatGPT + propietario (fuera de OpenCode).
+- Revisado en GitHub: implementación `bcbf16f`, registro operativo `14ef7a4`.
+- `docs/work/BOOT-001-VERIFY-20261013-234609.md`: GATES_PASS (Laravel 13.35.0, Vue 3, Inertia, TypeScript; HTTP 200 StockFlash, HTML `es-CL`).
+- `docs/work/BOOT-001-REVIEW-20261013-235005.md`: APROBADO, 0 bloqueantes.
+- R1 del roadmap completada. BRAND-001 permanece DRAFT, sin activar ni implementar.
