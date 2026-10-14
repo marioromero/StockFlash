@@ -1,6 +1,6 @@
 ---
 description: Ejecuta una feature aprobada de StockFlash; no define requisitos ni releases.
-mode: primary
+mode: all
 permission:
   external_directory: deny
 ---

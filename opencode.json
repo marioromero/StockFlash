@@ -170,7 +170,8 @@
           "*.pem": "deny",
           "*.key": "deny"
         }
-      }
+      },
+      "mode": "all"
     },
     "stockflash-reviewer": {
       "permission": {
