@@ -250,6 +250,17 @@ GATES_BY_PACKET: dict[str, list[dict]] = {
          "cmd": ["py", "-3", "-c", "import pathlib as P,sys;R=P.Path('.');req=['.opencode/agents/stockflash-orchestrator.md','.opencode/commands/sf-run.md'];miss=[f for f in req if not (R/f).exists()];t=(R/'docs/work/features/BRAND-001.md').read_text(encoding='utf-8');ok=not miss and 'status: DRAFT' in t;sys.exit(0 if ok else 1)"],
          "mandatory": True, "timeout_s": 120},
     ],
+    "BRAND-001": [
+        {"id": "B1-svg-valid", "kind": "shell",
+         "cmd": ["py", "-3", "-c", "import pathlib as P,sys,re,xml.etree.ElementTree as ET\nR=P.Path('.')\nF=['stockflash','stockflash-pos','stockflash-bodega','stockflash-syncwp','stockflash-fiscal','stockflash-compras','stockflash-analitica','stockflash-control']\nA={'#303846','#0856ff','#03c6be','#ffffff','#64748b','#f5f7fa','#e2e8f0'}\nC=re.compile(r'#[0-9A-Fa-f]{3,8}')\nok=True\nfor n in F:\n p=R/('public/images/brand/'+n+'.svg')\n if not p.exists():\n  ok=False\n  continue\n t=p.read_text(encoding='utf-8')\n tl=t.lower()\n wo=re.sub(r'xmlns=\"[^\"]+\"', '', tl)\n bad=('<script' in wo or 'foreignobject' in wo or 'http' in wo or 'data:' in wo or 'base64' in wo or '<image' in wo)\n if bad:\n  ok=False\n  continue\n try:\n  r=ET.fromstring(t)\n except Exception:\n  ok=False\n  continue\n has_xmlns='xmlns=' in tl and 'http://www.w3.org/2000/svg' in t\n has_vb='viewBox' in r.attrib\n has_title=('<title' in tl and '</title>' in tl)\n cols=[c.lower() for c in C.findall(t)]\n cols_ok=all(c in A for c in cols)\n nz=(len(t.strip())>0)\n if not (has_xmlns and has_vb and has_title and cols_ok and nz):\n  ok=False\nsys.exit(0 if ok else 1)"],
+         "mandatory": True, "timeout_s": 120},
+        {"id": "B2-docs-present", "kind": "shell",
+         "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\nb=R/'docs/branding/brand-assets.md'\ns1=R/'.agents/skills/stockflash-brand-system/SKILL.md'\ns2=R/'.agents/skills/stockflash-no-brand-drift/SKILL.md'\nok=b.exists() and 'provisional' in b.read_text(encoding='utf-8').lower() and 'brand-assets.md' in s1.read_text(encoding='utf-8') and 'brand-assets.md' in s2.read_text(encoding='utf-8')\nsys.exit(0 if ok else 1)"],
+         "mandatory": True, "timeout_s": 120},
+        {"id": "B3-harness-diff-check", "kind": "shell",
+         "cmd": ["git", "diff", "--check", "HEAD"],
+         "mandatory": True, "timeout_s": 120},
+    ],
 }
 
 
