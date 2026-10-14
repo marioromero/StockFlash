@@ -144,7 +144,10 @@
       "description": "Coordina Feature Packets aprobadas, gates, QA y publicación por agentes separados.",
       "mode": "all",
       "permission": {
-        "edit": "ask",
+        "edit": {
+          "*": "deny",
+          "docs/work/.run/*": "ask"
+        },
         "bash": {
           "*": "ask",
           "pwd": "allow",
