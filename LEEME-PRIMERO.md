@@ -1,6 +1,6 @@
 # StockFlash — LEEME PRIMERO
 
-Este repositorio contiene el contrato documental y el entorno de agentes para desarrollar **StockFlash** con OpenCode CLI. No es todavía una aplicación Laravel instalable.
+Este repositorio contiene el contrato documental, el entorno de agentes y el trabajo en curso de **StockFlash** con OpenCode CLI. **El scaffold Laravel fue creado LOCALMENTE, pero aún no está en GitHub ni cuenta con QA independiente aprobado**. Para el estado vigente consultar `docs/work/CURRENT.md` y `docs/harness/HANDOFF-CHAT-02.md`.
 
 ## Fuente de verdad
 
@@ -33,13 +33,13 @@ Revisar `docs/governance/DECISIONES-ABIERTAS-v2.2.md` antes de implementar una f
 - Rutas de staging: aplicación privada `/home/grupoint/stockflash-dev-app` y raíz pública `/home/grupoint/stockflash-dev.tusitioexpress.cl`.
 - Se creó una base de datos DEV separada. El acceso SSH por clave al puerto 2200 fue comprobado.
 - Se configuraron variables y secreto de GitHub Actions para staging; el workflow de verificación SSH se incorporó al repositorio.
-- **Laravel no está creado ni desplegado.** El siguiente trabajo de implementación requiere Feature Packet aprobado y activación en `docs/work/CURRENT.md`.
+- **BOOT-001 está implementado localmente según reporte de OpenCode, pero aún NO VERIFIED ni desplegado.** El código no versionado y `docs/work/BOOT-001-EVIDENCE.md` están en el equipo del propietario. Siguiente tarea: `/sf-review BOOT-001` y revisión de gates, después de instalar el último cambio de instrucciones Git. Ver `docs/work/CURRENT.md`.
 
 ## Uso con OpenCode
 
 1. Abrir Warp en la raíz del repositorio y ejecutar `opencode`.
 2. No ejecutar `/init`: el proyecto ya tiene `AGENTS.md` y configuración propia.
-3. Consultar `/sf-diagnostico` para diagnóstico y `/sf-plan <ID>` solo después de aprobar la Feature correspondiente.
+3. Usar `/sf-diagnostico` cuando haga falta diagnosticar un entorno nuevo o un cambio real; no repetir los preflights ya confirmados. Para feature nueva seguir `/sf-plan <ID>` y `/sf-feature <ID>` según su estado APPROVED.
 4. No permitir cambios a especificaciones, esquema de base de datos, licencias, reglas fiscales o dependencias sin decisión explícita documentada.
 5. No ejecutar migraciones ni desplegar hasta contar con código probado, configuración y plan de despliegue aprobado.
 
