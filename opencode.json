@@ -86,7 +86,8 @@
     "skill": "allow",
     "task": {
       "*publisher*": "deny",
-      "*orchestrator*": "deny"
+      "*orchestrator*": "deny",
+      "stockflash-orchestrator": "allow"
     }
   },
   "agent": {
@@ -288,5 +289,7 @@
   "compaction": {
     "auto": true,
     "prune": true
-  }
+  },
+  "default_agent": "build",
+  "subagent_depth": 2
 }
