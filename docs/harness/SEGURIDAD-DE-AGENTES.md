@@ -1,7 +1,7 @@
 # Seguridad de agentes y secretos — hardening progresivo
 
 ## Bootstrap (actual)
-`opencode.json` tiene permisos conservadores; `edit` pregunta para cambios no prohibidos, `bash` pregunta salvo comandos de inspección. `git commit/push`, SSH/FTP y migraciones ejecutadas por el agente quedan denegadas. Abrir sin `--auto`.
+`opencode.json` tiene permisos conservadores; `edit` pregunta para cambios no prohibidos, `bash` pregunta salvo comandos de inspección. `git commit/push`, SSH/FTP y migraciones ejecutadas por el agente quedan denegadas. Abrir sin `--auto`. Al iniciar `/sf-feature` o `/sf-review` se permite **solo** `py -3 scripts/safe_git_pull.py` sin prompt: comprueba rama `main` y ejecuta `git pull --ff-only origin main` una vez, con protección nativa de Git frente a conflictos locales. Si emite `SYNC_BLOCKED`, detenerse; ningún reset, stash, clean, merge forzado o sincronización en mitad de la implementación. La revisión QA permanece sin capacidad de editar código, salvo este preflight sincronizador.
 **Estas reglas son defensa en profundidad, no un sandbox**. Bash, plugins, comandos compuestos y MCPs pueden evitar restricciones si obtienen permisos. Nunca dar al agente acceso del sistema operativo a secretos/producción.
 
 ## Separaciones obligatorias antes de automatizar
