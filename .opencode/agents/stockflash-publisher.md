@@ -30,6 +30,10 @@ permission:
     "git push * --force-with-lease*": deny
     "git push origin :*": deny
     "git push origin main": ask
+    "git add -- *": allow
+    "git add -- .": deny
+    "git add -- ./": deny
+    "git commit -m *": allow
     "git reset --hard*": deny
     "git clean*": deny
     "git checkout -*": deny

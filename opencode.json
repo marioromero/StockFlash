@@ -114,9 +114,11 @@
           "git add*": "deny",
           "git commit*": "deny",
           "git push*": "deny",
-          "git add -- *": "ask",
-          "git commit -m *": "ask",
-          "git push origin main": "ask"
+          "git add -- *": "allow",
+          "git commit -m *": "allow",
+          "git push origin main": "ask",
+          "git add -- .": "deny",
+          "git add -- ./": "deny"
         },
         "task": {
           "*": "deny",
