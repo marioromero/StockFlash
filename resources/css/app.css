@@ -1,0 +1,55 @@
+/* StockFlash BOOT-001 — tokens base sin Tailwind ni UI kits.
+   brand.graphite #303846, brand.blue #0856FF, turquesa POS #03C6BE (solo acento). */
+:root {
+    --brand-graphite: #303846;
+    --brand-blue: #0856FF;
+    --brand-turquoise: #03C6BE;
+    --text-primary: #303846;
+    --text-secondary: #64748B;
+    --bg-page: #F5F7FA;
+    --bg-surface: #FFFFFF;
+    --border-subtle: #E2E8F0;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg-page);
+    color: var(--text-primary);
+}
+
+.sf-shell {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+}
+
+.sf-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 2rem;
+    max-width: 560px;
+    width: 100%;
+    text-align: left;
+}
+
+.sf-brand { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.02em; }
+.sf-brand .stock { color: var(--brand-graphite); }
+.sf-brand .flash { color: var(--brand-blue); }
+.sf-sub { color: var(--text-secondary); margin: 0.5rem 0 0; }
+.sf-badge {
+    display: inline-block;
+    margin-top: 1rem;
+    font-size: 0.8rem;
+    border: 1px solid var(--border-subtle);
+    border-radius: 999px;
+    padding: 0.25rem 0.75rem;
+    color: var(--text-secondary);
+}
+a:focus-visible, button:focus-visible { outline: 3px solid var(--brand-blue); outline-offset: 2px; }

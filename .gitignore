@@ -15,6 +15,7 @@
 # Archivos locales
 /.idea/
 /.phpunit.cache/
+.phpunit.result.cache
 /coverage/
 *.log
 *.sqlite
@@ -24,3 +25,6 @@
 /public/hot
 /public/storage
 /storage/*.key
+
+# BOOT-001 scaffold temporal (ignorar hasta fusión revisada)
+/tmp-boot-001/

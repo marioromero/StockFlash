@@ -13,8 +13,8 @@
 2. `/sf-plan F-XXXX`: plan técnico de máximo 10 subtareas, archivos, tests y riesgos; sin suponer cambios normativos.
 3. `/sf-feature F-XXXX`: implementa las subtareas de la feature aprobada, con evidencia/checkpoints y pruebas. No precisa una nueva autorización del plan ni microaprobaciones por cada subtarea, pero respeta permisos `ask`; ante cambios de alcance, dejar solicitud estructurada.
 4. `/sf-review F-XXXX`: reviewer compara cambios y tests; resultado APROBADO/REQUIERE CAMBIOS (no aprueba automáticamente release).
-5. Cuando exista pipeline de CI configurado, el sistema hará commit/push/staging después de checks. No activar este flujo antes de disponer de tests y credenciales aisladas.
-6. Owner/ChatGPT aprueba cambios de spec e hitos productivos, no cada modificación trivial de implementación.
+5. `/sf-publish F-XXXX`: publicador `stockflash-publisher` valida Git (main, sync ff-only con `origin/main`), alcance autorizado, `APROBADO` + `GATES_PASS` vigente ejecutado, staging explícito por archivo (nunca `git add -A`), `git diff --cached --check`, commit descriptivo y `git push origin main` sin force. Flujo permanente: `/sf-feature → /sf-verify → /sf-review → /sf-publish`. Publicar no significa VERIFIED ni autoriza deploy.
+6. Owner/ChatGPT aprueba cambios de spec, hitos VERIFIED/release y decisiones productivas, no cada modificación trivial de implementación.
 
 ### Reglas de escalamiento
 No se amplía alcance, no se crean dependencias inesperadas, no se altera schema congelado, no se cambia regla fiscal/privacidad/licencia; en cambio producir `docs/work/DECISION-REQUEST-TEMPLATE.md` completado o issue con pregunta y alternativas. OpenCode NO puede llamar automáticamente a este chat: el owner traslada el pedido y trae el ADR a Git.

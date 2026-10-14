@@ -1,11 +1,11 @@
 # Estado operativo — StockFlash (2026-10-13)
 
 ## Hito activo
-- **BOOT-001: APPROVED; implementación LOCAL reportada completa, QA independiente pendiente. NO VERIFIED y NO release.**
+- **BOOT-001: APPROVED; implementación LOCAL reportada completa, QA independiente APROBADO (estático, 0 bloqueantes, 2026-10-14). NO VERIFIED y NO release.**
 - OpenCode reportó scaffold Laravel 13.0.0, framework `laravel/framework 13.35.0`, Vue 3, Inertia 3.5.1, TypeScript/Vite, `composer.lock` y `package-lock.json`. `php artisan test` = 2 passed/4 assertions; `npm run build` OK; ruta `/` HTTP 200 con Home/StockFlash. **Son resultados reportados por OpenCode; el reviewer debe comprobarlos, no darlos por verificados.**
 - El scaffold, código y `docs/work/BOOT-001-EVIDENCE.md` están actualmente **solo en el equipo local, mayoritariamente archivos Git untracked**; no están en GitHub. `.gitignore` tiene cambios locales. Al revisar, consultar `git ls-files --others --exclude-standard` y leer archivos nuevos directamente; `git diff HEAD` no basta.
 - Riesgos/controles BOOT: scripts de Composer con `migrate` desactivados según OpenCode, ausencia de `database/migrations/` y `database.sqlite` reportada, `.env` local nunca debe leerse ni incorporarse. No ejecutar migraciones, ni desplegar.
-- **Siguiente acción del owner:** ejecutar `/sf-review BOOT-001` en OpenCode con el reviewer actualizado; si `APROBADO`, owner/ChatGPT revisan evidencias y deciden si declarar VERIFIED. No repetir scaffold ni implementar otra feature antes de este gate.
+- **Siguiente acción del owner:** re-ejecutar gates en limpio (`composer validate`, `php artisan test`, `npm run build`, `serve + GET /`), revisar evidencias y declarar VERIFIED fuera de OpenCode si procede. `tmp-boot-001/` se conserva ignorado hasta consentimiento destructivo. No implementar otra feature antes de este gate.
 
 ## Flujo Git/OpenCode
 - `/sf-feature` y `/sf-review` incorporan un preflight Git automático una sola vez al inicio: `py -3 scripts/safe_git_pull.py` (permiso específico `allow`). Solo rama `main`, `git pull --ff-only origin main`; ante `SYNC_BLOCKED` detener sin reset, stash ni clean. No sincronizar en medio de la tarea. Es necesario **un último git pull manual** para instalar esta versión del propio mecanismo.
