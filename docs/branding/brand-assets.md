@@ -50,20 +50,29 @@ No existen SVG para Caja, Ventas, Clientes ni Precios: son funciones internas, n
 
 Nombres y tildes según `docs/branding/module-identity-map.md`: «Analítica» con tilde, «SyncWP» con esa escritura.
 
-## 6. Paleta aprobada
+## 6. Paleta provisional por línea (ciclo 3, 2026-10-14 — no oficial)
 
-- `brand.graphite` `#303846` — «Stock» y etiquetas neutras.
+- `brand.graphite` `#303846` — «Stock», etiqueta Control y texto POS sobre turquesa.
 - `brand.blue` `#0856FF` — «Flash».
-- `brand.turquoise` `#03C6BE` — solo etiqueta POS.
-- Neutros de soporte: `#FFFFFF` (texto sobre grafito), `#64748B`, `#F5F7FA`, `#E2E8F0`.
-- Ningún otro color en los SVG. Las etiquetas neutras no usan acentos individuales ni colores semánticos de éxito/advertencia/error.
+- `brand.turquoise` `#03C6BE` — solo etiqueta POS, con texto oscuro `#303846`.
+- Neutros de soporte: `#FFFFFF` (texto sobre etiquetas oscuras), `#64748B`, `#F5F7FA`, `#E2E8F0`.
+- Etiquetas provisionales por línea (fondos sólidos sobrios, solo revisión visual, no oficiales):
+  - POS `#03C6BE` + texto `#303846` (contraste oscuro sobre turquesa brillante).
+  - Bodega `#1E7A4C` (verde operativo sobrio) + texto `#FFFFFF`.
+  - SyncWP `#4E53A8` (índigo sobrio) + texto `#FFFFFF`.
+  - Fiscal `#8C5400` (ámbar oscuro sobrio) + texto `#FFFFFF`.
+  - Compras `#B03A2E` (rojo ladrillo controlado) + texto `#FFFFFF`.
+  - Analítica `#6C3FA3` (violeta sobrio) + texto `#FFFFFF`.
+  - Control `#303846` (grafito neutro, sin acento) + texto `#FFFFFF`.
+- Contraste: texto `#FFFFFF` sobre los cinco fondos nuevos y grafito; texto oscuro `#303846` solo sobre turquesa POS. Sin cambios de tamaño tipográfico (contraste suficiente sin ajuste).
+- Ningún otro color en los SVG. Estos acentos son provisionales para revisión visual; no son colores oficiales ni semánticos de éxito/advertencia/error.
 
 ## 7. Wordmark + etiquetas
 
 - Wordmark horizontal `Stock` `#303846` + `Flash` `#0856FF`, fuente del sistema en negrita, sin isotipos, degradados ni efectos.
 - Productos: mismo wordmark + etiqueta rectangular de esquinas suavizadas (`rx="8"`) adosada a la derecha con el nombre del producto.
 - POS: rectángulo `#03C6BE` con texto oscuro `#303846` (contraste sobre turquesa brillante, según `brand-contract.md`).
-- Resto: rectángulo grafito `#303846` con texto `#FFFFFF`; tratamiento neutro provisional, sin acentos definitivos.
+- Resto: rectángulo con color provisional por línea (§6) y texto `#FFFFFF`, salvo POS; acentos provisionales para revisión visual, no definitivos.
 - SVG 1.1 por `<img>`: `xmlns`, `viewBox`, `<title>`, XML válido, sin JS, sin CSS remoto, sin recursos de red, sin raster/Base64, sin `script`, sin `foreignObject`, sin referencias externas.
 
 ## 8. Convención de nombres
@@ -80,7 +89,7 @@ Nombres y tildes según `docs/branding/module-identity-map.md`: «Analítica» c
   - Wordmark idéntico en las 8 (misma posición `x=16 y=60`, `font-size=36 bold`): a igual altura CSS el wordmark tiene igual tamaño visual en todas las variantes.
   - Etiquetas con anchos distintos según texto (provisionales, sin vacíos excesivos); no alterar posiciones, colores ni tipografías salvo decisión visual del propietario.
   - En HTML fijar solo `height` (`24px`, `32px` o `48px` según contexto de interfaz) y `width:auto`; nunca fijar ancho y alto independientes que deformen.
-- Accesibilidad: cada SVG trae `<title>`; al usar en HTML acompañar con `alt` equivalente (p. ej. `alt="StockFlash POS — logo provisional"`); contraste POS con texto oscuro; resto blanco sobre grafito.
+- Accesibilidad: cada SVG trae `<title>`; al usar en HTML acompañar con `alt` equivalente (p. ej. `alt="StockFlash POS — logo provisional"`); contraste POS con texto oscuro; resto blanco sobre su fondo provisional por línea (§6).
 - Legibilidad verificada sobre fondo blanco y fondo claro; no usar sobre fondos oscuros sin validación de contraste.
 
 ## 10. Limitaciones del `<text>` provisional

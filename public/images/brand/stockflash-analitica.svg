@@ -2,6 +2,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 406 96" role="img">
   <title>StockFlash Analítica — logo provisional</title>
   <text x="16" y="60" font-family="Arial, Helvetica, sans-serif" font-size="36" font-weight="700" letter-spacing="0"><tspan fill="#303846">Stock</tspan><tspan fill="#0856FF">Flash</tspan></text>
-  <rect x="252" y="28" width="138" height="40" rx="8" fill="#303846"/>
+  <rect x="252" y="28" width="138" height="40" rx="8" fill="#6C3FA3"/>
   <text x="321" y="55" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" text-anchor="middle" fill="#FFFFFF">Analítica</text>
 </svg>
