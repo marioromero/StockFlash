@@ -16,4 +16,4 @@
 - No alterar privacy/security/licencia con telemetría comercial adicional; LIC-02 conserva lista blanca exacta. Sin secretos en prompts, agentes ni logs.
 - Diseño corporativo constante y accesible, uso del PNG oficial StockFlash y etiqueta activa. Owner+ChatGPT gobiernan diseño y producto, OpenCode implementa y prueba.
 - No modificar contratos consolidados, esquemas adicionales ni dependencias críticas sin nueva revisión y ADR. Implementación por Feature Packet pequeño y validación independiente.
-- Staging/producción separados; CI comprueba diffs, pruebas y seguridad antes de desplegar. Producción requiere respaldo y aprobación humana. Nada de push ni deploy autónomo directo por agente en bootstrap.
+- Staging/producción separados; CI comprueba diffs, pruebas y seguridad antes de desplegar. Producción requiere respaldo y aprobación humana. Publicación Git solo por `stockflash-publisher` tras gates+review, sin force; nada de deploy autónomo por agente. Publicar no es VERIFIED.

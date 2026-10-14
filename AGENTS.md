@@ -13,5 +13,5 @@
 12. Probar idempotencia, permisos, concurrencia, caja, límites y stock por transacción cuando corresponda. Nunca declarar terminado sin pruebas.
 13. Cambios de reglas, columnas, contratos y dependencias no previstos en v2.2 requieren propuesta/ADR. Agentes implementadores no modifican estos contratos.
 14. Dudas: registrar solicitud de decisión (`docs/work/DECISION-REQUEST-TEMPLATE.md`) y detener SOLO la pieza afectada; owner+ChatGPT responden fuera de OpenCode. No existe conexión automática a este chat.
-15. No push, deploy, migraciones remotas, DB destructiva ni acceso a producción desde agentes. CI/deploy solo tras gates y credenciales aisladas.
+15. Publicación Git solo vía `stockflash-publisher` (`/sf-publish`) tras `APROBADO` + `GATES_PASS` vigente, en rama `main`, `git push origin main` sin force; prohibidos force push, reset destructivo, clean, borrado ramas remotas, deploy, migraciones remotas, DB destructiva y acceso a producción. CI/deploy solo tras gates y credenciales aisladas. Publicar no es VERIFIED.
 16. Skills bajo demanda `.agents/skills`; MEMORY es consultiva, no override. Leer `LEEME-PRIMERO.md` al iniciar trabajo nuevo. `/sf-diagnostico` se realiza una vez o ante cambios reales de entorno; no repetir un preflight ya completado ni finalizar por mera necesidad de permiso `ask`. No ejecutar `/init`.

@@ -59,6 +59,64 @@
     "websearch": "ask",
     "skill": "allow"
   },
+  "agent": {
+    "stockflash-publisher": {
+      "mode": "subagent",
+      "permission": {
+        "edit": "deny",
+        "bash": {
+          "*": "deny",
+          "pwd": "allow",
+          "git status*": "allow",
+          "git diff*": "allow",
+          "git log*": "allow",
+          "git ls-files*": "allow",
+          "git branch --show-current": "allow",
+          "git remote -v": "allow",
+          "git remote get-url origin": "allow",
+          "git rev-parse*": "allow",
+          "git merge-base*": "allow",
+          "git check-ignore*": "allow",
+          "git hash-object*": "allow",
+          "git ls-remote*": "allow",
+          "git show*": "allow",
+          "git fetch origin main": "allow",
+          "git add*": "deny",
+          "git commit*": "deny",
+          "git push*": "deny",
+          "git add -- *": "ask",
+          "git commit -m *": "ask",
+          "git push origin main": "ask"
+        },
+        "task": {
+          "*": "deny"
+        },
+        "external_directory": "deny"
+      }
+    },
+    "stockflash-implementer": {
+      "permission": {
+        "bash": {
+          "git commit*": "deny",
+          "git push*": "deny"
+        },
+        "task": {
+          "stockflash-publisher": "deny"
+        }
+      }
+    },
+    "stockflash-reviewer": {
+      "permission": {
+        "bash": {
+          "git commit*": "deny",
+          "git push*": "deny"
+        },
+        "task": {
+          "stockflash-publisher": "deny"
+        }
+      }
+    }
+  },
   "compaction": {
     "auto": true,
     "prune": true
