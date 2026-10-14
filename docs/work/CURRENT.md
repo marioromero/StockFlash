@@ -1,10 +1,11 @@
-# Estado operativo — StockFlash (2026-10-13)
+# Estado operativo — StockFlash (2026-10-14)
 
 ## Hito activo
 - **BOOT-001: VERIFIED (2026-10-14, decisión arquitecto ChatGPT + propietario, fuera de OpenCode). R1 del roadmap completada. Publicado en GitHub (`bcbf16f` implementación + `14ef7a4` registro, 69 archivos), QA independiente APROBADO (0 bloqueantes). NO release.** Ver: `https://github.com/marioromero/StockFlash/commit/bcbf16fa32ba56e21e4696b8950b60ae6cc067c2`.
 - Scaffold verificado en GitHub: Laravel 13.0.0, framework `laravel/framework 13.35.0`, Vue 3, Inertia 3.5.1, TypeScript/Vite, `composer.lock` y `package-lock.json`. `php artisan test` = 2 passed/4 assertions; `npm run build` OK; ruta `/` HTTP 200 con Home/StockFlash, HTML `es-CL`.
 - Riesgos/controles BOOT: scripts de Composer con `migrate` desactivados, ausencia de `database/migrations/` y `database.sqlite`, `.env` local nunca debe leerse ni incorporarse. No ejecutar migraciones, ni desplegar.
 - **Siguiente hito formal:** R2 (CI / staging seguro) según `docs/harness/ROADMAP-STOCKFLASH.md`. BRAND-001 permanece DRAFT: requiere aprobación y activación en este archivo antes de implementarse. `tmp-boot-001/` se conserva ignorado hasta consentimiento destructivo.
+- **Feature operativa activa: HARNESS-001 — APPROVED.** Mejora del orquestador `/sf-run` y permisos mínimos, autorizada por propietario+ChatGPT el 2026-10-14. Es tarea de herramientas, NO una nueva etapa del roadmap; R2 continúa como siguiente hito formal. BRAND-001 sigue DRAFT y no se implementa aún.
 
 ## Flujo Git/OpenCode
 - `/sf-feature` y `/sf-review` incorporan un preflight Git automático una sola vez al inicio: `py -3 scripts/safe_git_pull.py` (permiso específico `allow`). Solo rama `main`, `git pull --ff-only origin main`; ante `SYNC_BLOCKED` detener sin reset, stash ni clean. No sincronizar en medio de la tarea. Es necesario **un último git pull manual** para instalar esta versión del propio mecanismo.
