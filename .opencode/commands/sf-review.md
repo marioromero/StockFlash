@@ -3,6 +3,12 @@ description: Revisar la implementación completa y evidencia de Feature Packet a
 agent: stockflash-reviewer
 ---
 
+**Sincronización de inicio (excepción acotada a QA solo lectura):**
+
+!`py -3 scripts/safe_git_pull.py`
+
+La sincronización actualiza solamente archivos versionados cuando Git permite un fast-forward sin conflictos. Si la salida empieza con `SYNC_BLOCKED` o falta `SYNC_OK`, NO emitir veredicto: solicitar revisión del estado Git. El reviewer no edita archivos por su cuenta.
+
 Revisar independientemente Feature Packet $ARGUMENTS, criterios de aceptación, cambios rastreados, **archivos nuevos sin seguimiento Git** y evidencia/tests. Solo lectura; nunca implementar, aprobar despliegues ni alterar archivos.
 
 **Inventario obligatorio antes de concluir si hay código:**
