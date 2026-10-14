@@ -1,6 +1,6 @@
 # HARNESS-001 — Orquestación automática y permisos acotados
 
-status: APPROVED
+status: VERIFIED
 owner_approval: Autorización del propietario y ChatGPT en la conversación StockFlash del 2026-10-14 para automatizar implementación → gates → QA independiente → publicación y reducir aprobaciones rutinarias.
 etapa: HERRAMIENTAS_OPERATIVAS
 responsable_implementacion: OpenCode
@@ -35,3 +35,8 @@ Sin cambios a `docs/product/*`, `AGENTS.md`, `docs/governance/CONSTITUTION.md`, 
 - `.opencode/commands/sf-publish.md` y `.opencode/agents/stockflash-publisher.md`.
 - `docs/harness/WORKFLOW-SDD-HIBRIDO.md`; `docs/work/CURRENT.md`.
 - Evidencia local reportada: checkpoint write/read/delete, rechazo DRAFT, revisión independiente del harness APROBADO; revalidar el conjunto definitivo después de integrar el cambio administrativo.
+
+## Decisión de cierre (2026-10-14)
+- **VERIFIED del entregable de harness**, por aprobación externa del propietario y ChatGPT basada en implementación publicada, `docs/work/HARNESS-001-VERIFY-20261014-153021.md` (GATES_PASS) y `docs/work/HARNESS-001-REVIEW-20261014-153500.md` (APROBADO).
+- Implementación: commit `5b6c9e98a5695f03077b9c34b596a714023a6fde`; mejoras administrativas posteriores: `d72e74206b8c7d1fbf1e336237547ed7cde54d39`, `95eb9a9640f5400279b59154994a4a213fdcbaf7` y `9916b14538d34154926909f42cdcf35d2443ec9f`.
+- **Límite de evidencia:** no se ha demostrado todavía un recorrido real E2E completo del coordinador ni la reducción efectiva de prompts en una sesión iniciada con `--auto`. Probarlos con la primera feature real, BRAND-001, y registrar fallas si aparecen. VERIFIED no significa que esas pruebas se hayan ejecutado ni autoriza release/despliegue.
