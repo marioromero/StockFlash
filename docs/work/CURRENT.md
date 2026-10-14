@@ -1,12 +1,23 @@
-# Estado de ejecución — StockFlash 2026-10-12
+# Estado operativo — StockFlash (2026-10-13)
 
-- DOC-001: **corrección documental implementada** (ver `docs/adr/ADR-DOC-001.md`, `docs/governance/AUDITORIA-Y-TRAZABILIDAD-DOC-001.md`). No implica código Laravel terminado ni decisiones ADR-01..06 resueltas.
-- Feature activa: **BOOT-001 APPROVED, plan técnico revisado por ChatGPT y owner**. Se autoriza implementar en LOCAL la feature conforme `docs/work/features/BOOT-001.md`; no repetir aprobaciones por cada subtarea ordinaria.
-- `/sf-feature BOOT-001` debe proceder a construir Laravel + Vue3 + Inertia + TypeScript desde un scaffold temporal/fusión controlada. La ausencia actual de `artisan`, `composer.json` y `public/` es esperada, NO es motivo de bloqueo. **Subtarea 2 revisada (2026-10-12): Laravel 13.x estable compatible con PHP 8.3 aceptado, sin archivos creados. Continuar inmediatamente en subtarea 3: scaffold temporal seguro.**
-- OpenCode debe llamar a las herramientas pertinentes para que `ask` presente la autorización en la interfaz; no concluir prematuramente con «esperando autorización». El alcance ya está aprobado; conservar protección de colisiones, dependencias externas, contratos, tests y revisión QA. Laravel 13 incluye scripts de scaffold capaces de migrar SQLite: `composer create-project --no-scripts` y revisión antes de habilitar scripts. No commit/push/deploy autónomos todavía.
-- Fuente normativa: las tres especificaciones `docs/product/especificacion-v2.2-*CONSOLIDADO-EN-REVISION.md`, Parte 1 > Parte 2 > Anexo; fuentes v2.1 históricas preservadas intactas. Para Control aplicar `StockFlash-Control-SPEC-v0.1.md` exclusivamente en su alcance.
-- ADR-01..06 **abiertos**: límites Gratis (50 variantes/500 ventas), permisos Gratis, fiscal externo multireferencia, Fiscal autónomo, suspensión/gracia, Compras/Analítica. No bloquean BOOT-001 ni deben ser inventados.
-- Laravel aún no creado. PHP local 8.3.4, Composer 2.8.9, Node24.8.0; cPanel PHP8.3.35, Composer 2.8.10, Node20.19.3. CI proyecta build de assets Node24; el servidor no requiere compilar.
-- GitHub Actions actual: verificación SSH manual (`staging-ssh-check.yml`) y comprobación de contratos (`contract-check.yml`, Python). **Sin workflow de tests Laravel, build Vue ni despliegue**. Staging HTTPS y BD DEV creados, nunca utilizados por OpenCode en BOOT.
-- **Bloqueo de deploy:** SSH en GitHub autentica como usuario general de cPanel `grupoint`; no usarlo para subir/ejecutar código hasta limitar privilegios y rotar/reemplazar credencial. Rotar otras credenciales compartidas antes de explotación real.
-- Próximo paso: tras sincronizar estos cambios, abrir OpenCode y ejecutar `/sf-feature BOOT-001` para continuar desde subtarea 3; no repetir elección de versión ni la inspección general. No migraciones ni efectos remotos.
+## Hito activo
+- **BOOT-001: APPROVED; implementación LOCAL reportada completa, QA independiente pendiente. NO VERIFIED y NO release.**
+- OpenCode reportó scaffold Laravel 13.0.0, framework `laravel/framework 13.35.0`, Vue 3, Inertia 3.5.1, TypeScript/Vite, `composer.lock` y `package-lock.json`. `php artisan test` = 2 passed/4 assertions; `npm run build` OK; ruta `/` HTTP 200 con Home/StockFlash. **Son resultados reportados por OpenCode; el reviewer debe comprobarlos, no darlos por verificados.**
+- El scaffold, código y `docs/work/BOOT-001-EVIDENCE.md` están actualmente **solo en el equipo local, mayoritariamente archivos Git untracked**; no están en GitHub. `.gitignore` tiene cambios locales. Al revisar, consultar `git ls-files --others --exclude-standard` y leer archivos nuevos directamente; `git diff HEAD` no basta.
+- Riesgos/controles BOOT: scripts de Composer con `migrate` desactivados según OpenCode, ausencia de `database/migrations/` y `database.sqlite` reportada, `.env` local nunca debe leerse ni incorporarse. No ejecutar migraciones, ni desplegar.
+- **Siguiente acción del owner:** ejecutar `/sf-review BOOT-001` en OpenCode con el reviewer actualizado; si `APROBADO`, owner/ChatGPT revisan evidencias y deciden si declarar VERIFIED. No repetir scaffold ni implementar otra feature antes de este gate.
+
+## Flujo Git/OpenCode
+- `/sf-feature` y `/sf-review` incorporan un preflight Git automático una sola vez al inicio: `py -3 scripts/safe_git_pull.py` (permiso específico `allow`). Solo rama `main`, `git pull --ff-only origin main`; ante `SYNC_BLOCKED` detener sin reset, stash ni clean. No sincronizar en medio de la tarea. Es necesario **un último git pull manual** para instalar esta versión del propio mecanismo.
+- OpenCode mantiene `edit` en `ask`, permisos restringidos, y prohíbe `git commit/push`, despliegue, DB destructiva y operaciones remotas de staging. El owner conserva aprobaciones de cambios de alcance y release.
+
+## Contratos y decisiones
+- DOC-001: control documental local validado por el propietario. Ver `docs/adr/ADR-DOC-001.md`, `docs/governance/AUDITORIA-Y-TRAZABILIDAD-DOC-001.md`; el workflow de contratos existe, no asumir verificación de su corrida remota.
+- Fuente normativa: las tres especificaciones `docs/product/especificacion-v2.2-*CONSOLIDADO-EN-REVISION.md`, Parte 1 > Parte 2 > Anexo; v2.1 es histórico. Para StockFlash Control aplicar `StockFlash-Control-SPEC-v0.1.md` en su alcance.
+- ADR-01..06 permanecen abiertos; no decidir comercial, fiscal, permisos ni schema fuera del contrato. No bloquean BOOT-001.
+
+## Infraestructura y próximos hitos
+- Stack local reportado: PHP 8.3.4, Composer 2.8.9, Node 24.8.0, npm 11.6.0; cPanel PHP web/CLI 8.3/8.3.35, Composer 2.8.10, Node 20.19.3. Staging HTTPS y DB DEV existen, **no usados en BOOT**. Versión MariaDB exacta pendiente de verificar antes de schema.
+- GitHub Actions: `staging-ssh-check.yml` manual de diagnóstico y `contract-check.yml`. No existen aún CI de Laravel/Vue ni pipeline de deploy.
+- **Bloqueo de deploy:** SSH de Actions como usuario general de cPanel `grupoint`. No usar para subir/ejecutar código hasta credenciales de privilegio mínimo, rotación y hardening; también rotar otras credenciales compartidas antes de explotar entornos reales.
+- Roadmap vigente: `docs/harness/ROADMAP-STOCKFLASH.md`. No inventar una fase nueva sin decisión ni prometer despliegue antes de gates.
