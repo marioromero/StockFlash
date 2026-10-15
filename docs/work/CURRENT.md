@@ -8,9 +8,10 @@
 
 ## Preparación actual
 - **CI-001: VERIFIED** el 2026-10-14 tras ejecución remota sobre `218de3ad2a51be6f7b46102b8a9b73569d53cf0b`: GitHub Actions CI `38655297831` **SUCCESS** (PHP 8.3 / Node 24 / Smoke GET `/` es-CL); contratos `38655297947` **SUCCESS**. Falencias anteriores de política de acciones y pruebas efímeras corregidas y comprobadas. No deploy ni staging.
-- **STAGING-001: DRAFT de preparación R2**, inventario de precondiciones y diseño no invasivo, pendiente de validar capacidad real del hosting y de autorización explícita para actuar sobre infraestructura. No iniciar despliegue ni migraciones. Ver `docs/work/features/STAGING-001.md`.
+- **STAGING-001: APPROVED y ACTIVA para ejecución R2** (2026-10-15), por autorización expresa del propietario para FTPS exclusivamente hacia `/home/grupoint/stockflash-dev-app`. Document Root a `.../stockflash-dev-app/public` informado como cambiado, pero requiere comprobar mediante marcador público y smoke. OpenCode implementa/verifica según `docs/work/features/STAGING-001.md`; aún NO hay deploy demostrado ni VERIFIED.
 - Próximo hito formal: completar staging seguro R2 cuando sus prerequisitos estén satisfechos; luego preparar R3 con los ADR/Feature Packets pertinentes. La solicitud previa del propietario (guía reutilizable del harness y revisión Claude v2) ya fue atendida; no volver a preguntar de qué se trataba.
 - R3 Core (usuarios/RBAC, sucursales, licencias técnicas, catálogo y BD) empieza después de puertas R2 correspondientes; ADR de dominio continúan abiertos.
+- **Feature Packet activa: STAGING-001.** Próxima instrucción local: sincronizar `origin/main` y ejecutar `/sf-run STAGING-001`, con preflight FTPS y comprobación por marcador antes de subir Laravel. Ningún despliegue se ha verificado todavía.
 
 ## Reglas operativas
 - `main` y `origin/main` con sincronización fast-forward mediante `scripts/safe_git_pull.py`; ante `SYNC_BLOCKED` no descartar trabajo local. Al cargar comandos actualizados reiniciar OpenCode si la sesión conserva una versión anterior.
@@ -22,7 +23,7 @@
 ## Infraestructura y bloqueos reales
 - CI contractual `.github/workflows/contract-check.yml` y CI PHP/Node `.github/workflows/ci.yml` implementadas y verdes en GitHub Actions sobre `218de3a` (runs `38655297947` y `38655297831`). Diagnóstico SSH manual `.github/workflows/staging-ssh-check.yml` no constituye pipeline de despliegue.
 - Staging HTTPS y DB DEV reportados, **no utilizados** para BOOT ni BRAND. Versión exacta de MariaDB no verificada.
-- **Bloqueo de deploy:** credencial SSH del usuario general cPanel `grupoint`; no emplearla para publicar/ejecutar código hasta credencial de privilegio mínimo, rotación y hardening, respaldo/rollback y gate de autorización.
+- **Restricción SSH aún vigente:** no usar la credencial SSH general `grupoint`. El propietario autorizó una vía separada: cuenta FTPS creada para la aplicación privada, sin publicar secretos. El despliegue por esa vía queda condicionado a comprobar la raíz pública, preparar reversión y pasar gates/revisión STAGING-001.
 - Roadmap canónico: `docs/harness/ROADMAP-STOCKFLASH.md`. La CI de R2 está verificada; resta staging seguro para cerrar R2. Propuesta de autonomía adicional documentada en `docs/harness/AUTONOMIA-OPENCODE.md`. No iniciar R3 antes de la solicitud del propietario.
 ## Mejoras de continuidad preparatorias — 2026-10-15
 - Protocolo Claude v2 **revisado selectivamente**, sin sustituir la constitución, los contratos ni los comandos actuales. Criterios y decisiones: `docs/harness/ADOPCION-PROTOCOLO-V2.md`.
