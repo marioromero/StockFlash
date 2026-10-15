@@ -24,3 +24,10 @@
 - Staging HTTPS y DB DEV reportados, **no utilizados** para BOOT ni BRAND. Versión exacta de MariaDB no verificada.
 - **Bloqueo de deploy:** credencial SSH del usuario general cPanel `grupoint`; no emplearla para publicar/ejecutar código hasta credencial de privilegio mínimo, rotación y hardening, respaldo/rollback y gate de autorización.
 - Roadmap canónico: `docs/harness/ROADMAP-STOCKFLASH.md`. La CI de R2 está verificada; resta staging seguro para cerrar R2. Propuesta de autonomía adicional documentada en `docs/harness/AUTONOMIA-OPENCODE.md`. No iniciar R3 antes de la solicitud del propietario.
+## Mejoras de continuidad preparatorias — 2026-10-15
+- Protocolo Claude v2 **revisado selectivamente**, sin sustituir la constitución, los contratos ni los comandos actuales. Criterios y decisiones: `docs/harness/ADOPCION-PROTOCOLO-V2.md`.
+- Traspaso al nuevo chat: `docs/work/handoffs/HANDOFF-2026-10-15.md`; comenzar leyendo este CURRENT y luego el handoff, roadmap, ADR y Feature Packet activos. Comprobar HEAD remoto.
+- Registro de preguntas/convenciones propuestas: `docs/work/DECISIONS-LOG.md`; validaciones diferidas con puertas precisas: `docs/quality/DEFERRED-VALIDATIONS.md`.
+- Contrato propuesto `RUN-REPORT`: `docs/harness/RUN-REPORT-CONTRACT.md` (DOCUMENTADO, no implementado ni probado en OpenCode). No atribuir automatización que aún no existe.
+- **Antes de empezar R3:** atender solicitud previa del propietario; terminar diagnóstico de staging R2 y decisiones de dominio ADR pertinentes. No declarar `SPEC_READY` retroactivamente mientras falten decisiones bloqueantes.
+- Para evitar reabrir un harness operativo, no modificar permisos, agentes ni añadir cola/AutoPilot antes de realizar un smoke de delegación y una decisión específica de alcance.
