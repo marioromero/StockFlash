@@ -6,9 +6,10 @@
 - **HARNESS-001: VERIFIED del entregable** (2026-10-14), comandos `/sf-run`, `/sf-verify`, `/sf-review`, `/sf-publish` y segregación implementer/reviewer/publisher. No se atribuye ejecución E2E completa si la evidencia no la demuestra. La invocación directa del coordinador encontró una restricción Task durante BRAND-001; comprobar delegación nativa real en CI-001, sin relajar verificaciones.
 - **BRAND-001: VERIFIED del prototipo SVG provisional** (2026-10-14). Ocho assets publicados, última corrección `cdc993f`; GATES_PASS `VERIFY-20261014-173659`, QA APROBADO `REVIEW-20261014-174500`, conformidad del propietario al avanzar. Los SVG NO son oficiales ni se usan como fuente primaria: mantener fallback textual; PNG oficiales prevalecen.
 
-## Feature activa
-- **CI-001: APPROVED — implementación publicada, aún NO VERIFIED.** Commit `c39e0cc2c04ebb9bea768f961c6f2cea3cdccc0b`; GATES_PASS C1–C3, QA APROBADO. Primera corrida de CI GitHub Actions (`38644443485`) y workflow de contratos (`38644442118`) finalizaron `startup_failure`, con **0 jobs**, sin ejecutar PHP, Node o tests. Patrón afecta 47 de 48 runs consultados, y comenzó el 2026-10-12 antes de CI-001. Pendiente diagnóstico de GitHub Actions en cuenta/repositorio (billing/pagos/presupuesto/política/soporte); no afirmar éxito ni cerrar CI-001 hasta ejecución verde real.
-- **Próxima subentrega de R2:** staging seguro, solo tras revisar credenciales de menor privilegio, SSH y rollback. No confundir CI aprobada con deploy autorizado.
+## Preparación actual
+- **CI-001: VERIFIED** el 2026-10-14 tras ejecución remota sobre `218de3ad2a51be6f7b46102b8a9b73569d53cf0b`: GitHub Actions CI `38655297831` **SUCCESS** (PHP 8.3 / Node 24 / Smoke GET `/` es-CL); contratos `38655297947` **SUCCESS**. Falencias anteriores de política de acciones y pruebas efímeras corregidas y comprobadas. No deploy ni staging.
+- **STAGING-001: DRAFT de preparación R2**, inventario de precondiciones y diseño no invasivo, pendiente de validar capacidad real del hosting y de autorización explícita para actuar sobre infraestructura. No iniciar despliegue ni migraciones. Ver `docs/work/features/STAGING-001.md`.
+- Próximo hito formal: completar staging seguro R2 cuando sus prerequisitos estén satisfechos; solo entonces iniciar R3 después de la solicitud pendiente del propietario.
 - R3 Core (usuarios/RBAC, sucursales, licencias técnicas, catálogo y BD) empieza después de puertas R2 correspondientes; ADR de dominio continúan abiertos.
 
 ## Reglas operativas
@@ -19,7 +20,7 @@
 - Contractos vigentes: `docs/product/especificacion-v2.2-*-CONSOLIDADO-EN-REVISION.md` (Parte 1 > Parte 2 > Anexo); `docs/branding/brand-contract.md` y `docs/branding/module-identity-map.md` preceden al inventario SVG.
 
 ## Infraestructura y bloqueos reales
-- CI contractual `.github/workflows/contract-check.yml` y CI PHP/Node `.github/workflows/ci.yml` implementadas; ambas están BLOQUEADAS actualmente por `startup_failure` de GitHub Actions (0 jobs), antes de ejecutar pruebas. Diagnóstico SSH manual `.github/workflows/staging-ssh-check.yml` no constituye pipeline de despliegue.
+- CI contractual `.github/workflows/contract-check.yml` y CI PHP/Node `.github/workflows/ci.yml` implementadas y verdes en GitHub Actions sobre `218de3a` (runs `38655297947` y `38655297831`). Diagnóstico SSH manual `.github/workflows/staging-ssh-check.yml` no constituye pipeline de despliegue.
 - Staging HTTPS y DB DEV reportados, **no utilizados** para BOOT ni BRAND. Versión exacta de MariaDB no verificada.
 - **Bloqueo de deploy:** credencial SSH del usuario general cPanel `grupoint`; no emplearla para publicar/ejecutar código hasta credencial de privilegio mínimo, rotación y hardening, respaldo/rollback y gate de autorización.
-- Roadmap canónico: `docs/harness/ROADMAP-STOCKFLASH.md`. R2 es el siguiente hito formal; CI-001 es una feature dentro de R2, no una fase nueva.
+- Roadmap canónico: `docs/harness/ROADMAP-STOCKFLASH.md`. La CI de R2 está verificada; resta staging seguro para cerrar R2. Propuesta de autonomía adicional documentada en `docs/harness/AUTONOMIA-OPENCODE.md`. No iniciar R3 antes de la solicitud del propietario.
