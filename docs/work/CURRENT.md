@@ -9,7 +9,7 @@
 ## Preparación actual
 - **CI-001: VERIFIED** el 2026-10-14 tras ejecución remota sobre `218de3ad2a51be6f7b46102b8a9b73569d53cf0b`: GitHub Actions CI `38655297831` **SUCCESS** (PHP 8.3 / Node 24 / Smoke GET `/` es-CL); contratos `38655297947` **SUCCESS**. Falencias anteriores de política de acciones y pruebas efímeras corregidas y comprobadas. No deploy ni staging.
 - **STAGING-001: DRAFT de preparación R2**, inventario de precondiciones y diseño no invasivo, pendiente de validar capacidad real del hosting y de autorización explícita para actuar sobre infraestructura. No iniciar despliegue ni migraciones. Ver `docs/work/features/STAGING-001.md`.
-- Próximo hito formal: completar staging seguro R2 cuando sus prerequisitos estén satisfechos; solo entonces iniciar R3 después de la solicitud pendiente del propietario.
+- Próximo hito formal: completar staging seguro R2 cuando sus prerequisitos estén satisfechos; luego preparar R3 con los ADR/Feature Packets pertinentes. La solicitud previa del propietario (guía reutilizable del harness y revisión Claude v2) ya fue atendida; no volver a preguntar de qué se trataba.
 - R3 Core (usuarios/RBAC, sucursales, licencias técnicas, catálogo y BD) empieza después de puertas R2 correspondientes; ADR de dominio continúan abiertos.
 
 ## Reglas operativas
@@ -29,5 +29,5 @@
 - Traspaso al nuevo chat: `docs/work/handoffs/HANDOFF-2026-10-15.md`; comenzar leyendo este CURRENT y luego el handoff, roadmap, ADR y Feature Packet activos. Comprobar HEAD remoto.
 - Registro de preguntas/convenciones propuestas: `docs/work/DECISIONS-LOG.md`; validaciones diferidas con puertas precisas: `docs/quality/DEFERRED-VALIDATIONS.md`.
 - Contrato propuesto `RUN-REPORT`: `docs/harness/RUN-REPORT-CONTRACT.md` (DOCUMENTADO, no implementado ni probado en OpenCode). No atribuir automatización que aún no existe.
-- **Antes de empezar R3:** atender solicitud previa del propietario; terminar diagnóstico de staging R2 y decisiones de dominio ADR pertinentes. No declarar `SPEC_READY` retroactivamente mientras falten decisiones bloqueantes.
+- **Antes de empezar R3:** la solicitud previa del propietario sobre el manual del harness y revisión Claude v2 **ya está atendida**. Resta staging R2 y decisiones de dominio ADR pertinentes; no declarar `SPEC_READY` retroactivamente mientras falten decisiones bloqueantes.
 - Para evitar reabrir un harness operativo, no modificar permisos, agentes ni añadir cola/AutoPilot antes de realizar un smoke de delegación y una decisión específica de alcance.
