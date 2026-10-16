@@ -10,12 +10,16 @@ class DatabaseSeeder extends Seeder
     use WithoutModelEvents;
 
     /**
-     * BOOT-001: seeders de ejemplo excluidos del dominio StockFlash.
-     * No ejecutar en este hito; el modelo User de ejemplo no es esquema aprobado.
+     * DB-001: semillas mínimas contractuales (Parte 2 §13.1). Idempotentes.
+     * Sin cuenta demo (§13.2 jamás en free/DEV) ni datos reales.
      */
     public function run(): void
     {
-        // BOOT-001: sin seeds de dominio. Ejemplo de scaffold deshabilitado.
-        // User::factory()->create([...]);
+        $this->call([
+            RolesAndPermissionsSeeder::class,
+            SystemConfigsSeeder::class,
+            PlanDefinitionsSeeder::class,
+            ReasonCodesSeeder::class,
+        ]);
     }
 }
