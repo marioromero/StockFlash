@@ -37,7 +37,9 @@
       "node --version": "allow",
       "npm --version": "allow",
       "git push*": "deny",
+      "git push origin main": "allow",
       "git commit*": "deny",
+      "git commit -m *": "allow",
       "git tag*": "deny",
       "git reset --hard*": "deny",
       "git clean*": "deny",
@@ -78,7 +80,8 @@
       "erase *": "deny",
       "rmdir *": "deny",
       "rd *": "deny",
-      "git add*": "deny"
+      "git add*": "deny",
+      "git add -- *": "allow"
     },
     "external_directory": "deny",
     "webfetch": "allow",
