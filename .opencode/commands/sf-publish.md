@@ -35,4 +35,4 @@ Dos operaciones permanentes (no ampliar permisos, no declarar VERIFIED automáti
 7. Solo `git push origin main` sin variantes. Confirmar `git rev-parse HEAD` = `git rev-parse origin/main` + `git ls-remote origin main`.
 8. Entregar: archivos publicados/excluidos, permisos efectivos, gates+QA, SHA + enlace `https://github.com/marioromero/StockFlash/commit/<SHA>`, coincidencia `origin/main`, estado según operación (`publicado, pendiente de VERIFIED` en A; `VERIFIED registrado` en B). Flujo permanente por feature: `Implementación → sf-verify → sf-review → sf-publish → comprobación GitHub`, más cierre documental autorizado. No declarar VERIFIED ni desplegar.
 
-Respetar permisos `ask`: cada `bash`/`edit` muestra confirmación en OpenCode; no interpretar `ask` como bloqueo, continuar si el propietario autoriza. Ante archivos sospechosos, conflictos, cambios fuera de alcance o gates fallidos, detener publicación y reportar bloqueo.
+Autorización del propietario 2026-10-16: sin aprobaciones por `bash`/`edit`; ejecutar directo. Ante archivos sospechosos, conflictos, cambios fuera de alcance o gates fallidos, detener publicación y reportar bloqueo.

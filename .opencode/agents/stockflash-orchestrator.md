@@ -6,7 +6,7 @@ permission:
     "*": deny
     "docs/work/.run/*": allow
   bash:
-    "*": ask
+    "*": allow
     "pwd": allow
     "git status*": allow
     "git diff*": allow

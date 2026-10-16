@@ -4,7 +4,7 @@ mode: subagent
 permission:
   edit: deny
   bash:
-    "*": ask
+    "*": allow
     "git push*": deny
     "git commit*": deny
     "git tag*": deny

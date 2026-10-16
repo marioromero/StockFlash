@@ -2,9 +2,9 @@
 description: Publicación segura de cambios aprobados en GitHub (commit/push controlado, sin implementar ni revisar).
 mode: subagent
 permission:
-  edit: ask
+  edit: allow
   bash:
-    "*": ask
+    "*": allow
     "pwd": allow
     "git status*": allow
     "git diff*": allow
@@ -18,8 +18,8 @@ permission:
     "py -3 scripts/safe_git_pull.py": allow
     "git hash-object*": allow
     "git check-ignore*": allow
-    "git add*": ask
-    "git commit*": ask
+    "git add*": allow
+    "git commit*": allow
     "git push*": deny
     "git push --force*": deny
     "git push -f*": deny
@@ -29,7 +29,7 @@ permission:
     "git push * -f*": deny
     "git push * --force-with-lease*": deny
     "git push origin :*": deny
-    "git push origin main": ask
+    "git push origin main": allow
     "git add -- *": allow
     "git add -- .": deny
     "git add -- ./": deny

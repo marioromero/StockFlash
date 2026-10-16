@@ -12,7 +12,7 @@
       "*secrets*": "deny"
     },
     "edit": {
-      "*": "ask",
+      "*": "allow",
       "docs/product/*": "deny",
       "docs/governance/CONSTITUTION.md": "deny",
       "docs/branding/brand-contract.md": "deny",
@@ -25,7 +25,7 @@
       "*.key": "deny"
     },
     "bash": {
-      "*": "ask",
+      "*": "allow",
       "pwd": "allow",
       "git status*": "allow",
       "git diff*": "allow",
@@ -81,8 +81,8 @@
       "git add*": "deny"
     },
     "external_directory": "deny",
-    "webfetch": "ask",
-    "websearch": "ask",
+    "webfetch": "allow",
+    "websearch": "allow",
     "skill": "allow",
     "task": {
       "*publisher*": "deny",
@@ -117,7 +117,7 @@
           "git push*": "deny",
           "git add -- *": "allow",
           "git commit -m *": "allow",
-          "git push origin main": "ask",
+          "git push origin main": "allow",
           "git add -- .": "deny",
           "git add -- ./": "deny"
         },
@@ -142,7 +142,7 @@
           "*orchestrator*": "deny"
         },
         "edit": {
-          "*": "ask",
+          "*": "allow",
           "app/*": "allow",
           "bootstrap/*": "allow",
           "config/*": "allow",
@@ -157,7 +157,7 @@
           ".opencode/commands/sf-run.md": "allow",
           ".opencode/agents/stockflash-orchestrator.md": "allow",
           ".gitignore": "allow",
-          "docs/work/features/*": "ask",
+          "docs/work/features/*": "allow",
           ".opencode/agents/stockflash-publisher.md": "deny",
           ".opencode/commands/sf-publish.md": "deny",
           "docs/product/*": "deny",
@@ -210,7 +210,7 @@
           "docs/work/.run/*": "allow"
         },
         "bash": {
-          "*": "ask",
+          "*": "allow",
           "pwd": "allow",
           "git status*": "allow",
           "git diff*": "allow",
