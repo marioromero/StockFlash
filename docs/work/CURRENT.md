@@ -16,7 +16,7 @@
 ## Reglas operativas
 - `main` y `origin/main` con sincronización fast-forward mediante `scripts/safe_git_pull.py`; ante `SYNC_BLOCKED` no descartar trabajo local. Al cargar comandos actualizados reiniciar OpenCode si la sesión conserva una versión anterior.
 - Agentes: `default_agent: build`, autorización Task exacta `stockflash-orchestrator`, `subagent_depth: 2` para permitir Build → coordinador → implementer/reviewer/publisher. Implementer y reviewer conservan prohibición de invocar coordinador y publisher. Comprobar E2E en feature futura; no declarar probado solo por configurar.
-- Feature Packet `APPROVED` + activa → implementación → `GATES_PASS` → QA independiente `APROBADO` → publisher selectivo sin force → verificación SHA. `VERIFIED` únicamente por decisión externa, no por el agente. El modo `--auto` aprueba `ask`, pero no anula `deny`.
+- Feature Packet `APPROVED` + activa → implementación → `GATES_PASS` → QA independiente `APROBADO` → publisher selectivo sin force → verificación SHA. `VERIFIED` únicamente por decisión externa, no por el agente. Autorización del propietario 2026-10-16: `opencode.json` sin `ask` (rigen solo `deny`); ejecutar directo. (AGENTS.md aún menciona `ask`: pendiente alinear en revisión del propietario, no lo toca el implementador.)
 - Prohibido leer/publicar secretos, sobrescribir contratos protegidos, ejecutar migraciones o desplegar sin autorización específica. Mantener `tmp-boot-001/` ignorado, sin borrado automático.
 - Contractos vigentes: `docs/product/especificacion-v2.2-*-CONSOLIDADO-EN-REVISION.md` (Parte 1 > Parte 2 > Anexo); `docs/branding/brand-contract.md` y `docs/branding/module-identity-map.md` preceden al inventario SVG.
 
