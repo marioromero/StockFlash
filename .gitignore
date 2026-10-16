@@ -29,3 +29,16 @@
 # BOOT-001 scaffold temporal (ignorar hasta fusión revisada)
 /tmp-boot-001/
 docs/work/.run/
+
+# Artefactos locales de despliegue (transferencia, nunca repo fuente)
+/stockflash-staging-release.zip
+/stockflash-staging-part-*.zip
+scripts/__pycache__/
+/sf-probe-*.txt
+/sf-probe-*.zip
+/.probe-*.txt
+/.probe-*.zip
+/.env.staging-new
+/.sf-env-new
+/.sf-env-fixed
+/.sf-php-probe-*.php
