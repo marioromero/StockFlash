@@ -3,7 +3,7 @@ description: Despliegue automatizado a staging via cPanel API con un solo ZIP (s
 agent: build
 ---
 
-Ejecutar el pipeline de despliegue a staging de punta a punta con `scripts/sf_deploy_staging.py`. Este comando NO implementa features, NO revisa como QA y NO publica en Git: solo despliega la versión ya aprobada y registra evidencia. No declarar VERIFIED jamás (owner+ChatGPT fuera de OpenCode).
+Ejecutar el pipeline de despliegue a staging de punta a punta con `scripts/sf_deploy_staging.py`. **SOLO cuando el propietario lo indique expresamente; nunca automático ni por defecto.** Este comando NO implementa features, NO revisa como QA y NO publica en Git: solo despliega la versión ya aprobada y registra evidencia. No declarar VERIFIED jamás (owner+ChatGPT fuera de OpenCode).
 
 **Precondiciones (una sola vez, NO repetir si ya están):**
 
