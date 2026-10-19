@@ -1,5 +1,7 @@
 # Inicio y cierre de sesión (StockFlash)
 
+> **Estado de la funcionalidad:** planificada en el Feature Packet `AUTH-001` (estado `DRAFT`, pendiente de aprobación del propietario). Esta guía describe el comportamiento previsto una vez implementada; no refleja una función ya desplegada ni disponible en producción.
+
 Este manual explica cómo acceder y salir del sistema StockFlash.
 
 ## Nombre de la funcionalidad
@@ -45,7 +47,7 @@ No hay opciones de usuario en el formulario de acceso. El administrador del sist
 - Tras **5 intentos fallidos** de ingreso, la cuenta se bloquea temporalmente por seguridad. Debe esperar o contactar al administrador.
 - La sesión expira por inactividad (30 minutos en punto de venta, 60 minutos en administración) y tiene una duración máxima de 12 horas.
 - Al cambiar su contraseña, la sesión actual se invalida y debe volver a iniciar sesión.
-- Un usuario sin asignación de sucursal no tiene acceso al sistema.
+- Un usuario sin asignación de sucursal no tiene acceso a operar en sucursal alguna (403). El administrador global (`global_role_id` = `central_admin`) puede autenticarse y entrar al dashboard incluso si no existe sucursal creada, pero no puede operar en sucursal inexistente.
 
 ## Resultados esperados
 

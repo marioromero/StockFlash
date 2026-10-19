@@ -1,5 +1,7 @@
 # Cambio de contraseña (StockFlash)
 
+> **Estado de la funcionalidad:** planificada en el Feature Packet `AUTH-001` (estado `DRAFT`, pendiente de aprobación del propietario). Esta guía describe el comportamiento previsto una vez implementada; no refleja una función ya desplegada ni disponible en producción.
+
 Este manual explica cómo cambiar la contraseña de su propia cuenta.
 
 ## Nombre de la funcionalidad

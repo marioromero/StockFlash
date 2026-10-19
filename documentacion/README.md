@@ -25,10 +25,10 @@ Propietarios de negocios, administradores, cajeros, vendedores y otros usuarios 
 
 ## Guías disponibles
 
-| Funcionalidad | Guía | Módulo |
-|---------------|------|--------|
-| Inicio y cierre de sesión | `general/acceso.md` | Transversal |
-| Cambio de contraseña | `general/cambio-contrasena.md` | Transversal |
+| Funcionalidad | Guía | Módulo | Estado |
+|---------------|------|--------|--------|
+| Inicio y cierre de sesión | `general/acceso.md` | Transversal | Planificada (AUTH-001 DRAFT) |
+| Cambio de contraseña | `general/cambio-contrasena.md` | Transversal | Planificada (AUTH-001 DRAFT) |
 
 ## Estado de la documentación
 
