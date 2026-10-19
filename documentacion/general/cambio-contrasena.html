@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockFlash — Cambio de contraseña</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #f3f4f6; color: #1f2937; line-height: 1.6; }
+        .wrap { max-width: 700px; margin: 0 auto; padding: 2rem 1rem; }
+        header { background: #111827; color: #fff; padding: 1.5rem; border-radius: 0.5rem 0.5rem 0 0; }
+        header h1 { font-size: 1.5rem; }
+        header .flash { color: #2563eb; }
+        header p { margin-top: 0.25rem; font-size: 0.9rem; color: #d1d5db; }
+        main { background: #fff; padding: 1.5rem; border-radius: 0 0 0.5rem 0.5rem; border: 1px solid #e5e7eb; border-top: none; }
+        h2 { font-size: 1.25rem; margin-top: 1.5rem; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.25rem; }
+        h3 { font-size: 1rem; margin-top: 1rem; color: #2563eb; }
+        ol { margin: 0.5rem 0 1rem 1.5rem; }
+        li { margin-bottom: 0.5rem; }
+        .card { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 0.375rem; padding: 1rem; margin: 1rem 0; }
+        .card strong { color: #111827; }
+        .note { background: #fef3c7; border-left: 4px solid #d97706; padding: 0.75rem; margin: 1rem 0; font-size: 0.9rem; }
+        .back { display: inline-block; margin-top: 1rem; color: #2563eb; text-decoration: none; }
+        .back:hover { text-decoration: underline; }
+        a { color: #2563eb; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        @media (max-width: 600px) { .wrap { padding: 1rem 0.5rem; } header { padding: 1rem; } main { padding: 1rem; } }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <header>
+            <h1>Stock<span class="flash">Flash</span></h1>
+            <p>Cambio de contraseña</p>
+        </header>
+        <main>
+            <a class="back" href="../index.html">&larr; Volver al índice</a>
+
+            <h2>Cambio de contraseña</h2>
+            <p>Esta función permite que reemplaces tu contraseña actual por una nueva, por ejemplo por seguridad periódica o porque sospechas que alguien más la conoce.</p>
+
+            <h3>¿Quién puede usarla?</h3>
+            <p>Cualquier usuario con una sesión iniciada en StockFlash.</p>
+
+            <h3>¿Cómo cambiarla?</h3>
+            <ol>
+                <li>Inicia sesión en el sistema (consulta la guía de <a href="acceso.html">acceso</a>).</li>
+                <li>Abre el menú de usuario (tu nombre en la parte superior de la pantalla).</li>
+                <li>Selecciona <strong>Cambiar contraseña</strong>.</li>
+                <li>Aparecerá un formulario con tres campos: contraseña actual, contraseña nueva y confirmación.</li>
+                <li>Escribe tu <strong>contraseña actual</strong>.</li>
+                <li>Escribe la <strong>contraseña nueva</strong>. Debe tener <strong>al menos 15 caracteres</strong> y no estar en la lista de contraseñas comunes o comprometidas.</li>
+                <li>Repite la contraseña nueva en el campo de confirmación.</li>
+                <li>Haz clic en <strong>Guardar cambios</strong>.</li>
+            </ol>
+
+            <div class="card">
+                <strong>Qué pasa después:</strong> el sistema guarda la nueva contraseña, cierra tu sesión actual por seguridad y te lleva al formulario de ingreso para que entres de nuevo con la nueva contraseña.
+            </div>
+
+            <h3>Reglas y limitaciones</h3>
+            <ul>
+                <li>Mínimo <strong>15 caracteres</strong> para la contraseña nueva.</li>
+                <li>Máximo <strong>64 caracteres</strong>.</li>
+                <li>No se exigen reglas artificiales (como "una mayúscula y un número"); la longitud y la lista de contraseñas bloqueadas son los controles principales.</li>
+                <li>Las contraseñas comunes o comprometidas están bloqueadas.</li>
+                <li>El sistema no almacena ni muestra tu contraseña en texto plano, ni la escribe en registros.</li>
+            </ul>
+
+            <div class="note">
+                <strong>Si olvidaste tu contraseña:</strong> pídele al administrador de tu instalación que te la restablezca manualmente. El sistema no envía correos de recuperación en esta versión.
+            </div>
+        </main>
+    </div>
+</body>
+</html>
