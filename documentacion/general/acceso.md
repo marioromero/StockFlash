@@ -1,6 +1,6 @@
 # Inicio y cierre de sesión (StockFlash)
 
-> **Estado de la funcionalidad:** planificada en el Feature Packet `AUTH-001` (estado `DRAFT`, pendiente de aprobación del propietario). Esta guía describe el comportamiento previsto una vez implementada; no refleja una función ya desplegada ni disponible en producción.
+> **Estado de la funcionalidad:** implementada en el Feature Packet `AUTH-001` (estado `APPROVED`, autorizado por el propietario 2026-10-19).
 
 Este manual explica cómo acceder y salir del sistema StockFlash.
 

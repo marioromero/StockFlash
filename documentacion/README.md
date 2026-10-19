@@ -27,8 +27,8 @@ Propietarios de negocios, administradores, cajeros, vendedores y otros usuarios 
 
 | Funcionalidad | Guía | Módulo | Estado |
 |---------------|------|--------|--------|
-| Inicio y cierre de sesión | `general/acceso.md` | Transversal | Planificada (AUTH-001 DRAFT) |
-| Cambio de contraseña | `general/cambio-contrasena.md` | Transversal | Planificada (AUTH-001 DRAFT) |
+| Inicio y cierre de sesión | `general/acceso.md` | Transversal | Implementada (AUTH-001 APPROVED) |
+| Cambio de contraseña | `general/cambio-contrasena.md` | Transversal | Implementada (AUTH-001 APPROVED) |
 
 ## Estado de la documentación
 

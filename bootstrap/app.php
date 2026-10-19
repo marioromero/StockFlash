@@ -13,6 +13,13 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [
             \App\Http\Middleware\HandleInertiaRequests::class,
+            \App\Http\Middleware\RequirePasswordChange::class,
+        ]);
+
+        $middleware->alias([
+            'branch.access' => \App\Http\Middleware\EnsureBranchAccess::class,
+            'can.permission' => \App\Http\Middleware\CheckPermission::class,
+            'password.change' => \App\Http\Middleware\RequirePasswordChange::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
