@@ -1,8 +1,6 @@
-# StockFlash — Manual de usuario (en construcción)
+# StockFlash — Manual de usuario
 
-Este documento es el índice del manual de StockFlash, el software POS modular para el comercio chileno.
-
-Este manual se construye de forma **acumulativa**: cada nueva funcionalidad aprobada e implementada aporta su propia guía de usuario aquí. No se genera toda la documentación de golpe, ni se documentan funciones internas de implementación (clases, migraciones, comandos técnicos).
+Este índice crece de forma acumulativa: cada funcionalidad aprobada e implementada aporta su propia guía aquí.
 
 ## Público objetivo
 
@@ -12,7 +10,7 @@ Propietarios de negocios, administradores, cajeros, vendedores y otros usuarios 
 
 | Carpeta | Contenido |
 |---------|-----------|
-| `general/` | Introducción, navegación y funciones transversales |
+| `general/` | Introducción, navegación y funciones transversales (acceso, contraseña) |
 | `modulos/<modulo>/` | Guías por producto o módulo (POS, Bodega, SyncWP, Fiscal, Compras, Analítica, Control) |
 
 ## Módulos comerciales de StockFlash
@@ -24,6 +22,13 @@ Propietarios de negocios, administradores, cajeros, vendedores y otros usuarios 
 - **Compras** — Gestión de compras a proveedores y recepción de mercadería.
 - **Analítica** — Reportes y tableros de ventas, stock y caja.
 - **Control** — Plataforma privada de administración: clientes, licencias y suscripciones (no es un módulo vendido por separado).
+
+## Guías disponibles
+
+| Funcionalidad | Guía | Módulo |
+|---------------|------|--------|
+| Inicio y cierre de sesión | `general/acceso.md` | Transversal |
+| Cambio de contraseña | `general/cambio-contrasena.md` | Transversal |
 
 ## Estado de la documentación
 
