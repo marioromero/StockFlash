@@ -34,3 +34,11 @@ garantías: no reutilizar plantilla como Feature Packet aprobado.
 - [ ] responsive/táctil (si UI)
 - [ ] reviewer independiente
 - [ ] release de staging (si pipeline activo)
+
+## Documentación funcional de usuario (obligatorio para funcionalidades usables)
+- [ ] Guía de usuario creada en `/documentacion/modulos/<modulo>/<nombre-descriptivo>.md` con los 10 puntos obligatorios (nombre, para qué sirve, quién puede usarla, cómo acceder, cómo utilizarla, opciones, reglas y limitaciones, resultados esperados, errores frecuentes, ejemplos prácticos).
+- [ ] Índice general `/documentacion/README.md` actualizado con la nueva guía.
+- [ ] Enlaces internos válidos y sin duplicaciones.
+- [ ] Si la funcionalidad no afecta al usuario (infraestructura o implementación interna): registrar `NO_APLICA` con justificación en el reporte del Feature Packet.
+
+> La documentación se incluye en el mismo commit o conjunto de commits aprobados de la característica. No se considera completamente revisada una funcionalidad nueva si falta la documentación obligatoria.
