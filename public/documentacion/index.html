@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockFlash — Manual de usuario</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #f3f4f6; color: #1f2937; line-height: 1.6; }
+        .wrap { max-width: 900px; margin: 0 auto; padding: 2rem 1rem; }
+        header { background: #111827; color: #fff; padding: 1.5rem; border-radius: 0.5rem 0.5rem 0 0; }
+        header h1 { font-size: 1.5rem; }
+        header .flash { color: #2563eb; }
+        header p { margin-top: 0.25rem; font-size: 0.9rem; color: #d1d5db; }
+        main { background: #fff; padding: 1.5rem; border-radius: 0 0 0.5rem 0.5rem; border: 1px solid #e5e7eb; border-top: none; }
+        h2 { font-size: 1.25rem; margin-top: 1.5rem; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.25rem; }
+        h3 { font-size: 1rem; margin-top: 1rem; color: #2563eb; }
+        ul { margin: 0.5rem 0 1rem 1.5rem; }
+        li { margin-bottom: 0.35rem; }
+        .card { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 0.375rem; padding: 1rem; margin: 1rem 0; }
+        .card strong { color: #111827; }
+        .tag { display: inline-block; background: #dbeafe; color: #1e40af; font-size: 0.75rem; padding: 0.15rem 0.5rem; border-radius: 9999px; margin-right: 0.5rem; }
+        .note { background: #fef3c7; border-left: 4px solid #d97706; padding: 0.75rem; margin: 1rem 0; font-size: 0.9rem; }
+        a { color: #2563eb; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; margin-top: 1rem; }
+        .grid a { display: block; background: #fff; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 1rem; text-decoration: none; color: inherit; }
+        .grid a:hover { background: #f9fafb; border-color: #2563eb; }
+        .grid h4 { margin: 0 0 0.5rem 0; font-size: 1rem; color: #111827; }
+        .grid p { font-size: 0.85rem; color: #6b7280; margin: 0; }
+        footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #e5e7eb; font-size: 0.8rem; color: #6b7280; }
+        @media (max-width: 600px) { .wrap { padding: 1rem 0.5rem; } header { padding: 1rem; } main { padding: 1rem; } }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <header>
+            <h1>Stock<span class="flash">Flash</span></h1>
+            <p>Manual de usuario — Funcionalidades disponibles</p>
+        </header>
+        <main>
+            <h2>¿Qué es StockFlash?</h2>
+            <p>StockFlash es un sistema de punto de venta y gestión comercial para el comercio chileno. Se entrega por módulos que se activan según la licencia contratada. Esta guía explica qué puedes hacer hoy en el sistema.</p>
+
+            <div class="note">
+                <strong>Estado del entorno:</strong> esta documentación corresponde al entorno de desarrollo local de StockFlash. Las funciones disponibles aquí pueden no estar aún desplegadas en tu sitio de producción. Pregunta a tu administrador qué versión estás usando.
+            </div>
+
+            <h2>Funcionalidades disponibles</h2>
+            <div class="grid">
+                <a href="general/acceso.html">
+                    <h4>Inicio y cierre de sesión</h4>
+                    <p>Entra al sistema con tu correo y contraseña. Sal de forma segura cuando termines tu jornada.</p>
+                </a>
+                <a href="general/cambio-contrasena.html">
+                    <h4>Cambio de contraseña</h4>
+                    <p>Cambia tu propia contraseña desde el menú de usuario. Mínimo 15 caracteres.</p>
+                </a>
+            </div>
+
+            <h2>¿Quién puede usar cada cosa?</h2>
+            <p>StockFlash usa roles de sistema. Según tu rol, verás distintas opciones:</p>
+            <ul>
+                <li><strong>Vendedor:</strong> arma tickets y atiende clientes. No cobra.</li>
+                <li><strong>Cajero:</strong> incluye todo de vendedor, además cobra, abre y cierra caja, vende directo.</li>
+                <li><strong>Bodeguero:</strong> recepciones, traspasos, conteos y mermas. No opera el punto de venta.</li>
+                <li><strong>Supervisor:</strong> incluye cajero y bodeguero. Autoriza por PIN, anula, devuelve y ve reportes de su sucursal.</li>
+                <li><strong>Admin Central:</strong> acceso completo, todas las sucursales, configuración, licencias y respaldos.</li>
+            </ul>
+
+            <h2>Reglas importantes</h2>
+            <ul>
+                <li>Después de <strong>5 intentos fallidos</strong> de ingreso, tu cuenta se bloquea temporalmente.</li>
+                <li>La sesión expira por inactividad: <strong>30 minutos</strong> en punto de venta, <strong>60 minutos</strong> en administración.</li>
+                <li>La duración máxima de una sesión es de <strong>12 horas</strong>.</li>
+                <li>Si cambias tu contraseña, la sesión actual se cierra y debes volver a iniciar sesión.</li>
+                <li>Si no tienes una sucursal asignada, no puedes operar en ninguna.</li>
+            </ul>
+
+            <h2>¿Necesitas ayuda?</h2>
+            <p>Si olvidaste tu contraseña, pídele al administrador de tu instalación que te la restablezca manualmente. El sistema no envía correos de recuperación en esta versión.</p>
+
+            <footer>
+                StockFlash — Manual de usuario. Documentación acumulativa, creada junto con el software. No constituye evidencia de despliegue en producción.
+            </footer>
+        </main>
+    </div>
+</body>
+</html>
