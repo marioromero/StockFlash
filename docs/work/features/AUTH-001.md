@@ -1,8 +1,8 @@
 # AUTH-001 — Autenticación, sesiones y RBAC server-side
 
-status: DRAFT
-owner_approval: pendiente (arquitectura y alcance por definir con el propietario antes de implementar)
-etapa: R3_DB → R3_AUTH
+status: APPROVED
+owner_approval: Aprobación expresa del propietario (2026-10-19) para implementar la Feature Packet completa de autenticación, sesiones y RBAC server-side.
+etapa: R3_AUTH
 
 ## Qué / Por qué / No incluido
 
