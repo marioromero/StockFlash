@@ -20,6 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'branch.access' => \App\Http\Middleware\EnsureBranchAccess::class,
             'can.permission' => \App\Http\Middleware\CheckPermission::class,
             'password.change' => \App\Http\Middleware\RequirePasswordChange::class,
+            'verify.session' => \App\Http\Middleware\VerifySession::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -8,6 +8,7 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class RbacTest extends TestCase
@@ -20,140 +21,186 @@ class RbacTest extends TestCase
 
         $this->artisan('migrate')->run();
 
-        Role::create([
+        // Roles de sistema.
+        $this->rolCajero = Role::create([
             'code' => 'cashier',
             'name' => 'Cajero',
             'authority_level' => 20,
             'is_system' => 1,
         ]);
 
-        Role::create([
+        $this->rolAdmin = Role::create([
             'code' => 'central_admin',
             'name' => 'Admin Central',
             'authority_level' => 100,
             'is_system' => 1,
         ]);
 
-        Permission::create([
+        // Permisos.
+        $this->permUsuarios = Permission::create([
             'code' => 'users.manage',
             'module_code' => 'users',
             'description' => 'Gestionar usuarios',
         ]);
-    }
 
-    public function test_usuario_sin_branch_user_no_tiene_acceso_a_sucursal(): void
-    {
-        $user = User::create([
-            'name' => 'Sin Sucursal',
-            'email' => 'sin@sucursal.cl',
-            'password' => bcrypt('ContrasenaSegura123!'),
-            'is_active' => true,
-            'global_role_id' => null,
-        ]);
-
-        $this->actingAs($user);
-
-        $response = $this->get('/dashboard');
-
-        // Debe poder entrar al dashboard (global sin sucursal = acceso al dashboard, no a operaciones de sucursal)
-        $response->assertStatus(200);
-    }
-
-    public function test_usuario_de_sucursal_a_no_accede_a_sucursal_b(): void
-    {
-        $sucursalA = Branch::create([
+        // Sucursales.
+        $this->sucursalA = Branch::create([
             'code' => 'SUC-A',
             'name' => 'Sucursal A',
             'type' => 'store',
             'is_active' => true,
         ]);
 
-        $sucursalB = Branch::create([
+        $this->sucursalB = Branch::create([
             'code' => 'SUC-B',
             'name' => 'Sucursal B',
             'type' => 'store',
             'is_active' => true,
         ]);
+    }
 
-        $rolCajero = Role::where('code', 'cashier')->first();
+    private function asignarPermisoARol(int $rolId, int $permisoId): void
+    {
+        DB::table('role_permissions')->insert([
+            'role_id' => $rolId,
+            'permission_id' => $permisoId,
+        ]);
+    }
 
+    private function revocarPermisoDeRol(int $rolId, int $permisoId): void
+    {
+        DB::table('role_permissions')
+            ->where('role_id', $rolId)
+            ->where('permission_id', $permisoId)
+            ->delete();
+    }
+
+    public function test_cajero_sin_permiso_usuarios_recibe_403(): void
+    {
+        // El cajero NO tiene permiso users.manage.
         $usuario = User::create([
             'name' => 'Cajero A',
             'email' => 'cajero.a@prueba.cl',
             'password' => bcrypt('ContrasenaSegura123!'),
             'is_active' => true,
-            'default_branch_id' => $sucursalA->id,
+            'default_branch_id' => $this->sucursalA->id,
+            'global_role_id' => null,
         ]);
 
         BranchUser::create([
             'user_id' => $usuario->id,
-            'branch_id' => $sucursalA->id,
-            'role_id' => $rolCajero->id,
+            'branch_id' => $this->sucursalA->id,
+            'role_id' => $this->rolCajero->id,
         ]);
 
-        // Intenta acceder a ruta de sucursal B sin asignación
-        $response = $this->actingAs($usuario)->get('/dashboard/branch/' . $sucursalB->id);
+        $response = $this->actingAs($usuario)->get('/usuarios');
 
-        // Como no existe esa ruta, el test verifica que el usuario no tenga asignación a B
-        $this->assertFalse(
-            $usuario->branchAssignments()->where('branch_id', $sucursalB->id)->exists()
-        );
+        $response->assertStatus(403);
     }
 
-    public function test_cajero_no_puede_accesar_ruta_de_usuarios(): void
+    public function test_admin_global_con_permiso_usuarios_recibe_200(): void
     {
-        $rolCajero = Role::where('code', 'cashier')->first();
-        $permiso = Permission::where('code', 'users.manage')->first();
-
-        $sucursal = Branch::create([
-            'code' => 'SUC-X',
-            'name' => 'Sucursal X',
-            'type' => 'store',
-            'is_active' => true,
-        ]);
-
-        $usuario = User::create([
-            'name' => 'Cajero',
-            'email' => 'cajero@prueba.cl',
-            'password' => bcrypt('ContrasenaSegura123!'),
-            'is_active' => true,
-            'default_branch_id' => $sucursal->id,
-        ]);
-
-        BranchUser::create([
-            'user_id' => $usuario->id,
-            'branch_id' => $sucursal->id,
-            'role_id' => $rolCajero->id,
-        ]);
-
-        $this->actingAs($usuario);
-
-        // Ruta de administración de usuarios protegida por permiso users.manage
-        $response = $this->get('/usuarios');
-
-        // No existe la ruta, pero verificamos que el usuario NO tenga el permiso users.manage
-        $tienePermiso = $usuario->branchRoles()
-            ->join('role_permissions', 'role_permissions.role_id', '=', 'branch_user.role_id')
-            ->join('permissions', 'permissions.id', '=', 'role_permissions.permission_id')
-            ->where('permissions.code', 'users.manage')
-            ->exists();
-
-        $this->assertFalse($tienePermiso);
-    }
-
-    public function test_admin_global_tiene_acceso_a_todas_las_sucursales(): void
-    {
-        $rolAdmin = Role::where('code', 'central_admin')->first();
+        // El admin global tiene el permiso a través de su rol global.
+        $this->asignarPermisoARol($this->rolAdmin->id, $this->permUsuarios->id);
 
         $usuario = User::create([
             'name' => 'Admin Global',
             'email' => 'admin@prueba.cl',
             'password' => bcrypt('ContrasenaSegura123!'),
             'is_active' => true,
-            'global_role_id' => $rolAdmin->id,
+            'global_role_id' => $this->rolAdmin->id,
         ]);
 
-        $this->assertTrue($usuario->isGlobal());
+        $response = $this->actingAs($usuario)->get('/usuarios');
+
+        $response->assertStatus(200);
+        $response->assertJson(['ok' => true, 'seccion' => 'usuarios']);
+    }
+
+    public function test_usuario_sucursal_a_no_accede_a_sucursal_b(): void
+    {
+        $usuario = User::create([
+            'name' => 'Cajero A',
+            'email' => 'cajero.a@prueba.cl',
+            'password' => bcrypt('ContrasenaSegura123!'),
+            'is_active' => true,
+            'default_branch_id' => $this->sucursalA->id,
+            'global_role_id' => null,
+        ]);
+
+        // Solo tiene asignación en sucursal A.
+        BranchUser::create([
+            'user_id' => $usuario->id,
+            'branch_id' => $this->sucursalA->id,
+            'role_id' => $this->rolCajero->id,
+        ]);
+
+        // Intenta acceder a la sucursal B: debe recibir 403.
+        $response = $this->actingAs($usuario)->get('/dashboard/branch/' . $this->sucursalB->code);
+
+        $response->assertStatus(403);
+    }
+
+    public function test_usuario_sucursal_a_accede_a_sucursal_a(): void
+    {
+        $usuario = User::create([
+            'name' => 'Cajero A',
+            'email' => 'cajero.a@prueba.cl',
+            'password' => bcrypt('ContrasenaSegura123!'),
+            'is_active' => true,
+            'default_branch_id' => $this->sucursalA->id,
+            'global_role_id' => null,
+        ]);
+
+        BranchUser::create([
+            'user_id' => $usuario->id,
+            'branch_id' => $this->sucursalA->id,
+            'role_id' => $this->rolCajero->id,
+        ]);
+
+        $response = $this->actingAs($usuario)->get('/dashboard/branch/' . $this->sucursalA->code);
+
+        $response->assertStatus(200);
+        $response->assertJson(['ok' => true, 'sucursal' => 'SUC-A']);
+    }
+
+    public function test_admin_global_sin_sucursal_accede_a_dashboard(): void
+    {
+        $usuario = User::create([
+            'name' => 'Admin Global',
+            'email' => 'admin@prueba.cl',
+            'password' => bcrypt('ContrasenaSegura123!'),
+            'is_active' => true,
+            'global_role_id' => $this->rolAdmin->id,
+        ]);
+
+        // No hay filas en branch_user, ni sucursales asignadas.
+        $response = $this->actingAs($usuario)->get('/dashboard');
+
+        $response->assertStatus(200);
+    }
+
+    public function test_revocacion_de_permiso_deniega_acceso(): void
+    {
+        // Admin global con permiso.
+        $this->asignarPermisoARol($this->rolAdmin->id, $this->permUsuarios->id);
+
+        $usuario = User::create([
+            'name' => 'Admin Global',
+            'email' => 'admin@prueba.cl',
+            'password' => bcrypt('ContrasenaSegura123!'),
+            'is_active' => true,
+            'global_role_id' => $this->rolAdmin->id,
+        ]);
+
+        $response = $this->actingAs($usuario)->get('/usuarios');
+        $response->assertStatus(200);
+
+        // Revoca el permiso.
+        $this->revocarPermisoDeRol($this->rolAdmin->id, $this->permUsuarios->id);
+
+        $response = $this->actingAs($usuario)->get('/usuarios');
+        $response->assertStatus(403);
     }
 
     public function test_cuenta_desactivada_no_puede_autenticarse(): void
@@ -171,5 +218,35 @@ class RbacTest extends TestCase
         ]);
 
         $this->assertGuest();
+    }
+
+    public function test_cambio_de_rol_revoca_permiso_anterior(): void
+    {
+        // Usuario inicialmente cajero (sin users.manage).
+        $usuario = User::create([
+            'name' => 'Usuario',
+            'email' => 'usuario@prueba.cl',
+            'password' => bcrypt('ContrasenaSegura123!'),
+            'is_active' => true,
+            'default_branch_id' => $this->sucursalA->id,
+            'global_role_id' => null,
+        ]);
+
+        BranchUser::create([
+            'user_id' => $usuario->id,
+            'branch_id' => $this->sucursalA->id,
+            'role_id' => $this->rolCajero->id,
+        ]);
+
+        $response = $this->actingAs($usuario)->get('/usuarios');
+        $response->assertStatus(403);
+
+        // Cambia el rol a admin global con permiso users.manage.
+        $this->asignarPermisoARol($this->rolAdmin->id, $this->permUsuarios->id);
+        $usuario->update(['global_role_id' => $this->rolAdmin->id]);
+        $usuario->branchAssignments()->delete();
+
+        $response = $this->actingAs($usuario)->get('/usuarios');
+        $response->assertStatus(200);
     }
 }

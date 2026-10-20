@@ -14,6 +14,9 @@ use Symfony\Component\HttpFoundation\Response;
  * - Usuario global (global_role_id no nulo): acceso a todas las sucursales.
  * - Usuario por sucursal: solo a las sucursales donde tiene fila en branch_user.
  * - Sin asignación: sin acceso a ninguna sucursal (excepto dashboard global).
+ *
+ * El parámetro de ruta puede ser el código de sucursal (ej. 'SUC-A') o su ID numérico;
+ * se resuelve al ID antes de consultar branch_user.
  */
 class EnsureBranchAccess
 {
@@ -30,13 +33,20 @@ class EnsureBranchAccess
             return $next($request);
         }
 
-        // Si no se indica sucursal específica, verificar acceso a al menos una.
-        if ($branchId === null) {
-            $branchId = $request->route('branch') ?? $request->input('branch_id') ?? $user->default_branch_id;
-        }
+        // Resolver identificador de sucursal: ruta, request o default del usuario.
+        $branchId = $request->route('branch') ?? $request->input('branch_id') ?? $user->default_branch_id;
 
         if ($branchId === null) {
             return $next($request);
+        }
+
+        // Si el parámetro no es numérico, asumir que es el código de sucursal.
+        if (! is_numeric($branchId)) {
+            $sucursal = \App\Models\Branch::where('code', $branchId)->first();
+            if ($sucursal === null) {
+                abort(403, 'Sucursal no encontrada.');
+            }
+            $branchId = $sucursal->id;
         }
 
         $hasAccess = $user->branchAssignments()->where('branch_id', $branchId)->exists();

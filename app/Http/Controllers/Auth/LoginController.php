@@ -96,6 +96,7 @@ class LoginController extends Controller
         }
 
         $user->recordLogin($request->ip());
+        $request->session()->put('last_activity', now());
 
         if ($user->mustChangePassword()) {
             return redirect()->route('password.change')->with('warning', 'debe_cambiar_contrasena');

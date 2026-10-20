@@ -22,8 +22,19 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // --- Dashboard protegido (AUTH-001) ---
-Route::middleware(['auth', 'password.change'])->group(function () {
+Route::middleware(['auth', 'password.change', 'verify.session'])->group(function () {
     Route::get('/dashboard', function () {
         return inertia('Dashboard');
     })->name('dashboard');
+
+    // Rutas de prueba de autorización (AUTH-001). No son CRUD: devuelven
+    // un payload simple para verificar que el middleware de permisos y de
+    // acceso a sucursal se ejecuta correctamente.
+    Route::get('/usuarios', function () {
+        return response()->json(['ok' => true, 'seccion' => 'usuarios']);
+    })->middleware('can.permission:users.manage')->name('usuarios.index');
+
+    Route::get('/dashboard/branch/{branch}', function (string $branch) {
+        return response()->json(['ok' => true, 'sucursal' => $branch]);
+    })->middleware('branch.access')->name('dashboard.branch');
 });

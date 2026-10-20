@@ -5,18 +5,18 @@ namespace App\Console\Commands;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 /**
  * Crea el administrador inicial en entorno DEV.
  *
  * Excepción de desarrollo: no marca el onboarding como completado, no
  * desactiva /setup, no usa credenciales predefinidas. Solo para desarrollo local.
+ * La contraseña se solicita por consola de forma oculta; nunca se acepta como
+ * argumento visible en la línea de comandos.
  */
 class AdminCreateCommand extends Command
 {
-    protected $signature = 'admin:create {--email= : Correo del administrador}
-                            {--password= : Contraseña (se pide por consola si no se indica)}';
+    protected $signature = 'admin:create {--email= : Correo del administrador}';
 
     protected $description = 'Crea el administrador inicial en entorno de desarrollo';
 
@@ -28,7 +28,7 @@ class AdminCreateCommand extends Command
         }
 
         $email = $this->option('email') ?? $this->ask('Correo del administrador');
-        $password = $this->option('password') ?? $this->secret('Contraseña del administrador (mínimo 15 caracteres)');
+        $password = $this->secret('Contraseña del administrador (mínimo 15 caracteres)');
 
         if (User::where('email', $email)->exists()) {
             $this->error("Ya existe un usuario con el correo {$email}.");

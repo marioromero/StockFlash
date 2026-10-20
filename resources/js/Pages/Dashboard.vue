@@ -6,9 +6,9 @@
             </div>
             <div class="sf-user">
                 <span class="sf-user-name">{{ userName }}</span>
-                <button class="sf-button sf-button-secondary" @click="logout">
-                    Cerrar sesión
-                </button>
+                <form @submit.prevent="logout" class="sf-logout-form">
+                    <button type="submit" class="sf-button sf-button-secondary">Cerrar sesión</button>
+                </form>
             </div>
         </header>
 
@@ -24,14 +24,17 @@
 </template>
 
 <script setup lang="ts">
-import { useInertia } from '@inertiajs/vue3';
+import { router } from '@inertiajs/core';
 
-const { data } = useInertia();
+const props = defineProps<{
+    user_name?: string;
+}>();
 
-const userName = (data as any)?.user_name ?? 'Usuario';
+const userName = props.user_name ?? 'Usuario';
 
-async function logout() {
-    await useInertia().post('/logout', {});
+async function logout(event: SubmitEvent) {
+    event.preventDefault();
+    await router.post('/logout');
 }
 </script>
 
@@ -74,6 +77,10 @@ async function logout() {
 .sf-user-name {
     font-size: 0.875rem;
     color: #374151;
+}
+
+.sf-logout-form {
+    display: inline;
 }
 
 .sf-main {

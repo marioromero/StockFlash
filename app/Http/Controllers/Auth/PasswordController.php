@@ -44,7 +44,13 @@ class PasswordController extends Controller
             ]);
         }
 
-        $commonPasswords = (array) config('system_configs.common_passwords', []);
+        $commonPasswords = (array) config('system_configs.common_passwords', [
+            '123456789012345',
+            'password123456789',
+            'admin1234567890',
+            '1234567890123456',
+            'qwerty123456789',
+        ]);
         if (in_array(strtolower($request->password), array_map('strtolower', $commonPasswords))) {
             throw ValidationException::withMessages([
                 'password' => __('contrasena_comun_o_comprometida'),

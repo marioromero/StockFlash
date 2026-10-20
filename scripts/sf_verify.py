@@ -323,6 +323,15 @@ GATES_BY_PACKET: dict[str, list[dict]] = {
         {"id": "a9-documentacion-usuario", "kind": "shell",
          "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\nreq=['documentacion/general/acceso.md','documentacion/general/cambio-contrasena.md','documentacion/README.md']\nok=all((R/r).exists() for r in req)\nsys.exit(0 if ok else 1)"],
          "mandatory": True, "timeout_s": 60},
+        {"id": "a10-pruebas-php-auth", "kind": "shell",
+         "cmd": ["php", "artisan", "test", "tests/Feature/Auth"],
+         "mandatory": True, "timeout_s": 300},
+        {"id": "a11-typecheck-vue", "kind": "shell",
+         "cmd": ["npm", "run", "typecheck"],
+         "mandatory": True, "timeout_s": 300},
+        {"id": "a12-build-vite", "kind": "shell",
+         "cmd": ["npm", "run", "build"],
+         "mandatory": True, "timeout_s": 600},
     ],
 }
 
