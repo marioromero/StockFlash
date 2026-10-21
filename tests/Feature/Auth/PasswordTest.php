@@ -106,4 +106,38 @@ class PasswordTest extends TestCase
         $response->assertRedirect('/login');
         $this->assertGuest();
     }
+
+    public function test_cambia_contrasena_e_inicia_sesion_con_nueva(): void
+    {
+        $user = User::create([
+            'name' => 'Usuario Prueba',
+            'email' => 'usuario@prueba.cl',
+            'password' => bcrypt('ContrasenaSegura123!'),
+            'is_active' => true,
+            'global_role_id' => 1,
+        ]);
+
+        // Accede al formulario de cambio de contraseña.
+        $response = $this->actingAs($user)->get('/password/change');
+        $response->assertStatus(200);
+
+        // Cambia la contraseña.
+        $response = $this->actingAs($user)->put('/password/change', [
+            'current_password' => 'ContrasenaSegura123!',
+            'password' => 'NuevaContrasenaSegura456!',
+            'password_confirmation' => 'NuevaContrasenaSegura456!',
+        ]);
+
+        $response->assertRedirect('/login');
+        $this->assertGuest();
+
+        // Inicia sesión con la nueva contraseña.
+        $response = $this->post('/login', [
+            'email' => 'usuario@prueba.cl',
+            'password' => 'NuevaContrasenaSegura456!',
+        ]);
+
+        $response->assertStatus(302); // redirect a /dashboard
+        $this->assertAuthenticated();
+    }
 }

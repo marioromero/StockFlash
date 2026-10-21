@@ -249,4 +249,22 @@ class RbacTest extends TestCase
         $response = $this->actingAs($usuario)->get('/usuarios');
         $response->assertStatus(200);
     }
+
+    public function test_usuario_sin_sucursal_no_accede_a_ruta_con_sucursal(): void
+    {
+        // Usuario sin sucursal asignada.
+        $usuario = User::create([
+            'name' => 'Sin Sucursal',
+            'email' => 'sin.sucursal@prueba.cl',
+            'password' => bcrypt('ContrasenaSegura123!'),
+            'is_active' => true,
+            'default_branch_id' => null,
+            'global_role_id' => null,
+        ]);
+
+        // Intenta acceder a una ruta con contexto de sucursal: debe recibir 403.
+        $response = $this->actingAs($usuario)->get('/dashboard/branch/' . $this->sucursalA->code);
+
+        $response->assertStatus(403);
+    }
 }

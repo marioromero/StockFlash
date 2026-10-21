@@ -132,4 +132,29 @@ class LoginTest extends TestCase
         $response->assertRedirect('/login');
         $this->assertGuest();
     }
+
+    public function test_logout_invalida_sesion_y_redirige_a_login(): void
+    {
+        $user = User::create([
+            'name' => 'Usuario Prueba',
+            'email' => 'usuario@prueba.cl',
+            'password' => bcrypt('ContrasenaSegura123!'),
+            'is_active' => true,
+            'global_role_id' => 1,
+        ]);
+
+        // Inicia sesión.
+        $this->actingAs($user)->get('/dashboard')->assertStatus(200);
+        $this->assertAuthenticated();
+
+        // Cierra sesión.
+        $response = $this->actingAs($user)->post('/logout');
+
+        $response->assertRedirect('/login');
+        $this->assertGuest();
+
+        // No puede acceder a rutas protegidas sin iniciar sesión nuevamente.
+        $this->get('/dashboard')->assertRedirect('/login');
+        $this->assertGuest();
+    }
 }
