@@ -28,7 +28,7 @@ class PasswordController extends Controller
                 'required',
                 'string',
                 'min:' . $minLength,
-                'max:255',
+                'max:64',
                 'confirmed',
             ],
         ]);

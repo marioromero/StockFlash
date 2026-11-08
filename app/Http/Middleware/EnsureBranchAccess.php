@@ -11,7 +11,9 @@ use Symfony\Component\HttpFoundation\Response;
  * Verifica que el usuario autenticado tenga acceso a la sucursal indicada.
  *
  * Regla de negocio (DB-001 / AUTH-001):
- * - Usuario global (global_role_id no nulo): acceso a todas las sucursales.
+ * - La sucursal solicitada debe existir (no estar eliminada lógicamente) para
+ *   cualquier usuario, incluido el global.
+ * - Usuario global (global_role_id no nulo): acceso a todas las sucursales existentes.
  * - Usuario por sucursal: solo a las sucursales donde tiene fila en branch_user.
  * - Sin asignación: sin acceso a ninguna sucursal (excepto dashboard global).
  *
@@ -20,7 +22,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class EnsureBranchAccess
 {
-    public function handle(Request $request, Closure $next, ?int $branchId = null): Response
+    public function handle(Request $request, Closure $next, ?string $branchId = null): Response
     {
         $user = Auth::user();
 
@@ -28,15 +30,9 @@ class EnsureBranchAccess
             return redirect()->route('login');
         }
 
-        // Usuario global: acceso a todas las sucursales.
-        if ($user->isGlobal()) {
-            return $next($request);
-        }
-
         // Resolver identificador de sucursal: ruta, parámetro del middleware,
         // request o default del usuario. Sin identificador no hay acceso.
         $identifier = $request->route('branch')
-            ?? $request->route('brand')
             ?? $branchId
             ?? $request->input('branch_id')
             ?? $user->default_branch_id;
@@ -52,6 +48,11 @@ class EnsureBranchAccess
 
         if ($sucursal === null) {
             abort(403, 'Sucursal no encontrada.');
+        }
+
+        // La sucursal debe ser válida incluso para usuarios globales.
+        if ($user->isGlobal()) {
+            return $next($request);
         }
 
         $branchId = $sucursal->id;

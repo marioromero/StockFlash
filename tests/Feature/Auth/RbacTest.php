@@ -354,7 +354,7 @@ class RbacTest extends TestCase
             ->assertStatus(200);
     }
 
-    public function test_admin_global_accede_a_cualquier_sucursal(): void
+    public function test_admin_global_accede_a_sucursal_valida(): void
     {
         $usuario = User::create([
             'name' => 'Admin Global',
@@ -366,6 +366,82 @@ class RbacTest extends TestCase
 
         $this->actingAs($usuario)
             ->get('/dashboard/branch/' . $this->sucursalB->code)
+            ->assertStatus(200);
+    }
+
+    public function test_admin_global_con_codigo_inexistente_recibe_403(): void
+    {
+        $usuario = User::create([
+            'name' => 'Admin Global',
+            'email' => 'admin@prueba.cl',
+            'password' => bcrypt('ContrasenaSegura123!'),
+            'is_active' => true,
+            'global_role_id' => $this->rolAdmin->id,
+            'default_branch_id' => null,
+        ]);
+
+        $this->actingAs($usuario)
+            ->get('/dashboard/branch/NO-EXISTE')
+            ->assertStatus(403);
+    }
+
+    public function test_admin_global_con_id_inexistente_recibe_403(): void
+    {
+        $usuario = User::create([
+            'name' => 'Admin Global',
+            'email' => 'admin@prueba.cl',
+            'password' => bcrypt('ContrasenaSegura123!'),
+            'is_active' => true,
+            'global_role_id' => $this->rolAdmin->id,
+            'default_branch_id' => null,
+        ]);
+
+        $this->actingAs($usuario)
+            ->get('/dashboard/branch/999999')
+            ->assertStatus(403);
+    }
+
+    public function test_admin_global_sin_contexto_de_sucursal_recibe_403(): void
+    {
+        Route::middleware(['web', 'auth', 'branch.access'])
+            ->get('/test/branch-global-sin-contexto', fn () => response('ok'));
+
+        $usuario = User::create([
+            'name' => 'Admin Global',
+            'email' => 'admin@prueba.cl',
+            'password' => bcrypt('ContrasenaSegura123!'),
+            'is_active' => true,
+            'global_role_id' => $this->rolAdmin->id,
+            'default_branch_id' => null,
+        ]);
+
+        $this->actingAs($usuario)
+            ->get('/test/branch-global-sin-contexto')
+            ->assertStatus(403);
+    }
+
+    public function test_parametro_de_middleware_acepta_codigo_de_sucursal(): void
+    {
+        Route::middleware(['web', 'auth', 'branch.access:SUC-A'])
+            ->get('/test/branch-middleware-code', fn () => response('ok'));
+
+        $usuario = User::create([
+            'name' => 'Cajero A',
+            'email' => 'cajero.a@prueba.cl',
+            'password' => bcrypt('ContrasenaSegura123!'),
+            'is_active' => true,
+            'default_branch_id' => $this->sucursalA->id,
+            'global_role_id' => null,
+        ]);
+
+        BranchUser::create([
+            'user_id' => $usuario->id,
+            'branch_id' => $this->sucursalA->id,
+            'role_id' => $this->rolCajero->id,
+        ]);
+
+        $this->actingAs($usuario)
+            ->get('/test/branch-middleware-code')
             ->assertStatus(200);
     }
 

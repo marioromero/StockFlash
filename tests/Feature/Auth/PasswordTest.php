@@ -95,6 +95,53 @@ class PasswordTest extends TestCase
         $response->assertSessionHasErrors('password');
     }
 
+    public function test_contrasena_nueva_de_65_caracteres_no_cambia_hash(): void
+    {
+        $user = User::create([
+            'name' => 'Usuario Prueba',
+            'email' => 'usuario@prueba.cl',
+            'password' => bcrypt('ContrasenaSegura123!'),
+            'is_active' => true,
+            'global_role_id' => 1,
+        ]);
+
+        $hashOriginal = $user->password;
+        $passwordLarga = str_repeat('A', 65); // SEC-01: máximo 64.
+
+        $response = $this->actingAs($user)->put('/password/change', [
+            'current_password' => 'ContrasenaSegura123!',
+            'password' => $passwordLarga,
+            'password_confirmation' => $passwordLarga,
+        ]);
+
+        $response->assertSessionHasErrors('password');
+        $this->assertSame($hashOriginal, $user->fresh()->password);
+        $this->assertAuthenticated();
+    }
+
+    public function test_contrasena_nueva_de_64_caracteres_es_valida(): void
+    {
+        $user = User::create([
+            'name' => 'Usuario Prueba',
+            'email' => 'usuario@prueba.cl',
+            'password' => bcrypt('ContrasenaSegura123!'),
+            'is_active' => true,
+            'global_role_id' => 1,
+        ]);
+
+        $passwordValida = str_repeat('A', 64); // SEC-01: máximo 64.
+
+        $response = $this->actingAs($user)->put('/password/change', [
+            'current_password' => 'ContrasenaSegura123!',
+            'password' => $passwordValida,
+            'password_confirmation' => $passwordValida,
+        ]);
+
+        $response->assertRedirect('/login');
+        $this->assertGuest();
+        $this->assertTrue(Hash::check($passwordValida, $user->fresh()->password));
+    }
+
     public function test_no_autenticado_no_puede_cambiar_contrasena(): void
     {
         $response = $this->put('/password/change', [
