@@ -38,7 +38,7 @@ El administrador del sistema puede restablecer manualmente la contraseña de cua
 ## Reglas y limitaciones
 
 - La contraseña nueva debe tener **mínimo 15 caracteres**.
-- El sistema admite hasta **64 caracteres** como máximo.
+- El sistema admite hasta **255 caracteres** como máximo.
 - No se permiten reglas artificiales de composición (por ejemplo, "debe tener una mayúscula y un número") como requisito obligatorio; la longitud y la lista de contraseñas bloqueadas son los controles principales.
 - Las contraseñas comunes o comprometidas están bloqueadas.
 - Después de cambiar la contraseña, la sesión actual se invalida y debe iniciar sesión de nuevo.

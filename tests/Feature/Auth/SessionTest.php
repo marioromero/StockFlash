@@ -73,7 +73,7 @@ class SessionTest extends TestCase
         $this->assertGuest();
     }
 
-    public function test_sesion_expira_por_duracion_absoluta(): void
+    public function test_sesion_expira_por_duracion_absoluta_usando_fallback_de_ultimo_login(): void
     {
         $usuario = User::create([
             'name' => 'Usuario',
@@ -84,8 +84,82 @@ class SessionTest extends TestCase
             'last_login_at' => now()->subHours(13), // más de 12h
         ]);
 
+        // Sin session_started_at: se usa last_login_at como fallback.
         $this->actingAs($usuario)->get('/dashboard')->assertStatus(403);
         $this->assertGuest();
+    }
+
+    public function test_sesion_expira_por_duracion_absoluta_aunque_el_ultimo_login_sea_reciente(): void
+    {
+        $usuario = User::create([
+            'name' => 'Usuario',
+            'email' => 'usuario@prueba.cl',
+            'password' => bcrypt('ContrasenaSegura123!'),
+            'is_active' => true,
+            'global_role_id' => $this->rolAdmin->id,
+            'last_login_at' => now(), // login reciente, otra sesión del usuario
+        ]);
+
+        $this->actingAs($usuario)
+            ->session([
+                'session_started_at' => now()->subHours(13), // esta sesión superó 12h
+                'last_activity' => now(),
+            ])
+            ->get('/dashboard')
+            ->assertStatus(403);
+
+        $this->assertGuest();
+    }
+
+    public function test_sesiones_del_mismo_usuario_son_independientes(): void
+    {
+        $usuario = User::create([
+            'name' => 'Usuario',
+            'email' => 'usuario@prueba.cl',
+            'password' => bcrypt('ContrasenaSegura123!'),
+            'is_active' => true,
+            'global_role_id' => $this->rolAdmin->id,
+            'last_login_at' => now(),
+        ]);
+
+        // Sesión A: iniciada hace 13h -> expira.
+        $this->actingAs($usuario)
+            ->session([
+                'session_started_at' => now()->subHours(13),
+                'last_activity' => now(),
+            ])
+            ->get('/dashboard')
+            ->assertStatus(403);
+        $this->assertGuest();
+
+        // Sesión B: iniciada ahora -> sigue vigente.
+        $this->actingAs($usuario)
+            ->session([
+                'session_started_at' => now(),
+                'last_activity' => now(),
+            ])
+            ->get('/dashboard')
+            ->assertStatus(200);
+    }
+
+    public function test_login_exitoso_registra_inicio_de_sesion(): void
+    {
+        User::create([
+            'name' => 'Usuario',
+            'email' => 'usuario@prueba.cl',
+            'password' => bcrypt('ContrasenaSegura123!'),
+            'is_active' => true,
+            'global_role_id' => $this->rolAdmin->id,
+        ]);
+
+        $response = $this->post('/login', [
+            'email' => 'usuario@prueba.cl',
+            'password' => 'ContrasenaSegura123!',
+        ]);
+
+        $response->assertRedirect('/dashboard');
+        $response->assertSessionHas('session_started_at');
+        $this->assertAuthenticated();
     }
 
     public function test_sesion_no_expira_antes_de_duracion_absoluta(): void
@@ -96,10 +170,16 @@ class SessionTest extends TestCase
             'password' => bcrypt('ContrasenaSegura123!'),
             'is_active' => true,
             'global_role_id' => $this->rolAdmin->id,
-            'last_login_at' => now()->subHours(11), // menos de 12h
+            'last_login_at' => now(),
         ]);
 
-        $this->actingAs($usuario)->get('/dashboard')->assertStatus(200);
+        $this->actingAs($usuario)
+            ->session([
+                'session_started_at' => now()->subHours(11), // menos de 12h
+                'last_activity' => now(),
+            ])
+            ->get('/dashboard')
+            ->assertStatus(200);
     }
 
     public function test_sesion_expira_por_inactividad_pos(): void

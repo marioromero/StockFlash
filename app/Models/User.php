@@ -30,6 +30,7 @@ use Illuminate\Notifications\Notifiable;
     'pin_failed_attempts', 'pin_locked_until', 'mfa_enabled',
     'mfa_secret_encrypted', 'mfa_confirmed_at',
     'max_discount_percent', 'max_return_amount',
+    'password_changed_at',
     'is_active', 'failed_login_attempts', 'locked_until',
     'must_change_password', 'last_login_at', 'last_login_ip',
 ])]
@@ -92,8 +93,8 @@ class User extends Authenticatable
             Role::class,
             'branch_user',
             'user_id',
-            'branch_id'
-        )->withPivot('role_id', 'branch_id');
+            'role_id'
+        )->withPivot('branch_id');
     }
 
     /**
@@ -135,7 +136,7 @@ class User extends Authenticatable
     public function incrementFailedLogin(): void
     {
         $this->increment('failed_login_attempts');
-        $maxAttempts = (int) config('system_configs.pin_max_attempts', 5);
+        $maxAttempts = (int) config('system_configs.login_max_attempts', 5);
         if ($this->failed_login_attempts >= $maxAttempts) {
             $this->locked_until = now()->addMinutes(30);
         }

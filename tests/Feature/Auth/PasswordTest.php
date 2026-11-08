@@ -140,4 +140,91 @@ class PasswordTest extends TestCase
         $response->assertStatus(302); // redirect a /dashboard
         $this->assertAuthenticated();
     }
+
+    public function test_login_con_must_change_password_redirige_a_cambio_de_contrasena(): void
+    {
+        $user = User::create([
+            'name' => 'Usuario Prueba',
+            'email' => 'usuario@prueba.cl',
+            'password' => bcrypt('ContrasenaSegura123!'),
+            'is_active' => true,
+            'global_role_id' => 1,
+            'must_change_password' => true,
+        ]);
+
+        $response = $this->post('/login', [
+            'email' => 'usuario@prueba.cl',
+            'password' => 'ContrasenaSegura123!',
+        ]);
+
+        $response->assertRedirect('/password/change');
+        $this->assertAuthenticatedAs($user);
+    }
+
+    public function test_get_cambio_de_contrasena_no_redirige_a_si_mismo(): void
+    {
+        $user = User::create([
+            'name' => 'Usuario Prueba',
+            'email' => 'usuario@prueba.cl',
+            'password' => bcrypt('ContrasenaSegura123!'),
+            'is_active' => true,
+            'global_role_id' => 1,
+            'must_change_password' => true,
+        ]);
+
+        $this->actingAs($user)
+            ->get('/password/change')
+            ->assertStatus(200);
+    }
+
+    public function test_cambio_de_contrasena_obligatorio_actualiza_y_cierra_sesion(): void
+    {
+        $user = User::create([
+            'name' => 'Usuario Prueba',
+            'email' => 'usuario@prueba.cl',
+            'password' => bcrypt('ContrasenaSegura123!'),
+            'is_active' => true,
+            'global_role_id' => 1,
+            'must_change_password' => true,
+        ]);
+
+        $response = $this->actingAs($user)->put('/password/change', [
+            'current_password' => 'ContrasenaSegura123!',
+            'password' => 'NuevaContrasenaSegura456!',
+            'password_confirmation' => 'NuevaContrasenaSegura456!',
+        ]);
+
+        $response->assertRedirect('/login');
+        $this->assertGuest();
+
+        $actualizado = $user->fresh();
+        $this->assertTrue(Hash::check('NuevaContrasenaSegura456!', $actualizado->password));
+        $this->assertFalse((bool) $actualizado->must_change_password);
+    }
+
+    public function test_login_posterior_con_nueva_contrasena_redirige_a_dashboard(): void
+    {
+        $user = User::create([
+            'name' => 'Usuario Prueba',
+            'email' => 'usuario@prueba.cl',
+            'password' => bcrypt('ContrasenaSegura123!'),
+            'is_active' => true,
+            'global_role_id' => 1,
+            'must_change_password' => true,
+        ]);
+
+        $this->actingAs($user)->put('/password/change', [
+            'current_password' => 'ContrasenaSegura123!',
+            'password' => 'NuevaContrasenaSegura456!',
+            'password_confirmation' => 'NuevaContrasenaSegura456!',
+        ])->assertRedirect('/login');
+
+        $response = $this->post('/login', [
+            'email' => 'usuario@prueba.cl',
+            'password' => 'NuevaContrasenaSegura456!',
+        ]);
+
+        $response->assertRedirect('/dashboard');
+        $this->assertAuthenticated();
+    }
 }

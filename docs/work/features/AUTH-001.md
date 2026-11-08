@@ -141,4 +141,4 @@ La especificación exige que `/setup` bloquee la operación normal hasta complet
 ## Estado de funciones: implementado vs previsto
 
 - **Implementado (DB-001, ya publicado):** tablas `users`, `roles`, `permissions`, `role_permissions`, `branch_user`; semillas de 5 roles, permisos, planes, módulos, configs del sistema, reason codes.
-- **Previsto en AUTH-001 (DRAFT, sin implementar):** controladores de login/logout/cambio de contraseña, middleware de autorización, comando admin inicial DEV, dashboard protegido, pruebas de aceptación.
+- **Implementado en AUTH-001 (APPROVED, 2026-10-19):** controladores de login/logout/cambio de contraseña, middleware de sesión/autorización/acceso a sucursal, comando admin inicial DEV, dashboard protegido y pruebas de aceptación. Correcciones de cierre aplicadas: duración absoluta por sesión (12 h), flujo `must_change_password` sin redirección circular, `EnsureBranchAccess` sin bypass y alineación del modelo `User`/documentación.

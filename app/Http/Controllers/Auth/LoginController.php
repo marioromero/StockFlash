@@ -96,6 +96,7 @@ class LoginController extends Controller
         }
 
         $user->recordLogin($request->ip());
+        $request->session()->put('session_started_at', now());
         $request->session()->put('last_activity', now());
 
         if ($user->mustChangePassword()) {

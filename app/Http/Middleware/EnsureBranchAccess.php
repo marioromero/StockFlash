@@ -33,21 +33,28 @@ class EnsureBranchAccess
             return $next($request);
         }
 
-        // Resolver identificador de sucursal: ruta, request o default del usuario.
-        $branchId = $request->route('branch') ?? $request->input('branch_id') ?? $user->default_branch_id;
+        // Resolver identificador de sucursal: ruta, parámetro del middleware,
+        // request o default del usuario. Sin identificador no hay acceso.
+        $identifier = $request->route('branch')
+            ?? $request->route('brand')
+            ?? $branchId
+            ?? $request->input('branch_id')
+            ?? $user->default_branch_id;
 
-        if ($branchId === null) {
-            return $next($request);
+        if ($identifier === null || $identifier === '') {
+            abort(403, 'Sucursal no especificada.');
         }
 
-        // Si el parámetro no es numérico, asumir que es el código de sucursal.
-        if (! is_numeric($branchId)) {
-            $sucursal = \App\Models\Branch::where('code', $branchId)->first();
-            if ($sucursal === null) {
-                abort(403, 'Sucursal no encontrada.');
-            }
-            $branchId = $sucursal->id;
+        // Si el identificador es numérico se busca por ID; si no, por código.
+        $sucursal = is_numeric($identifier)
+            ? \App\Models\Branch::whereKey($identifier)->first()
+            : \App\Models\Branch::where('code', $identifier)->first();
+
+        if ($sucursal === null) {
+            abort(403, 'Sucursal no encontrada.');
         }
+
+        $branchId = $sucursal->id;
 
         $hasAccess = $user->branchAssignments()->where('branch_id', $branchId)->exists();
 

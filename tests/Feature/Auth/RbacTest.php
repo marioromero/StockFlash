@@ -9,6 +9,7 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
 
 class RbacTest extends TestCase
@@ -266,5 +267,129 @@ class RbacTest extends TestCase
         $response = $this->actingAs($usuario)->get('/dashboard/branch/' . $this->sucursalA->code);
 
         $response->assertStatus(403);
+    }
+
+    public function test_usuario_sin_sucursal_y_sin_parametro_recibe_403(): void
+    {
+        Route::middleware(['web', 'auth', 'branch.access'])
+            ->get('/test/branch-access', fn () => response('ok'));
+
+        $usuario = User::create([
+            'name' => 'Sin Sucursal',
+            'email' => 'sin.sucursal@prueba.cl',
+            'password' => bcrypt('ContrasenaSegura123!'),
+            'is_active' => true,
+            'default_branch_id' => null,
+            'global_role_id' => null,
+        ]);
+
+        $this->actingAs($usuario)
+            ->get('/test/branch-access')
+            ->assertStatus(403);
+    }
+
+    public function test_sucursal_inexistente_por_id_recibe_403(): void
+    {
+        $usuario = User::create([
+            'name' => 'Cajero A',
+            'email' => 'cajero.a@prueba.cl',
+            'password' => bcrypt('ContrasenaSegura123!'),
+            'is_active' => true,
+            'default_branch_id' => $this->sucursalA->id,
+            'global_role_id' => null,
+        ]);
+
+        BranchUser::create([
+            'user_id' => $usuario->id,
+            'branch_id' => $this->sucursalA->id,
+            'role_id' => $this->rolCajero->id,
+        ]);
+
+        $this->actingAs($usuario)
+            ->get('/dashboard/branch/999999')
+            ->assertStatus(403);
+    }
+
+    public function test_sucursal_inexistente_por_codigo_recibe_403(): void
+    {
+        $usuario = User::create([
+            'name' => 'Cajero A',
+            'email' => 'cajero.a@prueba.cl',
+            'password' => bcrypt('ContrasenaSegura123!'),
+            'is_active' => true,
+            'default_branch_id' => $this->sucursalA->id,
+            'global_role_id' => null,
+        ]);
+
+        BranchUser::create([
+            'user_id' => $usuario->id,
+            'branch_id' => $this->sucursalA->id,
+            'role_id' => $this->rolCajero->id,
+        ]);
+
+        $this->actingAs($usuario)
+            ->get('/dashboard/branch/NO-EXISTE')
+            ->assertStatus(403);
+    }
+
+    public function test_sucursal_valida_por_id_permite_acceso(): void
+    {
+        $usuario = User::create([
+            'name' => 'Cajero A',
+            'email' => 'cajero.a@prueba.cl',
+            'password' => bcrypt('ContrasenaSegura123!'),
+            'is_active' => true,
+            'default_branch_id' => $this->sucursalA->id,
+            'global_role_id' => null,
+        ]);
+
+        BranchUser::create([
+            'user_id' => $usuario->id,
+            'branch_id' => $this->sucursalA->id,
+            'role_id' => $this->rolCajero->id,
+        ]);
+
+        $this->actingAs($usuario)
+            ->get('/dashboard/branch/' . $this->sucursalA->id)
+            ->assertStatus(200);
+    }
+
+    public function test_admin_global_accede_a_cualquier_sucursal(): void
+    {
+        $usuario = User::create([
+            'name' => 'Admin Global',
+            'email' => 'admin@prueba.cl',
+            'password' => bcrypt('ContrasenaSegura123!'),
+            'is_active' => true,
+            'global_role_id' => $this->rolAdmin->id,
+        ]);
+
+        $this->actingAs($usuario)
+            ->get('/dashboard/branch/' . $this->sucursalB->code)
+            ->assertStatus(200);
+    }
+
+    public function test_sucursal_soft_deleted_recibe_403(): void
+    {
+        $usuario = User::create([
+            'name' => 'Cajero B',
+            'email' => 'cajero.b@prueba.cl',
+            'password' => bcrypt('ContrasenaSegura123!'),
+            'is_active' => true,
+            'default_branch_id' => $this->sucursalB->id,
+            'global_role_id' => null,
+        ]);
+
+        BranchUser::create([
+            'user_id' => $usuario->id,
+            'branch_id' => $this->sucursalB->id,
+            'role_id' => $this->rolCajero->id,
+        ]);
+
+        $this->sucursalB->delete();
+
+        $this->actingAs($usuario)
+            ->get('/dashboard/branch/' . $this->sucursalB->code)
+            ->assertStatus(403);
     }
 }

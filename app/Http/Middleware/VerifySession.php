@@ -42,9 +42,15 @@ class VerifySession
         $idleMinutesPos = (int) ($configs['session_idle_minutes_pos'] ?? 30);
         $idleMinutesAdmin = (int) ($configs['session_idle_minutes_admin'] ?? 60);
 
-        // 3. Duración absoluta: last_login_at + session_absolute_hours.
-        if ($user->last_login_at instanceof \DateTimeInterface) {
-            $limiteAbsoluto = $user->last_login_at->addHours($absoluteHours);
+        // 3. Duración absoluta por sesión: session_started_at + session_absolute_hours.
+        //    last_login_at es solo fallback cuando la sesión no registra su inicio
+        //    (sin escribirlo ni extender sesiones existentes).
+        $sessionStartedAt = $request->session()->get('session_started_at');
+        $inicioSesion = $sessionStartedAt instanceof \DateTimeInterface
+            ? $sessionStartedAt
+            : $user->last_login_at;
+        if ($inicioSesion instanceof \DateTimeInterface) {
+            $limiteAbsoluto = $inicioSesion->copy()->addHours($absoluteHours);
             if (now()->gt($limiteAbsoluto)) {
                 Auth::guard('web')->logout();
                 $request->session()->invalidate();
@@ -58,7 +64,7 @@ class VerifySession
         $ultimaActividad = $request->session()->get('last_activity');
         if ($ultimaActividad instanceof \DateTimeInterface) {
             $idleMinutes = $user->isGlobal() ? $idleMinutesAdmin : $idleMinutesPos;
-            $limiteInactividad = $ultimaActividad->addMinutes($idleMinutes);
+            $limiteInactividad = $ultimaActividad->copy()->addMinutes($idleMinutes);
             if (now()->gt($limiteInactividad)) {
                 Auth::guard('web')->logout();
                 $request->session()->invalidate();
