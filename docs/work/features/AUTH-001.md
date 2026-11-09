@@ -1,7 +1,8 @@
 # AUTH-001 — Autenticación, sesiones y RBAC server-side
 
-status: APPROVED
+status: VERIFIED
 owner_approval: Aprobación expresa del propietario (2026-10-19) para implementar la Feature Packet completa de autenticación, sesiones y RBAC server-side.
+verified_decision: Decisión externa del propietario (2026-11-09): AUTH-001 **VERIFIED**, respaldada por dictamen técnico externo, gates `GATES_PASS`, QA independiente `APROBADO` y CI remota completamente verde sobre el código publicado en `55b7f16e761adef306957904f78b20a9effbe6e7`. El cierre es documental; no re-ejecuta gates funcionales porque el código publicado no cambia.
 etapa: R3_AUTH
 
 ## Qué / Por qué / No incluido
@@ -122,6 +123,18 @@ La especificación exige que `/setup` bloquee la operación normal hasta complet
 - Registro de usuarios públicos y onboarding de comercio.
 - `/setup` completo (se define excepción DEV para comando local; el instalador completo queda fuera de este alcance).
 
+## Cierre VERIFIED (2026-11-09)
+
+- **Decisión externa:** el propietario confirmó AUTH-001 **VERIFIED**, respaldado por dictamen técnico externo, gates, QA independiente y CI remota completamente verde.
+- **Código publicado y verificado:** `55b7f16e761adef306957904f78b20a9effbe6e7` en `origin/main`; sin cambios de código en este cierre.
+- **Gates:** `docs/work/AUTH-001-VERIFY-20261107-213531.md` → `GATES_PASS` (reportes posteriores `...-215309` y `...-220148` también `GATES_PASS`).
+- **QA independiente:** `docs/work/AUTH-001-REVIEW-20261107-2.md` → `APROBADO` con addendum; suite completa 47 passed / 112 assertions.
+- **CI remota:** runs `42430883629` y `42430883632` SUCCESS, con 4 check-runs SUCCESS sobre `55b7f16`.
+- **PR #1:** cerrado como obsoleto, no fusionado; su head `dc4e018` no debe fusionarse.
+- **Alcance del cierre:** exclusivamente documental (estado, evidencias y registro de cierre); no declara deploy ni staging.
+- **Artefacto:** `docs/work/AUTH-001-CLOSURE-20261109.md`.
+- Publicar este cierre no modifica el estado VERIFIED; queda registrado como decisión externa.
+
 ## Gates
 
 - [ ] tests: login exitoso, login fallido ×5 y bloqueo, cambio de contraseña con `password_changed_at`, acceso denegado a ruta ajena por rol, acceso indebido entre sucursales (403), redirección de no autenticado a login, invalidez de sesión tras desactivación de cuenta, expiración por inactividad (configurable).
@@ -142,3 +155,4 @@ La especificación exige que `/setup` bloquee la operación normal hasta complet
 
 - **Implementado (DB-001, ya publicado):** tablas `users`, `roles`, `permissions`, `role_permissions`, `branch_user`; semillas de 5 roles, permisos, planes, módulos, configs del sistema, reason codes.
 - **Implementado en AUTH-001 (APPROVED, 2026-10-19):** controladores de login/logout/cambio de contraseña, middleware de sesión/autorización/acceso a sucursal, comando admin inicial DEV, dashboard protegido y pruebas de aceptación. Correcciones de cierre aplicadas: duración absoluta por sesión (12 h), flujo `must_change_password` sin redirección circular, `EnsureBranchAccess` sin bypass y alineación del modelo `User`/documentación.
+- **VERIFIED (decisión externa, 2026-11-09):** cierre formal aprobado tras dictamen técnico externo, gates `GATES_PASS`, QA independiente `APROBADO` y CI remota verde sobre `55b7f16`.
