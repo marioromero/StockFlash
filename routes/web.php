@@ -37,4 +37,25 @@ Route::middleware(['auth', 'password.change', 'verify.session'])->group(function
     Route::get('/dashboard/branch/{branch}', function (string $branch) {
         return response()->json(['ok' => true, 'sucursal' => $branch]);
     })->middleware('branch.access')->name('dashboard.branch');
+
+    // --- Administración global de sucursales (BRANCH-001 · CORE-05) ---
+    // Es administración global: NO usa `branch.access`.
+    Route::middleware('can.permission:settings.manage')->group(function () {
+        Route::get('/branches', [\App\Http\Controllers\BranchController::class, 'index'])
+            ->name('branches.index');
+        Route::get('/branches/create', [\App\Http\Controllers\BranchController::class, 'create'])
+            ->name('branches.create');
+        Route::post('/branches', [\App\Http\Controllers\BranchController::class, 'store'])
+            ->name('branches.store');
+        Route::get('/branches/{branch}/edit', [\App\Http\Controllers\BranchController::class, 'edit'])
+            ->name('branches.edit');
+        Route::match(['put', 'patch'], '/branches/{branch}', [\App\Http\Controllers\BranchController::class, 'update'])
+            ->name('branches.update');
+        Route::match(['post', 'patch'], '/branches/{branch}/deactivate', [\App\Http\Controllers\BranchController::class, 'deactivate'])
+            ->name('branches.deactivate');
+        Route::match(['post', 'patch'], '/branches/{branch}/activate', [\App\Http\Controllers\BranchController::class, 'activate'])
+            ->name('branches.activate');
+        Route::delete('/branches/{branch}', [\App\Http\Controllers\BranchController::class, 'destroy'])
+            ->name('branches.destroy');
+    });
 });

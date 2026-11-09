@@ -1,7 +1,7 @@
 # BRANCH-001 — Administración de sucursales (CRUD)
 
-status: DRAFT
-owner_approval: Pendiente de aprobación expresa del propietario. No implementar hasta pasar a APPROVED.
+status: APPROVED
+owner_approval: Aprobación expresa del propietario (2026-11-09): aprueba las nueve decisiones de esta propuesta y autoriza la implementación completa. Precisión adicional obligatoria: las escrituras de auditoría deben formar parte de la misma transacción de la operación correspondiente; si falla la auditoría, la operación debe revertirse por completo.
 etapa: R3_CORE (CORE-05)
 dependencias: AUTH-001 (implementado y con QA APROBADO; VERIFIED pendiente de decisión externa), DB-001 (tabla `branches` y permisos sembrados), `config/modules.php`. Incluye un ajuste acotado a `EnsureBranchAccess` (exigir sucursal activa), con regresión de AUTH-001.
 responsable_implementacion: OpenCode conforme al harness vigente; owner + ChatGPT delimitan alcance y declaran VERIFIED.
@@ -48,7 +48,7 @@ responsable_implementacion: OpenCode conforme al harness vigente; owner + ChatGP
 - **Desactivación:** `is_active=0` impide nuevas operaciones en la sucursal, pero no borra datos. Se permite desactivar la última sucursal activa, con confirmación y advertencia explícita; las operaciones que requieren sucursal responderán 403, mientras el dashboard global y `/branches` siguen accesibles. El Admin Central puede reactivarla.
 - **Límite de plan:** al crear o reactivar, si existe fila en `license_states` y `max_branches > 0`, la cantidad de sucursales activas no puede superar ese límite. Si `max_branches = 0` o **no hay fila de licencia**, se trata como ilimitado en BRANCH-001; la validación completa de licencia queda para CORE-08 y el `PlanGuard` completo para CORE-07.
 - **Concurrencia y atomicidad:** la creación/reactivación se ejecuta dentro de una transacción `DB::transaction`; cuando hay límite, se bloquea la fila de `license_states` con `lockForUpdate()` y se cuenta dentro de la misma transacción. La unicidad de `code` la garantiza la base de datos; el controlador captura la violación de clave única y devuelve un error de validación sin estado parcial. En SQLite (CI) `lockForUpdate` es no-op, por lo que la prueba obligatoria es secuencial; la prueba de concurrencia real contra MariaDB DEV es una validación diferida de implementación.
-- **Auditoría:** crear, editar, desactivar, reactivar y eliminar registran un evento en `audit_logs` con `module_code='core'`, `auditable_type='branches'`, `auditable_id`, valores anteriores/nuevos sin secretos, IP y user-agent. Eventos: `branch.created`, `branch.updated`, `branch.deactivated`, `branch.activated`, `branch.deleted`. Se implementa un helper mínimo `app/Support/AuditLogger.php` (sin dependencia externa) que escribe en `audit_logs`; no se registran contraseñas, tokens ni datos personales innecesarios.
+- **Auditoría:** crear, editar, desactivar, reactivar y eliminar registran un evento en `audit_logs` con `module_code='core'`, `auditable_type='branches'`, `auditable_id`, valores anteriores/nuevos sin secretos, IP y user-agent. Eventos: `branch.created`, `branch.updated`, `branch.deactivated`, `branch.activated`, `branch.deleted`. Se implementa un helper mínimo `app/Support/AuditLogger.php` (sin dependencia externa) que escribe en `audit_logs`; no se registran contraseñas, tokens ni datos personales innecesarios. **Las escrituras de auditoría forman parte de la misma transacción de la operación correspondiente; si la auditoría falla, la operación se revierte por completo (sin estado parcial).**
 - **Datos de prueba:** sintéticos (`SUC-A`, `SUC-B`, direcciones ficticias). Sin RUT ni datos reales.
 
 ## Aceptación (EARS)
@@ -64,6 +64,7 @@ responsable_implementacion: OpenCode conforme al harness vigente; owner + ChatGP
 - CUANDO el Admin Central elimina lógicamente una sucursal, EL SISTEMA DEBE aplicar `SoftDeletes` con confirmación explícita, conservar la historia y registrar auditoría; NO DEBE borrar físicamente la fila. El código queda reservado y no puede reutilizarse mientras exista la fila eliminada.
 - CUANDO la sucursal solicitada no existe, está eliminada lógicamente o está desactivada, EL SISTEMA DEBE responder 403/404 en rutas operativas, sin filtrar datos de otras instalaciones.
 - CUANDO dos creaciones compiten por el último cupo de `max_branches`, EL SISTEMA DEBE aceptar como máximo una y rechazar la otra sin estado parcial.
+- CUANDO una operación de creación, edición, desactivación, reactivación o eliminación lógica falla al registrar su auditoría, EL SISTEMA DEBE revertir la operación completa y no dejar cambios parciales.
 - CUANDO el Admin Central usa un dispositivo móvil, EL SISTEMA DEBE mostrar el listado y el formulario de forma usable, responsive y en español de Chile.
 
 ## Plan técnico mínimo por OpenCode
@@ -74,7 +75,7 @@ responsable_implementacion: OpenCode conforme al harness vigente; owner + ChatGP
 4. Impedir la modificación de `code` en `update` (ignorar o rechazar el cambio) y documentar la regla en la pantalla.
 5. Aplicar la verificación mínima de `license_states.max_branches` al crear/reactivar (0 = ilimitado) dentro de `DB::transaction` con `lockForUpdate()` sobre la fila de licencia; capturar la violación de unicidad de `code` y devolver error de validación. Sin implementar el `PlanGuard` completo.
 6. Ampliar `app/Http/Middleware/EnsureBranchAccess.php` para exigir `is_active=1` (además de existencia y no soft-deleted) en rutas operativas, también para usuario global.
-7. Registrar auditoría en `audit_logs` para create/update/deactivate/activate/destroy mediante `app/Support/AuditLogger.php`, con `old_values`/`new_values` filtrados y sin secretos.
+7. Registrar auditoría en `audit_logs` para create/update/deactivate/activate/destroy mediante `app/Support/AuditLogger.php`, con `old_values`/`new_values` filtrados y sin secretos, **dentro de la misma transacción de la operación; si la escritura de auditoría falla, la transacción se revierte**.
 8. Crear páginas Inertia/Vue responsive: `resources/js/Pages/Branches/Index.vue` y `resources/js/Pages/Branches/Form.vue` (o equivalente), en es-CL, con estados vacío/carga/error, confirmación de desactivación/eliminación (incluida la advertencia si es la última sucursal activa) y navegación de retorno al dashboard.
 9. Añadir el enlace de navegación solo cuando el usuario tenga `settings.manage`; la UI no es fuente de autorización.
 10. Pruebas de feature: CRUD feliz, validaciones, unicidad, inmutabilidad de código, 403 por permiso, límite de plan (secuencial), desactivación/reactivación, sucursal desactivada 403 en `branch.access`, soft delete, código reservado, auditoría y sucursal inexistente. Re-ejecutar la suite de AUTH-001 completa para detectar regresiones.
@@ -94,11 +95,11 @@ responsable_implementacion: OpenCode conforme al harness vigente; owner + ChatGP
 6. **Sin fila en `license_states`:** se trata como ilimitado en BRANCH-001; la validación completa de licencia queda para CORE-08 y el `PlanGuard` completo para CORE-07.
 7. **Límite de plan mínimo y atómico:** validar `license_states.max_branches` en crear/reactivar con transacción y `lockForUpdate()`; prueba secuencial obligatoria y concurrencia real contra MariaDB DEV como validación diferida.
 8. **Sucursal activa obligatoria en operaciones:** ampliar `EnsureBranchAccess` para exigir `is_active=1` además de existencia, también para usuario global. `/branches` no usa `branch.access`.
-9. **Auditoría básica:** usar `audit_logs` existente para los eventos del CRUD mediante un helper mínimo `app/Support/AuditLogger.php`.
+9. **Auditoría básica transaccional:** usar `audit_logs` existente para los eventos del CRUD mediante un helper mínimo `app/Support/AuditLogger.php`. La escritura de auditoría ocurre dentro de la misma transacción de la operación; si falla, toda la operación se revierte.
 
 ## Gates
 
-- [ ] tests: CRUD, validaciones, unicidad, inmutabilidad de código, 403 por permiso, límite de plan, desactivación/reactivación, sucursal desactivada 403 en `branch.access`, soft delete, código reservado, auditoría.
+- [ ] tests: CRUD, validaciones, unicidad, inmutabilidad de código, 403 por permiso, límite de plan, desactivación/reactivación, sucursal desactivada 403 en `branch.access`, soft delete, código reservado, auditoría, **auditoría transaccional con reversión ante fallo**.
 - [ ] regresión AUTH-001: suite completa verde tras el cambio de `EnsureBranchAccess`.
 - [ ] seguridad/permisos: RBAC server-side con `settings.manage`; sin permisos directos a usuarios; auditoría sin secretos; sin IDOR entre sucursales.
 - [ ] responsive/táctil (si UI): listado y formulario usables en móvil y desktop, es-CL.
@@ -116,5 +117,5 @@ responsable_implementacion: OpenCode conforme al harness vigente; owner + ChatGP
 ## Estado de funciones: implementado vs previsto
 
 - **Implementado y disponible como base:** tabla `branches` (DB-001), RBAC y middleware de permisos/sesión (AUTH-001), `config/modules.php` con `settings.manage`, `audit_logs` y `license_states.max_branches` en DB-001.
-- **Previsto en BRANCH-001 (DRAFT, sin implementar):** rutas, controlador, FormRequest, pantallas Vue/Inertia, verificación mínima de límite transaccional, ajuste de `EnsureBranchAccess` para exigir sucursal activa, auditoría del CRUD y pruebas de aceptación.
+- **En implementación en BRANCH-001 (APPROVED 2026-11-09):** rutas, controlador, FormRequest, pantallas Vue/Inertia, verificación mínima de límite transaccional, ajuste de `EnsureBranchAccess` para exigir sucursal activa, auditoría transaccional del CRUD y pruebas de aceptación.
 - **Diferido:** asignación de usuarios a sucursales, estaciones POS, caja, canales de cumplimiento, PlanGuard completo, restauración de eliminados y edición de código.

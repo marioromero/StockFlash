@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,7 +30,15 @@ class CheckPermission
             return redirect()->route('login');
         }
 
-        $branchId = $request->route('branch') ?? $request->input('branch_id') ?? $user->default_branch_id;
+        // `branch` puede llegar como modelo por Route Model Binding; se
+        // normaliza a su clave para consultar asignaciones por sucursal.
+        $routeBranch = $request->route('branch');
+
+        if ($routeBranch instanceof Model) {
+            $routeBranch = $routeBranch->getKey();
+        }
+
+        $branchId = $routeBranch ?? $request->input('branch_id') ?? $user->default_branch_id;
 
         $hasPermission = false;
 

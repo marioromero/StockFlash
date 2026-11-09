@@ -29,6 +29,7 @@ Propietarios de negocios, administradores, cajeros, vendedores y otros usuarios 
 |---------------|------|--------|--------|
 | Inicio y cierre de sesión | `general/acceso.md` | Transversal | Implementada (AUTH-001 APPROVED) |
 | Cambio de contraseña | `general/cambio-contrasena.md` | Transversal | Implementada (AUTH-001 APPROVED) |
+| Administración de sucursales | `modulos/sucursales/administracion-sucursales.md` | Administración interna (Control) | Implementada (BRANCH-001 APPROVED) |
 
 ## Estado de la documentación
 

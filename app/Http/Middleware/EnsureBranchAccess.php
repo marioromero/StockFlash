@@ -11,9 +11,10 @@ use Symfony\Component\HttpFoundation\Response;
  * Verifica que el usuario autenticado tenga acceso a la sucursal indicada.
  *
  * Regla de negocio (DB-001 / AUTH-001):
- * - La sucursal solicitada debe existir (no estar eliminada lógicamente) para
- *   cualquier usuario, incluido el global.
- * - Usuario global (global_role_id no nulo): acceso a todas las sucursales existentes.
+ * - La sucursal solicitada debe existir (no estar eliminada lógicamente) y
+ *   estar activa (is_active=1) para cualquier usuario, incluido el global.
+ * - Usuario global (global_role_id no nulo): acceso a todas las sucursales
+ *   existentes y activas.
  * - Usuario por sucursal: solo a las sucursales donde tiene fila en branch_user.
  * - Sin asignación: sin acceso a ninguna sucursal (excepto dashboard global).
  *
@@ -41,13 +42,25 @@ class EnsureBranchAccess
             abort(403, 'Sucursal no especificada.');
         }
 
-        // Si el identificador es numérico se busca por ID; si no, por código.
-        $sucursal = is_numeric($identifier)
-            ? \App\Models\Branch::whereKey($identifier)->first()
-            : \App\Models\Branch::where('code', $identifier)->first();
+        // Un identificador numérico se resuelve primero por ID y, si no existe,
+        // por código: los códigos de sucursal pueden ser puramente numéricos.
+        $sucursal = null;
+
+        if (is_numeric($identifier)) {
+            $sucursal = \App\Models\Branch::whereKey($identifier)->first();
+        }
+
+        if ($sucursal === null) {
+            $sucursal = \App\Models\Branch::where('code', $identifier)->first();
+        }
 
         if ($sucursal === null) {
             abort(403, 'Sucursal no encontrada.');
+        }
+
+        // La sucursal debe estar activa incluso para usuarios globales.
+        if (! $sucursal->is_active) {
+            abort(403, 'Sucursal desactivada.');
         }
 
         // La sucursal debe ser válida incluso para usuarios globales.

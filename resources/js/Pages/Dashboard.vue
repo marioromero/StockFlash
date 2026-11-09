@@ -18,19 +18,41 @@
                 <p class="sf-text">
                     Bienvenido al sistema StockFlash. Desde aquí puede acceder a los módulos disponibles según su rol y sucursal.
                 </p>
+                <nav class="sf-nav" aria-label="Accesos rápidos">
+                    <Link v-if="canManageBranches" href="/branches" class="sf-button sf-button-primary">
+                        Sucursales
+                    </Link>
+                    <Link href="/password/change" class="sf-button sf-button-secondary">
+                        Cambiar contraseña
+                    </Link>
+                </nav>
             </section>
         </main>
     </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
+import { Link, usePage } from '@inertiajs/vue3';
 import { router } from '@inertiajs/core';
+
+interface SharedPageProps {
+    [key: string]: unknown;
+    auth?: {
+        user?: { name?: string } | null;
+        permissions?: string[];
+    };
+}
 
 const props = defineProps<{
     user_name?: string;
 }>();
 
-const userName = props.user_name ?? 'Usuario';
+const page = usePage<SharedPageProps>();
+const userName = computed(() => page.props.auth?.user?.name ?? props.user_name ?? 'Usuario');
+const canManageBranches = computed(() =>
+    (page.props.auth?.permissions ?? []).includes('settings.manage')
+);
 
 async function logout(event: SubmitEvent) {
     event.preventDefault();
@@ -108,6 +130,42 @@ async function logout(event: SubmitEvent) {
     font-size: 0.875rem;
     color: #374151;
     line-height: 1.5;
+}
+
+.sf-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+}
+
+.sf-button {
+    display: inline-block;
+    padding: 0.55rem 1rem;
+    border: none;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.sf-button-primary {
+    background: #2563eb;
+    color: #ffffff;
+}
+
+.sf-button-primary:hover {
+    background: #1d4ed8;
+}
+
+.sf-button-secondary {
+    background: #e5e7eb;
+    color: #111827;
+}
+
+.sf-button-secondary:hover {
+    background: #d1d5db;
 }
 
 @media (max-width: 640px) {
