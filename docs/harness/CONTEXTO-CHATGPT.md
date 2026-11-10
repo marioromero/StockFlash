@@ -53,7 +53,7 @@ Si el propietario solicita «continuar StockFlash», «revisar lo que hizo OpenC
 
 **Mecánica:** cuando OC implemente una función visible nueva, debe emitir `GUIA_PENDIENTE_CHATGPT` con SHA, UI y evidencia. El propietario entrega ese resumen a ChatGPT; ChatGPT revisa código y escribe contenido. OC integra y verifica. Una nueva sesión retoma desde este archivo y la bitácora.
 
-**Actualización editorial pendiente de integrar:** ChatGPT preparó una revisión de `/docs/` explicando el nuevo botón «Ayuda» del Dashboard, y este archivo de continuidad, en una rama/PR documental separado a partir de `90254e5`. Verificar si ya está fusionado al consultar GitHub; nunca afirmar que está en `main` antes de comprobarlo.
+**Actualización editorial pendiente de integrar:** ChatGPT preparó una revisión de `/docs/` explicando el nuevo botón «Ayuda» del Dashboard, y este archivo de continuidad, en **PR #3** (`docs/chatgpt-actualiza-docs001-20261110`) a partir de `90254e5`: https://github.com/marioromero/StockFlash/pull/3. Verificar si ya está fusionado al consultar GitHub; nunca afirmar que está en `main` antes de comprobarlo.
 
 **Límite:** no crear guía de USERS-001 como funcionalidad existente mientras esté DRAFT.
 
