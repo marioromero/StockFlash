@@ -1,9 +1,10 @@
 # BRANCH-001 — Administración de sucursales (CRUD)
 
-status: APPROVED
+status: VERIFIED
 owner_approval: Aprobación expresa del propietario (2026-11-09): aprueba las nueve decisiones de esta propuesta y autoriza la implementación completa. Precisión adicional obligatoria: las escrituras de auditoría deben formar parte de la misma transacción de la operación correspondiente; si falla la auditoría, la operación debe revertirse por completo.
+verified_decision: Decisión externa del propietario (2026-11-10): BRANCH-001 **VERIFIED**, respaldada por CI remota completamente verde en `4f81457` (PHP, Node, smoke y contratos), gates `GATES_PASS` y QA independiente `APROBADO`. El cierre es documental; no re-ejecuta gates funcionales porque el código publicado no cambia.
 etapa: R3_CORE (CORE-05)
-dependencias: AUTH-001 (implementado y con QA APROBADO; VERIFIED pendiente de decisión externa), DB-001 (tabla `branches` y permisos sembrados), `config/modules.php`. Incluye un ajuste acotado a `EnsureBranchAccess` (exigir sucursal activa), con regresión de AUTH-001.
+dependencias: AUTH-001 (VERIFIED 2026-11-09), DB-001 (tabla `branches` y permisos sembrados), `config/modules.php`. Incluye un ajuste acotado a `EnsureBranchAccess` (exigir sucursal activa), con regresión de AUTH-001.
 responsable_implementacion: OpenCode conforme al harness vigente; owner + ChatGPT delimitan alcance y declaran VERIFIED.
 
 ## Qué / Por qué / No incluido
@@ -97,6 +98,16 @@ responsable_implementacion: OpenCode conforme al harness vigente; owner + ChatGP
 8. **Sucursal activa obligatoria en operaciones:** ampliar `EnsureBranchAccess` para exigir `is_active=1` además de existencia, también para usuario global. `/branches` no usa `branch.access`.
 9. **Auditoría básica transaccional:** usar `audit_logs` existente para los eventos del CRUD mediante un helper mínimo `app/Support/AuditLogger.php`. La escritura de auditoría ocurre dentro de la misma transacción de la operación; si falla, toda la operación se revierte.
 
+## Cierre VERIFIED (2026-11-10)
+
+- **Decisión externa:** el propietario confirmó BRANCH-001 **VERIFIED** tras revisión externa de ChatGPT.
+- **Código verificado:** `4f81457fae3c3549fe598a71333b211de4015f79` en `origin/main` (incluye la corrección de Inertia `js/Pages`); sin cambios de código en este cierre.
+- **CI remota:** PHP, Node, smoke y contratos **SUCCESS** sobre `4f81457` (confirmado externamente). El run fallido previo fue `42688151886` en `eefd2ff`.
+- **Gates:** `docs/work/BRANCH-001-VERIFY-20261109-194843.md` → `GATES_PASS` (BN1–BN10).
+- **QA independiente:** `docs/work/BRANCH-001-REVIEW-20261109-195125.md` → `APROBADO` (0 bloqueantes) sobre el estado exacto publicado.
+- **Alcance del cierre:** exclusivamente documental (estado, evidencias y registro). No declara deploy, staging ni migraciones.
+- **Artefacto:** `docs/work/BRANCH-001-CLOSURE-20261110.md`.
+
 ## Gates
 
 - [ ] tests: CRUD, validaciones, unicidad, inmutabilidad de código, 403 por permiso, límite de plan, desactivación/reactivación, sucursal desactivada 403 en `branch.access`, soft delete, código reservado, auditoría, **auditoría transaccional con reversión ante fallo**.
@@ -117,5 +128,5 @@ responsable_implementacion: OpenCode conforme al harness vigente; owner + ChatGP
 ## Estado de funciones: implementado vs previsto
 
 - **Implementado y disponible como base:** tabla `branches` (DB-001), RBAC y middleware de permisos/sesión (AUTH-001), `config/modules.php` con `settings.manage`, `audit_logs` y `license_states.max_branches` en DB-001.
-- **En implementación en BRANCH-001 (APPROVED 2026-11-09):** rutas, controlador, FormRequest, pantallas Vue/Inertia, verificación mínima de límite transaccional, ajuste de `EnsureBranchAccess` para exigir sucursal activa, auditoría transaccional del CRUD y pruebas de aceptación.
-- **Diferido:** asignación de usuarios a sucursales, estaciones POS, caja, canales de cumplimiento, PlanGuard completo, restauración de eliminados y edición de código.
+- **Implementado y publicado:** rutas, controlador, FormRequest, pantallas Vue/Inertia, verificación mínima de límite transaccional, ajuste de `EnsureBranchAccess` para exigir sucursal activa, auditoría transaccional del CRUD y pruebas de aceptación. Publicado en `eefd2ff` y corregido en `4f81457` (case-sensitivity Inertia). **VERIFIED (2026-11-10).**
+- **Diferido:** asignación de usuarios a sucursales (se aborda en USERS-001), estaciones POS, caja, canales de cumplimiento, PlanGuard completo, restauración de eliminados y edición de código.
