@@ -40,3 +40,7 @@ Esto permite continuidad reproducible **cuando el propietario inicia el encargo*
 - Sin datos personales, contraseñas reales, API keys ni tokens; solo ejemplos genéricos.
 - Mantener una guía consolidada y sin duplicaciones; revisar coherencia con funciones realmente verificadas.
 - Gates técnicos pueden comprobar disponibilidad y estructura; nunca sustituir el criterio editorial de ChatGPT por generación de texto automática.
+
+## Archivo de continuidad exclusivo para ChatGPT
+
+`docs/harness/CONTEXTO-CHATGPT.md` es el punto de reentrada de cualquier nueva sesión de ChatGPT y mantiene el estado funcional, decisiones y próximos pasos. **ChatGPT es el único editor de ese contexto** y lo revisa al recibir cada cierre significativo de OpenCode; OpenCode solo lo consulta. La bitácora `docs/work/GUIA-HTML-ESTADO.md` es distinta: OpenCode sí puede actualizar metadatos de cobertura tras integrar documentación redactada por ChatGPT.
