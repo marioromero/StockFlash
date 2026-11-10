@@ -22,3 +22,5 @@ Coordinar Feature Packet $ARGUMENTS con el agente `stockflash-orchestrator`:
 Respetar permisos `deny` administrativos con bloqueo + parche. Autorización del propietario 2026-10-16: sin aprobaciones `ask`; ejecutar directo.
 
 **Higiene de permisos:** priorizar herramientas nativas de archivo y comandos únicos; evitar pipelines PowerShell que disparan aprobaciones por subcomando. Checkpoints mediante edición permitida, nunca borrado destructivo. No invocar auto-approve con credenciales o secretos accesibles.
+
+**Handoff de manual HTML (automático al final del ciclo):** consultar `docs/harness/GUIA-HTML-USUARIO.md` y `docs/work/GUIA-HTML-ESTADO.md`. Al terminar de implementar/publicar una feature con cambios visibles al usuario, comprobar cobertura de `public/docs/index.html`. Si falta contenido redactado por ChatGPT, incluir `GUIA_PENDIENTE_CHATGPT` en el cierre con SHA, nuevas pantallas/campos y referencias para el propietario. OpenCode NO genera los textos del manual. No detener la publicación de código por depender de un mensaje humano a ChatGPT.
