@@ -423,7 +423,7 @@ GATES_BY_PACKET: dict[str, list[dict]] = {
     ],
     "ROADMAP-001": [
         {"id": "RM1-packet-approved-activo", "kind": "shell",
-         "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\nfe=(R/'docs/work/features/ROADMAP-001.md').read_text(encoding='utf-8')\ncu=(R/'docs/work/CURRENT.md').read_text(encoding='utf-8')\nok=('status: APPROVED' in fe and 'ROADMAP-001' in cu)\nsys.exit(0 if ok else 1)"],
+         "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\nfe=(R/'docs/work/features/ROADMAP-001.md').read_text(encoding='utf-8')\ncu=(R/'docs/work/CURRENT.md').read_text(encoding='utf-8')\nok=(('status: APPROVED' in fe or 'status: VERIFIED' in fe) and 'ROADMAP-001' in cu)\nsys.exit(0 if ok else 1)"],
          "mandatory": True, "timeout_s": 60},
         {"id": "RM2-archivos-pr3-presentes", "kind": "shell",
          "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\nreq=['resources/roadmap/index.html','docs/harness/ROADMAP-HTML-PROYECTO.md','docs/work/ROADMAP-HTML-ESTADO.md']\nok=all((R/r).exists() for r in req) and not (R/'public/roadmap/index.html').exists()\nsys.exit(0 if ok else 1)"],
