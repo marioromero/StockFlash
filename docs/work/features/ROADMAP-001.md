@@ -1,9 +1,10 @@
 # ROADMAP-001 — Ruta administrativa para el roadmap HTML del propietario
 
-status: APPROVED
+status: VERIFIED
 owner_approval: Decisión expresa del propietario (2026-11-10): autoriza la integración del PR #3 y la implementación de una ruta `/roadmap` restringida a administradores, con enlace «Avance del proyecto» en Dashboard, verificación, QA y publicación. ChatGPT mantiene la autoría exclusiva de `resources/roadmap/index.html` y `CONTEXTO-CHATGPT.md`; OpenCode no los redacta ni modifica.
+verified_decision: Decisión externa del propietario (2026-11-10): ROADMAP-001 **VERIFIED**, respaldada por implementación en `a9c19d415b0a6fff0c16294c5dca9bd84e37cb41`, gates `GATES_PASS` (RM1–RM15), QA independiente `APROBADO` y CI remota SUCCESS verificada externamente por ChatGPT.
 etapa: HARNESS-DOCS / ROADMAP
-dependencias: PR #3 (`refs/pull/3/head` `07eb72ee8432e84f8aa8cd6fbf5caeb66fdf4829`), `main` `3fde69148fa8306eaa2e5a9d2da57ae7450c676b`, DOCS-001 VERIFIED (2026-11-10), AUTH-001 VERIFIED, BRANCH-001 VERIFIED, USERS-001 DRAFT intacto.
+dependencias: PR #3 (`refs/pull/3/head` `07eb72ee8432e84f8aa8cd6fbf5caeb66fdf4829`), PR #4 (`refs/pull/4/head` `6601a2a3cf230581f1fe733d1ea57d2060eb39ab`), `main` `a9c19d415b0a6fff0c16294c5dca9bd84e37cb41`, DOCS-001 VERIFIED (2026-11-10), AUTH-001 VERIFIED, BRANCH-001 VERIFIED, USERS-001 DRAFT intacto.
 
 ## Qué / Por qué / No incluido
 
@@ -76,8 +77,20 @@ OpenCode no modifica los textos redactados ni el contexto de ChatGPT. Solo actua
 - [ ] reporte `sf_verify` con estado `ROADMAP_*` y `GUIA_*`.
 - [ ] reviewer independiente `APROBADO` sobre el estado exacto.
 
+## Cierre VERIFIED (2026-11-10)
+
+- **Decisión externa:** el propietario confirmó ROADMAP-001 **VERIFIED**.
+- **Implementación:** `a9c19d415b0a6fff0c16294c5dca9bd84e37cb41` en `origin/main`; sin cambios de código en este cierre.
+- **Actualización editorial integrada:** PR #4 (`6601a2a`) — manual con «Avance del proyecto», roadmap con DOCS-001 VERIFIED y referencia `a9c19d4`, contexto actualizado. Integración selectiva, sin fusionar el PR.
+- **Gates:** `docs/work/ROADMAP-001-VERIFY-20261110-194620.md` → `GATES_PASS` (RM1–RM15).
+- **QA independiente:** `docs/work/ROADMAP-001-DOCS-REVIEW-20261110-2.md` → `APROBADO` (0 bloqueantes); ronda 1 `CAMBIOS NECESARIOS` corregida.
+- **CI remota:** PHP/Node/smoke SUCCESS (run `42915292666`) y contratos SUCCESS (run `42915292580`) sobre `a9c19d4`, verificados externamente por ChatGPT.
+- **Pendiente de autoría ChatGPT:** actualizar `resources/roadmap/index.html` y `docs/harness/CONTEXTO-CHATGPT.md` para reflejar ROADMAP-001 VERIFIED y el gate vigente (`194620`). El manual ya no tiene pendientes (`GUIA_ACTUALIZADA`); el roadmap queda `ROADMAP_PENDIENTE_CHATGPT`.
+- **Alcance del cierre:** exclusivamente documental. No declara deploy, staging ni migraciones.
+- **Artefacto:** `docs/work/ROADMAP-001-CLOSURE-20261110.md`.
+
 ## Estado de funciones
 
 - **Base:** AUTH-001, BRANCH-001 y DOCS-001 VERIFIED; USERS-001 DRAFT; manual `/docs/`, Dashboard con Ayuda y automatización `GUIA_*`.
 - **Esta integración:** roadmap HTML de ChatGPT, protocolo y bitácora, ruta `/roadmap` protegida, botón «Avance del proyecto», pruebas, smoke de CI y automatización `ROADMAP_*`.
-- **Pendiente de autoría ChatGPT:** actualizar el HTML del roadmap (DOCS-001 ya VERIFIED) y la referencia al botón «Avance del proyecto» en el manual/contexto. OpenCode no los redacta.
+- **Pendiente de autoría ChatGPT:** actualizar `resources/roadmap/index.html` y `docs/harness/CONTEXTO-CHATGPT.md` para reflejar ROADMAP-001 VERIFIED y el gate vigente `194620`. El manual ya documenta «Avance del proyecto». OpenCode no redacta ni modifica esos contenidos.

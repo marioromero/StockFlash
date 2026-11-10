@@ -9,13 +9,12 @@ guide_branch: `docs/guia-usuario-interactiva-20261110`
 guide_pr: https://github.com/marioromero/StockFlash/pull/2
 guide_status: INTEGRADA_EN_MAIN (2026-11-10)
 guide_content_last_written: 2026-11-10
-covered_features: AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED (2026-11-10)
-latest_covered_code_sha: `90254e59bf61bc0252a579c076886fc500eb0119` (DOCS-001 publicado; AUTH/BRANCH previos)
+covered_features: AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED (2026-11-10); ROADMAP-001 VERIFIED (2026-11-10)
+latest_covered_code_sha: `a9c19d415b0a6fff0c16294c5dca9bd84e37cb41` (ROADMAP-001 publicado; DOCS/AUTH/BRANCH previos)
 next_feature: USERS-001 DRAFT (NO documentar como disponible)
-last_guide_integration_sha: `07eb72ee8432e84f8aa8cd6fbf5caeb66fdf4829` (head del PR #3; actualización de Ayuda integrada en main)
+last_guide_integration_sha: `6601a2a3cf230581f1fe733d1ea57d2060eb39ab` (head del PR #4; explicación de «Avance del proyecto» integrada)
 last_guide_integration_date: 2026-11-10
-pending_docs: Dashboard «Avance del proyecto» → `/roadmap` (ChatGPT debe añadir la referencia en «Conocer el panel principal»). El contexto de continuidad sigue siendo mantenido exclusivamente por ChatGPT.
-pending_since: 2026-11-10
+pending_docs: NINGUNO
 
 ## Cómo mantener este archivo
 - OpenCode puede actualizar solamente los metadatos y el registro de pendientes aquí, no los textos para usuarios en `public/docs/index.html`.
