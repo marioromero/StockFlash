@@ -17,6 +17,7 @@ Si el propietario solicita «continuar StockFlash», «revisar lo que hizo OpenC
 6. Si la revisión incluye una funcionalidad visible nueva o modificada, actualizar como autor exclusivo el contenido del manual `public/docs/index.html`, o preparar una rama/PR con la modificación hasta que el harness la integre. Comprobar nombres de campos y pantallas reales, no inventarlos.
 7. Para cambios en el contexto, preferir un commit documental acotado solo a este archivo, con control del SHA previo y sin sobrescribir trabajo paralelo. Si el flujo de Git disponible o el protocolo vigente exige PR, usar PR y dejar identificada la revisión pendiente.
 8. No hay comunicación automática entre OpenCode y este ChatGPT. El propietario inicia cada revisión pegando el cierre de OC, y puede abrir otra sesión con la instrucción «Lee el contexto de StockFlash en GitHub y continúa». No prometer trabajos sin una nueva interacción.
+9. Revisar también el roadmap HTML del propietario (`resources/roadmap/index.html`) y su protocolo. Cuando los hitos reales, las funcionalidades listas o el camino a R7 cambien, actualizarlo **solo desde ChatGPT**, sin plazos ni porcentajes inventados. OpenCode no edita ese archivo.
 
 **Idea central:** este archivo es un índice de continuidad y decisiones, no sustituye la fuente de verdad (el repositorio, Feature Packets y código).
 
@@ -57,10 +58,20 @@ Si el propietario solicita «continuar StockFlash», «revisar lo que hizo OpenC
 
 **Límite:** no crear guía de USERS-001 como funcionalidad existente mientras esté DRAFT.
 
+## 4B. ROADMAP HTML DEL PROPIETARIO — AUTORÍA EXCLUSIVA CHATGPT
+
+**Decisión expresa (2026-11-10):** ChatGPT redacta y mantiene por sí solo la página visual de progreso y sus estados. Archivo canónico: `resources/roadmap/index.html`, fuera del directorio público. URL prevista tras integración: **`/roadmap`**, protegida para usuario autenticado con `settings.manage` (Admin Central).
+
+**Fuentes de avance:** `docs/harness/ROADMAP-STOCKFLASH.md`, `docs/work/CURRENT.md`, Feature Packets, QA/gates y CI verificadas. Refleja R0–R10, capacidades realmente terminadas, pendientes para comercializar y versiones posteriores. No asigna fechas ni porcentajes arbitrarios.
+
+**Estado actual al corte 2026-11-10:** primera versión HTML redactada por ChatGPT en el **PR #3** (https://github.com/marioromero/StockFlash/pull/3), pendiente de integración/QA por OpenCode. Sitúa la etapa actual en R3 Core; BOOT/CI/AUTH/BRANCH verificados; DOCS-001 implementado/publicado con CI verde pero pendiente declaración formal VERIFIED; USERS-001 DRAFT, no implementado. **Primera versión comercializable:** R7 (POS + Bodega sin DTE integrado), después de completar R4 Bodega, R5 Control comercial/licencias y R6 POS, más controles R7. Posteriores: R8 SyncWP, R9 Fiscal, R10 Compras/Analítica.
+
+**Continuidad:** `docs/harness/ROADMAP-HTML-PROYECTO.md` contiene reglas obligatorias de autoría; `docs/work/ROADMAP-HTML-ESTADO.md` es una bitácora técnica que OpenCode puede modificar (no el HTML). Tras cada feature relevante OpenCode informa `ROADMAP_PENDIENTE_CHATGPT` con evidencia; el propietario lo traslada a ChatGPT; ChatGPT revisa y redacta actualización si corresponde. La nueva sesión de ChatGPT debe comprobar ambos archivos antes de intervenir.
+
 ## 5. TRABAJO ABIERTO Y SIGUIENTE PASO
 
 1. **DOCS-001:** código publicado en `90254e5` y CI verificada en GitHub; queda pendiente solo la **declaración externa VERIFIED** del propietario y su registro documental mediante operación B. ChatGPT ya verificó gates, QA y CI.
-2. **Actualizar guía y contexto por ChatGPT:** integrar la revisión documental redactada por ChatGPT (botón Ayuda y este contexto) desde PR separado, utilizando gates/QA pertinentes. No dejar que OpenCode reescriba explicación de usuario ni este contexto.
+2. **Integrar material ChatGPT del PR #3:** nueva descripción del botón Ayuda en manual, contexto de continuidad actualizado y **roadmap HTML administrativo** con protocolo de autoría exclusiva y bitácora. OpenCode añade ruta autenticada `/roadmap` y enlace admin del Dashboard, ejecuta QA/gates y publica. No puede reescribir ninguno de los HTML ni este contexto.
 3. **USERS-001:** QA documental aprobado, DRAFT pendiente de aprobación expresa del propietario de las 16 decisiones. No comenzar su implementación por inercia.
 4. En cada nuevo cierre de OpenCode, ChatGPT revisa evidencia actual y, en la misma interacción, mantiene este contexto y el HTML de guía cuando corresponda.
 
@@ -70,6 +81,7 @@ En cada cierre revisado de OC, ChatGPT debe:
 - Actualizar «Última revisión», «Estado de referencia observado» y estados afectados en §3.
 - Registrar feature ID, SHA, QA, gates y CI que se hayan verificado, y lo que siga pendiente.
 - Actualizar §4 con cobertura del manual, PR/commit correspondiente, sin afirmar integración no verificada.
+- Actualizar §4B con cobertura y cambios del roadmap HTML, diferenciando DRAFT, VERIFIED y versión comercial; sin fechas ni porcentajes inventados.
 - Sustituir el siguiente paso de §5 y mantener un único estado actual, evitando que la sección se vuelva una acumulación de logs.
 - No insertar secretos ni información personal.
 
