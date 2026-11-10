@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="es-CL">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="description" content="Avance de StockFlash: hitos, funcionalidades terminadas y ruta hacia la primera versión comercial.">
+<title>Avance del proyecto | StockFlash</title>
+<style>
+:root{--ink:#303846;--blue:#0856ff;--teal:#009d99;--muted:#637287;--line:#e0e6f0;--bg:#f5f7fb;--paper:#fff;--good:#127c5a;--warn:#96620a;--future:#697588}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}a{color:#084cce;text-decoration:none}a:hover{text-decoration:underline}button{font:inherit;cursor:pointer}button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #03c6be;outline-offset:3px}
+.wrap{max-width:1100px;margin:auto;padding:0 25px 65px}.header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;padding:23px 0 18px;border-bottom:1px solid var(--line)}.logo{font-weight:850;font-size:23px;letter-spacing:-.7px;color:#303846}.logo span{color:var(--blue)}.header nav{display:flex;gap:18px;font-size:13px;font-weight:600}.header nav a{color:#566376}
+.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.12em;font-weight:800;color:var(--teal);margin:29px 0 7px}.hero h1{font-size:clamp(29px,4.4vw,47px);line-height:1.13;letter-spacing:-.045em;margin:0 0 12px}.hero p{max-width:790px;color:#536177;font-size:16px;margin:0 0 16px}.meta{color:#69788a;font-size:12px;margin:13px 0 0}
+.summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:25px 0}.metric{padding:18px;border:1px solid var(--line);background:white;border-radius:13px;box-shadow:0 3px 15px #20304007}.metric .label{font-size:12px;color:#607084;font-weight:700}.metric strong{font-size:19px;display:block;line-height:1.3;margin:8px 0 6px;letter-spacing:-.02em}.metric p{font-size:13px;margin:0;color:#68768a}
+.notice{border-left:4px solid #0856ff;background:#ecf2ff;padding:13px 17px;border-radius:9px;color:#334866;font-size:14px;margin:22px 0}.notice strong{color:#173f9c}
+.section-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-top:34px}.section-head h2{font-size:23px;letter-spacing:-.02em;margin:0}.sub{color:#68768a;font-size:13px;margin:3px 0 16px}
+.launch-track{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;margin:18px 0 25px}.checkpoint{min-height:108px;background:white;border:1px solid var(--line);border-top:4px solid #c5cfde;border-radius:10px;padding:13px}.checkpoint.now{border-top-color:var(--blue);background:#f2f6ff}.checkpoint.release{border-top-color:var(--teal);background:#f0faf9}.checkpoint small{font-weight:800;color:#6c798b;display:block;font-size:11px}.checkpoint strong{font-size:14px;display:block;margin:4px 0}.checkpoint span{font-size:12px;color:#5d6e82}
+.legend{display:flex;flex-wrap:wrap;gap:9px;margin:8px 0 16px}.status{border-radius:100px;padding:3px 9px;font-size:11px;font-weight:750;white-space:nowrap;display:inline-block}.done{background:#e5f7ef;color:#116a50}.partial{background:#eaf0ff;color:#194da9}.draft{background:#fff3d9;color:#905b00}.todo{background:#eef1f5;color:#586777}.future{background:#f0edfb;color:#68549e}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.block{padding:15px 17px;background:#fff;border-radius:11px;border:1px solid var(--line)}.block h3{font-size:15px;line-height:1.4;margin:7px 0 4px}.block p{font-size:13px;color:#5d6c7f;margin:0}.block .prefix{font-size:11px;font-weight:800;letter-spacing:.06em;color:#66778b}
+.timeline{position:relative;margin:15px 0 0;padding-left:39px}.timeline:before{content:"";position:absolute;top:16px;bottom:18px;left:14px;width:2px;background:linear-gradient(#78cbbb 0%,#b7cafa 25%,#d6dce6 58%,#d6dce6 100%)}.item{position:relative;margin:0 0 11px}.item:before{content:"";position:absolute;left:-32px;top:19px;width:15px;height:15px;background:#c9d1dd;border:3px solid var(--bg);border-radius:50%;box-shadow:0 0 0 1px #ced7e3}.item.completed:before{background:var(--good)}.item.active:before{background:var(--blue);box-shadow:0 0 0 3px #dbe7ff}.item.release:before{background:var(--teal)}.item details{border-radius:11px;background:white;border:1px solid var(--line);overflow:hidden}.item.active details{border-color:#9ebcf8}.item.release details{border-color:#8acbc9}.item summary{padding:15px 16px;display:flex;align-items:center;gap:11px;cursor:pointer;list-style:none}.item summary::-webkit-details-marker{display:none}.item summary:after{content:"⌄";margin-left:auto;color:#7b8899}.item details[open] summary:after{content:"⌃"}.item .stage{font-weight:800;font-size:12px;color:#526074;min-width:27px}.item .name{font-weight:760;flex:1;font-size:15px}.item .inside{padding:0 18px 15px 55px;color:#576579;font-size:13px}.item .inside p{margin:0 0 8px}.item .inside ul{margin:7px 0 0;padding-left:18px}.item .inside li{margin:4px 0}.item .inside strong{color:#303846}
+.version{display:grid;grid-template-columns:120px 1fr;gap:15px;border:1px solid var(--line);background:white;padding:16px;margin:10px 0;border-radius:11px}.version .v-label{color:#0f7776;font-weight:800;font-size:13px}.version h3{margin:0 0 4px;font-size:15px}.version p{margin:0;font-size:13px;color:#607085}.footer{border-top:1px solid var(--line);font-size:12px;color:#68778a;margin-top:35px;padding-top:18px}.footer p{margin:5px 0}.buttons{display:flex;gap:8px}.buttons button{padding:6px 11px;border-radius:8px;border:1px solid #d3deea;background:white;color:#43536c;font-size:12px;font-weight:700}.buttons button:hover{border-color:#0856ff}
+@media(max-width:850px){.launch-track{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:640px){.wrap{padding:0 15px 35px}.summary{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.launch-track{grid-template-columns:repeat(2,minmax(0,1fr))}.header nav{gap:13px}.item summary{flex-wrap:wrap;gap:7px}.item .inside{padding:0 14px 13px 15px}.item .name{min-width:55%}.version{grid-template-columns:1fr;gap:5px}.section-head{align-items:center}.section-head h2{font-size:20px}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="header">
+<a class="logo" href="/dashboard" aria-label="StockFlash, volver al Dashboard">Stock<span>Flash</span></a>
+<nav aria-label="Navegación"><a href="#lanzamiento">Para comercializar</a><a href="#hitos">Hitos</a><a href="#versiones">Versiones</a><a href="/docs/">Manual</a></nav>
+</header>
+<main>
+<section class="hero" aria-labelledby="main-title">
+<div class="eyebrow">Estado del proyecto · revisión ChatGPT</div>
+<h1 id="main-title">Del desarrollo a la primera venta</h1>
+<p>Esta es la ruta de StockFlash. Muestra qué está comprobado, qué estamos preparando y qué falta para tener un producto básico que podamos ofrecer comercialmente.</p>
+<div class="summary">
+<div class="metric"><div class="label">Dónde estamos</div><strong>R3 · Núcleo administrativo</strong><p>Acceso y sucursales terminados. Usuarios aún en propuesta.</p></div>
+<div class="metric"><div class="label">Versión comercializable</div><strong>Todavía no</strong><p>Faltan inventario, POS, licenciamiento y validación de lanzamiento.</p></div>
+<div class="metric"><div class="label">Primer lanzamiento previsto</div><strong>R7 · POS + Bodega</strong><p>Sin DTE integrado; la documentación tributaria será externa.</p></div>
+</div>
+<p class="meta">Corte de información: 10 de noviembre de 2026 · Código de referencia: <code>90254e5</code> · Sin fechas comprometidas ni porcentajes de esfuerzo.</p>
+<div class="notice"><strong>Lo importante:</strong> ya funciona la base del sistema, pero una pantalla lista no significa que exista una venta completa. El primer producto vendible requiere terminar los flujos de negocio y validarlos de principio a fin.</div>
+</section>
+<section id="lanzamiento" aria-labelledby="launch-title">
+<div class="section-head"><h2 id="launch-title">¿Qué falta para poder venderlo?</h2></div>
+<p class="sub">Los bloques que deben quedar resueltos antes de la primera versión comercializable (R7). Sus estados no equivalen a porcentajes de trabajo.</p>
+<div class="launch-track" aria-label="Ruta hacia la versión comercial">
+<div class="checkpoint now"><small>R3 · AHORA</small><strong>Administración</strong><span>En desarrollo de funcionalidades</span></div>
+<div class="checkpoint"><small>R4</small><strong>Bodega</strong><span>Pendiente</span></div>
+<div class="checkpoint"><small>R5</small><strong>Licencias</strong><span>Pendiente; puede avanzar en paralelo</span></div>
+<div class="checkpoint"><small>R6</small><strong>POS y caja</strong><span>Pendiente</span></div>
+<div class="checkpoint release"><small>R7 · META</small><strong>Primera versión vendible</strong><span>Piloto y controles de salida</span></div>
+</div>
+<div class="grid">
+<div class="block"><span class="status partial">Parcial</span><h3>1. Núcleo y usuarios</h3><p>Login, permisos y sucursales listos. Faltan usuarios administrables, instalación/configuración y otros componentes del núcleo.</p></div>
+<div class="block"><span class="status todo">Pendiente</span><h3>2. Catálogo e inventario</h3><p>Productos y variantes; stock, movimientos, ajustes, traspasos y trazabilidad real.</p></div>
+<div class="block"><span class="status todo">Pendiente</span><h3>3. Punto de venta</h3><p>Ventas, pagos combinados, caja, devoluciones y ventas en pausa por estación, conectadas al stock.</p></div>
+<div class="block"><span class="status todo">Pendiente</span><h3>4. Licencias y planes</h3><p>Control comercial de instalaciones, planes, suscripciones, demo y acceso según lo contratado.</p></div>
+<div class="block"><span class="status todo">Pendiente</span><h3>5. Piloto y salida segura</h3><p>Pruebas integrales, respaldos y restauración, privacidad, seguridad y uso real antes de comercializar.</p></div>
+<div class="block"><span class="status done">Ya disponible</span><h3>La base sobre la que construiremos</h3><p>Proyecto Laravel/Vue, pruebas automáticas y CI, login, roles/permisos base, gestión de sucursales y ayuda HTML.</p></div>
+</div>
+</section>
+<section id="hitos" aria-labelledby="timeline-title">
+<div class="section-head"><h2 id="timeline-title">Línea de avances</h2><div class="buttons"><button type="button" id="expand" aria-label="Expandir todos los hitos">Expandir</button><button type="button" id="collapse" aria-label="Contraer todos los hitos">Contraer</button></div></div>
+<p class="sub">Abre un hito para ver qué incluye. Los estados corresponden a entregables comprobados, no a la cantidad de código escrita.</p>
+<div class="legend" aria-label="Significado de estados"><span class="status done">Verificado</span><span class="status partial">Parcial / en curso</span><span class="status draft">Propuesta</span><span class="status todo">Pendiente</span><span class="status future">Evolución</span></div>
+<div class="timeline">
+<div class="item active"><details class="step"><summary><span class="stage">R0</span><span class="name">Especificaciones y decisiones</span><span class="status partial">En revisión</span></summary><div class="inside"><p>Existe una especificación v2.2 y un conjunto de requisitos trazables. Hay decisiones ADR pendientes, así que no damos los contratos completos por cerrados.</p></div></details></div>
+<div class="item completed"><details class="step"><summary><span class="stage">R1</span><span class="name">Base tecnológica</span><span class="status done">Verificado</span></summary><div class="inside"><p><strong>BOOT-001:</strong> Laravel, Vue, Inertia y TypeScript disponibles; estructura y pruebas iniciales listas.</p></div></details></div>
+<div class="item active"><details class="step"><summary><span class="stage">R2</span><span class="name">Pruebas automáticas y entorno de pruebas</span><span class="status partial">Parcial</span></summary><div class="inside"><p><strong>CI-001 verificado:</strong> PHP, Node y contratos en GitHub Actions. El despliegue a staging no forma parte del flujo actual de desarrollo local y no se cuenta como completado.</p></div></details></div>
+<div class="item active"><details class="step" open><summary><span class="stage">R3</span><span class="name">Núcleo: identidad, sucursales, usuarios y configuración</span><span class="status partial">Etapa actual</span></summary><div class="inside"><p>La administración básica está tomando forma:</p><ul><li><strong>AUTH-001:</strong> login, sesiones y permisos — VERIFICADO.</li><li><strong>BRANCH-001:</strong> administración de sucursales — VERIFICADO.</li><li><strong>DOCS-001:</strong> guía de usuario y continuidad ChatGPT — publicada, QA y CI aprobados; cierre VERIFIED externo aún pendiente.</li><li><strong>USERS-001:</strong> administración de usuarios — DRAFT con QA documental aprobado; no implementada ni autorizada todavía.</li><li>Instalador, licencias técnicas y resto del núcleo: pendientes de sus etapas respectivas.</li></ul></div></details></div>
+<div class="item"><details class="step"><summary><span class="stage">R4</span><span class="name">Bodega: catálogo y existencias reales</span><span class="status todo">Pendiente</span></summary><div class="inside"><p>Productos, variantes, kardex, stock, ajustes, traspasos y controles de inventario. Este hito es indispensable para el primer lanzamiento.</p></div></details></div>
+<div class="item"><details class="step"><summary><span class="stage">R5</span><span class="name">Control comercial y licencias</span><span class="status todo">Pendiente</span></summary><div class="inside"><p>Aplicación de control de clientes comerciales, planes, licencias, suscripciones y modalidades demo/gratis. Puede desarrollarse en paralelo cuando estén resueltos sus contratos.</p></div></details></div>
+<div class="item"><details class="step"><summary><span class="stage">R6</span><span class="name">POS sin emisión DTE integrada</span><span class="status todo">Pendiente</span></summary><div class="inside"><p>Venta de mostrador, tickets, caja, cobros mixtos, devoluciones y ventas pausadas. El registro fiscal externo no equivale a emisión tributaria integrada.</p></div></details></div>
+<div class="item release"><details class="step"><summary><span class="stage">R7</span><span class="name">Piloto y primera versión comercializable</span><span class="status todo">Meta pendiente</span></summary><div class="inside"><p><strong>El primer punto en que StockFlash podría ofrecerse como producto:</strong> POS y Bodega probados, control de suscripciones, respaldos/restore, privacidad, seguridad y operación validada. No basta con que funcione una demo local.</p></div></details></div>
+<div class="item"><details class="step"><summary><span class="stage">R8</span><span class="name">SyncWP: WooCommerce</span><span class="status future">Versión posterior</span></summary><div class="inside"><p>Sincronización de catálogo, stock y pedidos, manejo de webhooks, fallos y reconciliación.</p></div></details></div>
+<div class="item"><details class="step"><summary><span class="stage">R9</span><span class="name">Fiscal: DTE integrado</span><span class="status future">Versión posterior</span></summary><div class="inside"><p>Emisión fiscal integrada con adaptador autorizado, documentos tributarios y notas de crédito, tras validaciones legales y técnicas propias.</p></div></details></div>
+<div class="item"><details class="step"><summary><span class="stage">R10</span><span class="name">Compras y Analítica</span><span class="status future">Versión posterior</span></summary><div class="inside"><p>Evolución de compras y reportes/analítica como productos y capacidades independientes. Su alcance se definirá en sus propias etapas.</p></div></details></div>
+</div>
+</section>
+<section id="versiones" aria-labelledby="versions-title">
+<div class="section-head"><h2 id="versions-title">Versiones previstas</h2></div>
+<p class="sub">Puntos de producto, no fechas de entrega. Cada versión depende de sus verificaciones.</p>
+<div class="version"><span class="v-label">Demo / alfa</span><div><h3>Primera demostración operativa</h3><p>Cuando los flujos esenciales de POS y Bodega estén integrados y puedan demostrarse. Una demo funcional no autoriza por sí sola a vender el producto.</p></div></div>
+<div class="version"><span class="v-label">Primera comercial</span><div><h3>R7 · POS + Bodega sin DTE integrado</h3><p>Versión básica vendible después del piloto y los controles de seguridad, respaldos, suscripción y operación.</p></div></div>
+<div class="version"><span class="v-label">Evolución 1</span><div><h3>R8 · SyncWP</h3><p>Integración con WooCommerce para ampliar los canales de venta.</p></div></div>
+<div class="version"><span class="v-label">Evolución 2</span><div><h3>R9 · Fiscal</h3><p>Documentos tributarios electrónicos integrados, sujetos a los requisitos y autorizaciones aplicables.</p></div></div>
+<div class="version"><span class="v-label">Evolución 3</span><div><h3>R10 · Compras / Analítica</h3><p>Ampliaciones independientes de compras y reportes.</p></div></div>
+</section>
+</main>
+<footer class="footer"><p><strong>StockFlash · Roadmap del propietario</strong> — redacción y actualización exclusiva de ChatGPT. OpenCode integra y verifica la página sin cambiar sus textos ni estados.</p><p>Fuentes: <code>docs/harness/ROADMAP-STOCKFLASH.md</code>, <code>docs/work/CURRENT.md</code>, Feature Packets y QA/CI comprobadas al corte indicado. La siguiente revisión actualizará los estados cuando existan nuevas evidencias. Esta página no establece fechas ni compromisos de lanzamiento.</p></footer>
+</div>
+<script>
+(function(){'use strict';var items=document.querySelectorAll('details.step');var open=document.getElementById('expand');var close=document.getElementById('collapse');open.addEventListener('click',function(){items.forEach(function(x){x.open=true})});close.addEventListener('click',function(){items.forEach(function(x){x.open=false})})})();
+</script>
+</body>
+</html>
