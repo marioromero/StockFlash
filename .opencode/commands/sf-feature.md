@@ -18,3 +18,5 @@ La selección de Laravel 13.x estable compatible con PHP 8.3 ya fue revisada en 
 Si no hay Feature Packet válido, el trabajo no está autorizado o la tarea necesita decisión de arquitectura fuera del contrato, diagnosticar y detenerse sin escribir la parte afectada. Nunca `git commit`, `git push` ni deploy desde este comando.
 
 **Control de documentación de usuario (obligatorio al cierre funcional):** revisar `docs/harness/GUIA-HTML-USUARIO.md` y `docs/work/GUIA-HTML-ESTADO.md`. Informar qué pantallas/opciones nuevas debe explicar ChatGPT. No escribir ni modificar el contenido explicativo del HTML en `public/docs/index.html`: autoría exclusiva de ChatGPT. No detener implementación del código por estar la guía pendiente.
+
+**Roadmap de proyecto:** verificar al finalizar si la feature modifica los hitos o capacidades de la primera versión comercial. Si corresponde, informar `ROADMAP_PENDIENTE_CHATGPT` con evidencia. No modificar `resources/roadmap/index.html`, cuyo único autor/editor es ChatGPT. Leer `docs/harness/ROADMAP-HTML-PROYECTO.md`.
