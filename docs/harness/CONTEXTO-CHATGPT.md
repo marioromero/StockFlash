@@ -55,7 +55,7 @@ Si el propietario solicita «continuar StockFlash», «revisar lo que hizo OpenC
 
 **Mecánica:** cuando OC implemente una función visible nueva, debe emitir `GUIA_PENDIENTE_CHATGPT` con SHA, UI y evidencia. El propietario entrega ese resumen a ChatGPT; ChatGPT revisa código y escribe contenido. OC integra y verifica. Una nueva sesión retoma desde este archivo y la bitácora.
 
-**Estado editorial:** manual `/docs/`, contexto y roadmap preparados en PR #3 y luego la explicación del botón «Avance del proyecto» preparada en PR #4 **ya están integrados selectivamente en `main`** al corte `3735c147`. PR #3 y PR #4 fueron cerrados sin fusionar para evitar cambios antiguos; no volver a aplicarlos. **Pendiente exclusivamente editorial de ChatGPT:** actualizar en el roadmap y este contexto el estado ROADMAP-001 a VERIFIED y el gate a `194620`; revisión preparada en rama `docs/chatgpt-cierra-roadmap001-20261110` posterior a ese corte, cuyo PR/integración debe comprobarse en GitHub.
+**Estado editorial:** manual `/docs/`, contexto y roadmap preparados en PR #3 y luego la explicación del botón «Avance del proyecto» preparada en PR #4 **ya están integrados selectivamente en `main`** al corte `3735c147`. PR #3 y PR #4 fueron cerrados sin fusionar para evitar cambios antiguos; no volver a aplicarlos. **Pendiente exclusivamente editorial de ChatGPT:** actualizar en el roadmap y este contexto el estado ROADMAP-001 a VERIFIED y el gate a `194620`; revisión preparada en [PR #5](https://github.com/marioromero/StockFlash/pull/5), rama `docs/chatgpt-cierra-roadmap001-20261110`, posterior a ese corte. Verificar su integración en GitHub.
 
 **Límite:** no crear guía de USERS-001 como funcionalidad existente mientras esté DRAFT.
 
@@ -71,7 +71,7 @@ Si el propietario solicita «continuar StockFlash», «revisar lo que hizo OpenC
 
 ## 5. TRABAJO ABIERTO Y SIGUIENTE PASO
 
-1. **Actualizar contenido ChatGPT:** integrar la revisión de `resources/roadmap/index.html` y de este archivo desde `docs/chatgpt-cierra-roadmap001-20261110` (buscar su PR abierto). Corrige el estado ROADMAP-001 a VERIFIED, el gate vigente `194620` y la referencia `3735c147`. OpenCode solo integra, hace QA/gates y publica; actualiza su bitácora técnica para `ROADMAP_ACTUALIZADO` cuando esté confirmado.
+1. **Actualizar contenido ChatGPT:** integrar la revisión de `resources/roadmap/index.html` y de este archivo desde el [PR #5](https://github.com/marioromero/StockFlash/pull/5), rama `docs/chatgpt-cierra-roadmap001-20261110`. Corrige el estado ROADMAP-001 a VERIFIED, el gate vigente `194620` y la referencia `3735c147`. OpenCode solo integra, hace QA/gates y publica; actualiza su bitácora técnica para `ROADMAP_ACTUALIZADO` cuando esté confirmado.
 2. **USERS-001:** QA documental aprobado y packet DRAFT pendiente de aprobación expresa del propietario de las 16 decisiones. No iniciar implementación sin esta autorización. Conservar las observaciones no bloqueantes en la preparación de implementación: `VerifySession` cubriendo rutas autenticadas, lectura de PII PRV-06/CORE-10 y precisión editorial.
 3. Continuar verificando GitHub en cada cierre de OpenCode y actualizar este contexto, la guía y el roadmap según los cambios reales. No hay cron ni conexión automática entre agentes.
 
