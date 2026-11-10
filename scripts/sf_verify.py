@@ -421,52 +421,65 @@ GATES_BY_PACKET: dict[str, list[dict]] = {
          "cmd": ["php", "artisan", "test", "tests/Feature/Branches"],
          "mandatory": True, "timeout_s": 600},
     ],
+    "ROADMAP-001": [
+        {"id": "RM1-packet-approved-activo", "kind": "shell",
+         "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\nfe=(R/'docs/work/features/ROADMAP-001.md').read_text(encoding='utf-8')\ncu=(R/'docs/work/CURRENT.md').read_text(encoding='utf-8')\nok=('status: APPROVED' in fe and 'ROADMAP-001' in cu)\nsys.exit(0 if ok else 1)"],
+         "mandatory": True, "timeout_s": 60},
+        {"id": "RM2-archivos-pr3-presentes", "kind": "shell",
+         "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\nreq=['resources/roadmap/index.html','docs/harness/ROADMAP-HTML-PROYECTO.md','docs/work/ROADMAP-HTML-ESTADO.md']\nok=all((R/r).exists() for r in req) and not (R/'public/roadmap/index.html').exists()\nsys.exit(0 if ok else 1)"],
+         "mandatory": True, "timeout_s": 60},
+        {"id": "RM3-ruta-protegida-no-publica", "kind": "shell",
+         "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\nw=(R/'routes/web.php').read_text(encoding='utf-8')\nok=('roadmap.index' in w and 'can.permission:settings.manage' in w and 'resource_path(' + chr(39) + 'roadmap/index.html' + chr(39) + ')' in w and 'public_path(' + chr(39) + 'roadmap' not in w)\nsys.exit(0 if ok else 1)"],
+         "mandatory": True, "timeout_s": 60},
+        {"id": "RM4-boton-dashboard-autorizado", "kind": "shell",
+         "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\nd=(R/'resources/js/Pages/Dashboard.vue').read_text(encoding='utf-8')\nok=('v-if=\"canViewRoadmap\"' in d and 'href=\"/roadmap\"' in d and 'Avance del proyecto' in d and 'rel=\"noopener noreferrer\"' in d)\nsys.exit(0 if ok else 1)"],
+         "mandatory": True, "timeout_s": 60},
+        {"id": "RM5-html-roadmap-integridad", "kind": "shell",
+         "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\nh=(R/'resources/roadmap/index.html').read_text(encoding='utf-8')\nhl=h.lower()\nok=('lang=\"es-CL\"' in h and 'Avance del proyecto | StockFlash' in h and 'details class=\"step\"' in h and 'id=\"expand\"' in h and 'id=\"collapse\"' in h and '@media(max-width:640px)' in h and 'prefers-reduced-motion' in h and all(('R'+str(i)) in h for i in range(11)) and '<script src=' not in hl and 'fetch(' not in hl and 'xmlhttprequest' not in hl and 'type=\"password\"' not in hl and '<form' not in hl and 'http://' not in hl and 'https://' not in hl)\nsys.exit(0 if ok else 1)"],
+         "mandatory": True, "timeout_s": 60},
+        {"id": "RM6-tests-roadmap", "kind": "shell",
+         "cmd": ["php", "artisan", "test", "tests/Feature/Roadmap"],
+         "mandatory": True, "timeout_s": 600},
+        {"id": "RM7-suite-completa", "kind": "shell",
+         "cmd": ["php", "artisan", "test"],
+         "mandatory": True, "timeout_s": 900},
+        {"id": "RM8-typecheck-vue", "kind": "shell",
+         "cmd": ["npm", "run", "typecheck"],
+         "mandatory": True, "timeout_s": 300},
+        {"id": "RM9-build-vite", "kind": "shell",
+         "cmd": ["npm", "run", "build"],
+         "mandatory": True, "timeout_s": 600},
+        {"id": "RM10-contratos", "kind": "shell",
+         "cmd": ["py", "-3", "scripts/check_contracts.py"],
+         "mandatory": True, "timeout_s": 120},
+        {"id": "RM11-regresion-auth", "kind": "shell",
+         "cmd": ["php", "artisan", "test", "tests/Feature/Auth"],
+         "mandatory": True, "timeout_s": 600},
+        {"id": "RM12-regresion-branches", "kind": "shell",
+         "cmd": ["php", "artisan", "test", "tests/Feature/Branches"],
+         "mandatory": True, "timeout_s": 600},
+        {"id": "RM13-regresion-docs", "kind": "shell",
+         "cmd": ["php", "artisan", "test", "tests/Feature/Docs"],
+         "mandatory": True, "timeout_s": 600},
+        {"id": "RM14-automatizacion-estado-roadmap", "kind": "shell",
+         "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\ns=(R/'scripts/sf_verify.py').read_text(encoding='utf-8')\nok=('roadmap_handoff' in s and 'ROADMAP_PENDIENTE_CHATGPT' in s and 'ROADMAP_ACTUALIZADA' in s)\nsys.exit(0 if ok else 1)"],
+         "mandatory": True, "timeout_s": 60},
+        {"id": "RM15-bitacora-roadmap", "kind": "shell",
+         "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\ns=(R/'docs/work/ROADMAP-HTML-ESTADO.md').read_text(encoding='utf-8')\nok=('content_owner: ChatGPT' in s and 'roadmap_content_status: INTEGRADA_EN_MAIN' in s and 'pending:' in s and 'R7' in s)\nsys.exit(0 if ok else 1)"],
+         "mandatory": True, "timeout_s": 60},
+    ],
 }
 
 
-def guide_handoff(packet: str) -> dict:
-    """Calcula el estado documental para el informe (no redacta contenido de usuario)."""
-    state_path = ROOT / "docs" / "work" / "GUIA-HTML-ESTADO.md"
-    result = {
-        "status": "GUIA_PENDIENTE_CHATGPT",
-        "covered": "",
-        "sha": "",
-        "pending": "",
-        "ui_files": [],
-        "instruction": "Comparte este cierre con ChatGPT para actualizar /docs/.",
-    }
-    if not state_path.exists():
-        result["pending"] = "Falta docs/work/GUIA-HTML-ESTADO.md"
-        return result
-
-    text = state_path.read_text(encoding="utf-8")
-
-    def field(name: str) -> str:
-        match = re.search(rf"^{re.escape(name)}:\s*(.+)$", text, re.M)
-        return match.group(1).strip() if match else ""
-
-    guide_status = field("guide_status")
-    result["covered"] = field("covered_features")
-    result["sha"] = field("latest_covered_code_sha") or field("last_guide_integration_sha")
-    result["pending"] = field("pending_docs")
-
-    status_norm = guide_status.upper()
-    pending_norm = result["pending"].upper()
-    no_pending = pending_norm in ("", "NINGUNO", "NINGUNA", "NO APLICA", "NO_APLICA")
-    if "INTEGRADA_EN_MAIN" in status_norm and no_pending:
-        result["status"] = "GUIA_ACTUALIZADA"
-        result["instruction"] = "Manual integrado; no hay pendientes de redacción declarados."
-    else:
-        result["status"] = "GUIA_PENDIENTE_CHATGPT"
-        if not result["pending"]:
-            result["pending"] = "Estado de guía no integrado o sin metadatos suficientes."
-
-    ui_prefixes = (
+def _changed_ui_files() -> list[str]:
+    """Rutas de UI modificadas en el arbol de trabajo (solo lectura)."""
+    prefixes = (
         "resources/js/",
         "resources/views/",
         "routes/web.php",
         "app/Http/Controllers/",
     )
+    files: list[str] = []
     try:
         status_out = subprocess.run(
             ["git", "status", "--porcelain=v1", "--untracked-files=all"],
@@ -483,17 +496,94 @@ def guide_handoff(packet: str) -> dict:
             path = line[3:].strip()
             if " -> " in path:
                 path = path.split(" -> ")[-1]
-            if path.startswith(ui_prefixes):
-                result["ui_files"].append(path)
+            if path.startswith(prefixes):
+                files.append(path)
     except Exception:
         pass
+    return sorted(set(files))
 
-    result["ui_files"] = sorted(set(result["ui_files"]))
+
+def _doc_handoff(
+    state_path: Path,
+    status_field: str,
+    pending_field: str,
+    integrated_marker: str,
+    updated_status: str,
+    pending_status: str,
+    sha_fields: tuple[str, ...],
+    label: str,
+    instruction: str,
+) -> dict:
+    """Estado documental comun para GUIA y ROADMAP (no redacta contenido)."""
+    result = {
+        "status": pending_status,
+        "covered": "",
+        "sha": "",
+        "pending": "",
+        "ui_files": _changed_ui_files(),
+        "instruction": instruction,
+        "label": label,
+    }
+    if not state_path.exists():
+        result["pending"] = f"Falta {state_path.name}"
+        return result
+
+    text = state_path.read_text(encoding="utf-8")
+
+    def field(name: str) -> str:
+        match = re.search(rf"^{re.escape(name)}:\s*(.+)$", text, re.M)
+        return match.group(1).strip() if match else ""
+
+    result["covered"] = field("covered_features")
+    result["sha"] = next((field(name) for name in sha_fields if field(name)), "")
+    result["pending"] = field(pending_field)
+
+    pending_norm = result["pending"].upper()
+    no_pending = pending_norm in ("", "NINGUNO", "NINGUNA", "NO APLICA", "NO_APLICA")
+    if integrated_marker in field(status_field).upper() and no_pending:
+        result["status"] = updated_status
+        result["instruction"] = "Documento integrado; no hay pendientes de redaccion declarados."
+    else:
+        result["status"] = pending_status
+        if not result["pending"]:
+            result["pending"] = "Estado documental no integrado o sin metadatos suficientes."
+
+    return result
+
+
+def guide_handoff(packet: str) -> dict:
+    result = _doc_handoff(
+        ROOT / "docs" / "work" / "GUIA-HTML-ESTADO.md",
+        "guide_status",
+        "pending_docs",
+        "INTEGRADA_EN_MAIN",
+        "GUIA_ACTUALIZADA",
+        "GUIA_PENDIENTE_CHATGPT",
+        ("latest_covered_code_sha", "last_guide_integration_sha"),
+        "GUIA",
+        "Comparte este cierre con ChatGPT para actualizar /docs/.",
+    )
     result["packet"] = packet
     return result
 
 
-def write_report(packet: str, results: list[dict], verdict: str, guide: dict) -> Path:
+def roadmap_handoff(packet: str) -> dict:
+    result = _doc_handoff(
+        ROOT / "docs" / "work" / "ROADMAP-HTML-ESTADO.md",
+        "roadmap_content_status",
+        "pending",
+        "INTEGRADA_EN_MAIN",
+        "ROADMAP_ACTUALIZADA",
+        "ROADMAP_PENDIENTE_CHATGPT",
+        ("baseline_code_sha", "roadmap_integration_sha"),
+        "ROADMAP",
+        "Comparte este cierre con ChatGPT para actualizar el roadmap.",
+    )
+    result["packet"] = packet
+    return result
+
+
+def write_report(packet: str, results: list[dict], verdict: str, guide: dict, roadmap: dict) -> Path:
     ts = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     REPORT_DIR.mkdir(parents=True, exist_ok=True)
     path = REPORT_DIR / f"{packet}-VERIFY-{ts}.md"
@@ -521,15 +611,19 @@ def write_report(packet: str, results: list[dict], verdict: str, guide: dict) ->
             "```",
             "",
         ]
+    lines += ["## Estado documental (GUIA y ROADMAP)"]
+    for doc in (guide, roadmap):
+        lines += [
+            f"### {doc.get('label', 'DOC')}",
+            f"- Estado: **{doc.get('status')}**",
+            f"- Cobertura declarada: {doc.get('covered') or '(no declarada)'}",
+            f"- SHA de referencia: {doc.get('sha') or '(no declarado)'}",
+            f"- Pendientes de redacción ChatGPT: {doc.get('pending') or 'NINGUNO'}",
+            f"- Archivos UI modificados: {', '.join(doc.get('ui_files', [])) or '(ninguno detectado)'}",
+            f"- Handoff: {doc.get('instruction')}",
+            "",
+        ]
     lines += [
-        "## Estado documental (GUIA)",
-        f"- Estado: **{guide.get('status', 'GUIA_PENDIENTE_CHATGPT')}**",
-        f"- Cobertura declarada: {guide.get('covered') or '(no declarada)'}",
-        f"- SHA de referencia: {guide.get('sha') or '(no declarado)'}",
-        f"- Pendientes de redacción ChatGPT: {guide.get('pending') or 'NINGUNO'}",
-        f"- Archivos UI modificados: {', '.join(guide.get('ui_files', [])) or '(ninguno detectado)'}",
-        f"- Handoff: {guide.get('instruction')}",
-        "",
         "## Restricciones respetadas",
         "- Sin migraciones/seeders, sin lectura de .env, sin secretos registrados.",
         "- Sin commit/push/deploy, sin cambios a contratos v2.2.",
@@ -586,11 +680,13 @@ def main() -> int:
     mandatory_fail = [r for r in results if r.get("mandatory") and not r["ok"]]
     verdict = "GATES_PASS" if not mandatory_fail else "GATES_FAIL"
     guide = guide_handoff(packet)
-    report = write_report(packet, results, verdict, guide)
-    print(f"Estado documental: {guide['status']}")
-    if guide["status"] == "GUIA_PENDIENTE_CHATGPT":
-        print(f"Pendiente ChatGPT: {guide['pending']}")
-        print(f"Handoff: {guide['instruction']}")
+    roadmap = roadmap_handoff(packet)
+    report = write_report(packet, results, verdict, guide, roadmap)
+    for doc in (guide, roadmap):
+        print(f"Estado documental {doc['label']}: {doc['status']}")
+        if doc["status"] in ("GUIA_PENDIENTE_CHATGPT", "ROADMAP_PENDIENTE_CHATGPT"):
+            print(f"Pendiente ChatGPT ({doc['label']}): {doc['pending']}")
+            print(f"Handoff ({doc['label']}): {doc['instruction']}")
     print(f"Reporte: {report}")
     print(f"Veredicto: {verdict}")
     if verdict != "GATES_PASS":

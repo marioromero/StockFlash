@@ -46,6 +46,17 @@ Route::middleware(['auth', 'password.change', 'verify.session'])->group(function
         return response()->json(['ok' => true, 'sucursal' => $branch]);
     })->middleware('branch.access')->name('dashboard.branch');
 
+    // --- Roadmap del propietario (ROADMAP-001) ---
+    // HTML de autoría exclusiva de ChatGPT, fuera de `public/`.
+    Route::get('/roadmap', fn () => response(
+        file_get_contents(resource_path('roadmap/index.html')),
+        200,
+        [
+            'Content-Type' => 'text/html; charset=UTF-8',
+            'Cache-Control' => 'no-store',
+        ]
+    ))->middleware('can.permission:settings.manage')->name('roadmap.index');
+
     // --- Administración global de sucursales (BRANCH-001 · CORE-05) ---
     // Es administración global: NO usa `branch.access`.
     Route::middleware('can.permission:settings.manage')->group(function () {

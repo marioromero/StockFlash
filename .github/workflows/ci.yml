@@ -133,4 +133,13 @@ jobs:
             echo "Smoke FAIL: /docs/ sin buscador o menu lateral"
             exit 1
           fi
-          echo "Smoke OK: HTTP 200 + lang es-CL + /docs/ 200"
+          ROADMAP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "http://127.0.0.1:${PORT}/roadmap")
+          if [ "$ROADMAP_STATUS" = "200" ]; then
+            echo "Smoke FAIL: /roadmap expuesto publicamente (200)"
+            exit 1
+          fi
+          if [ "$ROADMAP_STATUS" != "302" ] && [ "$ROADMAP_STATUS" != "403" ]; then
+            echo "Smoke FAIL: /roadmap respuesta inesperada ($ROADMAP_STATUS)"
+            exit 1
+          fi
+          echo "Smoke OK: HTTP 200 + lang es-CL + /docs/ 200 + /roadmap protegido ($ROADMAP_STATUS)"

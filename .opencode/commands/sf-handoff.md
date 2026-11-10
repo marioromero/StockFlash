@@ -9,3 +9,5 @@ Sin editar, generar nota corta del estado actual: feature, commit si existe, qu�
 
 
 **Continuidad entre chats:** leer `docs/harness/CONTEXTO-CHATGPT.md` como referencia de decisiones, pero no editarlo. Resumir SHA, QA/CI, rutas/pantallas nuevas y próximos pasos, indicando al propietario que ChatGPT actualizará su propio contexto y el contenido de `/docs/` si corresponde cuando reciba el cierre.
+
+**Roadmap del propietario:** añadir `ROADMAP_ACTUALIZADO` o `ROADMAP_PENDIENTE_CHATGPT` si hubo impacto en hitos, versiones o capacidad de comercialización. Cuando esté pendiente, incluir feature, SHA, QA/CI y cambios reales para que el propietario lo lleve a ChatGPT. El HTML `resources/roadmap/index.html` y sus textos son de ChatGPT exclusivamente; OC solo lo integra y prueba.

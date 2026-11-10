@@ -38,3 +38,5 @@ Dos operaciones permanentes (no ampliar permisos, no declarar VERIFIED automáti
 Autorización del propietario 2026-10-16: sin aprobaciones por `bash`/`edit`; ejecutar directo. Ante archivos sospechosos, conflictos, cambios fuera de alcance o gates fallidos, detener publicación y reportar bloqueo.
 
 **Estado documental al informar entrega:** revisar `docs/work/GUIA-HTML-ESTADO.md`; incluir `GUIA_ACTUALIZADA` solo si la guía escrita por ChatGPT está integrada y cubre el código publicado. En caso contrario, indicar `GUIA_PENDIENTE_CHATGPT` con SHA/feature y recomendar al propietario llevar el reporte a ChatGPT. El publicador no redacta el manual ni salta gates/QA; esta verificación informativa no bloquea la publicación del código.
+
+**Roadmap al publicar:** contrastar cambios de la feature con `docs/work/ROADMAP-HTML-ESTADO.md` y reportar `ROADMAP_ACTUALIZADO` o `ROADMAP_PENDIENTE_CHATGPT`. No escribir ni reescribir `resources/roadmap/index.html`; solo integrar versiones entregadas por ChatGPT y actualizar la bitácora técnica. No alterar condiciones de gates ni bloqueo de publicación.

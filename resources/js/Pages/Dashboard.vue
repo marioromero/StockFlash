@@ -22,6 +22,16 @@
                     <Link v-if="canManageBranches" href="/branches" class="sf-button sf-button-primary">
                         Sucursales
                     </Link>
+                    <a
+                        v-if="canViewRoadmap"
+                        href="/roadmap"
+                        class="sf-button sf-button-secondary"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="Abrir el avance del proyecto en una nueva pestaña"
+                    >
+                        Avance del proyecto
+                    </a>
                     <Link href="/password/change" class="sf-button sf-button-secondary">
                         Cambiar contraseña
                     </Link>
@@ -60,6 +70,9 @@ const props = defineProps<{
 const page = usePage<SharedPageProps>();
 const userName = computed(() => page.props.auth?.user?.name ?? props.user_name ?? 'Usuario');
 const canManageBranches = computed(() =>
+    (page.props.auth?.permissions ?? []).includes('settings.manage')
+);
+const canViewRoadmap = computed(() =>
     (page.props.auth?.permissions ?? []).includes('settings.manage')
 );
 

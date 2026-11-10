@@ -12,9 +12,9 @@ guide_content_last_written: 2026-11-10
 covered_features: AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED (2026-11-10)
 latest_covered_code_sha: `90254e59bf61bc0252a579c076886fc500eb0119` (DOCS-001 publicado; AUTH/BRANCH previos)
 next_feature: USERS-001 DRAFT (NO documentar como disponible)
-last_guide_integration_sha: `90254e59bf61bc0252a579c076886fc500eb0119` (integración DOCS-001 en main)
+last_guide_integration_sha: `07eb72ee8432e84f8aa8cd6fbf5caeb66fdf4829` (head del PR #3; actualización de Ayuda integrada en main)
 last_guide_integration_date: 2026-11-10
-pending_docs: Dashboard «Ayuda» → `/docs/` (ChatGPT debe añadir la referencia en «Conocer el panel principal»); actualizar `docs/harness/CONTEXTO-CHATGPT.md` para reflejar que el PR #2 ya está integrado.
+pending_docs: Dashboard «Avance del proyecto» → `/roadmap` (ChatGPT debe añadir la referencia en «Conocer el panel principal»). El contexto de continuidad sigue siendo mantenido exclusivamente por ChatGPT.
 pending_since: 2026-11-10
 
 ## Cómo mantener este archivo

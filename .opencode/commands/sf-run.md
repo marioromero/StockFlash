@@ -27,3 +27,5 @@ Respetar permisos `deny` administrativos con bloqueo + parche. Autorización del
 
 
 **Contexto para nueva sesión del propietario:** `docs/harness/CONTEXTO-CHATGPT.md` pertenece exclusivamente a ChatGPT. OpenCode puede leerlo, no editarlo. Al terminar, suministrar los hechos nuevos en el handoff para su actualización por ChatGPT cuando el propietario comparta el informe.
+
+**Seguimiento roadmap al cierre:** consultar `docs/harness/ROADMAP-HTML-PROYECTO.md` y `docs/work/ROADMAP-HTML-ESTADO.md`. Si la feature cambia hitos, capacidades listas o la ruta al primer lanzamiento, incluir `ROADMAP_PENDIENTE_CHATGPT` (SHA, QA/CI, Feature Packet, cambio verificable). OpenCode no edita `resources/roadmap/index.html`; es de ChatGPT. No bloquear entrega de código por esta actualización editorial externa.
