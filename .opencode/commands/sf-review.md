@@ -23,3 +23,5 @@ Clasificar hallazgos por severidad: correctness, permisos/privacidad, UX, perfor
 Si no hay código tras comprobar **también untracked**, indicar `NO APLICA`. No omitir revisiones por tratarse de un scaffold todavía sin commit.
 
 **Comprobación del manual interactivo:** revisar que `public/docs/index.html` no haya recibido nuevos contenidos explicativos redactados autónomamente por OpenCode. Si una feature incorpora o cambia UI, comparar con `docs/work/GUIA-HTML-ESTADO.md` y reflejar en QA si corresponde `GUIA_PENDIENTE_CHATGPT`. Es un pendiente de redacción externa, no un defecto bloqueante del código si la feature está correctamente implementada. Cuando ChatGPT haya entregado HTML nuevo, comprobar enlaces y comportamiento técnico sin reescribir el contenido.
+
+**Seguimiento roadmap:** comprobar que `resources/roadmap/index.html` conserva la autoría de ChatGPT y no ha sido reescrito por OpenCode. Señalar `ROADMAP_PENDIENTE_CHATGPT` si hay hitos/capacidades nuevos respecto de la bitácora; ausencia de edición editorial no bloquea código funcional. Ver `docs/harness/ROADMAP-HTML-PROYECTO.md`.
