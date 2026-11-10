@@ -9,6 +9,14 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
+// --- Manual HTML de usuario (DOCS-001) ---
+// El contenido es autoría exclusiva de ChatGPT; OpenCode solo sirve y verifica.
+Route::get('/docs/', fn () => response(
+    file_get_contents(public_path('docs/index.html')),
+    200,
+    ['Content-Type' => 'text/html; charset=UTF-8']
+))->name('docs.index');
+
 // --- Autenticación (AUTH-001) ---
 
 Route::get('/login', [\App\Http\Controllers\Auth\LoginController::class, 'show'])->name('login');

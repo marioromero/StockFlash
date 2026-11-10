@@ -124,4 +124,13 @@ jobs:
             echo "Smoke FAIL: sin referencia a la aplicacion Vue/Inertia"
             exit 1
           fi
-          echo "Smoke OK: HTTP 200 + lang es-CL"
+          DOCS_STATUS=$(curl -s -o /tmp/sf-docs.html -w "%{http_code}" "http://127.0.0.1:${PORT}/docs/")
+          if [ "$DOCS_STATUS" != "200" ]; then
+            echo "Smoke FAIL: /docs/ HTTP $DOCS_STATUS (esperado 200)"
+            exit 1
+          fi
+          if ! grep -q 'id="search"' /tmp/sf-docs.html || ! grep -q 'topics-nav' /tmp/sf-docs.html; then
+            echo "Smoke FAIL: /docs/ sin buscador o menu lateral"
+            exit 1
+          fi
+          echo "Smoke OK: HTTP 200 + lang es-CL + /docs/ 200"

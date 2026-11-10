@@ -21,3 +21,5 @@ Revisar independientemente Feature Packet $ARGUMENTS, criterios de aceptación, 
 Clasificar hallazgos por severidad: correctness, permisos/privacidad, UX, performance, schema y cobertura. Resultado `APROBADO` o `CAMBIOS NECESARIOS`, con bloqueantes y evidencia exacta (archivo + línea o comando). No declarar `VERIFIED` ni aprobar release: corresponde a los gates y revisión de owner/ChatGPT después del QA.
 
 Si no hay código tras comprobar **también untracked**, indicar `NO APLICA`. No omitir revisiones por tratarse de un scaffold todavía sin commit.
+
+**Comprobación del manual interactivo:** revisar que `public/docs/index.html` no haya recibido nuevos contenidos explicativos redactados autónomamente por OpenCode. Si una feature incorpora o cambia UI, comparar con `docs/work/GUIA-HTML-ESTADO.md` y reflejar en QA si corresponde `GUIA_PENDIENTE_CHATGPT`. Es un pendiente de redacción externa, no un defecto bloqueante del código si la feature está correctamente implementada. Cuando ChatGPT haya entregado HTML nuevo, comprobar enlaces y comportamiento técnico sin reescribir el contenido.

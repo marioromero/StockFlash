@@ -39,6 +39,13 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 REPORT_DIR = ROOT / "docs" / "work"
 
+# Evitar UnicodeEncodeError en consolas Windows (cp1252) al imprimir handoff.
+try:
+    sys.stdout.reconfigure(encoding="utf-8")
+    sys.stderr.reconfigure(encoding="utf-8")
+except Exception:
+    pass
+
 # Patrones a redactar si aparecieran en salidas (defensa en profundidad;
 # el verificador nunca lee .env ni vuelca entorno).
 REDACT_PATTERNS = [
@@ -144,8 +151,8 @@ def find_free_port(preferred: int) -> int:
             return s.getsockname()[1]
 
 
-def gate_http_serve(port: int, timeout_s: int = 90) -> dict:
-    """Levanta php artisan serve temporal, hace GET / y lo cierra siempre."""
+def gate_http_serve(port: int, timeout_s: int = 90, path: str = "/", expect: tuple[str, ...] = ("StockFlash",)) -> dict:
+    """Levanta php artisan serve temporal, hace GET <path> y lo cierra siempre."""
     cmd = ["php", "artisan", "serve", f"--host=127.0.0.1", f"--port={port}"]
     assert_not_forbidden(cmd)
     started = time.time()
@@ -158,8 +165,9 @@ def gate_http_serve(port: int, timeout_s: int = 90) -> dict:
         encoding="utf-8",
         errors="replace",
     )
-    url = f"http://127.0.0.1:{port}/"
+    url = f"http://127.0.0.1:{port}{path}"
     status: int | None = None
+    body = ""
     body_head = ""
     err_note = ""
     deadline = time.time() + timeout_s
@@ -179,6 +187,7 @@ def gate_http_serve(port: int, timeout_s: int = 90) -> dict:
                 with urllib.request.urlopen(url, timeout=5) as resp:
                     status = resp.status
                     raw = resp.read(200000).decode("utf-8", "replace")
+                    body = raw
                     body_head = raw[:2000]
                 break
             except Exception as exc:  # puerto aun no listo
@@ -188,15 +197,14 @@ def gate_http_serve(port: int, timeout_s: int = 90) -> dict:
             err_note = "TIMEOUT esperando respuesta del servidor temporal."
         if status is None and not err_note:
             err_note = f"sin respuesta HTTP. Ultimo error: {last_exc[:300]}"
-        checks = {
-            "http_200": status == 200,
-            "has_stockflash": "StockFlash" in body_head,
-        }
+        checks = {"http_200": status == 200}
+        for marker in expect:
+            checks[f"has_{marker}"] = marker in body
         ok = all(checks.values())
         if not ok and not err_note:
             err_note = f"checks={checks} status={status}"
         return {
-            "cmd": " ".join(cmd) + "  +  GET /",
+            "cmd": " ".join(cmd) + f"  +  GET {path}",
             "exit": 0 if ok else 1,
             "ok": ok,
             "elapsed_s": round(time.time() - started, 1),
@@ -365,10 +373,127 @@ GATES_BY_PACKET: dict[str, list[dict]] = {
          "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\nok=(R/'documentacion/modulos/sucursales/administracion-sucursales.md').exists() and 'sucursales' in (R/'documentacion/README.md').read_text(encoding='utf-8').lower()\nsys.exit(0 if ok else 1)"],
          "mandatory": True, "timeout_s": 60},
     ],
+    "DOCS-001": [
+        {"id": "D1-packet-approved-activo", "kind": "shell",
+         "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\nfe=(R/'docs/work/features/DOCS-001.md').read_text(encoding='utf-8')\ncu=(R/'docs/work/CURRENT.md').read_text(encoding='utf-8')\nok=('status: APPROVED' in fe and 'DOCS-001' in cu)\nsys.exit(0 if ok else 1)"],
+         "mandatory": True, "timeout_s": 60},
+        {"id": "D2-archivos-pr2-presentes", "kind": "shell",
+         "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\nreq=['public/docs/index.html','docs/harness/GUIA-HTML-USUARIO.md','docs/harness/CONTEXTO-CHATGPT.md','docs/work/GUIA-HTML-ESTADO.md']\nok=all((R/r).exists() for r in req)\nsys.exit(0 if ok else 1)"],
+         "mandatory": True, "timeout_s": 60},
+        {"id": "D3-reglas-autoria-y-handoff", "kind": "shell",
+         "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\na=(R/'AGENTS.md').read_text(encoding='utf-8')\nrun=(R/'.opencode/commands/sf-run.md').read_text(encoding='utf-8')\npub=(R/'.opencode/commands/sf-publish.md').read_text(encoding='utf-8')\nrev=(R/'.opencode/commands/sf-review.md').read_text(encoding='utf-8')\nfeat=(R/'.opencode/commands/sf-feature.md').read_text(encoding='utf-8')\nhand=(R/'.opencode/commands/sf-handoff.md').read_text(encoding='utf-8')\nok=('Manual HTML de usuarios' in a and 'Continuidad ChatGPT' in a and 'GUIA_PENDIENTE_CHATGPT' in run and 'CONTEXTO-CHATGPT.md' in run and 'GUIA_ACTUALIZADA' in pub and 'GUIA_PENDIENTE_CHATGPT' in rev and 'Control de documentaci' in feat and 'GUIA_PENDIENTE_CHATGPT' in hand)\nsys.exit(0 if ok else 1)"],
+         "mandatory": True, "timeout_s": 60},
+        {"id": "D4-ruta-docs-y-enlace-ayuda", "kind": "shell",
+         "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\nw=(R/'routes/web.php').read_text(encoding='utf-8')\nd=(R/'resources/js/Pages/Dashboard.vue').read_text(encoding='utf-8')\nok=('docs.index' in w and 'docs/index.html' in w and 'public_path' in w and 'href=\"/docs/\"' in d and 'Ayuda' in d)\nsys.exit(0 if ok else 1)"],
+         "mandatory": True, "timeout_s": 60},
+        {"id": "D5-html-estructura-y-seguridad", "kind": "shell",
+         "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\nh=(R/'public/docs/index.html').read_text(encoding='utf-8')\nhl=h.lower()\nok=('lang=\"es-CL\"' in h and 'id=\"search\"' in h and 'id=\"topics-nav\"' in h and 'class=\"sidebar\"' in h and 'details class=\"accordion\"' in h and 'aria-label' in h and '@media(max-width:820px)' in h and 'prefers-reduced-motion' in h and '<script src=' not in hl and 'fetch(' not in hl and 'xmlhttprequest' not in hl and 'type=\"password\"' not in hl and '<form' not in hl)\nsys.exit(0 if ok else 1)"],
+         "mandatory": True, "timeout_s": 60},
+        {"id": "D6-bitacora-documental", "kind": "shell",
+         "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\ns=(R/'docs/work/GUIA-HTML-ESTADO.md').read_text(encoding='utf-8')\nok=('content_owner: ChatGPT' in s and 'guide_status: INTEGRADA_EN_MAIN' in s and 'pending_docs:' in s and 'USERS-001 DRAFT' in s)\nsys.exit(0 if ok else 1)"],
+         "mandatory": True, "timeout_s": 60},
+        {"id": "D7-tests-docs", "kind": "shell",
+         "cmd": ["php", "artisan", "test", "tests/Feature/Docs"],
+         "mandatory": True, "timeout_s": 600},
+        {"id": "D8-contratos", "kind": "shell",
+         "cmd": ["py", "-3", "scripts/check_contracts.py"],
+         "mandatory": True, "timeout_s": 120},
+        {"id": "D9-suite-completa", "kind": "shell",
+         "cmd": ["php", "artisan", "test"],
+         "mandatory": True, "timeout_s": 900},
+        {"id": "D10-typecheck-vue", "kind": "shell",
+         "cmd": ["npm", "run", "typecheck"],
+         "mandatory": True, "timeout_s": 300},
+        {"id": "D11-build-vite", "kind": "shell",
+         "cmd": ["npm", "run", "build"],
+         "mandatory": True, "timeout_s": 600},
+        {"id": "D12-http-docs", "kind": "http_serve",
+         "path": "/docs/",
+         "expect": ["id=\"search\"", "topics-nav"],
+         "mandatory": True, "timeout_s": 120},
+        {"id": "D13-automatizacion-estado-guia", "kind": "shell",
+         "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\ns=(R/'scripts/sf_verify.py').read_text(encoding='utf-8')\nok=('guide_handoff' in s and 'GUIA_PENDIENTE_CHATGPT' in s and 'GUIA_ACTUALIZADA' in s)\nsys.exit(0 if ok else 1)"],
+         "mandatory": True, "timeout_s": 60},
+        {"id": "D14-regresion-auth", "kind": "shell",
+         "cmd": ["php", "artisan", "test", "tests/Feature/Auth"],
+         "mandatory": True, "timeout_s": 600},
+        {"id": "D15-regresion-branches", "kind": "shell",
+         "cmd": ["php", "artisan", "test", "tests/Feature/Branches"],
+         "mandatory": True, "timeout_s": 600},
+    ],
 }
 
 
-def write_report(packet: str, results: list[dict], verdict: str) -> Path:
+def guide_handoff(packet: str) -> dict:
+    """Calcula el estado documental para el informe (no redacta contenido de usuario)."""
+    state_path = ROOT / "docs" / "work" / "GUIA-HTML-ESTADO.md"
+    result = {
+        "status": "GUIA_PENDIENTE_CHATGPT",
+        "covered": "",
+        "sha": "",
+        "pending": "",
+        "ui_files": [],
+        "instruction": "Comparte este cierre con ChatGPT para actualizar /docs/.",
+    }
+    if not state_path.exists():
+        result["pending"] = "Falta docs/work/GUIA-HTML-ESTADO.md"
+        return result
+
+    text = state_path.read_text(encoding="utf-8")
+
+    def field(name: str) -> str:
+        match = re.search(rf"^{re.escape(name)}:\s*(.+)$", text, re.M)
+        return match.group(1).strip() if match else ""
+
+    guide_status = field("guide_status")
+    result["covered"] = field("covered_features")
+    result["sha"] = field("latest_covered_code_sha") or field("last_guide_integration_sha")
+    result["pending"] = field("pending_docs")
+
+    status_norm = guide_status.upper()
+    pending_norm = result["pending"].upper()
+    no_pending = pending_norm in ("", "NINGUNO", "NINGUNA", "NO APLICA", "NO_APLICA")
+    if "INTEGRADA_EN_MAIN" in status_norm and no_pending:
+        result["status"] = "GUIA_ACTUALIZADA"
+        result["instruction"] = "Manual integrado; no hay pendientes de redacción declarados."
+    else:
+        result["status"] = "GUIA_PENDIENTE_CHATGPT"
+        if not result["pending"]:
+            result["pending"] = "Estado de guía no integrado o sin metadatos suficientes."
+
+    ui_prefixes = (
+        "resources/js/",
+        "resources/views/",
+        "routes/web.php",
+        "app/Http/Controllers/",
+    )
+    try:
+        status_out = subprocess.run(
+            ["git", "status", "--porcelain=v1", "--untracked-files=all"],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=30,
+        ).stdout
+        for line in status_out.splitlines():
+            if len(line) < 4:
+                continue
+            path = line[3:].strip()
+            if " -> " in path:
+                path = path.split(" -> ")[-1]
+            if path.startswith(ui_prefixes):
+                result["ui_files"].append(path)
+    except Exception:
+        pass
+
+    result["ui_files"] = sorted(set(result["ui_files"]))
+    result["packet"] = packet
+    return result
+
+
+def write_report(packet: str, results: list[dict], verdict: str, guide: dict) -> Path:
     ts = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     REPORT_DIR.mkdir(parents=True, exist_ok=True)
     path = REPORT_DIR / f"{packet}-VERIFY-{ts}.md"
@@ -397,6 +522,14 @@ def write_report(packet: str, results: list[dict], verdict: str) -> Path:
             "",
         ]
     lines += [
+        "## Estado documental (GUIA)",
+        f"- Estado: **{guide.get('status', 'GUIA_PENDIENTE_CHATGPT')}**",
+        f"- Cobertura declarada: {guide.get('covered') or '(no declarada)'}",
+        f"- SHA de referencia: {guide.get('sha') or '(no declarado)'}",
+        f"- Pendientes de redacción ChatGPT: {guide.get('pending') or 'NINGUNO'}",
+        f"- Archivos UI modificados: {', '.join(guide.get('ui_files', [])) or '(ninguno detectado)'}",
+        f"- Handoff: {guide.get('instruction')}",
+        "",
         "## Restricciones respetadas",
         "- Sin migraciones/seeders, sin lectura de .env, sin secretos registrados.",
         "- Sin commit/push/deploy, sin cambios a contratos v2.2.",
@@ -423,7 +556,7 @@ def main() -> int:
     results: list[dict] = []
     for gate in GATES_BY_PACKET[packet]:
         gid = gate["id"]
-        print(f"== {gid} :: {' '.join(gate['cmd']) if gate['kind']=='shell' else 'serve-temporal + GET /'}")
+        print(f"== {gid} :: {' '.join(gate['cmd']) if gate['kind']=='shell' else 'serve-temporal + GET ' + gate.get('path', '/')}")
         if args.no_build and gid.startswith("G3-"):
             results.append({"id": gid, "cmd": "npm run build (omitido por --no-build)",
                             "exit": 99, "ok": False, "elapsed_s": 0.0,
@@ -436,7 +569,12 @@ def main() -> int:
             port = find_free_port(args.port)
             if port != args.port:
                 print(f"-- puerto {args.port} ocupado, usando {port}")
-            r = gate_http_serve(port, gate["timeout_s"])
+            r = gate_http_serve(
+                port,
+                gate["timeout_s"],
+                gate.get("path", "/"),
+                tuple(gate.get("expect", ("StockFlash",))),
+            )
         else:
             r = {"cmd": gid, "exit": 99, "ok": False, "elapsed_s": 0.0,
                  "stdout": "", "stderr": f"kind desconocido: {gate['kind']}"}
@@ -447,7 +585,12 @@ def main() -> int:
 
     mandatory_fail = [r for r in results if r.get("mandatory") and not r["ok"]]
     verdict = "GATES_PASS" if not mandatory_fail else "GATES_FAIL"
-    report = write_report(packet, results, verdict)
+    guide = guide_handoff(packet)
+    report = write_report(packet, results, verdict, guide)
+    print(f"Estado documental: {guide['status']}")
+    if guide["status"] == "GUIA_PENDIENTE_CHATGPT":
+        print(f"Pendiente ChatGPT: {guide['pending']}")
+        print(f"Handoff: {guide['instruction']}")
     print(f"Reporte: {report}")
     print(f"Veredicto: {verdict}")
     if verdict != "GATES_PASS":

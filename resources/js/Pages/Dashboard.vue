@@ -25,6 +25,15 @@
                     <Link href="/password/change" class="sf-button sf-button-secondary">
                         Cambiar contraseña
                     </Link>
+                    <a
+                        href="/docs/"
+                        class="sf-button sf-button-secondary"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="Abrir la guía de ayuda en una nueva pestaña"
+                    >
+                        Ayuda
+                    </a>
                 </nav>
             </section>
         </main>

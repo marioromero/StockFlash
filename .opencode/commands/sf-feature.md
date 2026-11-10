@@ -16,3 +16,5 @@ Ejecutar Feature Packet $ARGUMENTS solamente si tiene `status: APPROVED` y `docs
 La selección de Laravel 13.x estable compatible con PHP 8.3 ya fue revisada en BOOT-001; continuar desde creación del scaffold sin reabrir esa elección salvo error reproducible de Composer.
 
 Si no hay Feature Packet válido, el trabajo no está autorizado o la tarea necesita decisión de arquitectura fuera del contrato, diagnosticar y detenerse sin escribir la parte afectada. Nunca `git commit`, `git push` ni deploy desde este comando.
+
+**Control de documentación de usuario (obligatorio al cierre funcional):** revisar `docs/harness/GUIA-HTML-USUARIO.md` y `docs/work/GUIA-HTML-ESTADO.md`. Informar qué pantallas/opciones nuevas debe explicar ChatGPT. No escribir ni modificar el contenido explicativo del HTML en `public/docs/index.html`: autoría exclusiva de ChatGPT. No detener implementación del código por estar la guía pendiente.
