@@ -1,9 +1,10 @@
 # DOCS-001 — Integración del manual HTML de usuario y continuidad ChatGPT
 
-status: APPROVED
+status: VERIFIED
 owner_approval: Decisión expresa del propietario (2026-11-10): autoriza e integra la propuesta del PR #2, con autoría exclusiva de ChatGPT para el contenido explicativo de `/docs/` y `CONTEXTO-CHATGPT.md`, y autoriza el enlace «Ayuda» en Dashboard, la automatización de seguimiento y su publicación mediante el harness.
+verified_decision: Decisión externa del propietario (2026-11-10): DOCS-001 **VERIFIED**, respaldada por implementación en `90254e59bf61bc0252a579c076886fc500eb0119`, gates `GATES_PASS`, QA independiente `APROBADO` y CI remota SUCCESS verificada externamente por ChatGPT.
 etapa: HARNESS-DOCS
-dependencias: PR #2 (`refs/pull/2/head` `bc3ca23d41f8610fe2c7c7863488aa2db4c38d69`), `main` `f67a0779405fa3ecaf5b2f9e379fa11da8ccd2d8`, AUTH-001 VERIFIED, BRANCH-001 VERIFIED, USERS-001 DRAFT intacto.
+dependencias: PR #2 (`refs/pull/2/head` `bc3ca23d41f8610fe2c7c7863488aa2db4c38d69`), `main` `90254e59bf61bc0252a579c076886fc500eb0119`, AUTH-001 VERIFIED, BRANCH-001 VERIFIED, USERS-001 DRAFT intacto.
 
 ## Qué / Por qué / No incluido
 
@@ -88,8 +89,18 @@ La bitácora `docs/work/GUIA-HTML-ESTADO.md` se actualiza solo en metadatos téc
 - [ ] reviewer independiente `APROBADO` sobre el estado exacto.
 - [ ] reporte `sf_verify` incluye estado `GUIA_*`.
 
+## Cierre VERIFIED (2026-11-10)
+
+- **Decisión externa:** el propietario confirmó DOCS-001 **VERIFIED**, con CI remota verificada externamente por ChatGPT.
+- **Implementación:** `90254e59bf61bc0252a579c076886fc500eb0119` en `origin/main`; sin cambios de código en este cierre.
+- **Gates:** `docs/work/DOCS-001-VERIFY-20261110-184136.md` → `GATES_PASS` (D1–D15).
+- **QA independiente:** `docs/work/DOCS-001-REVIEW-20261110.md` → `APROBADO` (0 bloqueantes).
+- **CI remota:** PHP/Node/smoke SUCCESS (run `42908696754`) y contratos SUCCESS (run `42908696677`) sobre `90254e5`, verificados externamente.
+- **Alcance del cierre:** exclusivamente documental (estado, evidencia y registro). No declara deploy, staging ni migraciones.
+- **Artefacto:** `docs/work/DOCS-001-CLOSURE-20261110.md`.
+
 ## Estado de funciones
 
 - **Ya existente:** AUTH-001 VERIFIED, BRANCH-001 VERIFIED, USERS-001 DRAFT con QA documental APROBADO (sin implementar), harness con gates/QA/publisher.
-- **Esta integración:** manual `/docs/`, protocolo y bitácora, contexto ChatGPT, reglas de autoría/handoff, enlace «Ayuda», automatización de estado documental y smoke de `/docs/`.
-- **Pendiente de autoría ChatGPT:** referencia al nuevo enlace «Ayuda» en el manual y actualización de `CONTEXTO-CHATGPT.md` para reflejar que el PR #2 ya está integrado. OpenCode no los redacta.
+- **Esta integración:** manual `/docs/`, protocolo y bitácora, contexto ChatGPT, reglas de autoría/handoff, enlace «Ayuda», automatización de estado documental y smoke de `/docs/`. **VERIFIED (2026-11-10).**
+- **Pendiente de autoría ChatGPT:** referencia al nuevo enlace «Ayuda» en el manual y actualización de `CONTEXTO-CHATGPT.md`; ambas se entregan en el PR #3 y OpenCode no las redacta.

@@ -9,10 +9,10 @@ guide_branch: `docs/guia-usuario-interactiva-20261110`
 guide_pr: https://github.com/marioromero/StockFlash/pull/2
 guide_status: INTEGRADA_EN_MAIN (2026-11-10)
 guide_content_last_written: 2026-11-10
-covered_features: AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 integración del manual (2026-11-10)
-latest_covered_code_sha: `4f81457fae3c3549fe598a71333b211de4015f79` (código BRANCH-001; AUTH-001 previo)
+covered_features: AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED (2026-11-10)
+latest_covered_code_sha: `90254e59bf61bc0252a579c076886fc500eb0119` (DOCS-001 publicado; AUTH/BRANCH previos)
 next_feature: USERS-001 DRAFT (NO documentar como disponible)
-last_guide_integration_sha: `bc3ca23d41f8610fe2c7c7863488aa2db4c38d69` (head del PR #2; contenido integrado en main)
+last_guide_integration_sha: `90254e59bf61bc0252a579c076886fc500eb0119` (integración DOCS-001 en main)
 last_guide_integration_date: 2026-11-10
 pending_docs: Dashboard «Ayuda» → `/docs/` (ChatGPT debe añadir la referencia en «Conocer el panel principal»); actualizar `docs/harness/CONTEXTO-CHATGPT.md` para reflejar que el PR #2 ya está integrado.
 pending_since: 2026-11-10
