@@ -33,9 +33,9 @@ Desde la raíz del clone de StockFlash:
 
 ## Informe real y activación posterior
 
-Cuando OpenCode implemente una **feature previamente APPROVED**, debe continuar con el procedimiento existente de gates → reviewer → publisher, esperar CI verde para el SHA de main y crear/publicar el informe versionado `docs/work/<FEATURE>-RUN-REPORT-<ID>.md` conforme al contrato existente. Si el contrato RUN-REPORT aún no está operativo, primero implementarlo y probarlo mediante su packet propio; no falsificar reportes.
+Cuando OpenCode implemente una **feature previamente APPROVED**, debe crear el informe versionado ANTES de publicar, con el campo CI_UNVERIFIED/PENDING, incluirlo en el alcance revisado y seguir los gates → reviewer → publisher; tras el push debe esperar CI verde para ese SHA `docs/work/<FEATURE>-RUN-REPORT-<ID>.md` conforme al contrato existente. Si el contrato RUN-REPORT aún no está operativo, primero implementarlo y probarlo mediante su packet propio; no falsificar reportes.
 
-Luego, ejecutar (reemplazar campos por ID, ruta y número reales):
+Solo después de que CI remota termine, ejecutar (reemplazar campos por ID, ruta y número reales):
 
 ```powershell
 py -3 scripts/sf_work_bridge.py signal --pr PR_CONTROL --feature FEATURE-001 --report-id FEATURE-001-run-001 --report-path docs/work/FEATURE-001-RUN-REPORT-001.md
