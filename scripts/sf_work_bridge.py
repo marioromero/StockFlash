@@ -57,11 +57,20 @@ def validate_instruction(payload: dict) -> dict:
 
 
 def parse_instruction(body: str) -> dict | None:
+    """Accept an exact fenced payload or a complete raw JSON object from Work.
+
+    Refuse explanatory prose and partial JSON so that PR comments cannot be
+    interpreted as instructions by accident.
+    """
     match = FENCE.search(body or "")
-    if not match:
-        return None
+    if match:
+        raw = match.group(1)
+    else:
+        raw = (body or "").strip()
+        if not (raw.startswith("{") and raw.endswith("}")):
+            return None
     try:
-        return validate_instruction(json.loads(match.group(1)))
+        return validate_instruction(json.loads(raw))
     except (ValueError, TypeError) as exc:
         raise BridgeError(f"JSON inválido: {exc}") from exc
 
