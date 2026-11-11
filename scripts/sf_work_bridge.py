@@ -228,7 +228,9 @@ def handle_comment(comment: dict, state: dict, gh: GitHub, args) -> bool:
         for c in args.all_comments
     )
     if not matching_report:
-        raise BridgeError("No hay reporte previo de OpenCode asociado a la instrucción")
+        # Comentarios históricos o ajenos no deben bloquear la cola válida.
+        # Solo una respuesta vinculada a un aviso del PR de señales es procesable.
+        return False
     key = str(comment["id"])
     state["processed"][key] = {"instruction_id": data["instruction_id"], "status": "RECEIVED", "action": data["action"]}
     save_state(state)
