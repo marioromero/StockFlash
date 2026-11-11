@@ -125,11 +125,14 @@ class GitHub:
                 return comments
         raise BridgeError("Demasiados comentarios: requiere paginación ampliada")
 
-    def verify_control_pr(self, pr: int):
+    def verify_control_pr(self, pr: int, expected_marker: str | None = None):
         obj = self.request("GET", f"pulls/{pr}")
         allowed_titles = ("[SF-WORK-CONTROL]", "[SF-WORK-SIGNAL]")
-        if obj.get("state") != "open" or not any(t in obj.get("title", "") for t in allowed_titles):
+        title = obj.get("title", "")
+        if obj.get("state") != "open" or not any(t in title for t in allowed_titles):
             raise BridgeError("El PR debe estar abierto y marcado como canal Work")
+        if expected_marker and expected_marker not in title:
+            raise BridgeError("El PR no coincide con el canal de GitHub esperado")
         if obj.get("base", {}).get("ref") != "main":
             raise BridgeError("El PR de control no apunta a main")
 
@@ -259,6 +262,8 @@ def handle_comment(comment: dict, state: dict, gh: GitHub, args) -> bool:
 def cmd_watch(args, gh: GitHub):
     if args.signal_pr == args.pr:
         raise BridgeError("Canales separados obligatorios: avisos PR #8 y respuestas PR #7")
+    gh.verify_control_pr(args.pr, "[SF-WORK-CONTROL]")
+    gh.verify_control_pr(args.signal_pr, "[SF-WORK-SIGNAL]")
     while True:
         comments = gh.comments(args.pr)
         args.all_comments = gh.comments(args.signal_pr)
@@ -274,6 +279,7 @@ def cmd_watch(args, gh: GitHub):
 
 
 def cmd_signal(args, gh: GitHub):
+    gh.verify_control_pr(args.pr, "[SF-WORK-SIGNAL]")
     if not FEATURE_RE.fullmatch(args.feature) or not ID_RE.fullmatch(args.report_id):
         raise BridgeError("Feature o report_id incorrecto")
     sha = gh.main_sha()
