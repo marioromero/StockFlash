@@ -127,8 +127,9 @@ class GitHub:
 
     def verify_control_pr(self, pr: int):
         obj = self.request("GET", f"pulls/{pr}")
-        if obj.get("state") != "open" or "[SF-WORK-CONTROL]" not in obj.get("title", ""):
-            raise BridgeError("El PR debe estar abierto y marcado [SF-WORK-CONTROL]")
+        allowed_titles = ("[SF-WORK-CONTROL]", "[SF-WORK-SIGNAL]")
+        if obj.get("state") != "open" or not any(t in obj.get("title", "") for t in allowed_titles):
+            raise BridgeError("El PR debe estar abierto y marcado como canal Work")
         if obj.get("base", {}).get("ref") != "main":
             raise BridgeError("El PR de control no apunta a main")
 
@@ -256,9 +257,11 @@ def handle_comment(comment: dict, state: dict, gh: GitHub, args) -> bool:
 
 
 def cmd_watch(args, gh: GitHub):
+    if args.signal_pr == args.pr:
+        raise BridgeError("Canales separados obligatorios: avisos PR #8 y respuestas PR #7")
     while True:
         comments = gh.comments(args.pr)
-        args.all_comments = comments
+        args.all_comments = gh.comments(args.signal_pr)
         state = read_state()
         handled = 0
         for c in comments:
@@ -303,14 +306,15 @@ def main():
     p.add_argument("--repo", default=REPO)
     sp = p.add_subparsers(dest="mode", required=True)
     w = sp.add_parser("watch", help="Escuchar instrucciones de Work en un PR de control")
-    w.add_argument("--pr", type=int, required=True)
+    w.add_argument("--pr", type=int, required=True, help="PR #7 de respuestas Work")
+    w.add_argument("--signal-pr", type=int, default=8, help="PR #8 de avisos OpenCode")
     w.add_argument("--trusted-login", required=True)
     w.add_argument("--interval", type=int, default=30)
     w.add_argument("--timeout", type=int, default=3600)
     w.add_argument("--once", action="store_true")
     w.add_argument("--execute", action="store_true", help="Además ejecutar RUN; requiere SF_WORK_ALLOW_EXECUTE=YES")
     s = sp.add_parser("signal", help="Publicar un aviso de OpenCode para activar Work")
-    s.add_argument("--pr", type=int, required=True)
+    s.add_argument("--pr", type=int, required=True, help="PR #8 de avisos OpenCode")
     s.add_argument("--feature", required=True)
     s.add_argument("--report-id", required=True)
     s.add_argument("--report-path")
@@ -318,8 +322,12 @@ def main():
     a = p.parse_args()
     if not 0 < a.pr < 1000000:
         p.error("PR inválido")
+    if a.mode == "watch" and not 0 < a.signal_pr < 1000000:
+        p.error("PR de avisos inválido")
     if a.mode == "watch" and (a.interval < 15 or a.timeout < 60):
         p.error("Intervalo mínimo 15s y timeout mínimo 60s")
+    if a.mode == "watch" and a.pr == a.signal_pr:
+        p.error("El PR de respuestas no puede ser el PR de avisos")
     try:
         gh = GitHub(get_token(), a.repo)
         if a.mode == "watch":
