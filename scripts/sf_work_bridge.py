@@ -230,6 +230,8 @@ def handle_comment(comment: dict, state: dict, gh: GitHub, args) -> bool:
         print(f"DRY_RUN: instrucción RUN válida {data['instruction_id']}. No se invocó OpenCode.")
         return True
     if os.getenv("SF_WORK_ALLOW_EXECUTE") != "YES":
+        state["processed"][key]["status"] = "BLOCKED"
+        save_state(state)
         raise BridgeError("Para ejecutar RUN se requiere SF_WORK_ALLOW_EXECUTE=YES")
     state["processed"][key]["status"] = "RUNNING"
     save_state(state)
@@ -275,6 +277,13 @@ def cmd_signal(args, gh: GitHub):
     payload = {"protocol": REPORT_PROTOCOL, "report_id": args.report_id,
                "feature": args.feature, "sha": sha, "kind": "SMOKE" if args.smoke else "RUN",
                "report_path": args.report_path or ""}
+    # No reactivar Work por un mismo report_id, incluso tras un reintento local.
+    for previous in gh.comments(args.pr):
+        previous_body = previous.get("body", "")
+        if previous_body.find("\x60\x60\x60sf-oc-report-v1") >= 0 and (
+            f'"report_id": "{args.report_id}"' in previous_body
+        ):
+            raise BridgeError("report_id ya publicado; no se disparará otra revisión Work")
     content = "\x60\x60\x60sf-oc-report-v1\n" + json.dumps(payload, indent=2, ensure_ascii=False) + "\n\x60\x60\x60"
     print("Reporte señalado:", gh.post_comment(args.pr, content))
     print("Ahora Work debe responder en el PR. Si no tiene permiso de escritura, el ciclo queda bloqueado.")
