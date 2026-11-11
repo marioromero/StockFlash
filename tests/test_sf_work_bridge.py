@@ -27,6 +27,11 @@ class TestBridge(unittest.TestCase):
     def test_parse_stop(self):
         self.assertEqual(b.parse_instruction(self.body(self.payload()))["action"], "STOP")
 
+    def test_parse_raw_json_from_work(self):
+        import json
+        self.assertEqual(b.parse_instruction(json.dumps(self.payload()))["action"], "STOP")
+        self.assertIsNone(b.parse_instruction('Comentario: ' + json.dumps(self.payload())))
+
     def test_reject_shell_action_and_unknown_fields(self):
         with self.assertRaises(b.BridgeError):
             b.parse_instruction(self.body(self.payload(action="SHELL")))
