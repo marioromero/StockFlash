@@ -4,14 +4,14 @@
 
 ## Qué hace
 
-Usar un **pull request de control**, sin fusionarlo, para intercambiar comentarios: OpenCode termina su flujo ordinario `/sf-feature → /sf-verify → /sf-review → /sf-publish` en main; luego `signal` publica un aviso referenciando su informe y el SHA de main después de CI verde; una tarea Work se despierta al recibir un evento de comentario de PR; Work revisa la evidencia e intenta responder en el mismo PR; `watch` Python lee la instrucción y la registra. Opcionalmente puede ejecutar la spec autorizada por el `/sf-run` vigente. Python **no llama a OpenAI ni a DeepSeek**.
+Usar un **pull request de control**, sin fusionarlo, para intercambiar comentarios: OpenCode prepara un informe versionado con CI_UNVERIFIED/PENDING antes del publisher, lo incluye en los gates y QA y completa `/sf-feature → /sf-verify → /sf-review → /sf-publish` en main; cuando GitHub CI termina verde, `signal` publica un aviso referenciando ese informe y el SHA de main; una tarea Work se despierta al recibir un evento de comentario de PR; Work revisa la evidencia e intenta responder en el mismo PR; `watch` Python lee la instrucción y la registra. Opcionalmente puede ejecutar la spec autorizada por el `/sf-run` vigente. Python **no llama a OpenAI ni a DeepSeek**.
 
 El evento compatible y los permisos de escritura tienen que comprobarse en la interfaz real de Work. Los eventos de GitHub en Work incluyen actividad de PR; la disponibilidad concreta de comentarios depende del activador. **El conector GitHub estándar de ChatGPT se documenta como de solo lectura.** Si Work no puede publicar comentarios por algún medio autorizado, el ciclo automático no queda cerrado y debe detenerse. No sustituir esta comprobación por una promesa de disponibilidad.
 
 ## Fuentes de verdad y reglas inmutables
 
 - `AGENTS.md`, `docs/governance/CONSTITUTION.md`, `docs/work/CURRENT.md`, `docs/work/features/*.md`, `docs/harness/CONTEXTO-CHATGPT.md`, `docs/harness/WORKFLOW-SDD-HIBRIDO.md`, `docs/harness/RUN-REPORT-CONTRACT.md` y GitHub Actions del SHA exacto.
-- No modificar agentes, `opencode.json`, comandos `/sf-*`, contratos v2.2 ni workflows CI para el piloto. No publicar `VERIFIED` por cuenta del agente. Toda decisión de negocio y aprobación de spec DRAFT pertenece al propietario.
+- No modificar agentes, `opencode.json`, comandos `/sf-*`, contratos v2.2 ni workflows CI para el piloto. El RUN-REPORT no puede afirmar CI SUCCESS antes de publicarse: registrar CI_UNVERIFIED, y `signal` verifica CI remota tras el push. No publicar `VERIFIED` por cuenta del agente. Toda decisión de negocio y aprobación de spec DRAFT pertenece al propietario.
 - OpenCode no edita `docs/harness/CONTEXTO-CHATGPT.md`, `public/docs/index.html` ni `resources/roadmap/index.html`: son de autoría exclusiva de GPT. Work tampoco debe adjudicar autoría y cambios que no haya realizado realmente.
 - El PR de control debe permanecer abierto, base main, título con `[SF-WORK-CONTROL]`, rama separada y **NO MERGEAR**. Es canal de mensajes, no PR de implementación. Los comentarios de respuesta están en la pestaña Conversation, no como review inline.
 
