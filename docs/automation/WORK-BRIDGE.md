@@ -2,6 +2,10 @@
 
 **Estado: PILOTO / NO AUTÓNOMO hasta verificar eventos y escritura desde Work.** Este documento no crea una tarea de Work ni modifica el harness. El contrato `docs/harness/RUN-REPORT-CONTRACT.md` permanece DOCUMENTADO/NO OPERATIVO hasta que se complete y pruebe su implementación.
 
+## Modos, supervisión y sesiones
+
+**Leer también `docs/automation/MODOS-Y-CONTINUIDAD.md`.** Define la ubicación de resultados de Work en Programadas, la pausa manual segura, la continuidad entre chats y los controles pendientes antes de activar autonomía. Este piloto aún no incorpora un selector persistente AUTO/MANUAL y no debe ejecutarse con `--execute` en pruebas.
+
 ## Qué hace
 
 Usar un **pull request de control**, sin fusionarlo, para intercambiar comentarios: OpenCode prepara un informe versionado con CI_UNVERIFIED/PENDING antes del publisher, lo incluye en los gates y QA y completa `/sf-feature → /sf-verify → /sf-review → /sf-publish` en main; cuando GitHub CI termina verde, `signal` publica un aviso referenciando ese informe y el SHA de main; una tarea Work se despierta al recibir un evento de comentario de PR; Work revisa la evidencia e intenta responder en el mismo PR; `watch` Python lee la instrucción y la registra. Opcionalmente puede ejecutar la spec autorizada por el `/sf-run` vigente. Python **no llama a OpenAI ni a DeepSeek**.
