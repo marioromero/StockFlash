@@ -5,7 +5,7 @@
 ## Dónde se ve cada cosa
 
 - ChatGPT > **Programadas**: tarea Work, ejecuciones anteriores, errores, pausa/reanudación y aprobaciones pendientes. Cada ejecución de Work es una revisión distinta; no prometer que aparecerá en el chat manual.
-- GitHub PR **#7** [SF-WORK-CONTROL]: historial cronológico durable de reportes OC y respuestas de Work; mantener abierto y **NO MERGEAR**.
+- GitHub PR **#8** [SF-WORK-SIGNAL]: historial de avisos OC que activan Work. GitHub PR **#7** [SF-WORK-CONTROL]: historial de respuestas/instrucciones Work que Python escucha. Ambos abiertos y **NO MERGEAR**. Work nunca debe responder en #8 para evitar bucles y consumo innecesario.
 - GitHub main: Feature Packet, contexto ChatGPT, CURRENT, QA, gates, SHA exacto y CI; es la fuente de verdad.
 - Windows: `docs/work/.run/sf-work-bridge-state.json` (ledger local, ignorado por Git) y consola del supervisor; no borrar al cambiar de modo. El ledger local no reemplaza el historial GitHub.
 
@@ -26,11 +26,11 @@ No depender de memoria de conversación ni mantener un chat abierto durante día
 
 Al cerrar una revisión, registrar como mínimo: `feature`, `report_id`, `instruction_id`, `SHA`, CI/gates/QA realmente observados, decisiones del propietario y siguiente acción permitida. **OpenCode no edita** `docs/harness/CONTEXTO-CHATGPT.md`, `public/docs/index.html` ni `resources/roadmap/index.html`. Si Work carece de capacidad de escritura GitHub, marcar `OWNER_REQUIRED` y usar el protocolo editorial manual; no atribuir un cambio que no se ha publicado.
 
-Para reanudar en un chat GPT nuevo: \"Continúa StockFlash leyendo docs/harness/CONTEXTO-CHATGPT.md, docs/work/CURRENT.md, la spec activa y PR #7. Comprueba el SHA y el estado real de CI. No ejecutes automáticamente nada\".
+Para reanudar en un chat GPT nuevo: \"Continúa StockFlash leyendo docs/harness/CONTEXTO-CHATGPT.md, docs/work/CURRENT.md, la spec activa, avisos PR #8 y respuestas PR #7. Comprueba el SHA y el estado real de CI. No ejecutes automáticamente nada\".
 
 ## Pruebas que faltan
 
-- Evento Work exacto compatible con comentario en PR #7 y acción de escritura efectiva a GitHub. Si falla cualquiera, no hay ciclo automático Work ↔ OC.
+- Evento Work exacto compatible con comentario en PR #8 y escritura en PR #7, sin activaciones adicionales por respuestas. La escritura manual en PR #7 ya está comprobada; falta verificar ejecución real de la tarea.
 - Conmutación a MANUAL durante trabajo sin nueva ejecución; tras reanudar, deduplicación y comprobación de SHA.
 - Continuidad desde chat nuevo y desde nueva ejecución Work sin inventar estados o aprobaciones.
 - Paradas por costo, límite de ciclos y horario, y notificación visible al propietario.
