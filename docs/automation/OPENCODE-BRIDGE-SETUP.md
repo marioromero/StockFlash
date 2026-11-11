@@ -12,24 +12,24 @@ Desde la raíz del clone de StockFlash:
 
 1. Verificar `py -3 --version`, `opencode --version`, `git status --short` y `gh auth status`. Si `gh` no existe, instalar GitHub CLI o proporcionar `GH_TOKEN` temporal mediante variables de entorno del usuario. **Nunca copiar un token al chat, al repo, ni al prompt de OpenCode.**
 2. Integrar el PR de implementación después de revisar sus archivos y pasar CI; luego, en main limpio, ejecutar `py -3 scripts/safe_git_pull.py`. Si indica SYNC_BLOCKED, detenerse; no usar reset, stash o clean.
-3. Ejecutar pruebas sin red: `py -3 -m unittest discover -s tests -p test_sf_work_bridge.py -v`. Se esperan 6 tests.
-4. Preparar un PR independiente de control con base main y título `[SF-WORK-CONTROL] Transporte Work y OpenCode — NO MERGEAR`. Mantenerlo abierto. Su número se usa como PR_CONTROL. **Este PR no contiene código para fusionar.**
+3. Ejecutar pruebas sin red: `py -3 -m unittest discover -s tests -p test_sf_work_bridge.py -v`. Se esperan 8 tests.
+4. **Ya existen dos PR de transporte, NO MERGEAR:** PR #8 `[SF-WORK-SIGNAL]` recibe avisos OC y es el único que debe activar Work; PR #7 `[SF-WORK-CONTROL]` recibe respuestas Work y es el único que escucha Python. Ambos tienen base main. Nunca responder en PR #8.
 5. Con la cuenta de GitHub conectada en el equipo y permiso de crear comentarios, enviar una prueba:
    
    ```powershell
-   py -3 scripts/sf_work_bridge.py signal --pr PR_CONTROL --feature USERS-001 --report-id SMOKE-001 --smoke
+   py -3 scripts/sf_work_bridge.py signal --pr 8 --feature USERS-001 --report-id SMOKE-NEW-001 --smoke
    ```
 
    El script publica un comentario inofensivo referenciando el HEAD actual de main. `--smoke` no consulta CI y **no autoriza USERS-001**.
-6. Configurar la tarea Work usando el prompt exacto de `WORK-BRIDGE.md`. Elegir evento **comentario nuevo de PR**, filtrar por marcador `sf-oc-report-v1` y por el PR de control. Si el evento no aparece en tu cuenta, detener y reportar limitación; no sustituirlo silenciosamente por un cron. Tras crear la tarea puede hacer falta otro aviso `SMOKE-002` para activarla.
-7. Confirmar que Work publicó un comentario `sf-work-instruction-v1` con acción STOP. Si Work no puede **escribir** en GitHub, esto no quedó automatizado; no ejecutar código.
+6. Configurar la tarea Work usando el prompt exacto de `WORK-BRIDGE.md`. Elegir evento **comentario nuevo SOLO del PR #8**. No hay filtro por contenido en el activador; Work debe comprobar el comentario recibido y responder exclusivamente en PR #7. La tarea no debe vigilar el PR #7. El primer comentario de prueba debe publicarse DESPUÉS de crear la tarea.
+7. Confirmar que Work publicó un comentario `sf-work-instruction-v1` con acción STOP **en PR #7**. La publicación manual en PR #7 ya se probó; falta verificar que una tarea automática lo haga. Si falla, detenerse y comprobar Programadas, sin habilitar ejecución.
 8. Consultar el resultado sin lanzar OpenCode:
 
    ```powershell
-   py -3 scripts/sf_work_bridge.py watch --pr PR_CONTROL --trusted-login marioromero --once
+   py -3 scripts/sf_work_bridge.py watch --pr 7 --signal-pr 8 --trusted-login marioromero --once
    ```
 
-   Si hay una instrucción STOP válida debe mostrarla. Si se quiere escuchar indefinidamente mientras Windows está encendido, quitar `--once`: espera 30 segundos entre consultas. Para finalizar, Ctrl+C. No usar todavía `--execute`.
+   El supervisor solo empareja una instrucción recibida en PR #7 con un aviso previo de PR #8; las pruebas antiguas creadas en PR #7 no constituyen señales válidas. Si hay una instrucción STOP válida debe mostrarla. Si se quiere escuchar indefinidamente mientras Windows está encendido, quitar `--once`: espera 30 segundos entre consultas. Para finalizar, Ctrl+C. No usar todavía `--execute`.
 
 ## Informe real y activación posterior
 
@@ -38,7 +38,7 @@ Cuando OpenCode implemente una **feature previamente APPROVED**, debe crear el i
 Solo después de que CI remota termine, ejecutar (reemplazar campos por ID, ruta y número reales):
 
 ```powershell
-py -3 scripts/sf_work_bridge.py signal --pr PR_CONTROL --feature FEATURE-001 --report-id FEATURE-001-run-001 --report-path docs/work/FEATURE-001-RUN-REPORT-001.md
+py -3 scripts/sf_work_bridge.py signal --pr 8 --feature FEATURE-001 --report-id FEATURE-001-run-001 --report-path docs/work/FEATURE-001-RUN-REPORT-001.md
 ```
 
 Para la señal real el script verifica la presencia del Markdown en GitHub en el SHA HEAD y CI SUCCESS de PHP 8.3, Node 24, smoke GET / y contratos. Si algún check está pendiente o falla, devuelve BRIDGE_BLOCKED y **no** publica el aviso de trabajo.
@@ -47,7 +47,7 @@ Para una fase futura, solo después de probar entrada/salida y controles económ
 
 ```powershell
 $env:SF_WORK_ALLOW_EXECUTE="YES"
-py -3 scripts/sf_work_bridge.py watch --pr PR_CONTROL --trusted-login marioromero --execute
+py -3 scripts/sf_work_bridge.py watch --pr 7 --signal-pr 8 --trusted-login marioromero --execute
 ```
 
 Esto invoca el comando OpenCode documentado `opencode run --file <JSON local> --command sf-run FEATURE`, pero la forma exacta debe validarse contra `opencode run --help` instalado en tu OpenCode 2. No cambiar `/sf-run` por prompts de shell. El JSON recibido se guarda en `docs/work/.run`, ignorado por Git. Work no modifica archivos del proyecto en este puente; si necesita actualizar manual/roadmap/contexto debe seguir el flujo editorial de GPT existente.
