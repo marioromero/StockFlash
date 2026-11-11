@@ -19,6 +19,16 @@ El evento compatible y los permisos de escritura tienen que comprobarse en la in
 - OpenCode no edita `docs/harness/CONTEXTO-CHATGPT.md`, `public/docs/index.html` ni `resources/roadmap/index.html`: son de autoría exclusiva de GPT. Work tampoco debe adjudicar autoría y cambios que no haya realizado realmente.
 - El PR de control debe permanecer abierto, base main, título con `[SF-WORK-CONTROL]`, rama separada y **NO MERGEAR**. Es canal de mensajes, no PR de implementación. Los comentarios de respuesta están en la pestaña Conversation, no como review inline.
 
+## Modelo y potencia recomendados (Work Plus)
+
+Durante instalación, prueba de transporte y revisión rutinaria: **GPT-6.1 Sol, Alto**, si está disponible en la cuenta; si no, mantener la opción equivalente que muestre Work y anotarla. Reservar **GPT-6 Astra, Alto** para problemas arquitectónicos excepcionales. No seleccionar Muy alto o Máximo como configuración permanente sin evidencias de mejor rendimiento.
+
+**La tarea Work no tiene conmutación dinámica del modelo demostrada.** Una instrucción de Markdown no puede cambiar el selector de modelo. Si Work permite configurar tareas separadas con distintos modelos y condiciones de activación, se podrá evaluar después una tarea especializada, comprobando su consumo, filtros y prevención de bucles. Mientras no esté validado, la revisión ordinaria usa un modelo fijo y los casos complejos devuelven OWNER_REQUIRED para escalamiento. No prometer auto-ruteo que aún no existe.
+
+## Compatibilidad del comentario real de Work
+
+Durante la prueba manual Work escribió un objeto JSON puro en PR #7 (comentario #6808805849), sin bloque fenced Markdown. El supervisor acepta ahora **un bloque fenced estricto o un JSON que ocupe el comentario completo** y pase la validación del contrato. No acepta texto libre ni comandos shell. El modo de ejecución sigue bloqueado sin habilitación explícita.
+
 ## Contrato de comentarios
 
 **OC → Work:** comentario generado por `signal`, con bloque fenced (lenguaje `sf-oc-report-v1`), JSON del ejemplo:
