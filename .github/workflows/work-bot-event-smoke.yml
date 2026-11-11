@@ -1,0 +1,39 @@
+name: Temporary Work event bot smoke
+
+on:
+  push:
+    branches:
+      - pilot/work-bot-event-smoke-20261111
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  signal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Post harmless test comment as GitHub Actions bot
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          SHA="$(gh api repos/marioromero/StockFlash/git/ref/heads/main --jq .object.sha)"
+          [[ "$SHA" =~ ^[0-9a-f]{40}$ ]]
+          BODY="$(cat <<EOF
+          \`\`\`sf-oc-report-v1
+          {
+            "protocol": "SF-OC-REPORT-1",
+            "report_id": "SMOKE-BOT-004",
+            "feature": "USERS-001",
+            "sha": "$SHA",
+            "kind": "SMOKE",
+            "report_path": ""
+          }
+          \`\`\`
+          EOF
+          )"
+          gh api --method POST repos/marioromero/StockFlash/issues/8/comments \
+            -f body="$BODY" --jq .html_url
