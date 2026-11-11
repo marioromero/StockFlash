@@ -65,6 +65,28 @@ class TestBridge(unittest.TestCase):
                 with self.assertRaises(b.BridgeError):
                     b.handle_comment(ic, {}, FakeGitHub(), args)
 
+    def test_cross_pr_channels_and_stop(self):
+        import json
+        p = self.payload(instruction_id="SMOKE-CROSS-001", report_id="SMOKE-CROSS-001")
+        rc = {"id": 50, "body": "```sf-oc-report-v1\n" +
+              json.dumps({"protocol": b.REPORT_PROTOCOL, "report_id": p["report_id"],
+                          "feature": p["source_feature"], "sha": p["base_sha"]}, indent=2) +
+              "\n```"}
+        ic = {"id": 51, "user": {"login": "marioromero"}, "body": json.dumps(p)}
+        class FakeGitHub:
+            def verify_control_pr(self, n, marker):
+                assert (n, marker) in [(7, "[SF-WORK-CONTROL]"), (8, "[SF-WORK-SIGNAL]")]
+            def comments(self, n):
+                return [ic] if n == 7 else [rc]
+            def main_sha(self):
+                return p["base_sha"]
+        with tempfile.TemporaryDirectory() as d:
+            with patch.object(b, "STATE", Path(d) / "state.json"):
+                args = SimpleNamespace(pr=7, signal_pr=8, once=True,
+                    trusted_login="marioromero", execute=False, timeout=60)
+                b.cmd_watch(args, FakeGitHub())
+                self.assertEqual(b.read_state()["processed"]["51"]["status"], "STOP")
+
     def test_unknown_actor_ignored(self):
         ic = {"id": 11, "user": {"login": "intruder"}, "body": self.body(self.payload())}
         args = SimpleNamespace(trusted_login="marioromero")
