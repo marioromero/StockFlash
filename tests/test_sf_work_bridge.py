@@ -62,8 +62,7 @@ class TestBridge(unittest.TestCase):
                 self.assertTrue(b.handle_comment(ic, {}, FakeGitHub(), args))
                 self.assertFalse(b.handle_comment(ic, b.read_state(), FakeGitHub(), args))
                 args.all_comments = [ic]
-                with self.assertRaises(b.BridgeError):
-                    b.handle_comment(ic, {}, FakeGitHub(), args)
+                self.assertFalse(b.handle_comment(ic, {}, FakeGitHub(), args))
 
     def test_cross_pr_channels_and_stop(self):
         import json
