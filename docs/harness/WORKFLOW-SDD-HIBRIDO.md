@@ -1,5 +1,18 @@
 # SDD híbrido (owner+ChatGPT lidera; OpenCode ejecuta)
 
+**Adenda aprobada BRIDGE-001 (2026-11-12):** Codex CLI sucede a ChatGPT en la
+función técnica externa, prepara instrucciones y revisa las evidencias del
+reviewer sin sustituirlo. Propietario conserva aprobación de alcance, decisiones
+importantes, activación y VERIFIED. OpenCode conserva el coordinador y su cadena.
+Python será transporte persistente, sin elegir features ni interpretar contratos.
+Las instrucciones/revisiones rutinarias viajarán por el puente tras su aceptación;
+no está operativo mientras falte aislamiento demostrado. Piloto sin publisher,
+publicación de código, despliegues, migraciones ni acceso de escritura al original.
+Solicitud posterior del propietario permite commit/push documental selectivo por
+Codex en la rama piloto; ver excepción acotada en AGENTS.
+No iniciar USERS-001. Ver packet BRIDGE-001 y CURRENT para estado vigente.
+
+
 ### Capas
 **Producto/arquitectura:** Owner y ChatGPT cierran QUÉ, POR QUÉ, decisiones, criterios verificables, límites, UX, alcance comercial.
 **Repo:** especificaciones/ADR/Feature Packets aprobados y versionados (fuente persistente).

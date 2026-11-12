@@ -1,5 +1,16 @@
 # StockFlash — Roadmap HTML del propietario
 
+**Sucesión aprobada BRIDGE-001, 2026-11-12:** Codex CLI sucede a ChatGPT como
+autor/editor exclusivo de este HTML y del contexto; OpenCode conserva
+integración técnica, pruebas y publicación sin modificar el HTML. Las menciones
+de ChatGPT inferiores se leen con esta sucesión, conservando estados históricos.
+El puente entregará los pedidos `ROADMAP_PENDIENTE_CHATGPT` a Codex cuando se
+valide; hoy está bloqueado por aislamiento, sin recepción automática operativa.
+No actualizar hitos ni cobertura por pruebas unitarias del puente. Activación y
+VERIFIED siguen sujetos a decisión externa; la excepción documental posterior
+solo permite entregar Markdown en la rama piloto (ver AGENTS), sin código.
+
+
 decision_owner: Propietario, 2026-11-10
 content_owner: ChatGPT (exclusivo)
 technical_integrator: OpenCode

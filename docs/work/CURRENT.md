@@ -1,5 +1,23 @@
 # Estado operativo — StockFlash (2026-10-14)
 
+## Trabajo piloto autorizado — 2026-11-12
+
+bridge_active_packet: BRIDGE-001
+
+- Propietario aprobó BRIDGE-001 en worktree `stockflash-codex-pilot`, rama
+  `pilot/codex-bridge-20261112`, base `d103120f6e45dcb10a999c99f3d6f2faff5f466c`.
+- Estado: BLOCKED_ISOLATION, núcleo local implementado y probado; aceptación
+  integral NO realizada, agentes sobre código y publicación deshabilitados.
+- Excepción posterior solicitada por el propietario: entrega de Markdown mediante
+  commit/push selectivo por Codex en la rama piloto, sin código ni integración a
+  main. Sin cambios al original, permisos/credenciales SO, migraciones ni deploy.
+  No reactivar STAGING ni USERS-001 por referencias históricas abajo.
+- Evidencia: `BRIDGE-001-EVIDENCE.md`. Decisión necesaria:
+  `BRIDGE-001-ISOLATION-DECISION.md`. No declarar GATES_PASS global ni VERIFIED.
+- Codex asume revisión externa y autoría editorial conforme a adenda en AGENTS.
+  Harness y separación de QA/publicación se conservan.
+
+
 ## Hitos cerrados y estado vigente
 - **R0 DOC-001:** base documental y contrato v2.2 preparado, sujeto a ADR-01..06 abiertos y controles pendientes antes de dominio.
 - **R1 BOOT-001: VERIFIED** el 2026-10-14; Laravel 13.35.0 + Vue 3 + Inertia 3.5.1 + TypeScript/Vite. Gates `BOOT-001-VERIFY-20261013-234609.md` PASS; QA `BOOT-001-REVIEW-20261013-235005.md` APROBADO; scaffold remoto `bcbf16f`. No deploy ni migraciones.

@@ -1,6 +1,6 @@
 # StockFlash — Seguimiento técnico del roadmap HTML
 
-content_owner: ChatGPT (archivo `resources/roadmap/index.html`; autoría 100 % exclusiva)
+content_owner: Codex CLI (sucesor de ChatGPT por aprobación BRIDGE-001, 2026-11-12; autoría exclusiva)
 integration_owner: OpenCode (ruta, control de acceso, pruebas, publicación y este registro técnico)
 policy: `docs/harness/ROADMAP-HTML-PROYECTO.md`
 roadmap_path: `resources/roadmap/index.html`
@@ -18,6 +18,12 @@ pending: NINGUNO
 report_state: ROADMAP_ACTUALIZADA
 
 ## Mantenimiento por OpenCode
+
+Adenda de continuidad: Codex asume autoría íntegra del HTML; OpenCode conserva
+metadatos e integración. BRIDGE-001 no modifica hitos comerciales ni cobertura.
+Su núcleo local está probado, pero aislamiento y aceptación integral pendientes;
+no presentar la automatización como funcional ni alterar estados VERIFIED.
+
 
 Actualizar exclusivamente metadatos de integración, cobertura, SHA y pendientes; no el HTML ni el protocolo redactados por ChatGPT. Al cerrar futuras features comparar el estado actual con la cobertura y emitir `ROADMAP_ACTUALIZADO` o `ROADMAP_PENDIENTE_CHATGPT` en el handoff. Los estados no son porcentajes de avance.
 

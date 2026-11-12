@@ -1,6 +1,6 @@
 # StockFlash — Seguimiento de guía HTML de usuario
 
-content_owner: ChatGPT (exclusivo para textos explicativos de `public/docs/index.html`)
+content_owner: Codex CLI (sucesor de ChatGPT por aprobación BRIDGE-001, 2026-11-12)
 integration_owner: OpenCode (validación, enlace /docs/, publicación y reportes)
 policy: `docs/harness/GUIA-HTML-USUARIO.md`
 guide_path: `public/docs/index.html`
@@ -17,6 +17,12 @@ last_guide_integration_date: 2026-11-10
 pending_docs: NINGUNO
 
 ## Cómo mantener este archivo
+
+Adenda de continuidad: Codex asume redacción, OpenCode mantiene metadatos e
+integración. Sin cambios de UI en el núcleo BRIDGE-001, sin nueva cobertura ni
+pendiente editorial de usuario. Transporte automático aún bloqueado; las
+referencias históricas a traslado por ChatGPT no acreditan puente operativo.
+
 - OpenCode puede actualizar solamente los metadatos y el registro de pendientes aquí, no los textos para usuarios en `public/docs/index.html`.
 - Al completar/publicar una nueva feature: si ChatGPT aún no redactó su nueva guía, registrar `GUIA_PENDIENTE_CHATGPT` con feature, SHA y fecha, más enlaces al packet/QA en el handoff.
 - Después de que ChatGPT redacte y OpenCode integre/publica la guía, actualizar la cobertura y el SHA, marcando `GUIA_ACTUALIZADA`.

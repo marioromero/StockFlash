@@ -1,5 +1,31 @@
 # StockFlash — CONTEXTO PARA CHATGPT (continuidad entre sesiones)
 
+## Reentrada vigente — revisión Codex 2026-11-12
+
+El propietario autorizó BRIDGE-001 y transfirió a Codex CLI las responsabilidades
+técnicas externas y editoriales de ChatGPT. OpenCode continúa sin autoría del
+manual, roadmap ni este contexto. El nombre del archivo se conserva por
+compatibilidad; el contenido histórico inferior no revoca esta transferencia.
+
+HEAD local y `main` remoto comprobados: `d103120f6e45dcb10a999c99f3d6f2faff5f466c`.
+Trabajo actual solo en `pilot/codex-bridge-20261112`; solicitud posterior del
+propietario autoriza entregar únicamente Markdown mediante commit/push selectivo
+por Codex a esa rama. Código y pruebas quedan locales; no integrar a main.
+Núcleo del puente local implementado; 17 pruebas unitarias pasan. Dispatch y
+aceptación real bloqueados por aislamiento no demostrado. No hay automatización
+CLI funcional completa, QA independiente de BRIDGE-001 ni nuevo VERIFIED.
+Consultar CURRENT, packet BRIDGE-001, evidencia y decisión de aislamiento antes
+de continuar. No cambiar permisos/credenciales SO ni instalar runtime sin decisión.
+
+La guía, roadmap y bitácoras efectivas ya muestran ROADMAP-001 VERIFIED e
+integración editorial del PR #5; los pedidos inferiores de volver a integrarlo
+son históricos y no deben repetirse. USERS-001 permanece DRAFT. Sin cambio
+funcional ni comercial; no ampliar manual ni alterar hitos por este núcleo local.
+La próxima tarea es resolver aislamiento, completar adaptadores y realizar una
+única aceptación real con el harness existente. El resto de instrucciones de
+traslado humano se sustituirá al demostrar el puente, sin prometerlo operativo.
+
+
 **Última revisión por ChatGPT:** 2026-11-10
 **Repositorio:** `marioromero/StockFlash` · rama de desarrollo `main`
 **Estado de referencia observado:** `3735c1473b5494ce0840acfc3fa8de6cdc82b245` (ROADMAP-001 VERIFIED, cierre documental publicado; CI remota comprobada)

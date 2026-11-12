@@ -1,5 +1,17 @@
 # StockFlash — Protocolo de documentación HTML de usuario
 
+**Sucesión aprobada BRIDGE-001, 2026-11-12:** Codex CLI asume la autoría
+explicativa y mantenimiento antes reservados a ChatGPT. Las menciones de
+ChatGPT como autor en este protocolo incluyen a Codex como sucesor técnico.
+OpenCode conserva integración, QA y publicación, sin redacción autónoma.
+Los pedidos `GUIA_PENDIENTE_CHATGPT` se entregarán a Codex por el puente una vez
+validado; mientras BRIDGE-001 esté bloqueado no atribuir comunicación automática.
+La publicación sigue controlada por publisher y requiere autorización del entorno.
+El piloto no autoriza publicación de código; una solicitud posterior del
+propietario permite entregar solo Markdown en la rama piloto (ver AGENTS).
+No cambia la cobertura del manual.
+
+
 **Decisión expresa del propietario (2026-11-10):** el contenido de la guía /docs/ será 100 % redactado por ChatGPT, no por OpenCode. Esta norma entra en vigor cuando el PR #2 se integra a main.
 
 ## Punto de acceso y formato

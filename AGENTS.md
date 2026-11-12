@@ -1,4 +1,25 @@
 # StockFlash — reglas de agentes (v1.1, contratos integrados)
+
+**Adenda BRIDGE-001 aprobada por el propietario, 2026-11-12 (piloto local):**
+Codex CLI sucede a ChatGPT en revisión técnica externa, preparación de packets,
+autoría del manual `public/docs/index.html`, autoría íntegra del roadmap
+`resources/roadmap/index.html` y mantenimiento de `CONTEXTO-CHATGPT.md`.
+Esta decisión actualiza las atribuciones de los puntos 14 y 17–19; OpenCode
+conserva sus límites editoriales, coordinador, QA independiente y publisher.
+Los avisos `*_PENDIENTE_CHATGPT` existentes son compatibles como pedidos a Codex.
+Mientras el puente esté bloqueado no existe entrega automática operativa.
+BRIDGE-001 está autorizado solo en el piloto, sin commits, push, migraciones,
+deploy ni modificaciones al original. No alterar permisos/credenciales del SO.
+No invocar agentes sobre código hasta demostrar aislamiento efectivo.
+Activación normal y VERIFIED requieren decisión externa; USERS-001 sigue DRAFT.
+
+**Excepción documental puntual (solicitud posterior del propietario, 2026-11-12):**
+publicar únicamente los Markdown del avance BRIDGE-001 en
+`pilot/codex-bridge-20261112`, mediante commit selectivo y push sin force desde
+Codex. Esta entrega de documentos queda fuera del publisher limitado a main;
+no publica código, no concede GATES_PASS/QA/VERIFIED ni habilita automatización.
+Se mantiene prohibido publicar en main, desplegar o ejecutar agentes sobre código.
+
 1. Comunicación y UI en español es-CL; código/tablas en inglés; nunca tocar producción.
 2. Contratos de trabajo prioritarios **v2.2**: negocio=`docs/product/especificacion-v2.2-parte-1-CONSOLIDADO-EN-REVISION.md`; datos=`docs/product/especificacion-v2.2-parte-2-CONSOLIDADO-EN-REVISION.md`; integración=`docs/product/especificacion-v2.2-anexo-CONSOLIDADO-EN-REVISION.md`. Los tres documentos v2.1 en `docs/product/historico-v2.1/` son evidencia histórica, NO instrucciones vigentes si difieren.
 3. v2.2 consolida decisiones comerciales del owner (demo vs free, derechos por producto, fiscal externo, ventas pausadas, branding). No interpretarlas como simples propuestas: están aprobadas. **Las partes rotuladas ABIERTAS requieren una decisión futura y no se implementan por intuición.**
