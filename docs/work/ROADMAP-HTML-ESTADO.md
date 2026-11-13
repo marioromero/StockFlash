@@ -6,16 +6,16 @@ policy: `docs/harness/ROADMAP-HTML-PROYECTO.md`
 roadmap_path: `resources/roadmap/index.html`
 route: `/roadmap` (restringida a Admin Central / `settings.manage`)
 created_on: 2026-11-10
-baseline_code_sha: `3735c1473b5494ce0840acfc3fa8de6cdc82b245`
-roadmap_content_status: INTEGRADA_EN_MAIN (2026-11-10)
-roadmap_integration_sha: `d6f134e6e20a9fab80047d41c6ab4a9eed29ba7d` (head del PR #5; cierre editorial integrado)
-roadmap_integration_date: 2026-11-10
-roadmap_last_review: 2026-11-10
-covered_features: BOOT-001 VERIFIED; CI-001 VERIFIED; AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED (cierre 3fde691); ROADMAP-001 VERIFIED (2026-11-10)
-in_progress: R3_CORE — USERS-001 código publicado en 882f281; QA externa privacidad pendiente, NO VERIFIED
+baseline_code_sha: `2aec03893c78bc7180544930e0b6f741599df9ed`
+roadmap_content_status: INTEGRADA_EN_MAIN (2026-11-13)
+roadmap_integration_sha: `79c3b0f5af573b956cbcfb8c95c50aef251f5bd5` (commit de ChatGPT que actualizó el roadmap)
+roadmap_integration_date: 2026-11-13
+roadmap_last_review: 2026-11-13
+covered_features: BOOT-001 VERIFIED; CI-001 VERIFIED; AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED (cierre 3fde691); ROADMAP-001 VERIFIED (2026-11-10); USERS-001 APPROVED/publicada (código 2aec038; VERIFIED pendiente)
+in_progress: R3_CORE — USERS-001 publicada con QA/CI verdes; cierre VERIFIED externo pendiente
 first_commercial_release: R7 — POS + Bodega sin emisión DTE integrada y con piloto/controles de salida
-pending: ROADMAP_PENDIENTE_CHATGPT — reflejar USERS-001 implementado/publicado con corrección de privacidad pendiente; no declarar VERIFIED
-report_state: ROADMAP_PENDIENTE_CHATGPT
+pending: NINGUNO
+report_state: ROADMAP_ACTUALIZADA
 
 ## Mantenimiento por OpenCode
 
