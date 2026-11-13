@@ -108,13 +108,18 @@ class UserController extends Controller
 
                 $user = User::create($attributes);
 
+                // PRV-06/CORE-10: se audita el alta PII sin copiar nombre ni
+                // correo; solo se dejan los nombres de los campos afectados.
+                $newValues = $this->auditValues($user);
+                $newValues['personal_data_fields'] = ['name', 'email'];
+
                 $this->auditLogger->record(
                     'user.created',
                     'users',
                     (int) $user->id,
                     null,
                     null,
-                    $this->auditValues($user),
+                    $newValues,
                     'users',
                     true,
                     true,
@@ -202,6 +207,8 @@ class UserController extends Controller
         try {
             DB::transaction(function () use ($data, $user, $actor, $globalRoleId, $proposedRows, $hasAssignmentsInput, $accessErrorKey): void {
                 $oldValues = $this->auditValues($user);
+                $originalName = (string) $user->name;
+                $originalEmail = (string) $user->email;
                 $oldRows = $this->currentAssignmentRows($user);
                 $oldProvidesManage = $this->accessManager->hasUsersManage($user);
                 $newProvidesManage = $this->accessManager->accessProvidesUsersManage($globalRoleId, $proposedRows);
@@ -263,6 +270,14 @@ class UserController extends Controller
 
                 $user->save();
 
+                // PRV-06/CORE-10: el flag PII se decide comparando en memoria
+                // los valores originales con los nuevos, antes de sanitizar.
+                $personalDataChanges = $this->changedPersonalDataFields(
+                    $originalName,
+                    $originalEmail,
+                    $user,
+                );
+
                 if ($globalRoleId !== null) {
                     // Al pasar a global se eliminan las asignaciones.
                     $this->replaceAssignments($user, [], audit: true);
@@ -271,6 +286,10 @@ class UserController extends Controller
                 }
 
                 $newValues = $this->auditValues($user);
+
+                if ($personalDataChanges !== []) {
+                    $newValues['personal_data_fields'] = $personalDataChanges;
+                }
 
                 $this->auditLogger->record(
                     'user.updated',
@@ -281,7 +300,7 @@ class UserController extends Controller
                     $newValues,
                     'users',
                     false,
-                    $this->changedPersonalData($oldValues, $newValues),
+                    $personalDataChanges !== [],
                 );
 
                 if (
@@ -459,6 +478,9 @@ class UserController extends Controller
                 [
                     'is_active' => false,
                     'deleted_at' => optional($user->deleted_at)->toDateTimeString(),
+                    // Sin valores PII: solo se deja constancia de los campos
+                    // personales que la baja deja de exponer.
+                    'personal_data_fields' => ['name', 'email'],
                 ],
                 'users',
                 true,
@@ -687,13 +709,16 @@ class UserController extends Controller
     }
 
     /**
+     * Instantánea no PII para `audit_logs` (PRV-06/CORE-10).
+     *
+     * Nunca incluye nombre ni correo: solo metadatos administrativos y de
+     * acceso que no identifican a la persona.
+     *
      * @return array<string, mixed>
      */
     private function auditValues(User $user): array
     {
         return [
-            'name' => $user->name,
-            'email' => $user->email,
             'global_role_id' => $user->global_role_id,
             'default_branch_id' => $user->default_branch_id,
             'is_active' => (bool) $user->is_active,
@@ -707,18 +732,26 @@ class UserController extends Controller
     }
 
     /**
-     * @param  array<string, mixed>  $old
-     * @param  array<string, mixed>  $new
+     * Nombres (no valores) de los campos PII modificados en la edición.
+     *
+     * Compara en memoria los valores originales con los del modelo ya
+     * guardado, de modo que el flag PII no dependa de las cargas sanitizadas.
+     *
+     * @return list<string>
      */
-    private function changedPersonalData(array $old, array $new): bool
+    private function changedPersonalDataFields(string $originalName, string $originalEmail, User $user): array
     {
-        foreach (['name', 'email'] as $key) {
-            if (($old[$key] ?? null) !== ($new[$key] ?? null)) {
-                return true;
-            }
+        $changed = [];
+
+        if ($originalName !== (string) $user->name) {
+            $changed[] = 'name';
         }
 
-        return false;
+        if ($originalEmail !== (string) $user->email) {
+            $changed[] = 'email';
+        }
+
+        return $changed;
     }
 
     private function rethrowEmailViolation(QueryException $exception): never

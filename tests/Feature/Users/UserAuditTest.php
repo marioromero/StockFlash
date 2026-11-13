@@ -5,6 +5,7 @@ namespace Tests\Feature\Users;
 use App\Models\User;
 use App\Support\AuditLogger;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use RuntimeException;
 
 class UserAuditTest extends UserTestCase
@@ -255,6 +256,96 @@ class UserAuditTest extends UserTestCase
 
         $this->assertTrue((bool) $user->fresh()->is_active);
         $this->assertDatabaseCount('audit_logs', 0);
+    }
+
+    public function test_creacion_edicion_y_baja_no_persisten_valores_de_nombre_ni_email(): void
+    {
+        $originalName = 'Nombre R1 Original '.Str::random(12);
+        $originalEmail = 'r1.original.'.Str::lower(Str::random(12)).'@example.test';
+        $updatedName = 'Nombre R1 Editado '.Str::random(12);
+        $updatedEmail = 'r1.editado.'.Str::lower(Str::random(12)).'@example.test';
+
+        $this->actingAs($this->admin)->post('/users', $this->validUserPayload([
+            'name' => $originalName,
+            'email' => $originalEmail,
+        ]))->assertRedirect(route('users.index'));
+
+        $user = User::query()->where('email', $originalEmail)->firstOrFail();
+        $userId = (int) $user->id;
+
+        $this->actingAs($this->admin)->put("/users/{$user->id}", $this->validUserPayload([
+            'name' => $updatedName,
+            'email' => $updatedEmail,
+            'password' => null,
+            'global_role_id' => $this->role('cashier')->id,
+        ]))->assertRedirect(route('users.index'));
+
+        $this->actingAs($this->admin)->delete("/users/{$user->id}")
+            ->assertRedirect(route('users.index'));
+
+        // Ninguna fila de auditoría puede contener los valores PII, ni antiguos
+        // ni nuevos, en old_values ni en new_values.
+        foreach (DB::table('audit_logs')->get() as $row) {
+            foreach ([$originalName, $originalEmail, $updatedName, $updatedEmail] as $piiValue) {
+                $this->assertStringNotContainsString($piiValue, (string) $row->old_values);
+                $this->assertStringNotContainsString($piiValue, (string) $row->new_values);
+            }
+        }
+
+        $created = DB::table('audit_logs')->where('event', 'user.created')->firstOrFail();
+        $updated = DB::table('audit_logs')->where('event', 'user.updated')->firstOrFail();
+        $deleted = DB::table('audit_logs')->where('event', 'user.deleted')->firstOrFail();
+
+        $this->assertSame(1, (int) $created->is_personal_data_access);
+        $this->assertSame(1, (int) $created->is_security_event);
+        $this->assertSame(1, (int) $updated->is_personal_data_access);
+        $this->assertSame(0, (int) $updated->is_security_event);
+
+        // Trazabilidad no PII conservada: actor, entidad, ID y fecha.
+        foreach ([$created, $updated, $deleted] as $row) {
+            $this->assertSame((int) $this->admin->id, (int) $row->user_id);
+            $this->assertSame('users', $row->auditable_type);
+            $this->assertSame($userId, (int) $row->auditable_id);
+            $this->assertNotNull($row->created_at);
+        }
+
+        // Solo se registran los nombres de los campos afectados.
+        $this->assertStringContainsString('personal_data_fields', (string) $created->new_values);
+        $this->assertStringContainsString('personal_data_fields', (string) $updated->new_values);
+        $this->assertStringContainsString('name', (string) $updated->new_values);
+        $this->assertStringContainsString('email', (string) $updated->new_values);
+        $this->assertStringContainsString('personal_data_fields', (string) $deleted->new_values);
+        $this->assertStringNotContainsString('name', (string) $deleted->old_values);
+        $this->assertStringNotContainsString('email', (string) $deleted->old_values);
+    }
+
+    public function test_edicion_sin_cambio_de_pii_mantiene_flag_en_cero(): void
+    {
+        $name = 'Nombre Estable '.Str::random(10);
+        $email = 'estable.'.Str::lower(Str::random(10)).'@example.test';
+
+        $user = $this->makeUser([
+            'name' => $name,
+            'email' => $email,
+            'global_role_id' => $this->role('cashier')->id,
+        ]);
+
+        $this->actingAs($this->admin)->put("/users/{$user->id}", $this->validUserPayload([
+            'name' => $name,
+            'email' => $email,
+            'password' => null,
+            'global_role_id' => $this->role('cashier')->id,
+        ]))->assertRedirect(route('users.index'));
+
+        $updated = DB::table('audit_logs')->where('event', 'user.updated')->firstOrFail();
+
+        $this->assertSame(0, (int) $updated->is_personal_data_access);
+        $this->assertSame(0, (int) $updated->is_security_event);
+        $this->assertStringNotContainsString('personal_data_fields', (string) $updated->new_values);
+        $this->assertStringNotContainsString($name, (string) $updated->new_values);
+        $this->assertStringNotContainsString($email, (string) $updated->new_values);
+        $this->assertStringNotContainsString($name, (string) $updated->old_values);
+        $this->assertStringNotContainsString($email, (string) $updated->old_values);
     }
 
     private function bindFailingReadLogger(): void
