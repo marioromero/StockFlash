@@ -1,10 +1,19 @@
-# Mapa de lectura v1.1 — baja carga de contexto
-1. Leer `AGENTS.md`, `docs/work/CURRENT.md` y Feature Packet específico.
-2. Consultar `docs/requirements/INDEX-REQUISITOS.md` por ID; buscar solo secciones relevantes.
-3. Contrato de negocio prioritario: `docs/product/especificacion-v2.2-parte-1-CONSOLIDADO-EN-REVISION.md`.
-4. Modelo de datos: `docs/product/especificacion-v2.2-parte-2-CONSOLIDADO-EN-REVISION.md`.
-5. Integraciones y cPanel: `docs/product/especificacion-v2.2-anexo-CONSOLIDADO-EN-REVISION.md`.
-6. Servicio central: `docs/product/StockFlash-Control-SPEC-v0.1.md` solo para features de Control.
-7. Validar asuntos abiertos en `docs/governance/DECISIONES-ABIERTAS-v2.2.md`; si están abiertos, escalar y detener únicamente la parte que depende de ellos.
-8. `docs/product/historico-v2.1/` = fuente histórica para diff/trazabilidad, NUNCA prevalece sobre v2.2 consolidada.
-9. Skill de tarea bajo demanda. Reviewer examina feature+diff+pruebas, no toda especificación.
+# Mapa de lectura v1.2 — baja carga de contexto
+
+## Lectura por defecto
+1. `AGENTS.md` + estado ACTIVO resumido de `docs/work/CURRENT.md` + Feature Packet específico (`docs/work/features/<ID>.md`).
+2. Resolver IDs y requisitos con `docs/requirements/INDEX-REQUISITOS.md`; usar `grep`/`glob` para abrir solo las secciones de contrato y los archivos de código pertinentes.
+3. Skill de tarea bajo demanda. Reviewer examina feature + diff + pruebas, no toda la especificación.
+
+## Lo que NO se lee por defecto
+- Las 3 partes v2.2 completas (`docs/product/especificacion-v2.2-*-CONSOLIDADO-EN-REVISION.md`): abrir solo la sección necesaria.
+- `docs/product/historico-v2.1/`: fuente histórica para diff/trazabilidad, NUNCA prevalece sobre v2.2 consolidada.
+- Reportes previos de verificación/QA/cierres y `docs/harness/CONTEXTO-CHATGPT.md` completo: consultar solo si la tarea lo exige.
+- `docs/product/StockFlash-Control-SPEC-v0.1.md` salvo features de Control.
+
+## Cuándo expandir
+- Existe una dependencia real entre módulos, un cambio transversal o una ambigüedad del contrato.
+- Faltan IDs o criterios en `INDEX-REQUISITOS.md` y hay que confirmar el texto exacto.
+- Se requiere revisar una decisión abierta en `docs/governance/DECISIONES-ABIERTAS-v2.2.md`; si sigue abierta, escalar y detener únicamente la parte que depende de ella.
+
+La búsqueda puntual en código sigue siendo la fuente principal de dependencias; no reconstruir índices ni inventarios de archivos por módulo.
