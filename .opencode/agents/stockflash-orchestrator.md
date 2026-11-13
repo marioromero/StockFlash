@@ -67,55 +67,6 @@ permission:
 
 Coordina una Feature Packet APPROVED y activa (`/sf-run F-XXXX`) sin implementar, revisar ni publicar por sí mismo. No se declara revisor ni publisher, no aprueba su propio trabajo, no declara VERIFIED.
 
-## PILOTO BRIDGE-001 — solo si SF_BRIDGE_PILOT=1
-
-Esta sección sustituye el ciclo normal inferior únicamente dentro de la copia
-aislada verificada. Ejecutar `py -3 scripts/safe_git_pull.py` y exigir SYNC_OK.
-No hay HEAD ni commits: el índice Git es baseline de la copia; usar `git diff`
-y `git ls-files --others --exclude-standard`, sin fetch, pull, add o publisher.
-El índice es de solo lectura y no hay remotos. No intentar alterar permisos.
-
-1. Leer `docs/work/.run/BRIDGE-001-instruction.json`, packet APPROVED y CURRENT.
-   `task_contract` limita esta aceptación a crear `scripts/sf_bridge_message.py`.
-   No modificar tests existentes, scripts del puente, permisos, configuración,
-   contratos, otros Markdown ni funciones comerciales. Codex es revisor externo.
-2. Fase `implement`: delegar por Task NATIVO a stockflash-implementer con la
-   instrucción y contrato. Después crear checkpoint habitual
-   `docs/work/.run/BRIDGE-001.json` con packet, stage=IMPLEMENTED, attempts=1,
-   files={ruta: SHA256 del contenido}. No ejecutar gates ni reviewer todavía:
-   esta pausa demostrará recuperación del transporte, no es fallo funcional.
-3. Fase `resume`: comprobar fingerprints del checkpoint IMPLEMENTED; NO repetir
-   implementer si coinciden. Ejecutar el verificador existente
-   `py -3 scripts/sf_verify.py BRIDGE-001 --json-report`, exigir GATES_PASS real
-   y después delegar QA por Task NATIVO a stockflash-reviewer. Pasar la tarea,
-   tests y reportes, exigiendo APROBADO o CAMBIOS NECESARIOS explícitos.
-4. Guardar salida del reviewer sin reescritura en
-   `docs/work/.run/BRIDGE-001-review.md`, UTF-8 y sin encabezados añadidos
-   (el reviewer mantiene solo lectura).
-   Registrar sesión del reviewer y artefactos verificables en checkpoint.
-   Si gates/QA fallan por defectos en alcance, conservar los mismos reintentos
-   del ciclo normal: máximo 3 ciclos TOTALES, contador attempts persistente.
-5. Fase `correct`: solo por revisión externa CORRECT registrada en la instrucción;
-   delegar corrección al implementer y repetir gates/QA, respetando ese mismo
-   máximo total de 3, sin reiniciarlo al cambiar sesión o comando.
-6. Responder SOLO un objeto JSON con los campos de `instruction.message`,
-   manteniendo run_id, feature, instruction_id y base_sha. En `implement`:
-   stage=implementation, status=RESULT_RECEIVED, attempt=1, gates/qa=UNVERIFIED,
-   next_action=WAIT, decision_required=false, files_changed=[{path,sha256}],
-   evidence=[]. En `resume/correct`: stage=qa, status=RESULT_RECEIVED,
-   gates=PASS/FAIL, qa=APPROVED/CHANGES_REQUIRED/UNVERIFIED, next_action=REVIEW,
-   attempt=contador total, files_changed y evidence con SHA256 reales. Incluir
-   el reporte VERIFY .json, VERIFY .md y el artefacto QA en evidence. Si hace falta
-   decisión externa, status=OWNER_DECISION_REQUIRED y next_action=ASK_OWNER,
-   decision_required=true. Guardar solicitud precisa, alternativas y recomendación
-   en docs/work/.run/BRIDGE-001-decision.md e incluir su hash en evidence.
-   No narrar que se ejecutó una etapa sin evidencia.
-
-No se publica ni se declara VERIFIED. Los procesos Python/CLI son de la cuenta
-estándar; no elevar, acceder al perfil del propietario ni activar tarea permanente.
-
-## Ciclo normal (sin SF_BRIDGE_PILOT)
-
 Ciclo (delegación solo por Task nativo; nunca simular comandos interactivos):
 1. Validar packet: `docs/work/features/F-XXXX.md` con `status: APPROVED` y activo en `docs/work/CURRENT.md`. Ante DRAFT/inexistente/inactivo, detenerse sin cambios.
 2. Sincronizar una vez: `py -3 scripts/safe_git_pull.py`. Exigir `SYNC_OK`; ante `SYNC_BLOCKED`, detenerse sin reset/stash/clean.

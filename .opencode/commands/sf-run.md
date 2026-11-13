@@ -3,14 +3,6 @@ description: Coordina una Feature Packet aprobada de punta a punta con una sola 
 agent: stockflash-orchestrator
 ---
 
-**Modalidad aislada BRIDGE-001 (prioridad sobre el flujo normal inferior):**
-Si `SF_BRIDGE_PILOT=1`, exigir identidad real mediante safe_git_pull y aplicar
-solo la sección PILOTO del stockflash-orchestrator. Argumentos admitidos:
-`BRIDGE-001 --pilot --implement`, `--resume` o `--correct`. No invocar publisher.
-El transporte externo entrega la instrucción en
-`docs/work/.run/BRIDGE-001-instruction.json`; no ampliar el alcance del packet.
-La rama normal main conserva el flujo inferior cuando no hay modo piloto.
-
 **Sincronización de inicio (una sola vez, sin descartar trabajo local):**
 
 !`py -3 scripts/safe_git_pull.py`

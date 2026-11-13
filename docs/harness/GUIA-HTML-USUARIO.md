@@ -1,20 +1,6 @@
 # StockFlash — Protocolo de documentación HTML de usuario
 
-**Sucesión aprobada BRIDGE-001, 2026-11-12:** Codex CLI asume la autoría
-explicativa y mantenimiento antes reservados a ChatGPT. Las menciones de
-ChatGPT como autor en este protocolo incluyen a Codex como sucesor técnico.
-OpenCode conserva integración, QA y publicación, sin redacción autónoma.
-Los pedidos `GUIA_PENDIENTE_CHATGPT` se entregarán a Codex por el puente una vez
-validado; mientras BRIDGE-001 esté bloqueado no atribuir comunicación automática.
-La publicación sigue controlada por publisher y requiere autorización del entorno.
-El piloto no autoriza publicación de código; una solicitud posterior del
-propietario permite entregar solo Markdown en la rama piloto (ver AGENTS).
-No cambia la cobertura del manual.
-
-
-**Trazabilidad:** el propietario reservó la redacción a ChatGPT el 2026-11-10 y
-transfirió esa responsabilidad a Codex CLI en BRIDGE-001. La separación respecto
-de OpenCode se conserva; las instrucciones operativas siguientes usan Codex.
+**Decisión expresa del propietario (2026-11-10):** el contenido de la guía /docs/ será 100 % redactado por ChatGPT, no por OpenCode. Esta norma entra en vigor cuando el PR #2 se integra a main.
 
 ## Punto de acceso y formato
 
@@ -25,46 +11,26 @@ de OpenCode se conserva; las instrucciones operativas siguientes usan Codex.
 
 ## Separación obligatoria de responsabilidades
 
-**Codex CLI, autor exclusivo del contenido dirigido al usuario:** títulos,
-navegación, explicaciones, ejemplos, pasos, glosario, preguntas y toda modificación
-semántica de `public/docs/index.html`. Revisa código/UI/evidencia antes de escribir
-y entrega la edición al flujo controlado de gates, QA y publisher. Respeta anclas
-y contenido publicado; el piloto no habilita publicación funcional en main.
+**ChatGPT, autor exclusivo del contenido dirigido al usuario:** títulos, textos de navegación, descripciones, explicaciones, ejemplos, pasos, glosario, preguntas frecuentes y cualquier modificación semántica de `public/docs/index.html`. Lee el código, la UI y la evidencia antes de escribir; crea la revisión de HTML en rama/PR GitHub cuando dispone del conector, o entrega el archivo listo para integrar. Respeta anclas y contenido previamente publicado.
 
-**OpenCode, integrador técnico:** implementa enlaces/rutas, verifica HTML/CSS/JS,
-navegación, responsive, accesibilidad y CI; publica por el harness autorizado.
-No crea ni modifica explicaciones ni delega redacción. Al detectar contenido
-ausente o incorrecto, entrega el pedido concreto a Codex según el estado del puente.
+**OpenCode, integrador técnico:** puede implementar enlaces «Ayuda» en la interfaz, asegurar que `/docs/` se sirve, verificar HTML/CSS/JS, navegación, responsive, accesibilidad, CI y publicar mediante el harness. Puede corregir aspectos técnicos del estilo, script o enlaces sin cambiar el contenido redactado. **No crea ni modifica por su cuenta la explicación para usuarios, ni delega esa redacción a otro agente/modelo.** Al detectar texto ausente, incorrecto o desactualizado, emite un pedido concreto de actualización a ChatGPT por medio del propietario.
 
 OpenCode puede mantener `docs/work/GUIA-HTML-ESTADO.md` y producir handoffs técnicos; estos NO constituyen documentación explicativa para el usuario.
 
 ## Ciclo por Feature Packet: detección y handoff automáticos
 
 1. **Inicio:** durante `/sf-run` o equivalente, comprobar `docs/work/GUIA-HTML-ESTADO.md` y este protocolo. Anotar si la feature agregará o cambiará pantallas, botones, flujos o comportamientos visibles.
-2. **Finalización funcional:** comparar cobertura con código y pantallas probadas.
-   Si falta redacción de Codex, emitir `GUIA_PENDIENTE_CHATGPT` como alias histórico
-   compatible. Un Markdown auxiliar no concede GUIA_ACTUALIZADA.
-3. **Handoff obligatorio:** incluir feature, SHA, rutas/componentes, cambios de
-   opciones y evidencia QA/CI. Entregar a Codex por el puente durante una ejecución
-   validada; mientras no esté operativo, dejar el pendiente explícito. OpenCode
-   no redacta el manual ni concede autorizaciones por falta del traslado.
-4. **Cuando Codex entregue el HTML:** integrar por verificación técnica, QA y
-   publisher; contrastar con UI y devolver a Codex las correcciones semánticas.
+2. **Finalización funcional:** después de implementación, gates, QA y publicación, comparar el estado de guía contra el SHA y las pantallas implementadas. Si hay contenido que ChatGPT no ha redactado e integrado, marcar **`GUIA_PENDIENTE_CHATGPT`** en el informe de cierre; no declarar `GUIA_ACTUALIZADA` por haber escrito un Markdown auxiliar.
+3. **Handoff obligatorio:** incluir feature, SHA, URLs/rutas y componentes Vue afectados, resumen técnico de nuevas opciones, packet y evidencia QA/CI, y una sola instrucción al propietario: **«Comparte este cierre con ChatGPT para actualizar /docs/»**. No rellenar el manual con texto de OpenCode.
+4. **Cuando ChatGPT entregue el HTML:** integrar mediante flujo del harness (verificación técnica, QA, publisher). Comprobar el texto contra la UI real y pedir a ChatGPT cualquier corrección semántica. Añadir enlaces/rutas si faltan. Publicar y comprobar el SHA.
 5. **Bitácora:** actualizar `docs/work/GUIA-HTML-ESTADO.md` indicando último código cubierto, funcionalidades cubiertas y SHA de documentación integrado. Si aún está pendiente, conservar indicador y fecha del pendiente.
 6. **Al solicitar VERIFIED externo:** informar en el resumen si la guía está actualizada o pendiente. No bloquear el desarrollo ni publicación de código por falta del traspaso humano; no afirmar que el manual está al día cuando no lo esté.
 
-**Límite:** el puente local conecta CLI, no este chat web. No hay vigilancia
-permanente ni ejecución desatendida activada por este documento. La entrega
-automática se atribuye solo después de demostrar BRIDGE-001 y en una ejecución
-autorizada; la autenticación pendiente no se presenta como conexión operativa.
+**Limitación importante:** el harness NO dispone de conexión automática con esta sesión de ChatGPT. Ni OpenCode puede solicitarle contenido por sí solo ni ChatGPT reacciona en segundo plano a cambios de Git. El aviso automático en el handoff necesita que el propietario traiga la entrega a ChatGPT.
 
 ## Recuperación al cambiar de chat o sesión
 
-Protocolo y bitácora son persistentes en Git. Codex recupera AGENTS, este
-protocolo, bitácora, CURRENT, HTML, packet y código/QA de la etapa; contrasta HEAD
-y snapshot autorizado y revisa cambios pendientes antes de editar. En el piloto
-aislado, el transporte aporta SHA/manifiesto del origen sin abrir el repo privado.
-La edición se integra mediante el flujo controlado, sin publicar por inferencia.
+El protocolo y la bitácora viven versionados en GitHub, no dependen del contexto de una conversación. En una sesión nueva el propietario puede decir: «Actualiza la guía /docs de StockFlash con la última etapa». ChatGPT debe abrir `AGENTS.md`, `docs/harness/GUIA-HTML-USUARIO.md`, `docs/work/GUIA-HTML-ESTADO.md`, `docs/work/CURRENT.md`, `public/docs/index.html`, el packet y el código/QA de la etapa; confirmar el HEAD y la existencia de cambios/PR pendientes antes de editar. Solo entonces redacta y publica la actualización.
 
 Esto permite continuidad reproducible **cuando el propietario inicia el encargo**, sin prometer lectura automática en una sesión donde todavía no se pidió continuar.
 
@@ -73,11 +39,8 @@ Esto permite continuidad reproducible **cuando el propietario inicia el encargo*
 - Buscar en español con/sin tildes, menú y acordeones con teclado y móvil, anclas estables, enlaces reales, `GET /docs/`, entrada «Ayuda» desde Dashboard.
 - Sin datos personales, contraseñas reales, API keys ni tokens; solo ejemplos genéricos.
 - Mantener una guía consolidada y sin duplicaciones; revisar coherencia con funciones realmente verificadas.
-- Gates técnicos comprueban disponibilidad/estructura; no sustituyen la revisión
-  editorial de Codex por redacción autónoma de OpenCode.
+- Gates técnicos pueden comprobar disponibilidad y estructura; nunca sustituir el criterio editorial de ChatGPT por generación de texto automática.
 
-## Archivo de continuidad exclusivo para Codex
+## Archivo de continuidad exclusivo para ChatGPT
 
-`docs/harness/CONTEXTO-CHATGPT.md` conserva su nombre histórico y lo mantiene Codex
-al revisar cierres significativos. OpenCode solo consulta ese contexto; sí mantiene
-los metadatos técnicos de GUIA-HTML-ESTADO tras integrar redacción de Codex.
+`docs/harness/CONTEXTO-CHATGPT.md` es el punto de reentrada de cualquier nueva sesión de ChatGPT y mantiene el estado funcional, decisiones y próximos pasos. **ChatGPT es el único editor de ese contexto** y lo revisa al recibir cada cierre significativo de OpenCode; OpenCode solo lo consulta. La bitácora `docs/work/GUIA-HTML-ESTADO.md` es distinta: OpenCode sí puede actualizar metadatos de cobertura tras integrar documentación redactada por ChatGPT.
