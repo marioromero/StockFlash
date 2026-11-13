@@ -2,10 +2,10 @@
 
 status: APPROVED
 owner_approval: Aprobación expresa del propietario en sesión Codex, 2026-11-12.
-execution_status: BLOCKED_UAC
+execution_status: WAITING_DESKTOP_PROVISION
 
 environment_approval: Decisión definitiva posterior: cuenta local estándar StockFlashAgent; Docker/WSL descartados.
-environment_gate: Aceptación de UAC para aprovisionamiento autorizado; ver BRIDGE-001-WINDOWS-SETUP.md.
+environment_gate: Ejecutar lanzador revisado desde PowerShell normal del escritorio y comprobar pruebas reales; ver BRIDGE-001-WINDOWS-SETUP.md.
 environment: Solo worktree stockflash-codex-pilot, rama pilot/codex-bridge-20261112.
 base_sha: d103120f6e45dcb10a999c99f3d6f2faff5f466c
 publication: FORBIDDEN para código/automatización; excepción posterior solo Markdown en rama piloto.

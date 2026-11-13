@@ -4,6 +4,74 @@ Decisión definitiva del propietario: cuenta estándar StockFlashAgent.
 Docker y WSL quedan descartados; no ejecutar DISM ni instalar sus componentes.
 No activar tarea programada permanente antes de aceptación integral.
 
+## Procedimiento vigente revisado — ejecución desde el escritorio
+
+Abrir una ventana **normal, sin elevación**, de PowerShell del propietario y ejecutar:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "C:\Users\Mario\PhpstormProjects\stockflash-codex-pilot\scripts\bridge_windows\Start-Provision.ps1"
+```
+
+Aceptar UAC en ese escritorio. No ejecutar el lanzador desde una consola ya
+elevada ni deshabilitar UAC. Bypass se limita a estos procesos PowerShell;
+no modifica la política de ejecución permanente. Los scripts están guardados
+LOCALMENTE en el piloto; los commits documentales no incluyen sus fuentes.
+
+El lanzador hace preflight sin cambios, toma bloqueo exclusivo, espera al proceso
+administrativo y exige un recibo de éxito del MISMO run_id. Después, desde el
+token normal del propietario, verifica cuenta habilitada, ausencia del grupo
+Administradores y acceso habitual de lectura/escritura a AGENTS de ambos árboles
+(abre/cierra handles sin escribir bytes).
+
+Prepara runtime Python 3.12 por copia selectiva de biblioteca estándar/binarios,
+sin site-packages ni credenciales; exporta fuentes permitidas, sin `.git` ni
+`.env`. No sobrescribe archivos del workspace modificados fuera del manifiesto.
+Prepara sentinels sintéticos y remoto Git local protegido que faltaban en la
+versión anterior. No contacta GitHub ni crea commits en StockFlash.
+
+Finalmente ejecuta probe y las 17 pruebas del núcleo como StockFlashAgent,
+verificando SID y token no administrativo. El entorno del hijo es una lista
+permitida independiente: no borra ni modifica variables de la consola del usuario.
+Solo muestra `STOCKFLASH_AGENT_SETUP_PASS` si todas esas operaciones terminan bien.
+Ese resultado NO significa aceptación integral, GATES_PASS global, QA ni VERIFIED.
+
+Evidencia esperada:
+
+- `C:\StockFlashAgent\exchange\isolation.json`, con run_id vigente.
+- `C:\StockFlashAgent\exchange\probe-execution.txt`.
+- `C:\StockFlashAgent\exchange\core-tests.txt`, con 17 pruebas y salida exitosa.
+- Estado administrativo privado: `%LOCALAPPDATA%\StockFlash\bridge\provisioning\desktop-status.json`.
+
+No compartir archivos de credenciales ni backups SDDL. Ante fallo no reintentar
+si hay proceso activo; el recibo indica etapa fallida y el puente conserva el bloqueo.
+
+## Revisión de seguridad y validación efectivamente realizadas
+
+- Se corrigieron espera/exit code, recibos obsoletos, rutas con espacios y el
+  falso éxito del primer lanzador. No se lanzó UAC desde Codex en esta revisión.
+- Reejecución comprueba marcador/identidades, contraseña nativa y pertenencias;
+  no adopta otra cuenta ni una carpeta no marcada. Un estado parcial no verificable
+  se bloquea, sin resetear contraseñas, borrar trabajo ni aplicar permisos generales.
+- Rechaza reparse points en rutas administradas y origen/destino de copias.
+- ACL privadas añaden Deny solo al SID nuevo. Se comparan propietario, grupo y
+  TODAS las reglas de otros principales antes/después; se conserva backup privado.
+- Se detectó Modify para Usuarios autenticados en `C:\php`: se deniega solamente
+  escritura/borrado/cambio de permisos a StockFlashAgent, manteniendo lectura y
+  ejecución. El acceso del propietario no se elimina. El probe también comprueba
+  handles de escritura denegados sobre PHP, Node y Git compartidos.
+- Captura de pruebas usa ProcessStartInfo: evita que stderr normal de unittest
+  se interprete como error PowerShell antes de comprobar el exit code.
+- Se validó sintaxis de seis scripts PowerShell y del probe Python; bindings C#
+  compilan sin acceder a credenciales. Preflight real sin cambios:
+  `PROVISION_PREFLIGHT_PASS_NO_CHANGES`.
+- AST confirma 17 pruebas existentes, sin modificaciones. No se repitieron en el
+  token del propietario ni se ejecutó probe como sustituto de la identidad dedicada.
+- Última comprobación: cuenta aún inexistente, sin recibo ni reporte de aislamiento.
+  Falta ejecutar el comando de escritorio; no hay aislamiento aprobado.
+
+Las siguientes secciones conservan el diseño inicial; cuando describen pasos
+pendientes, el flujo vigente anterior los automatiza después de aceptar UAC.
+
 ## Preparación administrativa concreta
 
 `scripts/bridge_windows/Start-Provision.ps1` solicita UAC y lanza solamente

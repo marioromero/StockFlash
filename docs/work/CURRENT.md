@@ -13,6 +13,13 @@ pendiente interacción del escritorio seguro. Agentes sobre código aún bloquea
 no tarea programada permanente. Ver BRIDGE-001-WINDOWS-SETUP.md. Las referencias
 a instalación de contenedor inferiores conservan trazabilidad y no están activas.
 
+Continuación vigente: scripts administrativos revisados/corregidos y preflight
+sin cambios aprobado. Aprovisionamiento preparado para ejecutar Start-Provision.ps1
+desde PowerShell normal del escritorio, con UAC visible, espera y recibo verificado.
+Después ejecuta pruebas reales con StockFlashAgent. La cuenta aún no existe;
+pendiente esa ejecución, sin ISOLATION_PASS ni aceptación integral demostrada.
+Comando exacto y cambios de seguridad: BRIDGE-001-WINDOWS-SETUP.md.
+
 - Propietario aprobó BRIDGE-001 en worktree `stockflash-codex-pilot`, rama
   `pilot/codex-bridge-20261112`, base `d103120f6e45dcb10a999c99f3d6f2faff5f466c`.
 - Estado: BLOCKED_UAC, núcleo local implementado y probado; aceptación

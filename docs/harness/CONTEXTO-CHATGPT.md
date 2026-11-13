@@ -2,6 +2,15 @@
 
 ## Reentrada vigente — revisión Codex 2026-11-12
 
+**Siguiente acción concreta:** el propietario ejecuta desde PowerShell normal el
+comando Start-Provision.ps1 de BRIDGE-001-WINDOWS-SETUP.md. Scripts revisados y
+preflight sin cambios PASS; se corrigieron credenciales/ACL/idempotencia, espera
+UAC, entorno del hijo, runtime/fixtures faltantes y escritura heredada en C:\php.
+No se relanzó UAC desde Codex. Cuenta aún inexistente; no afirmar aislamiento
+aprobado hasta recibir y comprobar ejecución real de probe/pruebas como esa cuenta.
+Después se continúa con adaptadores y aceptación única, sin otra comparación
+de arquitectura. Los fuentes de scripts siguen locales; Markdown se publica.
+
 Publicación documental continuada autorizada por el propietario: mantener los
 Markdown del trabajo en `pilot/codex-bridge-20261112` para consulta desde GPT,
 con commits selectivos y SHA remoto comprobado. Scripts/pruebas continúan locales
