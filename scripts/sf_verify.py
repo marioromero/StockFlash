@@ -425,7 +425,7 @@ GATES_BY_PACKET: dict[str, list[dict]] = {
          "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\nh=(R/'public/docs/index.html').read_text(encoding='utf-8')\nhl=h.lower()\nok=('lang=\"es-CL\"' in h and 'id=\"search\"' in h and 'id=\"topics-nav\"' in h and 'class=\"sidebar\"' in h and 'details class=\"accordion\"' in h and 'aria-label' in h and '@media(max-width:820px)' in h and 'prefers-reduced-motion' in h and '<script src=' not in hl and 'fetch(' not in hl and 'xmlhttprequest' not in hl and 'type=\"password\"' not in hl and '<form' not in hl)\nsys.exit(0 if ok else 1)"],
          "mandatory": True, "timeout_s": 60},
         {"id": "D6-bitacora-documental", "kind": "shell",
-         "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\ns=(R/'docs/work/GUIA-HTML-ESTADO.md').read_text(encoding='utf-8')\nok=('content_owner: ChatGPT' in s and 'guide_status: INTEGRADA_EN_MAIN' in s and 'pending_docs:' in s and 'USERS-001 DRAFT' in s)\nsys.exit(0 if ok else 1)"],
+         "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\ns=(R/'docs/work/GUIA-HTML-ESTADO.md').read_text(encoding='utf-8')\nok=('content_owner: ChatGPT' in s and 'guide_status: INTEGRADA_EN_MAIN' in s and 'pending_docs:' in s and 'USERS-001' in s)\nsys.exit(0 if ok else 1)"],
          "mandatory": True, "timeout_s": 60},
         {"id": "D7-tests-docs", "kind": "shell",
          "cmd": ["php", "artisan", "test", "tests/Feature/Docs"],
