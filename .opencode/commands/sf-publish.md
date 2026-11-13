@@ -12,6 +12,7 @@ Si la salida empieza con `SYNC_BLOCKED` o falta `SYNC_OK`, detener y solicitar r
 Dos operaciones permanentes (no ampliar permisos, no declarar VERIFIED automáticamente):
 
 **A. Publicación ordinaria** — Feature Packet $ARGUMENTS (p. ej. `BOOT-001`) solo si:
+- Con `publication_mode: OWNER_GATE`, exigir aprobación EXPRESA SEPARADA del propietario para publicar esta feature; `ok` SFH1, `status: APPROVED` o QA/gates no constituyen esa autorización.
 - `docs/work/features/$ARGUMENTS.md` tiene `status: APPROVED` y `docs/work/CURRENT.md` lo mantiene activo.
 - Existe veredicto reviewer `APROBADO` (cero bloqueantes o bloqueantes resueltos) y reporte `docs/work/$ARGUMENTS-VERIFY-*.md` con `GATES_PASS` ejecutado para el estado exacto a publicar.
 - Flujo respetado: `/sf-feature → /sf-verify → /sf-review → /sf-publish`. No publicar tras edición aislada sin gates+review.

@@ -14,7 +14,7 @@ Si la salida empieza con `SYNC_BLOCKED` o falta `SYNC_OK`, detener y solicitar r
 Coordinar Feature Packet $ARGUMENTS con el agente `stockflash-orchestrator`:
 
 1. Validar `status: APPROVED` en `docs/work/features/$ARGUMENTS.md` y activo en `docs/work/CURRENT.md`. Ante DRAFT/VERIFIED-otro/inactivo, detenerse sin cambios (p. ej. BRAND-001 DRAFT se rechaza, no se implementa).
-2. Delegación nativa por Task a `stockflash-implementer` → gates `py -3 scripts/sf_verify.py $ARGUMENTS` (`GATES_BY_PACKET`) → `stockflash-reviewer` (artefacto `REVIEW-*.md` atribuible) → `stockflash-publisher` (operación A). El coordinador no implementa, revisa, publica ni auto-aprueba; no declara VERIFIED.
+2. Delegación nativa por Task a `stockflash-implementer` → gates `py -3 scripts/sf_verify.py $ARGUMENTS` (`GATES_BY_PACKET`) → `stockflash-reviewer` (artefacto `REVIEW-*.md` atribuible) → `stockflash-publisher` (operación A) únicamente si el packet NO contiene `publication_mode: OWNER_GATE`. En ese caso detenerse al lograr `GATES_PASS` y QA `APROBADO`, entregar evidencia por SFH1 y no commit/push/publicación hasta autorización expresa separada del propietario. El coordinador no implementa, revisa, publica ni auto-aprueba; no declara VERIFIED.
 3. Reintentos automáticos ante defectos corregibles en alcance: máximo 3 ciclos implementador→gates→review; al exceder, diagnóstico + pendientes con trabajo conservado.
 4. Checkpoints `docs/work/.run/$ARGUMENTS.json` (ignorado en Git) con fingerprints `git hash-object`; al reanudar, revalidar y repetir desde el último stage válido.
 5. Solo se detiene ante decisiones contractuales, visuales, de seguridad o permisos del propietario. Cierre documental VERIFIED usa `/sf-publish` operación B, no `/sf-run`.

@@ -74,8 +74,8 @@ Ciclo (delegación solo por Task nativo; nunca simular comandos interactivos):
 4. Ejecutar gates deterministas `py -3 scripts/sf_verify.py F-XXXX` (definición en `GATES_BY_PACKET`; nuevas features los declaran ahí, sin duplicar lógica). Exigir `GATES_PASS` real.
 5. Delegar revisión a `stockflash-reviewer` (Task). Exigir `APROBADO` con artefacto `docs/work/F-XXXX-REVIEW-*.md` atribuible al reviewer y estado exacto revisado.
 6. Ante defectos corregibles dentro del alcance: reenviar al implementador y repetir gates + QA automáticamente. Máximo 3 ciclos; al superarlos, entregar diagnóstico + cambios pendientes conservando el trabajo.
-7. Con `APROBADO` + `GATES_PASS` del estado exacto, delegar publicación a `stockflash-publisher` (Task, operación A ordinaria).
-8. Verificar SHA publicado: `git rev-parse HEAD` = `git rev-parse origin/main` = `git ls-remote origin main`.
+7. Con `APROBADO` + `GATES_PASS` del estado exacto, revisar `publication_mode`. Si el packet declara `OWNER_GATE` (USERS-001), detener ANTES del publisher, conservar cambios locales y reportar gates/QA al issue SFH1. No ejecutar commit/push hasta autorización expresa separada del propietario. Solo para packets sin `OWNER_GATE`, delegar la publicación ordinaria a `stockflash-publisher`.
+8. Cuando hubo publicación autorizada, verificar SHA remoto: `git rev-parse HEAD` = `git rev-parse origin/main` = `git ls-remote origin main`. Si `OWNER_GATE`, no declarar publicación, CI remota ni VERIFIED.
 9. Detenerse únicamente ante decisiones contractuales, visuales, de seguridad o permisos que requieran al propietario, sin eludir `deny`.
 
 Checkpoints (`docs/work/.run/F-XXXX.json`, ignorado en Git): `{packet, stage, files: {ruta: hash}, attempts, verify_report, review_file, commit_sha}`. Al reanudar: revalidar fingerprints con `git hash-object`; ante divergencia, repetir desde el último stage válido en vez de asumirlo. Nunca reutilizar QA/gates de un estado distinto.
