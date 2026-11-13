@@ -2,11 +2,21 @@
 
 ## Reentrada vigente — revisión Codex 2026-11-12
 
-**Siguiente acción concreta:** el propietario ejecuta desde PowerShell normal el
+**Diagnóstico posterior vigente:** la cuenta SÍ se creó como estándar y se aplicaron
+ACL sin alterar propietario/grupo/otras reglas (comparadas contra cinco backups).
+Fallo en etapa receipt por File.Replace con `$null` convertido en ruta vacía en
+PowerShell 5.1. Corregido con `[NullString]::Value`; regresión de función real pasa.
+Sin proceso activo detectado, lock libre, preflight de estado parcial PASS.
+No se relanzó desde Codex: el propietario reanuda el mismo comando de escritorio.
+Ver BRIDGE-001-PROVISION-RECEIPT-FIX.md. Probe como StockFlashAgent aún pendiente;
+no declarar ISOLATION_PASS ni aceptación integral. Los estados anteriores de
+cuenta inexistente son históricos del intento UAC cancelado, ya superados.
+
+**Siguiente acción concreta:** el propietario reanuda desde PowerShell normal el
 comando Start-Provision.ps1 de BRIDGE-001-WINDOWS-SETUP.md. Scripts revisados y
 preflight sin cambios PASS; se corrigieron credenciales/ACL/idempotencia, espera
 UAC, entorno del hijo, runtime/fixtures faltantes y escritura heredada en C:\php.
-No se relanzó UAC desde Codex. Cuenta aún inexistente; no afirmar aislamiento
+No se relanzó UAC desde Codex. Cuenta creada con recibo parcial; no afirmar aislamiento
 aprobado hasta recibir y comprobar ejecución real de probe/pruebas como esa cuenta.
 Después se continúa con adaptadores y aceptación única, sin otra comparación
 de arquitectura. Los fuentes de scripts siguen locales; Markdown se publica.
@@ -19,7 +29,8 @@ hasta autorización de publicación funcional; main permanece intacta.
 **Decisión definitiva posterior:** usar cuenta estándar StockFlashAgent, sin
 Docker/WSL y sin tarea permanente hasta aceptación integral. Aprovisionamiento,
 ACL y herramientas están autorizados. Scripts preparados en scripts/bridge_windows;
-primer UAC devolvió cancelación, cuenta aún inexistente y sin receipt administrativo.
+primer UAC devolvió cancelación; posteriormente el intento de escritorio creó
+cuenta/ACL, pero el recibo quedó parcial por el defecto ya corregido.
 No ejecutar agentes con el token del propietario ni elevarlos para sortearlo.
 Se solicitó únicamente la interacción del escritorio seguro para reintentar UAC
 o ejecutar la preparación como administrador. Ver BRIDGE-001-WINDOWS-SETUP.md.

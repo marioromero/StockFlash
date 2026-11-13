@@ -4,16 +4,23 @@
 
 bridge_active_packet: BRIDGE-001
 
+Actualización de diagnóstico: primer intento de escritorio creó StockFlashAgent
+y aplicó ACL, pero falló en receipt por File.Replace con `$null` en PowerShell 5.1.
+Corregido con null string tipado; regresión real pasa, preflight de estado parcial
+pasa y lock está libre. No se relanzó aprovisionamiento. Próximo paso: reanudar
+Start-Provision.ps1 desde PowerShell normal. Ver BRIDGE-001-PROVISION-RECEIPT-FIX.md.
+Cuenta existente no equivale a aislamiento aprobado; probe bajo esa identidad pendiente.
+
 El propietario autorizó publicación continuada de los Markdown de BRIDGE-001 en
 `pilot/codex-bridge-20261112` para consulta desde GPT. No incluye código ni main.
 
 Decisión definitiva posterior: cuenta estándar StockFlashAgent, Docker/WSL
-descartados. Aprovisionamiento y ACL autorizados; primer UAC cancelado por Windows,
-pendiente interacción del escritorio seguro. Agentes sobre código aún bloqueados;
-no tarea programada permanente. Ver BRIDGE-001-WINDOWS-SETUP.md. Las referencias
+descartados. Cuenta y ACL ya creadas en el intento de escritorio; falta reanudar
+el recibo final corregido y probar aislamiento real. Agentes sobre código aún
+bloqueados; no tarea permanente. Ver BRIDGE-001-WINDOWS-SETUP.md. Las referencias
 a instalación de contenedor inferiores conservan trazabilidad y no están activas.
 
-Continuación vigente: scripts administrativos revisados/corregidos y preflight
+Histórico anterior al primer intento de escritorio: scripts administrativos revisados/corregidos y preflight
 sin cambios aprobado. Aprovisionamiento preparado para ejecutar Start-Provision.ps1
 desde PowerShell normal del escritorio, con UAC visible, espera y recibo verificado.
 Después ejecuta pruebas reales con StockFlashAgent. La cuenta aún no existe;

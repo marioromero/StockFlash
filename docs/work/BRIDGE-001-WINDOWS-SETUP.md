@@ -6,6 +6,13 @@ No activar tarea programada permanente antes de aceptación integral.
 
 ## Procedimiento vigente revisado — ejecución desde el escritorio
 
+**Diagnóstico posterior del primer intento de escritorio:** la cuenta y las ACL
+sí se crearon; falló File.Replace al recibir `$null` en PowerShell 5.1. Corregido
+con `[NullString]::Value` y regresión sobre la función real aprobada. Estado parcial
+reanudable: sin procesos detectados, lock libre, preflight PASS, acceso del
+propietario preservado. No se relanzó aprovisionamiento desde Codex.
+Ver `BRIDGE-001-PROVISION-RECEIPT-FIX.md`. El comando inferior no cambia.
+
 Abrir una ventana **normal, sin elevación**, de PowerShell del propietario y ejecutar:
 
 ```powershell
@@ -61,13 +68,15 @@ si hay proceso activo; el recibo indica etapa fallida y el puente conserva el bl
   handles de escritura denegados sobre PHP, Node y Git compartidos.
 - Captura de pruebas usa ProcessStartInfo: evita que stderr normal de unittest
   se interprete como error PowerShell antes de comprobar el exit code.
-- Se validó sintaxis de seis scripts PowerShell y del probe Python; bindings C#
+- Se validó sintaxis de siete scripts PowerShell (incluida regresión del recibo)
+  y del probe Python; bindings C#
   compilan sin acceder a credenciales. Preflight real sin cambios:
   `PROVISION_PREFLIGHT_PASS_NO_CHANGES`.
 - AST confirma 17 pruebas existentes, sin modificaciones. No se repitieron en el
   token del propietario ni se ejecutó probe como sustituto de la identidad dedicada.
-- Última comprobación: cuenta aún inexistente, sin recibo ni reporte de aislamiento.
-  Falta ejecutar el comando de escritorio; no hay aislamiento aprobado.
+- Última comprobación: cuenta habilitada y estándar; ACL aplicadas; recibo parcial
+  PROVISIONING por fallo de reemplazo ya corregido. Falta reanudar el comando de
+  escritorio y verificar el probe real; no hay aislamiento aprobado.
 
 Las siguientes secciones conservan el diseño inicial; cuando describen pasos
 pendientes, el flujo vigente anterior los automatiza después de aceptar UAC.
