@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light">
-<meta name="description" content="Guía interactiva de usuario StockFlash: primeros pasos, acceso, contraseña y sucursales.">
+<meta name="description" content="Guía interactiva StockFlash: acceso, sucursales, usuarios, roles y seguridad.">
 <title>Guía de usuario | StockFlash</title>
 <style>
 :root{--ink:#303846;--blue:#0856ff;--teal:#03a7a2;--bg:#f5f7fb;--line:#dce4ef;--muted:#5b687e;--white:#fff;--radius:13px}
@@ -52,12 +52,19 @@ details.accordion{border:1px solid var(--line);border-radius:9px;margin:9px 0;ba
       <li><a href="#eliminar">Eliminar una sucursal</a></li>
       <li><a href="#ajustes">Entender los campos</a></li>
     </ul></details>
+    <details class="navgroup" open><summary>Usuarios</summary><ul>
+      <li><a href="#usuarios">Administrar usuarios</a></li>
+      <li><a href="#usuario-crear">Crear una cuenta</a></li>
+      <li><a href="#usuario-acceso">Roles y sucursales</a></li>
+      <li><a href="#usuario-seguridad">Claves, PIN y estados</a></li>
+      <li><a href="#usuario-licencia">Licencias y límites</a></li>
+    </ul></details>
     <details class="navgroup" open><summary>Ayuda</summary><ul>
       <li><a href="#problemas">Problemas frecuentes</a></li>
       <li><a href="#glosario">Palabras que debes conocer</a></li>
     </ul></details>
   </nav>
-  <div class="sidebar-foot">Contenido basado en funciones <strong>implementadas y verificadas</strong>.<br>Proyecto aún en desarrollo local.</div>
+  <div class="sidebar-foot">Funciones verificadas y otras <strong>implementadas en revisión</strong>.<br>Proyecto aún en desarrollo local.</div>
 </aside>
 <div class="content"><div class="wrap">
 <header class="topbar">
@@ -66,16 +73,16 @@ details.accordion{border:1px solid var(--line);border-radius:9px;margin:9px 0;ba
 </header>
 <div class="hero"><div class="eyebrow">Aprende a tu ritmo</div><h1>Tu guía para usar StockFlash</h1>
 <p>Todo lo que necesitas para comenzar, explicado sin términos complicados. Elige un tema en el menú izquierdo o escribe lo que buscas. Abre las preguntas de cada sección para ver los detalles.</p>
-<div class="meta"><span class="pill verified">Acceso y sucursales verificados</span><span class="pill">Guía de la versión de desarrollo</span><span class="pill">Actualizada: 10-11-2026</span></div>
-<p id="search-status" role="status" aria-live="polite">14 temas disponibles.</p></div>
+<div class="meta"><span class="pill verified">Acceso y sucursales verificados</span><span class="pill">Usuarios implementados; cierre pendiente</span><span class="pill">Actualizada: 13-11-2026</span></div>
+<p id="search-status" role="status" aria-live="polite">19 temas disponibles.</p></div>
 <main id="manual">
 <section class="topic" id="bienvenida" data-keywords="introduccion comienzo que es stockflash primer uso ayuda"><div class="kicker">Primeros pasos</div><h2>¿Qué es StockFlash?</h2>
 <p>Es el sistema con el que podrás administrar las operaciones de tu negocio. Incluye una zona de administración y, a medida que se vayan incorporando funciones, módulos como punto de venta e inventario.</p>
-<div class="grid"><div class="tile"><h3>¿Qué puedes hacer ahora?</h3><p>Ingresar, cerrar sesión, cambiar tu contraseña y administrar las sucursales si tienes permiso.</p></div><div class="tile"><h3>¿Qué se agregará después?</h3><p>Gestión de usuarios y otras funciones comerciales. Se documentarán cuando estén implementadas y verificadas.</p></div></div>
+<div class="grid"><div class="tile"><h3>¿Qué puedes hacer ahora?</h3><p>Ingresar, cambiar contraseña y, si tienes permiso, administrar sucursales y usuarios en el entorno de desarrollo. La gestión de usuarios aún espera el cierre formal VERIFIED.</p></div><div class="tile"><h3>¿Qué se agregará después?</h3><p>Inventario, punto de venta, caja y otras funciones comerciales, cada una en su etapa de desarrollo y verificación.</p></div></div>
 <div class="callout">Esta guía describe el <strong>desarrollo local</strong>. Que una función esté documentada no significa que ya esté desplegada para clientes.</div></section>
 <section class="topic" id="panel" data-keywords="dashboard inicio pantalla principal botonera navegar cambiar contrasena ayuda manual guia documentacion avance del proyecto roadmap hitos etapas versiones comercial"><div class="kicker">Primeros pasos</div><h2>Conocer el panel principal</h2>
 <p>Después de iniciar sesión llegarás al <strong>Dashboard</strong>. Es el punto de partida para acceder a las funciones disponibles.</p>
-<ul><li><strong>Sucursales:</strong> abre la administración de locales y bodegas. Solo aparece si tienes el permiso correspondiente.</li><li><strong>Cambiar contraseña:</strong> abre el formulario para modificar tu contraseña.</li><li><strong>Ayuda:</strong> abre esta guía en una pestaña nueva. Úsala cuando necesites saber para qué sirve una opción o cómo completar un procedimiento.</li><li><strong>Avance del proyecto:</strong> muestra la línea de hitos de StockFlash, las funciones listas y lo que falta para la primera versión comercial. Solo aparece para quienes tienen permisos de administración y abre una pestaña nueva.</li><li><strong>Cerrar sesión:</strong> está en la parte superior, junto a tu nombre.</li></ul>
+<ul><li><strong>Sucursales:</strong> abre la administración de locales y bodegas. Solo aparece si tienes el permiso correspondiente.</li><li><strong>Usuarios:</strong> administra cuentas, roles y asignaciones de sucursal. Solo aparece al administrador autorizado.</li><li><strong>Cambiar contraseña:</strong> abre el formulario para modificar tu contraseña.</li><li><strong>Ayuda:</strong> abre esta guía en una pestaña nueva. Úsala cuando necesites saber para qué sirve una opción o cómo completar un procedimiento.</li><li><strong>Avance del proyecto:</strong> muestra la línea de hitos de StockFlash, las funciones listas y lo que falta para la primera versión comercial. Solo aparece para quienes tienen permisos de administración y abre una pestaña nueva.</li><li><strong>Cerrar sesión:</strong> está en la parte superior, junto a tu nombre.</li></ul>
 <details class="accordion"><summary>¿Cómo busco ayuda sobre una función?</summary><div class="answer">Selecciona <strong>Ayuda</strong> en el Dashboard. En la guía, escribe el nombre del tema en el buscador superior o elígelo en el menú de la izquierda. Haz clic en las preguntas desplegables para ver explicaciones adicionales. Puedes dejar abierta la guía mientras usas StockFlash en la pestaña original.</div></details>
 <details class="accordion"><summary>¿Para qué sirve «Avance del proyecto»?</summary><div class="answer">Es un resumen de cómo progresa StockFlash. Puedes revisar los hitos completados, los pendientes y el objetivo de la primera versión comercial. Si tienes acceso de administración, selecciónalo desde el Dashboard. Los hitos tienen apartados desplegables para conocer sus detalles.</div></details>
 <details class="accordion"><summary>¿Por qué no veo el botón «Avance del proyecto»?</summary><div class="answer">Esta página es exclusiva de la administración del proyecto. Si tu cuenta no tiene el permiso necesario, el botón no aparece.</div></details>
@@ -98,7 +105,7 @@ details.accordion{border:1px solid var(--line);border-radius:9px;margin:9px 0;ba
 <tr><td>Cajero</td><td>Preparado para registrar cobros y operaciones de caja.</td></tr>
 <tr><td>Bodeguero</td><td>Preparado para recepciones, traspasos e inventario.</td></tr>
 <tr><td>Supervisor</td><td>Mayor nivel de supervisión y autorización operativa.</td></tr>
-<tr><td>Admin Central</td><td>Administración global, incluida la gestión actual de sucursales.</td></tr>
+<tr><td>Admin Central</td><td>Administración global, incluida la gestión de sucursales y usuarios.</td></tr>
 </tbody></table></div>
 <p class="mini">Los nombres de roles indican sus funciones previstas. No significan que todos los módulos comerciales estén habilitados hoy.</p></section>
 <section class="topic" id="sucursales" data-keywords="local bodega online sucursal tienda gestionar listar administrar"><div class="kicker">Sucursales</div><h2>¿Para qué sirven las sucursales?</h2>
@@ -108,7 +115,7 @@ details.accordion{border:1px solid var(--line);border-radius:9px;margin:9px 0;ba
 <section class="topic" id="crear" data-keywords="nueva crear sucursal local codigo tienda bodega alta"><div class="kicker">Sucursales</div><h2>Crear una sucursal</h2>
 <ol class="steps"><li>En la pantalla <strong>Sucursales</strong>, selecciona <strong>Nueva sucursal</strong>. Si es la primera, verás <strong>Crear primera sucursal</strong>.</li><li>Ingresa un <strong>código</strong> único, un <strong>nombre</strong> y el <strong>tipo</strong>: Local, Bodega u Online.</li><li>Completa los datos opcionales de ubicación y teléfono, además de las opciones operativas.</li><li>Selecciona <strong>Crear sucursal</strong>. Si hay errores, corrige los campos señalados.</li></ol>
 <div class="callout warn"><strong>Importante:</strong> el código no puede modificarse después. Elígelo con cuidado; también permanece reservado si eliminas la sucursal.</div>
-<details class="accordion"><summary>¿Cuántas sucursales puedo crear?</summary><div class="answer">Depende del límite de sucursales activas establecido por el plan de la instalación. Si alcanzas el máximo, no podrás activar otra hasta liberar cupo.</div></details></section>
+<details class="accordion"><summary>¿Cuántas sucursales puedo crear?</summary><div class="answer">Depende del límite de sucursales activas establecido por el plan de la instalación. Si alcanzas el máximo, no podrás activar otra hasta liberar cupo. Sin licencia registrada no se pueden crear ni reactivar sucursales; con licencia registrada y límite cero, no existe máximo numérico.</div></details></section>
 <section class="topic" id="editar" data-keywords="modificar editar sucursal nombre direccion ubicacion configuracion"><div class="kicker">Sucursales</div><h2>Editar una sucursal</h2>
 <ol class="steps"><li>Abre <strong>Sucursales</strong> y selecciona <strong>Editar</strong> en la fila correspondiente.</li><li>Cambia los datos necesarios: nombre, tipo, dirección, teléfono o preferencias.</li><li>Selecciona <strong>Guardar cambios</strong>. Regresarás al listado.</li></ol>
 <details class="accordion"><summary>¿Por qué no puedo cambiar el código ni el estado aquí?</summary><div class="answer">El código es inmutable para mantener identificadores estables. Para cambiar el estado debes usar los botones específicos <strong>Activar</strong> o <strong>Desactivar</strong> del listado.</div></details></section>
@@ -135,6 +142,27 @@ details.accordion{border:1px solid var(--line);border-radius:9px;margin:9px 0;ba
 </tbody></table></div>
 <details class="accordion"><summary>¿Qué significa «Heredar»?</summary><div class="answer">Significa usar la configuración general del sistema, sin establecer una regla especial para esa sucursal.</div></details>
 <details class="accordion"><summary>¿Necesito escribir configuración JSON?</summary><div class="answer">No. Es un campo avanzado y opcional. Si no sabes qué es, déjalo vacío; las opciones habituales se controlan desde los campos del formulario.</div></details></section>
+<section class="topic" id="usuarios" data-keywords="usuarios administrar listado buscar cuentas nombre correo roles permisos"><div class="kicker">Usuarios · Implementado en desarrollo</div><h2>Administrar usuarios</h2>
+<p>El <strong>Admin Central</strong> puede abrir <strong>Usuarios</strong> desde el Dashboard o acceder a <code>/users</code>. El listado permite buscar por nombre o correo, revisar roles, sucursales, estado y si una cuenta tiene PIN configurado.</p>
+<div class="callout warn">USERS-001 está implementado, publicado en GitHub y con pruebas automáticas aprobadas, pero su cierre formal <strong>VERIFIED sigue pendiente</strong>. No implica despliegue a clientes.</div>
+<details class="accordion"><summary>¿Por qué no veo el menú Usuarios?</summary><div class="answer">Se necesita el permiso <code>users.manage</code>, correspondiente a Admin Central. El servidor rechaza operaciones sin permiso, incluso si se escribe la dirección manualmente.</div></details></section>
+<section class="topic" id="usuario-crear" data-keywords="usuario nuevo crear contraseña temporal nombre correo agregar cuenta"><div class="kicker">Usuarios</div><h2>Crear una cuenta</h2>
+<ol class="steps"><li>Abre <strong>Usuarios</strong> y selecciona <strong>Nuevo usuario</strong>.</li><li>Completa nombre, correo único y contraseña temporal de <strong>15 a 64 caracteres</strong>.</li><li>Elige rol global o asignaciones por sucursal y, opcionalmente, sucursal inicial.</li><li>Configura opcionalmente PIN y topes de descuento/devolución.</li><li>Selecciona <strong>Crear usuario</strong>. En su primer ingreso tendrá que cambiar la contraseña.</li></ol>
+<div class="callout">La contraseña temporal no se envía automáticamente por correo. Entrégala por un canal seguro.</div>
+<details class="accordion"><summary>¿Puedo crear un usuario sin sucursal?</summary><div class="answer">Sí, pero una cuenta de tipo «Por sucursal» sin asignaciones no tendrá acceso operativo hasta recibir al menos una. El sistema lo advierte.</div></details></section>
+<section class="topic" id="usuario-acceso" data-keywords="roles sucursales asignaciones acceso global cajero supervisor vendedor bodeguero"><div class="kicker">Usuarios</div><h2>Roles y sucursales</h2>
+<div class="grid"><div class="tile"><h3>Acceso global</h3><p>El rol se aplica a todas las sucursales. No se combina con asignaciones individuales. Admin Central solo puede ser global.</p></div><div class="tile"><h3>Acceso por sucursal</h3><p>Asigna sucursales activas y un rol por cada una. La sucursal inicial, si se elige, debe estar entre las asignadas.</p></div></div>
+<p>En <strong>Editar</strong> puedes cambiar roles y asignaciones. Al pasar a global se quitan las asignaciones; al pasar a por sucursal se elimina el rol global. No se permite quitar los permisos del último administrador.</p>
+<details class="accordion"><summary>¿Qué ocurre si la sucursal inicial deja de ser válida?</summary><div class="answer">El formulario puede limpiarla cuando ya no está activa o asignada. Comprueba ese dato antes de guardar.</div></details></section>
+<section class="topic" id="usuario-seguridad" data-keywords="contraseña pin restablecer sesion seguridad activar desactivar eliminar borrado"><div class="kicker">Usuarios</div><h2>Contraseñas, PIN y estado</h2>
+<p>Para restablecer una contraseña, abre <strong>Editar</strong> e ingresa una nueva clave temporal. Las sesiones del afectado se invalidan al realizar su siguiente petición. Cambiar rol, asignaciones, sucursal inicial o estado también invalida la sesión.</p>
+<p>El <strong>PIN</strong> es opcional, tiene la cantidad exacta de dígitos configurada (por defecto cuatro) y nunca se muestra; todavía no habilita autorizaciones operativas.</p>
+<details class="accordion"><summary>¿Cómo desactivo o elimino una cuenta?</summary><div class="answer">Usa las acciones <strong>Desactivar</strong> o <strong>Eliminar</strong> del listado y confirma. Eliminar aplica borrado lógico, conserva el historial y reserva el correo. No puedes desactivar ni eliminar tu propia cuenta.</div></details></section>
+<section class="topic" id="usuario-licencia" data-keywords="licencia limites cupos usuarios activos descuento devolucion auditoria datos personales"><div class="kicker">Usuarios</div><h2>Licencia, topes y auditoría</h2>
+<p>La licencia limita la cantidad de <strong>usuarios activos</strong>. Los inactivos y eliminados no ocupan cupo. Sin licencia registrada no puedes crear ni activar cuentas; una licencia registrada con límite cero permite usuarios ilimitados.</p>
+<p>Los topes individuales de descuento (0–100 %) y devolución (monto no negativo) son opcionales. Si los dejas vacíos, se heredan los del rol.</p>
+<details class="accordion"><summary>¿Qué se registra al consultar o editar una cuenta?</summary><div class="answer">El sistema registra quién consultó la ficha/listado o realizó un cambio, con fecha y tipo de operación. El registro identifica el recurso, pero no copia nombres ni correos de usuarios en los valores auditados.</div></details>
+<details class="accordion"><summary>¿Por qué no puedo activar un usuario?</summary><div class="answer">Puede faltar una licencia válida, haberse alcanzado el máximo de usuarios activos o estar suspendida fuera del período de gracia.</div></details></section>
 <section class="topic" id="problemas" data-keywords="ayuda error 403 404 correo bloqueo no funciona pantalla busqueda problemas"><div class="kicker">Ayuda</div><h2>Problemas frecuentes</h2>
 <details class="accordion"><summary>Me aparece «403» o «No tiene permiso»</summary><div class="answer">Tu cuenta no tiene permiso para esa operación o la sucursal no está habilitada. Pide al administrador que revise tu rol o sucursal.</div></details>
 <details class="accordion"><summary>No puedo entrar con mi contraseña</summary><div class="answer">Revisa correo y contraseña. Después de 5 intentos fallidos puedes quedar bloqueado temporalmente. Si olvidaste la clave, contacta al administrador.</div></details>
@@ -145,7 +173,7 @@ details.accordion{border:1px solid var(--line);border-radius:9px;margin:9px 0;ba
 <ul><li><strong>Dashboard:</strong> pantalla principal de StockFlash.</li><li><strong>Rol:</strong> conjunto de permisos de un usuario.</li><li><strong>Sucursal:</strong> local, bodega u operación online registrada en el sistema.</li><li><strong>Activa:</strong> habilitada para nuevas operaciones.</li><li><strong>Heredar:</strong> tomar la configuración general sin sobrescribirla.</li><li><strong>Borrado lógico:</strong> ocultar y deshabilitar un registro sin eliminar su historial.</li><li><strong>JSON:</strong> formato de texto para ajustes avanzados; normalmente no necesitas utilizarlo.</li></ul></section>
 </main>
 <div id="empty-state" role="status"><strong>No encontramos ese tema.</strong><p>Prueba con otra palabra, por ejemplo «sucursal», «contraseña» o «caja».</p><button id="clear-search" type="button">Ver todos los temas</button></div>
-<footer class="footer">StockFlash · Guía interactiva de usuario · Edición inicial: AUTH-001 y BRANCH-001 VERIFIED. Crece con nuevas funcionalidades verificadas. Documentación del entorno local; no implica despliegue comercial.</footer>
+<footer class="footer">StockFlash · Guía interactiva de usuario · AUTH-001 y BRANCH-001 VERIFIED; USERS-001 implementado, aún pendiente de VERIFIED. Desarrollo local, sin despliegue comercial.</footer>
 </div></div></div>
 <script>
 (function () {
