@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Support\UserAccessFingerprint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
@@ -98,6 +99,10 @@ class LoginController extends Controller
         $user->recordLogin($request->ip());
         $request->session()->put('session_started_at', now());
         $request->session()->put('last_activity', now());
+        $request->session()->put(
+            UserAccessFingerprint::SESSION_KEY,
+            UserAccessFingerprint::for($user),
+        );
 
         if ($user->mustChangePassword()) {
             return redirect()->route('password.change')->with('warning', 'debe_cambiar_contrasena');

@@ -26,6 +26,11 @@ abstract class BranchTestCase extends TestCase
         $this->artisan('migrate')->run();
         $this->seed(RolesAndPermissionsSeeder::class);
 
+        // USERS-001: una licencia registrada es obligatoria para altas y
+        // reactivaciones. Los fixtures usan límite ilimitado (0) salvo que la
+        // prueba configure un máximo explícito.
+        $this->setMaxBranches(0);
+
         $this->adminRole = Role::query()->where('code', 'central_admin')->firstOrFail();
         $this->admin = $this->makeUser(['global_role_id' => $this->adminRole->id]);
     }

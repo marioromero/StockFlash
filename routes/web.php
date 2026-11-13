@@ -23,8 +23,8 @@ Route::get('/login', [\App\Http\Controllers\Auth\LoginController::class, 'show']
 Route::post('/login', [\App\Http\Controllers\Auth\LoginController::class, 'store']);
 Route::post('/logout', [\App\Http\Controllers\Auth\LogoutController::class, 'destroy'])->name('logout');
 
-// Cambio de contraseña (solo autenticados)
-Route::middleware(['auth'])->group(function () {
+// Cambio de contraseña (autenticados; también verifica el fingerprint SEC-05)
+Route::middleware(['auth', 'verify.session'])->group(function () {
     Route::get('/password/change', [\App\Http\Controllers\Auth\PasswordController::class, 'show'])->name('password.change');
     Route::put('/password/change', [\App\Http\Controllers\Auth\PasswordController::class, 'update'])->name('password.update');
 });
@@ -56,6 +56,27 @@ Route::middleware(['auth', 'password.change', 'verify.session'])->group(function
             'Cache-Control' => 'no-store',
         ]
     ))->middleware('can.permission:settings.manage')->name('roadmap.index');
+
+    // --- Administración global de usuarios (USERS-001 · CORE-03) ---
+    // Es administración global: NO usa `branch.access`.
+    Route::middleware('can.permission:users.manage')->group(function () {
+        Route::get('/users', [\App\Http\Controllers\UserController::class, 'index'])
+            ->name('users.index');
+        Route::get('/users/create', [\App\Http\Controllers\UserController::class, 'create'])
+            ->name('users.create');
+        Route::post('/users', [\App\Http\Controllers\UserController::class, 'store'])
+            ->name('users.store');
+        Route::get('/users/{user}/edit', [\App\Http\Controllers\UserController::class, 'edit'])
+            ->name('users.edit');
+        Route::match(['put', 'patch'], '/users/{user}', [\App\Http\Controllers\UserController::class, 'update'])
+            ->name('users.update');
+        Route::match(['post', 'patch'], '/users/{user}/activate', [\App\Http\Controllers\UserController::class, 'activate'])
+            ->name('users.activate');
+        Route::match(['post', 'patch'], '/users/{user}/deactivate', [\App\Http\Controllers\UserController::class, 'deactivate'])
+            ->name('users.deactivate');
+        Route::delete('/users/{user}', [\App\Http\Controllers\UserController::class, 'destroy'])
+            ->name('users.destroy');
+    });
 
     // --- Administración global de sucursales (BRANCH-001 · CORE-05) ---
     // Es administración global: NO usa `branch.access`.

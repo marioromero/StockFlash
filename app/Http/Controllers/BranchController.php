@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\BranchRequest;
 use App\Models\Branch;
 use App\Support\AuditLogger;
+use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
@@ -184,21 +185,29 @@ class BranchController extends Controller
     }
 
     /**
-     * Verifica el límite mínimo de sucursales activas de `license_states`.
+     * Verifica la licencia registrada y el límite de sucursales activas.
      * Debe ejecutarse dentro de una transacción; bloquea la fila de licencia.
+     *
+     * USERS-001 (corrección acotada): sin fila `license_states` se bloquean
+     * las altas y reactivaciones. Con fila registrada, `max_branches = 0`
+     * significa ilimitado. Licencia suspendida fuera de gracia = solo lectura.
      */
     private function assertWithinBranchLimit(bool $newBranchWillBeActive): void
     {
-        if (! $newBranchWillBeActive) {
-            return;
-        }
-
         $license = DB::table('license_states')
             ->orderBy('id')
             ->lockForUpdate()
             ->first();
 
         if ($license === null) {
+            throw ValidationException::withMessages([
+                'max_branches' => 'No hay una licencia registrada. No es posible crear ni activar sucursales hasta registrar la licencia.',
+            ]);
+        }
+
+        $this->assertLicenseAllowsWrites($license);
+
+        if (! $newBranchWillBeActive) {
             return;
         }
 
@@ -213,6 +222,28 @@ class BranchController extends Controller
         if ($activeBranches >= $maxBranches) {
             throw ValidationException::withMessages([
                 'max_branches' => "El plan permite un máximo de {$maxBranches} sucursales activas.",
+            ]);
+        }
+    }
+
+    /**
+     * Licencia suspendida fuera del período de gracia: solo lectura (RN-70).
+     */
+    private function assertLicenseAllowsWrites(object $license): void
+    {
+        if ($license->status !== 'suspended') {
+            return;
+        }
+
+        if ($license->grace_until === null) {
+            throw ValidationException::withMessages([
+                'max_branches' => 'La licencia está suspendida y el sistema no permite nuevas altas ni activaciones de sucursales.',
+            ]);
+        }
+
+        if (Carbon::parse((string) $license->grace_until)->endOfDay()->isPast()) {
+            throw ValidationException::withMessages([
+                'max_branches' => 'La licencia está suspendida fuera del período de gracia; el sistema está en modo solo lectura.',
             ]);
         }
     }

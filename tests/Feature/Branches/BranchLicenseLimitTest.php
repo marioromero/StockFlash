@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\Branches;
 
+use Illuminate\Support\Facades\DB;
+
 class BranchLicenseLimitTest extends BranchTestCase
 {
     public function test_limite_de_plan_permite_hasta_el_maximo_y_rechaza_el_siguiente(): void
@@ -37,15 +39,17 @@ class BranchLicenseLimitTest extends BranchTestCase
         $this->assertDatabaseCount('branches', 3);
     }
 
-    public function test_sin_fila_de_licencia_el_limite_es_ilimitado(): void
+    public function test_sin_fila_de_licencia_se_bloquea_crear_sucursales(): void
     {
-        for ($i = 1; $i <= 3; $i++) {
-            $this->actingAs($this->admin)
-                ->post('/branches', $this->validPayload(['code' => "SUC-NL{$i}"]))
-                ->assertRedirect(route('branches.index'));
-        }
+        DB::table('license_states')->delete();
+        $this->makeBranch(['code' => 'SUC-PRE']);
 
-        $this->assertDatabaseCount('branches', 3);
+        $response = $this->actingAs($this->admin)
+            ->post('/branches', $this->validPayload(['code' => 'SUC-NL']));
+
+        $response->assertSessionHasErrors('max_branches');
+        $this->assertDatabaseMissing('branches', ['code' => 'SUC-NL']);
+        $this->assertDatabaseCount('branches', 1);
     }
 
     public function test_reactivar_sucursal_respeta_el_limite_de_plan(): void

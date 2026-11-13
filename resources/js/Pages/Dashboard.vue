@@ -19,6 +19,9 @@
                     Bienvenido al sistema StockFlash. Desde aquí puede acceder a los módulos disponibles según su rol y sucursal.
                 </p>
                 <nav class="sf-nav" aria-label="Accesos rápidos">
+                    <Link v-if="canManageUsers" href="/users" class="sf-button sf-button-primary">
+                        Usuarios
+                    </Link>
                     <Link v-if="canManageBranches" href="/branches" class="sf-button sf-button-primary">
                         Sucursales
                     </Link>
@@ -69,6 +72,9 @@ const props = defineProps<{
 
 const page = usePage<SharedPageProps>();
 const userName = computed(() => page.props.auth?.user?.name ?? props.user_name ?? 'Usuario');
+const canManageUsers = computed(() =>
+    (page.props.auth?.permissions ?? []).includes('users.manage')
+);
 const canManageBranches = computed(() =>
     (page.props.auth?.permissions ?? []).includes('settings.manage')
 );

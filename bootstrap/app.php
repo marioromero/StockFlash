@@ -13,6 +13,10 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [
             \App\Http\Middleware\HandleInertiaRequests::class,
+            // SEC-05: el fingerprint debe verificarse antes de cualquier
+            // redirección de cambio de contraseña; si no, una sesión invalidada
+            // podría navegar a /password/change sin ser rechazada.
+            \App\Http\Middleware\VerifySession::class,
             \App\Http\Middleware\RequirePasswordChange::class,
         ]);
 
