@@ -1,9 +1,9 @@
 # USERS-001 — Administración de usuarios, roles y asignación a sucursales
 
 status: APPROVED
-owner_approval: Aprobación expresa del propietario (2026-11-13): 16 decisiones y precisiones A (licencia registrada obligatoria) y B (auditoría lectura PII) y correcciones de revisión documental. Autoriza implementación, gates y QA en una ola; NO autoriza publicar Git, desplegar ni migrar BD remota.
+owner_approval: Aprobación expresa del propietario (2026-11-13) de las 16 decisiones y precisiones A/B. Publicación Git inicialmente retenida; posteriormente autorizada expresamente y ejecutada en 882f281668793116ea18db6ab31be53b7a312d76. El propietario aprobó después política permanente AUTO_GIT para correcciones y futuras features aprobadas. No autoriza staging, producción ni migraciones BD remotas.
 execution_mode: ONE_WAVE_ALL_16
-publication_mode: OWNER_GATE
+publication_mode: AUTO_GIT
 revision_externa: 2026-11-10 — incorpora los 5 ajustes de la revisión externa (último administrador frente a cambios de rol/acceso, invalidación de sesiones SEC-05, PIN según `system_configs.pin_length`, `SoftDeletes` en `User`) y aclara que `max_users` limita usuarios activos.
 etapa: R3_CORE (CORE-03)
 dependencias: AUTH-001 (VERIFIED 2026-11-09: autenticación, sesiones y RBAC server-side), BRANCH-001 (VERIFIED 2026-11-10: sucursales y `EnsureBranchAccess` con sucursal activa), DB-001 (tablas `users`, `roles`, `permissions`, `role_permissions`, `branch_user`), `config/modules.php` (permiso `users.manage`).
@@ -13,10 +13,14 @@ responsable_implementacion: OpenCode conforme al harness vigente; owner + ChatGP
 
 - **Una ola, las 16 decisiones completas:** ejecutar todos los EARS de USERS-001 y precisiones P1–P4 en este packet con implementer → gates `py -3 scripts/sf_verify.py USERS-001` → reviewer independiente, reintentos automáticos por defectos del alcance (hasta 3 ciclos). Una vez iniciado desde un único `ok` en OpenCode, NO solicitar aprobación intermedia de ChatGPT ni del propietario por subtarea ordinaria.
 - **Resultado exigido:** reporte `GATES_PASS`, reviewer `APROBADO` y matriz explícita D01–D16 + P1–P4 con evidencia de pruebas para el estado exacto. Comunicar solo `RESULT` o `BLOCK` compacto vía SFH1. Cuando no se haya publicado código, informar `sha=LOCAL_UNPUBLISHED` y hashes/rutas locales reales, sin inventar SHA remoto.
-- **Freno de publicación:** `publication_mode: OWNER_GATE` ordena detener el flujo antes de `stockflash-publisher`. No commit/push/deploy ni migraciones BD remotas hasta autorización expresa separada. `ok` solo inicia/continúa trabajo ya autorizado; no habilita publicación ni VERIFIED.
+- **Publicación Git incluida por autorización posterior:** `publication_mode: AUTO_GIT`. El ciclo de implementación, gates, QA y Git publisher se ejecuta sin pedir autorización Git adicional; correcciones ChatGPT por SFH1 siguen la misma regla. Primera publicación: `882f281668793116ea18db6ab31be53b7a312d76`. `ok` no habilita deploy, migración remota, cambios contractuales ni VERIFIED.
 - **Guardas:** no cambiar `docs/product/*`, constitución, permisos generales ni contratos pendientes; no nuevas tablas/migraciones, BD remota, secretos ni producción. Autorizado solo ajuste de ausencia de licencia de BRANCH-001 descrito abajo. `public/docs/index.html` y `resources/roadmap/index.html` siguen siendo de ChatGPT: al acabar generar `GUIA_PENDIENTE_CHATGPT` y `ROADMAP_PENDIENTE_CHATGPT`, sin pausar la implementación para edición externa.
 - **Bloqueo real:** conservar trabajo/checkpoints si aparece decisión material no resuelta, error de permisos o imposibilidad de pruebas; nunca fabricar PASS. Carrera real con MariaDB solo si existe una instancia LOCAL aislada y autorizada; si no, cubrir secuencial SQLite y reportar esa prueba de concurrencia como pendiente, sin afirmar que corrió.
 
+
+## Revisión externa posterior a publicación — 2026-11-13
+
+- Publicado en `882f281668793116ea18db6ab31be53b7a312d76`, QA OC APROBADO y CI remota PHP/Node/smoke/contratos SUCCESS. **Revisión externa ChatGPT detectó exposición de nombre y correo en datos de auditoría de cambios**: ver `docs/work/USERS-001-EXTERNAL-REVIEW-20261113.md`. Es un bloqueante para VERIFIED; OpenCode debe corregirlo al siguiente `ok` SFH1, repetir gates/QA y publicar nuevo SHA automáticamente bajo `AUTO_GIT`. No desplegar.
 
 ## Ajustes de la revisión externa (2026-11-10)
 
@@ -165,7 +169,7 @@ responsable_implementacion: OpenCode conforme al harness vigente; owner + ChatGP
 - [ ] tests de usuarios: CRUD, validaciones, email case-insensitive incluyendo eliminados, global XOR sucursal, asignaciones, topes, PIN sin exposición, 403/IDOR, estado, último administrador (incluido auto-cambio de rol), invalidación de sesiones, límite de plan sobre activos, soft delete, auditoría.
 - [ ] regresión AUTH-001 (sesiones/RBAC) y BRANCH-001 (AuditLogger y sucursales) verde.
 - [ ] suite completa, `npm run typecheck` y `npm run build`.
-- [ ] reviewer independiente `APROBADO` sobre estado exacto, informe de cobertura D01–D16/P1–P4 y cero bloqueantes; no publicar con `publication_mode: OWNER_GATE`.
+- [ ] reviewer independiente `APROBADO` sobre el estado exacto, D01–D16/P1–P4 con cero bloqueantes; publicación Git automática tras gates+QA. CI remota y revisión externa ChatGPT del SHA para eventual VERIFIED.
 - [ ] documentación funcional en `/documentacion/modulos/usuarios/` e índice actualizado.
 
 ## Documentación funcional de usuario (obligatorio al implementar)

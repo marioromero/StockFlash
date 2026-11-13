@@ -12,10 +12,10 @@ roadmap_integration_sha: `d6f134e6e20a9fab80047d41c6ab4a9eed29ba7d` (head del PR
 roadmap_integration_date: 2026-11-10
 roadmap_last_review: 2026-11-10
 covered_features: BOOT-001 VERIFIED; CI-001 VERIFIED; AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED (cierre 3fde691); ROADMAP-001 VERIFIED (2026-11-10)
-in_progress: R3_CORE — USERS-001 DRAFT, no implementado
+in_progress: R3_CORE — USERS-001 código publicado en 882f281; QA externa privacidad pendiente, NO VERIFIED
 first_commercial_release: R7 — POS + Bodega sin emisión DTE integrada y con piloto/controles de salida
-pending: NINGUNO
-report_state: ROADMAP_ACTUALIZADA
+pending: ROADMAP_PENDIENTE_CHATGPT — reflejar USERS-001 implementado/publicado con corrección de privacidad pendiente; no declarar VERIFIED
+report_state: ROADMAP_PENDIENTE_CHATGPT
 
 ## Mantenimiento por OpenCode
 

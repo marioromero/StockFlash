@@ -343,7 +343,7 @@ GATES_BY_PACKET: dict[str, list[dict]] = {
     ],
     "USERS-001": [
         {"id": "U1-packet-approved-activo", "kind": "shell",
-         "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\np=(R/'docs/work/features/USERS-001.md').read_text(encoding='utf-8')\nc=(R/'docs/work/CURRENT.md').read_text(encoding='utf-8')\nok=('status: APPROVED' in p and 'execution_mode: ONE_WAVE_ALL_16' in p and 'publication_mode: OWNER_GATE' in p and 'USERS-001: APPROVED' in c)\nsys.exit(0 if ok else 1)"],
+         "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\np=(R/'docs/work/features/USERS-001.md').read_text(encoding='utf-8')\nc=(R/'docs/work/CURRENT.md').read_text(encoding='utf-8')\nok=('status: APPROVED' in p and 'execution_mode: ONE_WAVE_ALL_16' in p and 'publication_mode: AUTO_GIT' in p and 'USERS-001: APPROVED' in c)\nsys.exit(0 if ok else 1)"],
          "mandatory": True, "timeout_s": 60},
         {"id": "U2-archivos-backend-ui", "kind": "shell",
          "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\nreq=['app/Http/Controllers/UserController.php','app/Support/UserAccessFingerprint.php','app/Support/AuditLogger.php','app/Models/User.php','resources/js/Pages/Users/Index.vue','resources/js/Pages/Users/Form.vue','documentacion/modulos/usuarios/administracion-usuarios.md']\nsys.exit(0 if all((R/x).exists() for x in req) else 1)"],
