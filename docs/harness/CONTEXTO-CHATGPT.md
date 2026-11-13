@@ -7,11 +7,13 @@ real y 17 pruebas PASS como StockFlashAgent comprobados (provisión
 b322493309c44df7bd72a616c0081e63). CLI nativas 0.167.2/1.19.0 arrancan desde
 binarios reutilizados protegidos; no se abrió el perfil privado NVM del propietario.
 Git de la copia es independiente, sin remoto/commits, metadatos RO y publicación
-local negativa real PASS. Las 10 pruebas nuevas de transporte pasan bajo esa cuenta.
+local negativa real PASS. Las 12 pruebas nuevas de transporte pasan bajo esa cuenta.
 Adaptadores, checkpoints y modo piloto del mismo coordinador están preparados;
-el ciclo LLM integral todavía NO se ejecutó. Codex ya tiene login ChatGPT comprobado.
-Bloqueo real: conectar DeepSeek con API key propia en el perfil dedicado, sin copiar
-credenciales. Ver BRIDGE-001-AUTH-AND-ACCEPTANCE.md para la intervención mínima.
+el ciclo LLM se inició y Codex completó su preparación real. OpenCode recibió
+APIError HTTP 401 de DeepSeek antes de ejecutar herramientas o implementar.
+Reconciliación real de la misma sesión confirma proceso terminado y ningún cambio;
+sesiones conservadas, preparación cacheada, máximo tres intentos de autenticación.
+Corregir API key en terminal privada; ver BRIDGE-001-AUTH-AND-ACCEPTANCE.md.
 No repetir creación de cuenta ni diagnóstico del recibo. No declarar GATES_PASS
 global, QA aprobado o VERIFIED por estos resultados parciales; sin tarea permanente.
 

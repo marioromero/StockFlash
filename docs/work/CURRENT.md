@@ -12,10 +12,12 @@ como esa cuenta; NVM apuntaba al perfil privado y se reutilizaron binarios en
 tools sin abrir permisos del perfil. La copia tiene Git independiente, sin remoto
 ni commits, metadatos de solo lectura y push local negativo comprobado.
 
-Adaptadores y modo piloto del harness preparados; 10 pruebas de transporte PASS
-bajo la cuenta. Sesiones LLM reales/recuperación integral aún NO comprobadas:
-Codex ya tiene login ChatGPT comprobado; falta conectar DeepSeek con API key propia
-en el perfil dedicado. No crear otro entorno ni repetir aprovisionamiento.
+Adaptadores y modo piloto preparados; 12 pruebas de transporte PASS bajo la cuenta.
+Preparación Codex real completada; OpenCode falló antes de implementar: DeepSeek
+APIError HTTP 401, credencial rechazada. Reconciliado por export de la misma sesión:
+sin herramientas, implementación ni proceso activo; sesiones conservadas y máximo
+tres intentos de autenticación. Corregir API key mediante opencode-login privado.
+Integral, gates y QA aún pendientes. No repetir aprovisionamiento ni preparación Codex.
 Siguiente acción y comandos: BRIDGE-001-AUTH-AND-ACCEPTANCE.md.
 Sin GATES_PASS global, QA integral ni VERIFIED. No tarea permanente ni main.
 

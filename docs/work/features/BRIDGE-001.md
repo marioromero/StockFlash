@@ -2,11 +2,11 @@
 
 status: APPROVED
 owner_approval: Aprobación expresa del propietario en sesión Codex, 2026-11-12.
-execution_status: ISOLATED_AUTHENTICATION_PENDING
+execution_status: DEEPSEEK_AUTHENTICATION_REJECTED_401
 
 environment_approval: Decisión definitiva posterior: cuenta local estándar StockFlashAgent; Docker/WSL descartados.
 environment_gate: Aislamiento real y 17 pruebas PASS comprobados; CLI disponibles. Autenticar en perfil dedicado antes de aceptación real.
-partial_state: Adaptadores, modo piloto y 10 pruebas de transporte preparados; integral y QA aún pendientes. Ver BRIDGE-001-AUTH-AND-ACCEPTANCE.md.
+partial_state: Preparación Codex real completada; DeepSeek rechazó credencial HTTP 401 antes de herramientas. Reconciliado sin replay; 12 pruebas transporte PASS. Integral y QA pendientes. Ver BRIDGE-001-AUTH-AND-ACCEPTANCE.md.
 environment: Solo worktree stockflash-codex-pilot, rama pilot/codex-bridge-20261112.
 base_sha: d103120f6e45dcb10a999c99f3d6f2faff5f466c
 publication: FORBIDDEN para código/automatización; excepción posterior solo Markdown en rama piloto.
