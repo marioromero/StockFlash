@@ -1,5 +1,5 @@
 ---
-description: Coordina una Feature Packet aprobada de punta a punta con una sola instrucción (v1)
+description: Ejecuta una Feature Packet aprobada y publica Git tras gates y QA
 agent: stockflash-orchestrator
 ---
 
@@ -9,15 +9,15 @@ agent: stockflash-orchestrator
 
 Si la salida empieza con `SYNC_BLOCKED` o falta `SYNC_OK`, detener y solicitar revisión del estado Git. No usar reset/stash/clean.
 
-**Nota de versión (anti-caché):** este comando es `sf-run v1` (coordinador + operaciones A/B de `/sf-publish`). Antes de coordinar, el agente debe confirmar que el procedimiento visible coincide con este archivo; ante discrepancia, informar y pedir reinicio de OpenCode una sola vez (los `.opencode/commands/` se registran al iniciar sesión).
+**Nota de versión (anti-caché):** este comando es `sf-run v2` (publicación Git autónoma tras gates+QA, salvo OWNER_GATE explícito). Antes de coordinar, el agente debe confirmar que el procedimiento visible coincide con este archivo; ante discrepancia, informar y pedir reinicio de OpenCode una sola vez (los `.opencode/commands/` se registran al iniciar sesión).
 
 Coordinar Feature Packet $ARGUMENTS con el agente `stockflash-orchestrator`:
 
 1. Validar `status: APPROVED` en `docs/work/features/$ARGUMENTS.md` y activo en `docs/work/CURRENT.md`. Ante DRAFT/VERIFIED-otro/inactivo, detenerse sin cambios (p. ej. BRAND-001 DRAFT se rechaza, no se implementa).
-2. Delegación nativa por Task a `stockflash-implementer` → gates `py -3 scripts/sf_verify.py $ARGUMENTS` (`GATES_BY_PACKET`) → `stockflash-reviewer` (artefacto `REVIEW-*.md` atribuible) → `stockflash-publisher` (operación A) únicamente si el packet NO contiene `publication_mode: OWNER_GATE`. En ese caso detenerse al lograr `GATES_PASS` y QA `APROBADO`, entregar evidencia por SFH1 y no commit/push/publicación hasta autorización expresa separada del propietario. El coordinador no implementa, revisa, publica ni auto-aprueba; no declara VERIFIED.
+2. Delegación Task a `stockflash-implementer` → gates `py -3 scripts/sf_verify.py $ARGUMENTS` → `stockflash-reviewer` independiente → `stockflash-publisher` (operación A **automática** tras `GATES_PASS` y QA `APROBADO` del mismo estado). La aprobación de la feature cubre Git commit/push, sin permiso adicional. `AUTO_GIT` es default también si falta el campo; solo `OWNER_GATE` expresamente definido impide publicar. Orquestador nunca implementa, revisa, publica por sí mismo ni declara VERIFIED.
 3. Reintentos automáticos ante defectos corregibles en alcance: máximo 3 ciclos implementador→gates→review; al exceder, diagnóstico + pendientes con trabajo conservado.
 4. Checkpoints `docs/work/.run/$ARGUMENTS.json` (ignorado en Git) con fingerprints `git hash-object`; al reanudar, revalidar y repetir desde el último stage válido.
-5. Solo se detiene ante decisiones contractuales, visuales, de seguridad o permisos del propietario. Cierre documental VERIFIED usa `/sf-publish` operación B, no `/sf-run`.
+5. Después del push: devolver SHA+URL, gate, QA y CI verificada por SHA (`SUCCESS`/`FAILURE`/`PENDING`). CI pendiente no significa éxito. Error de CI o `.md` de revisión ChatGPT -> corregir dentro de la misma feature al siguiente `ok`, repetir gates+QA y publicar nuevo SHA automáticamente. Revertir solo mediante commit selectivo revisado, sin force. Detener ante nuevas decisiones contractuales/de seguridad fuera de alcance, permisos, despliegue o BD remota. VERIFIED sigue siendo decisión externa.
 
 Respetar permisos `deny` administrativos con bloqueo + parche. Autorización del propietario 2026-10-16: sin aprobaciones `ask`; ejecutar directo.
 

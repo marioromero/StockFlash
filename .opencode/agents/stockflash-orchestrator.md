@@ -1,5 +1,5 @@
 ---
-description: Coordina una Feature Packet aprobada de punta a punta (implementer → gates → reviewer → publisher) en una sola instrucción.
+description: Coordina una Feature Packet aprobada con publicación Git autónoma tras gates y QA.
 mode: all
 permission:
   edit:
@@ -74,9 +74,9 @@ Ciclo (delegación solo por Task nativo; nunca simular comandos interactivos):
 4. Ejecutar gates deterministas `py -3 scripts/sf_verify.py F-XXXX` (definición en `GATES_BY_PACKET`; nuevas features los declaran ahí, sin duplicar lógica). Exigir `GATES_PASS` real.
 5. Delegar revisión a `stockflash-reviewer` (Task). Exigir `APROBADO` con artefacto `docs/work/F-XXXX-REVIEW-*.md` atribuible al reviewer y estado exacto revisado.
 6. Ante defectos corregibles dentro del alcance: reenviar al implementador y repetir gates + QA automáticamente. Máximo 3 ciclos; al superarlos, entregar diagnóstico + cambios pendientes conservando el trabajo.
-7. Con `APROBADO` + `GATES_PASS` del estado exacto, revisar `publication_mode`. Si el packet declara `OWNER_GATE` (USERS-001), detener ANTES del publisher, conservar cambios locales y reportar gates/QA al issue SFH1. No ejecutar commit/push hasta autorización expresa separada del propietario. Solo para packets sin `OWNER_GATE`, delegar la publicación ordinaria a `stockflash-publisher`.
-8. Cuando hubo publicación autorizada, verificar SHA remoto: `git rev-parse HEAD` = `git rev-parse origin/main` = `git ls-remote origin main`. Si `OWNER_GATE`, no declarar publicación, CI remota ni VERIFIED.
-9. Detenerse únicamente ante decisiones contractuales, visuales, de seguridad o permisos que requieran al propietario, sin eludir `deny`.
+7. Con `APROBADO` + `GATES_PASS` del estado exacto, delegar publicación a `stockflash-publisher` automáticamente: aprobación inicial del packet cubre commit/push Git. Solo una excepción explícita `publication_mode: OWNER_GATE` puede detenerlo; clave ausente o `AUTO_GIT` habilita publisher. No staging, producción ni BD remota.
+8. Tras publicar, confirmar `git rev-parse HEAD` = `origin/main` = `git ls-remote origin main`; consultar CI por SHA cuando esté disponible y comunicar SUCCESS/FAILURE/PENDING, no inventar éxito ni VERIFIED.
+9. Ante CI fallida o revisión ChatGPT con ruta `docs/work/<FEATURE>-EXTERNAL-REVIEW-*.md` vía SFH1, al siguiente `ok` sincronizar, corregir mismo alcance, repetir gates + QA y publicar nuevo SHA automáticamente. En caso de retirada, preparar reversión selectiva con commit revisado sin force/reset ni tocar commits ajenos. Detener ante decisión contractual nueva, seguridad fuera de alcance o permisos, respetando deny.
 
 Checkpoints (`docs/work/.run/F-XXXX.json`, ignorado en Git): `{packet, stage, files: {ruta: hash}, attempts, verify_report, review_file, commit_sha}`. Al reanudar: revalidar fingerprints con `git hash-object`; ante divergencia, repetir desde el último stage válido en vez de asumirlo. Nunca reutilizar QA/gates de un estado distinto.
 
