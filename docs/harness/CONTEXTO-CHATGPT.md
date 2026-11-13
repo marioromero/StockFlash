@@ -1,8 +1,8 @@
 # StockFlash — CONTEXTO PARA CHATGPT (continuidad entre sesiones)
 
-**Última revisión por ChatGPT:** 2026-11-10
+**Última revisión por ChatGPT:** 2026-11-13
 **Repositorio:** `marioromero/StockFlash` · rama de desarrollo `main`
-**Estado de referencia observado:** `3735c1473b5494ce0840acfc3fa8de6cdc82b245` (ROADMAP-001 VERIFIED, cierre documental publicado; CI remota comprobada)
+**Estado de referencia observado:** `79c3b0f5af573b956cbcfb8c95c50aef251f5bd5` (USERS-001 código `2aec038` corregido, QA+CI verde; guía y roadmap HTML editados; cierre VERIFIED pendiente)
 **Aviso de vigencia:** este SHA es un punto de control histórico, NO el HEAD garantizado al abrir una nueva sesión. Verificar HEAD, PR abiertos y documentación actual antes de actuar.
 
 ## 1. INSTRUCCIONES PARA CUALQUIER SESIÓN NUEVA DE CHATGPT
@@ -16,7 +16,7 @@ Si el propietario solicita «continuar StockFlash», «revisar lo que hizo OpenC
 5. **Actualizar ESTE archivo en GitHub cuando una revisión cambie materialmente el estado del proyecto, los compromisos o los próximos pasos**, conservando el histórico de hitos con referencia SHA. Autoría y mantenimiento de este archivo: **ChatGPT**. OpenCode lo lee sin editarlo.
 6. Si la revisión incluye una funcionalidad visible nueva o modificada, actualizar como autor exclusivo el contenido del manual `public/docs/index.html`, o preparar una rama/PR con la modificación hasta que el harness la integre. Comprobar nombres de campos y pantallas reales, no inventarlos.
 7. Para cambios en el contexto, preferir un commit documental acotado solo a este archivo, con control del SHA previo y sin sobrescribir trabajo paralelo. Si el flujo de Git disponible o el protocolo vigente exige PR, usar PR y dejar identificada la revisión pendiente.
-8. No hay comunicación automática entre OpenCode y este ChatGPT. El propietario inicia cada revisión pegando el cierre de OC, y puede abrir otra sesión con la instrucción «Lee el contexto de StockFlash en GitHub y continúa». No prometer trabajos sin una nueva interacción.
+8. SFH1 permite intercambio asíncrono por GitHub issue bajo demanda: el propietario escribe `ok` a la IA destinataria, quien consulta el issue y procesa mensajes dirigidos a ella. Sin despertador automático ni copia de informes. `ok` no equivale a aprobar nuevos packets, VERIFIED, migraciones remotas o deploy.
 9. Revisar también el roadmap HTML del propietario (`resources/roadmap/index.html`) y su protocolo. Cuando los hitos reales, las funcionalidades listas o el camino a R7 cambien, actualizarlo **solo desde ChatGPT**, sin plazos ni porcentajes inventados. OpenCode no edita ese archivo.
 
 **Idea central:** este archivo es un índice de continuidad y decisiones, no sustituye la fuente de verdad (el repositorio, Feature Packets y código).
@@ -31,7 +31,7 @@ Si el propietario solicita «continuar StockFlash», «revisar lo que hizo OpenC
 
 **Contratos prevalentes:** `AGENTS.md`; `docs/governance/CONSTITUTION.md`; archivos `docs/product/especificacion-v2.2-*-CONSOLIDADO-EN-REVISION.md`; `docs/work/features/*.md`.
 
-**Flujo:** owner+ChatGPT deciden alcance → OpenCode implementa → gates GATES_PASS → QA independiente APROBADO → publisher Git → CI en GitHub → owner+ChatGPT deciden VERIFIED → OpenCode registra cierre. Publicar no equivale a VERIFIED. No migrar BD remota ni desplegar sin autorización expresa. Mantener los permisos amplios de OpenCode según decisión del propietario; no proponer reducciones rutinarias.
+**Flujo actual (2026-11-13):** propietario aprueba una feature UNA vez → OpenCode implementa → gates `GATES_PASS` → QA independiente `APROBADO` → publisher Git automático (modo `AUTO_GIT`) → GitHub Actions en SHA → ChatGPT revisa al recibir `ok` → correcciones SFH1 con informe `.md`, sin nueva autorización Git → cierre `VERIFIED` solo por decisión externa expresa. No staging/producción ni BD remota sin autorización propia. Permisos amplios `allow/deny` según harness.
 
 ## 3. HITOS VALIDOS EN LA FECHA DE ESTE SNAPSHOT
 
@@ -40,14 +40,14 @@ Si el propietario solicita «continuar StockFlash», «revisar lo que hizo OpenC
 - `BRANCH-001`: VERIFIED, código consolidado `4f81457`, cierre `55086ed`. CRUD de sucursales, permisos, auditoría transaccional. CI PHP/Node/smoke/contratos confirmada en GitHub para `4f81457`.
 - `DOCS-001`: **VERIFIED** (decisión expresa del propietario, 2026-11-10). Código publicado `90254e5`, cierre documental `3fde691`, gates `GATES_PASS`, QA independiente `APROBADO` y CI PHP/Node/smoke + contratos SUCCESS ([42908696754](https://github.com/marioromero/StockFlash/actions/runs/42908696754), [42908696677](https://github.com/marioromero/StockFlash/actions/runs/42908696677)). Manual /docs/, enlace Ayuda y continuidad ChatGPT integrados.
 - `ROADMAP-001`: **VERIFIED** (decisión externa del propietario y cierre documental `docs/work/ROADMAP-001-CLOSURE-20261110.md` publicado en `main`). Implementación `a9c19d415b0a6fff0c16294c5dca9bd84e37cb41`; integración selectiva editorial del PR #4 y cierre documental presentes en el snapshot `3735c147`. Gate definitivo `ROADMAP-001-VERIFY-20261110-194620.md` = GATES_PASS (RM1–RM15), QA definitivo `ROADMAP-001-DOCS-REVIEW-20261110-2.md` = APROBADO (0 bloqueantes). **CI remota comprobada por ChatGPT** para `3735c147`: [PHP/Node/smoke SUCCESS](https://github.com/marioromero/StockFlash/actions/runs/42918708678), [contratos SUCCESS](https://github.com/marioromero/StockFlash/actions/runs/42918708636). `/roadmap` requiere `settings.manage`; botón del Dashboard, hitos R0–R10, bitácora y alertas `ROADMAP_*` operativos.
-- `USERS-001`: **DRAFT, NO implementado**, revisado y QA documental APROBADO. Último snapshot `f67a077`.  Detalla CRUD usuarios, rol global/por sucursal, PIN conforme `system_configs.pin_length`, `SoftDeletes`, límites de usuarios activos, protección último administrador, invalidación de sesiones por cambio de accesos y auditoría. Contiene **16 decisiones propuestas**. **Requiere aprobación explícita del propietario** para pasar a APPROVED e implementar; no deducirla de este documento.
+- `USERS-001`: **APPROVED, implementada y publicada, QA+CI verdes; aún NO VERIFIED formal.** Primer commit `882f281`, hallazgo GPT sobre valores PII en logs y corrección `2aec03893c78bc7180544930e0b6f741599df9ed` (2026-11-13). Gates 11/11 PASS `USERS-001-VERIFY-20261113-173228.md`, revisor independiente `USERS-001-REVIEW-20261113-173533.md` APROBADO, 199 PHP tests/1183 aserciones en local. CI en SHA corregido: [PHP/Node/smoke SUCCESS](https://github.com/marioromero/StockFlash/actions/runs/43503252099) y [contratos SUCCESS](https://github.com/marioromero/StockFlash/actions/runs/43503252172). D01–D16/P1–P4 cubiertas; PII excluida de old/new. Concurrencia real MariaDB aislada y validación visual móvil no ejecutadas. Reportes enviados SFH1 issue #13 `i=010`, dirigidos a GPT; no implica trabajo pendiente para OC.
 - Sin despliegue nuevo ni migraciones remotas autorizadas en este snapshot.
 
 ## 4. MANUAL HTML — AUTORÍA 100 % CHATGPT
 
 **Decisión del propietario:** ChatGPT redacta el 100 % de títulos, explicaciones, pasos, definiciones, preguntas frecuentes y ejemplos de la documentación de usuario; OpenCode no puede crear ni reescribir esos textos. OpenCode solo integra, automatiza seguimiento, prueba UI/CSS/JS, añade enlace Ayuda y publica.
 
-**Nueva referencia canónica:** `public/docs/index.html` (URL `/docs/`). Primera versión redactada por ChatGPT: 14 temas de AUTH-001 y BRANCH-001, menú lateral, búsqueda, acordeones y diseño responsive.
+**Referencia canónica:** `public/docs/index.html` (URL `/docs/`). Manual inicial 14 temas; ampliación ChatGPT del 2026-11-13 a **19 temas** (cinco sobre USERS-001), publicada junto al roadmap en `79c3b0f`. Indica implementada con cierre `VERIFIED` pendiente y sin deploy comercial. Navegación, búsqueda y acordeones responsive conservados.
 
 **Estado de integración al 2026-11-10:** la guía inicial y el protocolo se integraron selectivamente en `main` mediante DOCS-001, commit `90254e5`. El PR #2 fue la fuente original; **no debe fusionarse**, porque su rama antecede a revisiones de USERS-001 y podría introducir regresiones. OpenCode integró los archivos ChatGPT byte a byte, con bitácora técnica actualizada. Enlace histórico: https://github.com/marioromero/StockFlash/pull/2
 
@@ -57,7 +57,7 @@ Si el propietario solicita «continuar StockFlash», «revisar lo que hizo OpenC
 
 **Estado editorial:** manual `/docs/`, contexto y roadmap preparados en PR #3 y luego la explicación del botón «Avance del proyecto» preparada en PR #4 **ya están integrados selectivamente en `main`** al corte `3735c147`. PR #3 y PR #4 fueron cerrados sin fusionar para evitar cambios antiguos; no volver a aplicarlos. **Pendiente exclusivamente editorial de ChatGPT:** actualizar en el roadmap y este contexto el estado ROADMAP-001 a VERIFIED y el gate a `194620`; revisión preparada en [PR #5](https://github.com/marioromero/StockFlash/pull/5), rama `docs/chatgpt-cierra-roadmap001-20261110`, posterior a ese corte. Verificar su integración en GitHub.
 
-**Límite:** no crear guía de USERS-001 como funcionalidad existente mientras esté DRAFT.
+**Estado actual:** la restricción DRAFT dejó de aplicar. USERS-001 ya está implementada, publicada y documentada con aviso expreso de que VERIFIED formal aún no se declara; no mostrarla como desplegada a clientes.
 
 ## 4B. ROADMAP HTML DEL PROPIETARIO — AUTORÍA EXCLUSIVA CHATGPT
 
@@ -65,15 +65,16 @@ Si el propietario solicita «continuar StockFlash», «revisar lo que hizo OpenC
 
 **Fuentes de avance:** `docs/harness/ROADMAP-STOCKFLASH.md`, `docs/work/CURRENT.md`, Feature Packets, QA/gates y CI verificadas. Refleja R0–R10, capacidades realmente terminadas, pendientes para comercializar y versiones posteriores. No asigna fechas ni porcentajes arbitrarios.
 
-**Estado actual al corte 2026-11-10:** roadmap HTML integrado en `main` desde PR #3 y PR #4 de forma selectiva; código/cierre verificados hasta `3735c147`. Ruta `/roadmap` activa solo para administradores; pruebas de acceso, QA, gates y CI remota confirmadas. ROADMAP-001 ya fue declarado y registrado VERIFIED; ChatGPT preparó una última actualización editorial en `docs/chatgpt-cierra-roadmap001-20261110` que necesita integración por OpenCode. Etapa actual R3 Core; BOOT/CI/AUTH/BRANCH/DOCS/ROADMAP verificados; USERS-001 sigue DRAFT sin implementar. **Primera versión comercializable:** R7 (POS + Bodega sin DTE integrado), después de R4 Bodega, R5 Control comercial/licencias y R6 POS, más controles R7. Posteriores: R8 SyncWP, R9 Fiscal, R10 Compras/Analítica.
+**Estado al 2026-11-13:** `resources/roadmap/index.html` actualizado por ChatGPT en `79c3b0f` para reflejar USERS-001 implementada y publicada, pendiente de VERIFIED; ruta `/roadmap` mantiene permiso `settings.manage`; R0–R10 sin porcentajes ni fechas ficticias. BOOT/CI/AUTH/BRANCH/DOCS/ROADMAP verificados. Primera comercial R7 POS+Bodega sin DTE integrado; R4 Bodega, R5 licencias, R6 POS y controles R7 pendientes. Después R8 SyncWP, R9 Fiscal, R10 Compras/Analítica.
 
 **Continuidad:** `docs/harness/ROADMAP-HTML-PROYECTO.md` contiene reglas obligatorias de autoría; `docs/work/ROADMAP-HTML-ESTADO.md` es una bitácora técnica que OpenCode puede modificar (no el HTML). Tras cada feature relevante OpenCode informa `ROADMAP_PENDIENTE_CHATGPT` con evidencia; el propietario lo traslada a ChatGPT; ChatGPT revisa y redacta actualización si corresponde. La nueva sesión de ChatGPT debe comprobar ambos archivos antes de intervenir.
 
 ## 5. TRABAJO ABIERTO Y SIGUIENTE PASO
 
-1. **Actualizar contenido ChatGPT:** integrar la revisión de `resources/roadmap/index.html` y de este archivo desde el [PR #5](https://github.com/marioromero/StockFlash/pull/5), rama `docs/chatgpt-cierra-roadmap001-20261110`. Corrige el estado ROADMAP-001 a VERIFIED, el gate vigente `194620` y la referencia `3735c147`. OpenCode solo integra, hace QA/gates y publica; actualiza su bitácora técnica para `ROADMAP_ACTUALIZADO` cuando esté confirmado.
-2. **USERS-001:** QA documental aprobado y packet DRAFT pendiente de aprobación expresa del propietario de las 16 decisiones. No iniciar implementación sin esta autorización. Conservar las observaciones no bloqueantes en la preparación de implementación: `VerifySession` cubriendo rutas autenticadas, lectura de PII PRV-06/CORE-10 y precisión editorial.
-3. Continuar verificando GitHub en cada cierre de OpenCode y actualizar este contexto, la guía y el roadmap según los cambios reales. No hay cron ni conexión automática entre agentes.
+1. USERS-001: QA independiente y CI del código corregido `2aec038` comprobados por ChatGPT; cero bloqueantes técnicos conocidos. Cierre VERIFIED formal aún requiere autorización externa expresa del propietario. No interpretarlo a partir de `ok`.
+2. ChatGPT editó e integró manual (19 temas) y roadmap en `79c3b0f`. La CI de ese commit reportó **fallo de prueba documental obsoleta**; prueba corregida en un commit posterior. Antes de continuar comprobar nueva CI por SHA y sincronizar bitácoras `GUIA-HTML-ESTADO.md` / `ROADMAP-HTML-ESTADO.md` por OpenCode, integrador técnico. No pedir reescritura a OpenCode de HTML que es autoría exclusiva ChatGPT.
+3. Mantener como pendientes declarados prueba de concurrencia MariaDB real aislada y QA visual responsive, no probados. No deploy ni migraciones remotas.
+4. SFH1 issue #13: último reporte OC `i=010 dst=GPT`; el `ok` a OC antes de un nuevo `dst=OC` debe responder "no hay trabajo pendiente". Solo publicar mensaje nuevo con acción técnica concreta, sin ping-pong artificial.
 
 ## 6. FORMATO BREVE DE ACTUALIZACIÓN DE ESTE ARCHIVO
 

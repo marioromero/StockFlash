@@ -100,15 +100,14 @@ class DocsIntegrationTest extends TestCase
         }
     }
 
-    public function test_users_001_is_not_advertised_as_available_in_the_manual(): void
+    public function test_users_001_is_documented_without_premature_verified_or_deploy(): void
     {
         $html = $this->manual();
 
-        $this->assertStringNotContainsString('USERS-001', $html);
-        $this->assertStringContainsString(
-            'Se documentarán cuando estén implementadas y verificadas',
-            $html
-        );
+        $this->assertStringContainsString('id="usuarios"', $html);
+        $this->assertStringContainsString('USERS-001', $html);
+        $this->assertStringContainsString('VERIFIED sigue pendiente', $html);
+        $this->assertStringContainsString('No implica despliegue a clientes', $html);
     }
 
     private function manual(): string

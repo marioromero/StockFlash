@@ -37,10 +37,10 @@ La versión inicial de venta se sitúa en R7 (POS + Bodega sin DTE integrado, pi
 4. OpenCode integra el HTML exacto de ChatGPT sin reescribirlo; ejecuta QA/gates adecuados, publica por el harness y ajusta la bitácora para marcar `ROADMAP_ACTUALIZADO` con SHA cubierto.
 5. La falta de revisión del roadmap **no bloquea** la implementación o publicación de una feature, pero siempre debe aparecer como pendiente en el handoff, al igual que `GUIA_PENDIENTE_CHATGPT`.
 
-**No existe comunicación automática entre OpenCode y esta conversación:** el propietario traslada cada informe. Al abrir una nueva sesión de ChatGPT, basta leer `CONTEXTO-CHATGPT.md`, este protocolo y la última versión HTML antes de intervenir.
+**Comunicación SFH1 bajo demanda:** el propietario escribe `ok` en el chat destinatario; cada IA recupera su mensaje desde GitHub issue y puede consultar código/QA y bitácora. No hay ejecución en segundo plano. Para otra sesión, leer `CONTEXTO-CHATGPT.md`, el protocolo y la última versión HTML.
 
 ## Verificación mínima
 
 - Comprobar GET autorizado, redirección de no autenticados y 403 sin permiso; no permitir ruta de archivo estático pública.
 - Verificar hitos R0–R10, primera versión R7, títulos, anclas, interacción de expandir/contraer, legibilidad móvil y ausencia de recursos externos/secretos.
-- Mantener `USERS-001` como DRAFT mientras no se apruebe formalmente; no publicar un porcentaje inventado o convertir un módulo planificado en funcionalidad existente.
+- Reflejar el estado real de USERS-001 según el packet: DRAFT antes de aprobar, `APPROVED` una vez implementada, y `VERIFIED` solo tras decisión externa expresa. No publicar porcentajes inventados ni confundir código publicado con despliegue comercial.
