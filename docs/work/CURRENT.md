@@ -4,18 +4,30 @@
 
 bridge_active_packet: BRIDGE-001
 
+El propietario autorizó publicación continuada de los Markdown de BRIDGE-001 en
+`pilot/codex-bridge-20261112` para consulta desde GPT. No incluye código ni main.
+
+Decisión definitiva posterior: cuenta estándar StockFlashAgent, Docker/WSL
+descartados. Aprovisionamiento y ACL autorizados; primer UAC cancelado por Windows,
+pendiente interacción del escritorio seguro. Agentes sobre código aún bloqueados;
+no tarea programada permanente. Ver BRIDGE-001-WINDOWS-SETUP.md. Las referencias
+a instalación de contenedor inferiores conservan trazabilidad y no están activas.
+
 - Propietario aprobó BRIDGE-001 en worktree `stockflash-codex-pilot`, rama
   `pilot/codex-bridge-20261112`, base `d103120f6e45dcb10a999c99f3d6f2faff5f466c`.
-- Estado: BLOCKED_ISOLATION, núcleo local implementado y probado; aceptación
+- Estado: BLOCKED_UAC, núcleo local implementado y probado; aceptación
   integral NO realizada, agentes sobre código y publicación deshabilitados.
 - Excepción posterior solicitada por el propietario: entrega de Markdown mediante
   commit/push selectivo por Codex en la rama piloto, sin código ni integración a
   main. Sin cambios al original, permisos/credenciales SO, migraciones ni deploy.
   No reactivar STAGING ni USERS-001 por referencias históricas abajo.
-- Evidencia: `BRIDGE-001-EVIDENCE.md`. Decisión necesaria:
-  `BRIDGE-001-ISOLATION-DECISION.md`. No declarar GATES_PASS global ni VERIFIED.
+- Evidencia: `BRIDGE-001-EVIDENCE.md`. Decisión de aislamiento resuelta en
+  `BRIDGE-001-ISOLATION-DECISION.md`; interacción UAC pendiente según
+  `BRIDGE-001-WINDOWS-SETUP.md`. No declarar GATES_PASS global ni VERIFIED.
 - Codex asume revisión externa y autoría editorial conforme a adenda en AGENTS.
   Harness y separación de QA/publicación se conservan.
+- Histórico sustituido: se evaluó Docker Desktop / WSL 2 en
+  `BRIDGE-001-CONTAINER-SETUP.md`, ahora descartado. No ejecutar DISM ni instalador.
 
 
 ## Hitos cerrados y estado vigente

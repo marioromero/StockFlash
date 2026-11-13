@@ -2,6 +2,21 @@
 
 ## Reentrada vigente — revisión Codex 2026-11-12
 
+Publicación documental continuada autorizada por el propietario: mantener los
+Markdown del trabajo en `pilot/codex-bridge-20261112` para consulta desde GPT,
+con commits selectivos y SHA remoto comprobado. Scripts/pruebas continúan locales
+hasta autorización de publicación funcional; main permanece intacta.
+
+**Decisión definitiva posterior:** usar cuenta estándar StockFlashAgent, sin
+Docker/WSL y sin tarea permanente hasta aceptación integral. Aprovisionamiento,
+ACL y herramientas están autorizados. Scripts preparados en scripts/bridge_windows;
+primer UAC devolvió cancelación, cuenta aún inexistente y sin receipt administrativo.
+No ejecutar agentes con el token del propietario ni elevarlos para sortearlo.
+Se solicitó únicamente la interacción del escritorio seguro para reintentar UAC
+o ejecutar la preparación como administrador. Ver BRIDGE-001-WINDOWS-SETUP.md.
+Las instrucciones inferiores de preparar contenedor/DISM son históricas y quedan
+sustituidas por esta decisión. Núcleo y 17 pruebas preservados, sin publicación.
+
 El propietario autorizó BRIDGE-001 y transfirió a Codex CLI las responsabilidades
 técnicas externas y editoriales de ChatGPT. OpenCode continúa sin autoría del
 manual, roadmap ni este contexto. El nombre del archivo se conserva por
@@ -24,6 +39,11 @@ funcional ni comercial; no ampliar manual ni alterar hitos por este núcleo loca
 La próxima tarea es resolver aislamiento, completar adaptadores y realizar una
 única aceptación real con el harness existente. El resto de instrucciones de
 traslado humano se sustituirá al demostrar el puente, sin prometerlo operativo.
+
+Histórico sustituido: se aprobó inicialmente evaluar Docker Desktop / WSL 2,
+pero después se descartó expresamente. No ejecutar sus instrucciones de
+BRIDGE-001-CONTAINER-SETUP.md. La preparación vigente es StockFlashAgent,
+sin modificar núcleo Python ni sus 17 pruebas; ambos ejecutores deberán aislarse.
 
 
 **Última revisión por ChatGPT:** 2026-11-10

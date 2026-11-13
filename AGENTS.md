@@ -20,6 +20,18 @@ Codex. Esta entrega de documentos queda fuera del publisher limitado a main;
 no publica código, no concede GATES_PASS/QA/VERIFIED ni habilita automatización.
 Se mantiene prohibido publicar en main, desplegar o ejecutar agentes sobre código.
 
+**Autorización documental continuada del propietario (solicitud posterior):**
+durante BRIDGE-001, publicar las actualizaciones Markdown de este trabajo en
+`pilot/codex-bridge-20261112` para consulta dinámica desde GPT, sin pedir aprobación
+por cada entrega. Mantener selección explícita de archivos, revisión de contenido,
+commit documental y push sin force; verificar SHA remoto. No incluye código,
+scripts, credenciales, publicación funcional, cambios a main ni activación del
+puente. Decisión vigente de aislamiento: cuenta estándar StockFlashAgent;
+Docker/WSL descartados. Elevación solo administrativa, nunca para ejecutar agentes.
+La aprobación definitiva permite crear esa cuenta y configurar sus ACL y
+herramientas; sustituye la prohibición inicial de esos cambios del sistema.
+No activar tarea permanente hasta superar la aceptación integral.
+
 1. Comunicación y UI en español es-CL; código/tablas en inglés; nunca tocar producción.
 2. Contratos de trabajo prioritarios **v2.2**: negocio=`docs/product/especificacion-v2.2-parte-1-CONSOLIDADO-EN-REVISION.md`; datos=`docs/product/especificacion-v2.2-parte-2-CONSOLIDADO-EN-REVISION.md`; integración=`docs/product/especificacion-v2.2-anexo-CONSOLIDADO-EN-REVISION.md`. Los tres documentos v2.1 en `docs/product/historico-v2.1/` son evidencia histórica, NO instrucciones vigentes si difieren.
 3. v2.2 consolida decisiones comerciales del owner (demo vs free, derechos por producto, fiscal externo, ventas pausadas, branding). No interpretarlas como simples propuestas: están aprobadas. **Las partes rotuladas ABIERTAS requieren una decisión futura y no se implementan por intuición.**

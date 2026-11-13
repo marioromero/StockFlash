@@ -1,6 +1,27 @@
-# BRIDGE-001 — Decisión de aislamiento pendiente
+# BRIDGE-001 — Decisión de aislamiento resuelta: StockFlashAgent
 
-Estado: OWNER_DECISION_REQUIRED. Fecha: 2026-11-12.
+Estado: RESUELTA_CUENTA_WINDOWS. Fecha de decisión inicial: 2026-11-12.
+
+## Decisión definitiva que sustituye la alternativa anterior
+
+El propietario aprobó cuenta estándar StockFlashAgent, ACL específicas y
+herramientas bajo esa identidad. Docker/WSL quedan descartados. Elevación solo
+para administración; no tarea permanente hasta aceptación. No volver a comparar
+alternativas ni solicitar autorización rutinaria de este alcance.
+El primer lanzamiento UAC fue cancelado por Windows; falta esa interacción del
+sistema para ejecutar el aprovisionamiento ya autorizado.
+Ver BRIDGE-001-WINDOWS-SETUP.md. Las secciones inferiores son históricas.
+
+## Histórico sustituido — aprobación inicial del contenedor
+
+Aprobada preparación/instalación de contenedor local, preferentemente Docker
+Desktop con WSL 2. Elevación, reinicio y cambios importantes de Windows requieren
+confirmación puntual previa. Ambos ejecutores Codex/OpenCode deben aislarse;
+no copiar credenciales del host ni montar original, Git compartido o socket Docker.
+Ver `BRIDGE-001-CONTAINER-SETUP.md`: compatibilidad básica comprobada y petición
+de habilitación de dos características de Windows pendiente de confirmación.
+Esta resolución cierra la elección A/B; aún no demuestra aislamiento efectivo.
+La solicitud y alternativas inferiores se conservan como trazabilidad histórica.
 
 ## Bloqueo y evidencia
 
@@ -47,4 +68,6 @@ cuya instalación/configuración y eventual autenticación exceden esta autoriza
 No afecta contratos comerciales, datos ni fiscalidad.
 
 Hasta entonces, conservar dispatch bloqueado y no ejecutar la aceptación real.
-Estado humano: PENDIENTE; ninguna prueba o respuesta técnica concede autorización.
+Estado humano original: PENDIENTE en la entrega 61478cd; resuelto posteriormente
+por aprobación expresa de A (ver sección inicial). La aceptación técnica del
+aislamiento y las confirmaciones puntuales del sistema siguen pendientes.
