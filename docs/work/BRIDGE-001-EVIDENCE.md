@@ -1,5 +1,14 @@
 # BRIDGE-001 — Evidencia parcial local (2026-11-12)
 
+## Actualización vigente posterior al aprovisionamiento
+
+Aislamiento real, publicación local negativa y 17 pruebas comprobados como
+StockFlashAgent; ambas CLI arrancan, 8 pruebas de transporte nuevas PASS.
+Adaptadores/mode piloto preparados, pero autenticación e integral LLM pendientes.
+Ver `BRIDGE-001-AUTH-AND-ACCEPTANCE.md`; ese documento distingue interfaces listas
+de sesiones/modelos realmente ejecutados. Los límites y fallos originales inferiores
+son históricos. No conceden ni revocan por sí solos aceptación global o VERIFIED.
+
 Base y HEAD al ejecutar las pruebas: `d103120f6e45dcb10a999c99f3d6f2faff5f466c`.
 Rama: `pilot/codex-bridge-20261112`.
 Autorización: propietario aprobó implementación local sin commits/publicación.

@@ -27,4 +27,6 @@ no presentar la automatización como funcional ni alterar estados VERIFIED.
 
 Actualizar exclusivamente metadatos de integración, cobertura, SHA y pendientes; no el HTML ni el protocolo redactados por ChatGPT. Al cerrar futuras features comparar el estado actual con la cobertura y emitir `ROADMAP_ACTUALIZADO` o `ROADMAP_PENDIENTE_CHATGPT` en el handoff. Los estados no son porcentajes de avance.
 
-El propietario entrega el cierre de OpenCode a ChatGPT; ChatGPT consulta la evidencia actual, actualiza `resources/roadmap/index.html` cuando corresponda y mantiene su archivo de continuidad.
+Codex recibe el cierre por el puente validado en ejecución autorizada, consulta
+evidencia actual y edita HTML/contexto solo si corresponde. Mientras la integral
+esté pendiente, conservar handoff explícito; no prometer actualizaciones de fondo.

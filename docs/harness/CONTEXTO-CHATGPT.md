@@ -2,6 +2,19 @@
 
 ## Reentrada vigente — revisión Codex 2026-11-12
 
+**Estado actual, reemplaza los pendientes UAC/receipt inferiores:** aislamiento
+real y 17 pruebas PASS como StockFlashAgent comprobados (provisión
+b322493309c44df7bd72a616c0081e63). CLI nativas 0.167.2/1.19.0 arrancan desde
+binarios reutilizados protegidos; no se abrió el perfil privado NVM del propietario.
+Git de la copia es independiente, sin remoto/commits, metadatos RO y publicación
+local negativa real PASS. Las 10 pruebas nuevas de transporte pasan bajo esa cuenta.
+Adaptadores, checkpoints y modo piloto del mismo coordinador están preparados;
+el ciclo LLM integral todavía NO se ejecutó. Codex ya tiene login ChatGPT comprobado.
+Bloqueo real: conectar DeepSeek con API key propia en el perfil dedicado, sin copiar
+credenciales. Ver BRIDGE-001-AUTH-AND-ACCEPTANCE.md para la intervención mínima.
+No repetir creación de cuenta ni diagnóstico del recibo. No declarar GATES_PASS
+global, QA aprobado o VERIFIED por estos resultados parciales; sin tarea permanente.
+
 **Diagnóstico posterior vigente:** la cuenta SÍ se creó como estándar y se aplicaron
 ACL sin alterar propietario/grupo/otras reglas (comparadas contra cinco backups).
 Fallo en etapa receipt por File.Replace con `$null` convertido en ruta vacía en
@@ -65,6 +78,12 @@ pero después se descartó expresamente. No ejecutar sus instrucciones de
 BRIDGE-001-CONTAINER-SETUP.md. La preparación vigente es StockFlashAgent,
 sin modificar núcleo Python ni sus 17 pruebas; ambos ejecutores deberán aislarse.
 
+
+## Archivo histórico de ChatGPT — corte 2026-11-10
+
+Las atribuciones editoriales y mandatos de traslado manual de este snapshot
+fueron sustituidos por AGENTS y la reentrada vigente de Codex anterior. Se
+conserva el relato original como evidencia, no como instrucción operativa nueva.
 
 **Última revisión por ChatGPT:** 2026-11-10
 **Repositorio:** `marioromero/StockFlash` · rama de desarrollo `main`

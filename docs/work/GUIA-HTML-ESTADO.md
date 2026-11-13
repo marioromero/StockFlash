@@ -24,7 +24,11 @@ pendiente editorial de usuario. Transporte automático aún bloqueado; las
 referencias históricas a traslado por ChatGPT no acreditan puente operativo.
 
 - OpenCode puede actualizar solamente los metadatos y el registro de pendientes aquí, no los textos para usuarios en `public/docs/index.html`.
-- Al completar/publicar una nueva feature: si ChatGPT aún no redactó su nueva guía, registrar `GUIA_PENDIENTE_CHATGPT` con feature, SHA y fecha, más enlaces al packet/QA en el handoff.
-- Después de que ChatGPT redacte y OpenCode integre/publica la guía, actualizar la cobertura y el SHA, marcando `GUIA_ACTUALIZADA`.
+- Al completar/publicar una feature: si Codex aún no redactó su guía, registrar
+  `GUIA_PENDIENTE_CHATGPT` (alias histórico) con feature, SHA y evidencia.
+- Después de redacción de Codex e integración/QA/publicación por OpenCode,
+  actualizar cobertura y SHA, marcando GUIA_ACTUALIZADA.
 - Si cambia la rama principal o existe otro PR abierto, verificar HEAD antes de editar; no sobrescribir trabajo de otros agentes.
-- La guía no se actualiza sin una solicitud explícita al chat: al usuario le corresponde traer el cierre de OpenCode, y ChatGPT verifica el código real mediante GitHub.
+- Durante ejecución autorizada del puente validado, el cierre llega a Codex para
+  revisión editorial sin traslado manual; antes de aceptar el puente se conserva
+  el handoff pendiente. No atribuir actividad de fondo ni actualizaciones ficticias.

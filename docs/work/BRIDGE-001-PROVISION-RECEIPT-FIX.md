@@ -1,5 +1,10 @@
 # BRIDGE-001 — Fallo de recibo: causa y corrección
 
+**INCIDENTE RESUELTO:** después de esta corrección el propietario ejecutó
+Start-Provision y obtuvo SETUP_PASS, corroborado por reportes reales como
+StockFlashAgent. El comando inferior es histórico de esa recuperación; no es
+el siguiente paso actual. Continuar según BRIDGE-001-AUTH-AND-ACCEPTANCE.md.
+
 ## Evidencia del fallo real
 
 Run administrativo: `4a6b5001cb8f4dc9b56182964f96aad4`.

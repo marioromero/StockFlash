@@ -5,14 +5,14 @@ autor/editor exclusivo de este HTML y del contexto; OpenCode conserva
 integración técnica, pruebas y publicación sin modificar el HTML. Las menciones
 de ChatGPT inferiores se leen con esta sucesión, conservando estados históricos.
 El puente entregará los pedidos `ROADMAP_PENDIENTE_CHATGPT` a Codex cuando se
-valide; hoy está bloqueado por aislamiento, sin recepción automática operativa.
+valide; aislamiento ya comprobado, autenticación/integral aún pendientes.
 No actualizar hitos ni cobertura por pruebas unitarias del puente. Activación y
 VERIFIED siguen sujetos a decisión externa; la excepción documental posterior
 solo permite entregar Markdown en la rama piloto (ver AGENTS), sin código.
 
 
 decision_owner: Propietario, 2026-11-10
-content_owner: ChatGPT (exclusivo)
+content_owner: Codex CLI (sucesor exclusivo de ChatGPT; aprobación BRIDGE-001)
 technical_integrator: OpenCode
 canonical_html: `resources/roadmap/index.html`
 requested_route: `/roadmap` (solo administrador autenticado con `settings.manage`)
@@ -29,10 +29,15 @@ La versión inicial de venta se sitúa en R7 (POS + Bodega sin DTE integrado, pi
 
 ## Reglas estrictas de autoría
 
-- **ChatGPT escribe y modifica íntegramente `resources/roadmap/index.html`**: contenido, texto, etiquetas, estados, estructura, diseño y scripts. Solo ChatGPT actualiza esta página en cada revisión sustantiva de entregas de OpenCode, si hay cambios reales que lo justifiquen.
-- OpenCode **NO edita ese archivo**, ni actualiza estados/hitos/etiquetas ni genera automáticamente el HTML mediante scripts. Puede consultarlo para pruebas de solo lectura y solicitar a ChatGPT correcciones de contenido o técnicas a través del propietario.
+- **Codex escribe y modifica íntegramente `resources/roadmap/index.html`**:
+  contenido, etiquetas, estados, estructura, diseño y scripts, tras revisión
+  sustantiva de entregas cuando haya cambios reales que lo justifiquen.
+- OpenCode **NO edita ese archivo**, ni estados ni genera HTML por scripts. Lo
+  consulta para pruebas y entrega solicitudes a Codex por el puente validado o
+  handoff explícito mientras esté pendiente, sin delegar esa autoría a otro agente.
 - OpenCode implementa las rutas, enlace visual desde el Dashboard (solo para quienes puedan ver el roadmap), permisos server-side, pruebas de accesibilidad/HTTP, CI y publicación. Solo OpenCode puede actualizar la bitácora técnica `ROADMAP-HTML-ESTADO.md`.
-- Ni la actualización por ChatGPT ni el commit de HTML cambia por sí solo un estado contractual o concede `VERIFIED` a una feature.
+- Ni la actualización por Codex ni un commit de HTML cambia por sí solo un estado
+  contractual o concede VERIFIED.
 
 ## Integración de interfaz
 
@@ -40,15 +45,20 @@ La versión inicial de venta se sitúa en R7 (POS + Bodega sin DTE integrado, pi
 - En Dashboard, enlace **Avance del proyecto** visible solo para rol/permisos autorizados; abre `/roadmap`. El manual `/docs/` permanece independiente y público.
 - La guía debe ser usable en móvil/escritorio y con teclado; los controles de expandir y contraer hitos deben funcionar. No se requieren servicios ni dependencias externas.
 
-## Detección automática y actualización por ChatGPT
+## Detección y actualización editorial por Codex
 
 1. Al cerrar cualquier feature o al emitir `sf-handoff`, OpenCode contrasta el último SHA cubierto en `ROADMAP-HTML-ESTADO.md` con la nueva funcionalidad/hito y detecta si hay cambios que afectarían la línea de avance, el bloque de primera versión comercial o los estados.
 2. Si hay cambios relevantes, registra `ROADMAP_PENDIENTE_CHATGPT` y en el informe incluye feature, SHA publicado, estado real, QA/gates/CI, pantallas y dependencias. **No edita el HTML ni infiere nuevos porcentajes.**
-3. El propietario comparte el cierre de OpenCode con ChatGPT. ChatGPT verifica evidencia en GitHub y actualiza `resources/roadmap/index.html` y `docs/harness/CONTEXTO-CHATGPT.md` **cuando corresponda**, por rama/PR documental.
-4. OpenCode integra el HTML exacto de ChatGPT sin reescribirlo; ejecuta QA/gates adecuados, publica por el harness y ajusta la bitácora para marcar `ROADMAP_ACTUALIZADO` con SHA cubierto.
+3. Codex recibe el cierre por el puente validado durante una ejecución autorizada,
+   contrasta evidencia efectiva y actualiza HTML/contexto solo cuando corresponda.
+   Mientras falte aceptar el puente, conservar un handoff explícito pendiente.
+4. OpenCode integra el HTML exacto de Codex sin reescribirlo, ejecuta QA/gates
+   adecuados, publica por el harness autorizado y actualiza cobertura técnica.
 5. La falta de revisión del roadmap **no bloquea** la implementación o publicación de una feature, pero siempre debe aparecer como pendiente en el handoff, al igual que `GUIA_PENDIENTE_CHATGPT`.
 
-**No existe comunicación automática entre OpenCode y esta conversación:** el propietario traslada cada informe. Al abrir una nueva sesión de ChatGPT, basta leer `CONTEXTO-CHATGPT.md`, este protocolo y la última versión HTML antes de intervenir.
+**No hay conexión con el chat web ni tarea permanente activada:** el transporte
+CLI solo se atribuye tras aceptación. Una nueva sesión de Codex recupera contexto,
+protocolo, HTML y evidencia vigente antes de actuar, sin asumir actividad de fondo.
 
 ## Verificación mínima
 

@@ -4,7 +4,14 @@ Decisión definitiva del propietario: cuenta estándar StockFlashAgent.
 Docker y WSL quedan descartados; no ejecutar DISM ni instalar sus componentes.
 No activar tarea programada permanente antes de aceptación integral.
 
-## Procedimiento vigente revisado — ejecución desde el escritorio
+**APROVISIONAMIENTO YA SUPERADO:** el propietario ejecutó el lanzador corregido
+y obtuvo SETUP_PASS. Se comprobaron el recibo y los reportes reales de la misma
+provisión b322493309c44df7bd72a616c0081e63. No volver a ejecutar creación/ACL
+como siguiente paso ordinario: ahora corresponde autenticar CLI y realizar la
+integral. Ver BRIDGE-001-AUTH-AND-ACCEPTANCE.md. Se conserva abajo el procedimiento
+usado y el diagnóstico histórico, sin afirmar que siga bloqueado en receipt.
+
+## Procedimiento revisado ya ejecutado — referencia de recuperación
 
 **Diagnóstico posterior del primer intento de escritorio:** la cuenta y las ACL
 sí se crearon; falló File.Replace al recibir `$null` en PowerShell 5.1. Corregido

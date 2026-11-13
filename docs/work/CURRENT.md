@@ -4,6 +4,24 @@
 
 bridge_active_packet: BRIDGE-001
 
+## Estado vigente después del aprovisionamiento exitoso
+
+StockFlashAgent ejecutó aislamiento real PASS y las 17 pruebas originales PASS.
+Run de provisión comprobado: b322493309c44df7bd72a616c0081e63. Ambas CLI arrancan
+como esa cuenta; NVM apuntaba al perfil privado y se reutilizaron binarios en
+tools sin abrir permisos del perfil. La copia tiene Git independiente, sin remoto
+ni commits, metadatos de solo lectura y push local negativo comprobado.
+
+Adaptadores y modo piloto del harness preparados; 10 pruebas de transporte PASS
+bajo la cuenta. Sesiones LLM reales/recuperación integral aún NO comprobadas:
+Codex ya tiene login ChatGPT comprobado; falta conectar DeepSeek con API key propia
+en el perfil dedicado. No crear otro entorno ni repetir aprovisionamiento.
+Siguiente acción y comandos: BRIDGE-001-AUTH-AND-ACCEPTANCE.md.
+Sin GATES_PASS global, QA integral ni VERIFIED. No tarea permanente ni main.
+
+Las notas de diagnóstico siguientes conservan trazabilidad y NO son el estado
+operativo actual: fallo de recibo y UAC ya fueron superados.
+
 Actualización de diagnóstico: primer intento de escritorio creó StockFlashAgent
 y aplicó ACL, pero falló en receipt por File.Replace con `$null` en PowerShell 5.1.
 Corregido con null string tipado; regresión real pasa, preflight de estado parcial

@@ -2,11 +2,11 @@
 
 status: APPROVED
 owner_approval: Aprobación expresa del propietario en sesión Codex, 2026-11-12.
-execution_status: READY_TO_RESUME_DESKTOP_PROVISION
+execution_status: ISOLATED_AUTHENTICATION_PENDING
 
 environment_approval: Decisión definitiva posterior: cuenta local estándar StockFlashAgent; Docker/WSL descartados.
-environment_gate: Ejecutar lanzador revisado desde PowerShell normal del escritorio y comprobar pruebas reales; ver BRIDGE-001-WINDOWS-SETUP.md.
-partial_state: Cuenta estándar y ACL aplicadas; fallo de recibo corregido y regresión/preflight PASS. Ver BRIDGE-001-PROVISION-RECEIPT-FIX.md.
+environment_gate: Aislamiento real y 17 pruebas PASS comprobados; CLI disponibles. Autenticar en perfil dedicado antes de aceptación real.
+partial_state: Adaptadores, modo piloto y 10 pruebas de transporte preparados; integral y QA aún pendientes. Ver BRIDGE-001-AUTH-AND-ACCEPTANCE.md.
 environment: Solo worktree stockflash-codex-pilot, rama pilot/codex-bridge-20261112.
 base_sha: d103120f6e45dcb10a999c99f3d6f2faff5f466c
 publication: FORBIDDEN para código/automatización; excepción posterior solo Markdown en rama piloto.
