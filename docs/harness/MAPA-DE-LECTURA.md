@@ -17,3 +17,5 @@
 - Se requiere revisar una decisión abierta en `docs/governance/DECISIONES-ABIERTAS-v2.2.md`; si sigue abierta, escalar y detener únicamente la parte que depende de ella.
 
 La búsqueda puntual en código sigue siendo la fuente principal de dependencias; no reconstruir índices ni inventarios de archivos por módulo.
+
+Mantenimiento pasivo: actualizar este mapa solo si durante el cierre normal de una feature aparece un patrón de lectura realmente reutilizable; si no hay información nueva útil, no editar nada.
