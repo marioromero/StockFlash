@@ -343,7 +343,7 @@ GATES_BY_PACKET: dict[str, list[dict]] = {
     ],
     "USERS-001": [
         {"id": "U1-packet-approved-activo", "kind": "shell",
-         "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\np=(R/'docs/work/features/USERS-001.md').read_text(encoding='utf-8')\nc=(R/'docs/work/CURRENT.md').read_text(encoding='utf-8')\nok=('status: APPROVED' in p and 'execution_mode: ONE_WAVE_ALL_16' in p and 'publication_mode: AUTO_GIT' in p and 'USERS-001: APPROVED' in c)\nsys.exit(0 if ok else 1)"],
+         "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\np=(R/'docs/work/features/USERS-001.md').read_text(encoding='utf-8')\nc=(R/'docs/work/CURRENT.md').read_text(encoding='utf-8')\nok=(('status: APPROVED' in p or 'status: VERIFIED' in p) and 'execution_mode: ONE_WAVE_ALL_16' in p and 'publication_mode: AUTO_GIT' in p and ('USERS-001: APPROVED' in c or 'USERS-001: VERIFIED' in c))\nsys.exit(0 if ok else 1)"],
          "mandatory": True, "timeout_s": 60},
         {"id": "U2-archivos-backend-ui", "kind": "shell",
          "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\nreq=['app/Http/Controllers/UserController.php','app/Support/UserAccessFingerprint.php','app/Support/AuditLogger.php','app/Models/User.php','resources/js/Pages/Users/Index.vue','resources/js/Pages/Users/Form.vue','documentacion/modulos/usuarios/administracion-usuarios.md']\nsys.exit(0 if all((R/x).exists() for x in req) else 1)"],
@@ -505,10 +505,10 @@ GATES_BY_PACKET: dict[str, list[dict]] = {
     ],
     "HCTX-001": [
         {"id": "X1-packet-approved-activo", "kind": "shell",
-         "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\nfe=(R/'docs/work/features/HCTX-001.md').read_text(encoding='utf-8')\ncu=(R/'docs/work/CURRENT.md').read_text(encoding='utf-8')\nok=('status: APPROVED' in fe and 'publication_mode: AUTO_GIT' in fe and 'execution_mode: ONE_SMALL_WAVE' in fe and 'HCTX-001' in cu)\nsys.exit(0 if ok else 1)"],
+         "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\nfe=(R/'docs/work/features/HCTX-001.md').read_text(encoding='utf-8')\ncu=(R/'docs/work/CURRENT.md').read_text(encoding='utf-8')\nok=(('status: APPROVED' in fe or 'status: VERIFIED' in fe) and 'publication_mode: AUTO_GIT' in fe and 'execution_mode: ONE_SMALL_WAVE' in fe and 'HCTX-001' in cu)\nsys.exit(0 if ok else 1)"],
          "mandatory": True, "timeout_s": 60},
         {"id": "X2-current-compacto", "kind": "shell",
-         "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\nb=(R/'docs/work/CURRENT.md').read_bytes()\nt=b.decode('utf-8')\nok=(2000<=len(b)<=4096 and all(s in t for s in ['HCTX-001','USERS-001: APPROVED','BOOT-001','STAGING-001: APPROVED','VERIFIED']) and len(t.splitlines())<=70)\nsys.exit(0 if ok else 1)"],
+         "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\nb=(R/'docs/work/CURRENT.md').read_bytes()\nt=b.decode('utf-8')\nok=(2000<=len(b)<=4096 and all(s in t for s in ['HCTX-001','USERS-001: VERIFIED','BOOT-001','STAGING-001: APPROVED','VERIFIED']) and len(t.splitlines())<=70)\nsys.exit(0 if ok else 1)"],
          "mandatory": True, "timeout_s": 60},
         {"id": "X3-mapa-selectivo", "kind": "shell",
          "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\nt=(R/'docs/harness/MAPA-DE-LECTURA.md').read_text(encoding='utf-8').lower()\nok=all(s in t for s in ['agents.md','current.md','index-requisitos.md','grep','secciones','por defecto','contexto-chatgpt.md','expandir'])\nsys.exit(0 if ok else 1)"],

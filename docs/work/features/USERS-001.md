@@ -1,13 +1,13 @@
 # USERS-001 — Administración de usuarios, roles y asignación a sucursales
 
-status: APPROVED
+status: VERIFIED
 owner_approval: Aprobación expresa del propietario (2026-11-13) de las 16 decisiones y precisiones A/B. Publicación Git inicialmente retenida; posteriormente autorizada expresamente y ejecutada en 882f281668793116ea18db6ab31be53b7a312d76. El propietario aprobó después política permanente AUTO_GIT para correcciones y futuras features aprobadas. No autoriza staging, producción ni migraciones BD remotas.
 execution_mode: ONE_WAVE_ALL_16
 publication_mode: AUTO_GIT
 revision_externa: 2026-11-10 — incorpora los 5 ajustes de la revisión externa (último administrador frente a cambios de rol/acceso, invalidación de sesiones SEC-05, PIN según `system_configs.pin_length`, `SoftDeletes` en `User`) y aclara que `max_users` limita usuarios activos.
 etapa: R3_CORE (CORE-03)
 dependencias: AUTH-001 (VERIFIED 2026-11-09: autenticación, sesiones y RBAC server-side), BRANCH-001 (VERIFIED 2026-11-10: sucursales y `EnsureBranchAccess` con sucursal activa), DB-001 (tablas `users`, `roles`, `permissions`, `role_permissions`, `branch_user`), `config/modules.php` (permiso `users.manage`).
-responsable_implementacion: OpenCode conforme al harness vigente; owner + ChatGPT delimitan alcance y declaran VERIFIED.
+responsable_implementacion: OpenCode conforme al harness vigente; propietario autoriza alcance; ChatGPT determina VERIFIED técnico con revisión independiente.
 
 ## Autorización única de ejecución — 2026-11-13
 
@@ -181,5 +181,13 @@ responsable_implementacion: OpenCode conforme al harness vigente; owner + ChatGP
 ## Estado de funciones: implementado vs propuesto
 
 - **Implementado y disponible como base:** tablas `users`, `roles`, `permissions`, `role_permissions` y `branch_user` (DB-001); login/logout, cambio de contraseña, sesiones, RBAC server-side y `admin:create` (AUTH-001); CRUD de sucursales, `EnsureBranchAccess` con sucursal activa y `AuditLogger` transaccional específico de sucursales (BRANCH-001); `users.manage` en `config/modules.php`. El modelo `User` **aún no usa `SoftDeletes`** aunque la columna `deleted_at` existe; USERS-001 añadirá el trait sin migración.
-- **Aprobado en USERS-001 (APPROVED, aún sin implementar):** rutas, controlador, FormRequests, servicio de guardas (último administrador y límite de plan), fingerprint SEC-05 en `LoginController`/`VerifySession`, `SoftDeletes` en `User`, pantallas Vue/Inertia, generalización del `AuditLogger`, pruebas y documentación descritas arriba.
+- **Implementado y verificado en USERS-001:** rutas, controlador, FormRequests, servicio de guardas (último administrador y límite de plan), fingerprint SEC-05 en `LoginController`/`VerifySession`, `SoftDeletes` en `User`, pantallas Vue/Inertia, generalización del `AuditLogger`, pruebas y documentación descritas arriba.
 - **Diferido:** MFA/TOTP, anonimización, autorización por PIN (CORE-11), roles personalizados (CORE-16), vendedores (SEL-01), `PlanGuard` completo (CORE-07), importación masiva, restablecimiento por correo, restauración de eliminados y visor de auditoría.
+
+## Cierre técnico — 2026-11-16
+
+status: VERIFIED
+verificador_externo: ChatGPT, sobre aprobación original del propietario (sin segunda firma)
+registro: `docs/work/USERS-001-CLOSURE-20261116.md`
+evidencia: 11/11 gates PASS, QA APROBADO, CI 2/2 SUCCESS, código SHA `2aec03893c78bc7180544930e0b6f741599df9ed` y R1 privacidad corregido
+no_ejecutado: concurrencia real MariaDB aislada y verificación visual responsive con navegador; quedan pendientes predespliegue y no se declaran ejecutadas

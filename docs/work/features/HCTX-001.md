@@ -1,6 +1,6 @@
 # HCTX-001 — Contexto selectivo sin sobreingeniería
 
-status: APPROVED
+status: VERIFIED
 owner_approval: Autorización expresa del propietario en conversación StockFlash el 2026-11-13 para refinar la lectura selectiva del harness y su actualización incremental, sin crear nuevos protocolos ni agregar trabajo/tokens de mantenimiento.
 publication_mode: AUTO_GIT
 execution_mode: ONE_SMALL_WAVE
@@ -34,3 +34,10 @@ Reducir el contexto que OpenCode lee en cada feature, sin rediseñar el harness.
 ## Exclusiones
 
 No alterar USERS-001 ni su condición actual (publicada y pendiente decisión VERIFIED); no inventar nuevos requisitos ni afectar continuidad entre ChatGPT/OpenCode. Se mantiene aprobación única AUTO_GIT y sincronización Git segura.
+
+## Cierre técnico — 2026-11-16
+
+status: VERIFIED
+verificador_externo: ChatGPT, sobre aprobación original del propietario (sin segunda firma)
+registro: `docs/work/HCTX-001-CLOSURE-20261116.md`
+evidencia: SHA `9beb83428861dbce9392b3e935011e5eec3417c8`, gates 11/11 PASS, QA APROBADO y CI 2/2 SUCCESS; sin sobreingeniería

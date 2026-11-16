@@ -2,7 +2,7 @@
 
 **Última revisión por ChatGPT:** 2026-11-16
 **Repositorio:** `marioromero/StockFlash` · rama de desarrollo `main`
-**Estado de referencia observado:** `79c3b0f5af573b956cbcfb8c95c50aef251f5bd5` (USERS-001 código `2aec038` corregido, QA+CI verde; guía y roadmap HTML editados; cierre VERIFIED pendiente)
+**Estado de referencia observado:** `9beb83428861dbce9392b3e935011e5eec3417c8` (USERS-001 y HCTX-001 publicadas, QA y CI verde; ChatGPT registra cierres VERIFIED el 2026-11-16; verificar HEAD vigente)
 **Aviso de vigencia:** este SHA es un punto de control histórico, NO el HEAD garantizado al abrir una nueva sesión. Verificar HEAD, PR abiertos y documentación actual antes de actuar.
 
 ## 1. INSTRUCCIONES PARA CUALQUIER SESIÓN NUEVA DE CHATGPT
@@ -40,7 +40,7 @@ Si el propietario solicita «continuar StockFlash», «revisar lo que hizo OpenC
 - `BRANCH-001`: VERIFIED, código consolidado `4f81457`, cierre `55086ed`. CRUD de sucursales, permisos, auditoría transaccional. CI PHP/Node/smoke/contratos confirmada en GitHub para `4f81457`.
 - `DOCS-001`: **VERIFIED** (decisión expresa del propietario, 2026-11-10). Código publicado `90254e5`, cierre documental `3fde691`, gates `GATES_PASS`, QA independiente `APROBADO` y CI PHP/Node/smoke + contratos SUCCESS ([42908696754](https://github.com/marioromero/StockFlash/actions/runs/42908696754), [42908696677](https://github.com/marioromero/StockFlash/actions/runs/42908696677)). Manual /docs/, enlace Ayuda y continuidad ChatGPT integrados.
 - `ROADMAP-001`: **VERIFIED** (decisión externa del propietario y cierre documental `docs/work/ROADMAP-001-CLOSURE-20261110.md` publicado en `main`). Implementación `a9c19d415b0a6fff0c16294c5dca9bd84e37cb41`; integración selectiva editorial del PR #4 y cierre documental presentes en el snapshot `3735c147`. Gate definitivo `ROADMAP-001-VERIFY-20261110-194620.md` = GATES_PASS (RM1–RM15), QA definitivo `ROADMAP-001-DOCS-REVIEW-20261110-2.md` = APROBADO (0 bloqueantes). **CI remota comprobada por ChatGPT** para `3735c147`: [PHP/Node/smoke SUCCESS](https://github.com/marioromero/StockFlash/actions/runs/42918708678), [contratos SUCCESS](https://github.com/marioromero/StockFlash/actions/runs/42918708636). `/roadmap` requiere `settings.manage`; botón del Dashboard, hitos R0–R10, bitácora y alertas `ROADMAP_*` operativos.
-- `USERS-001`: **APPROVED, implementada y publicada, QA+CI verdes; aún NO VERIFIED formal.** Primer commit `882f281`, hallazgo GPT sobre valores PII en logs y corrección `2aec03893c78bc7180544930e0b6f741599df9ed` (2026-11-13). Gates 11/11 PASS `USERS-001-VERIFY-20261113-173228.md`, revisor independiente `USERS-001-REVIEW-20261113-173533.md` APROBADO, 199 PHP tests/1183 aserciones en local. CI en SHA corregido: [PHP/Node/smoke SUCCESS](https://github.com/marioromero/StockFlash/actions/runs/43503252099) y [contratos SUCCESS](https://github.com/marioromero/StockFlash/actions/runs/43503252172). D01–D16/P1–P4 cubiertas; PII excluida de old/new. Concurrencia real MariaDB aislada y validación visual móvil no ejecutadas. Reportes enviados SFH1 issue #13 `i=010`, dirigidos a GPT; no implica trabajo pendiente para OC.
+- `USERS-001`: **VERIFIED técnico por ChatGPT 2026-11-16, no desplegado.** Primer commit `882f281`, hallazgo GPT sobre valores PII en logs y corrección `2aec03893c78bc7180544930e0b6f741599df9ed` (2026-11-13). Gates 11/11 PASS `USERS-001-VERIFY-20261113-173228.md`, revisor independiente `USERS-001-REVIEW-20261113-173533.md` APROBADO, 199 PHP tests/1183 aserciones en local. CI en SHA corregido: [PHP/Node/smoke SUCCESS](https://github.com/marioromero/StockFlash/actions/runs/43503252099) y [contratos SUCCESS](https://github.com/marioromero/StockFlash/actions/runs/43503252172). D01–D16/P1–P4 cubiertas; PII excluida de old/new. Concurrencia real MariaDB aislada y validación visual móvil no ejecutadas. Reportes enviados SFH1 issue #13 `i=010`, dirigidos a GPT; no implica trabajo pendiente para OC.
 - Sin despliegue nuevo ni migraciones remotas autorizadas en este snapshot.
 
 ## 4. MANUAL HTML — AUTORÍA 100 % CHATGPT
@@ -71,10 +71,9 @@ Si el propietario solicita «continuar StockFlash», «revisar lo que hizo OpenC
 
 ## 5. TRABAJO ABIERTO Y SIGUIENTE PASO
 
-1. USERS-001: QA independiente y CI del código corregido `2aec038` comprobados por ChatGPT; cero bloqueantes técnicos conocidos. Cierre VERIFIED formal aún requiere autorización externa expresa del propietario. No interpretarlo a partir de `ok`.
-2. ChatGPT editó e integró manual (19 temas) y roadmap en `79c3b0f`. La CI de ese commit reportó **fallo de prueba documental obsoleta**; prueba corregida en un commit posterior. Antes de continuar comprobar nueva CI por SHA y sincronizar bitácoras `GUIA-HTML-ESTADO.md` / `ROADMAP-HTML-ESTADO.md` por OpenCode, integrador técnico. No pedir reescritura a OpenCode de HTML que es autoría exclusiva ChatGPT.
-3. Mantener como pendientes declarados prueba de concurrencia MariaDB real aislada y QA visual responsive, no probados. No deploy ni migraciones remotas.
-4. SFH1 issue #13: último reporte OC `i=010 dst=GPT`; el `ok` a OC antes de un nuevo `dst=OC` debe responder "no hay trabajo pendiente". Solo publicar mensaje nuevo con acción técnica concreta, sin ping-pong artificial.
+1. USERS-001 y HCTX-001: VERIFIED técnico, informes de cierre publicados el 2026-11-16; sin despliegue. Concurrencia MariaDB real y UX visual quedan explícitamente pendientes para predespliegue.
+2. No hay una nueva Feature Packet aprobada y activa. Próxima decisión del propietario: alcance de la siguiente capacidad R3 Núcleo o R4 Bodega, presentada en lenguaje funcional antes de aprobarla.
+3. SFH1: mantener un issue activo por tarea; no exigir autorizaciones administrativas de cierre repetidas. ChatGPT verifica y registra el cierre, OpenCode solo lo publica.
 
 ## 6. FORMATO BREVE DE ACTUALIZACIÓN DE ESTE ARCHIVO
 
