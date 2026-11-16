@@ -115,10 +115,22 @@ class DocsIntegrationTest extends TestCase
         $html = $this->manual();
 
         $this->assertStringContainsString('id="comprobante"', $html);
-        $this->assertStringContainsString('20 temas disponibles.', $html);
+        $this->assertStringContainsString('21 temas disponibles.', $html);
         $this->assertStringContainsString('Ajustes de comprobante', $html);
         $this->assertStringContainsString('settings.manage', $html);
         $this->assertStringContainsString('no tributario', $html);
+        $this->assertStringContainsString('Sin despliegue comercial', $html);
+    }
+
+    public function test_cfg_002_business_settings_are_explained_without_sii_claims(): void
+    {
+        $html = $this->manual();
+
+        $this->assertStringContainsString('id="datos-comercio"', $html);
+        $this->assertStringContainsString('21 temas disponibles.', $html);
+        $this->assertStringContainsString('Datos del comercio', $html);
+        $this->assertStringContainsString('settings.manage', $html);
+        $this->assertStringContainsString('no valida el RUT ante el SII', $html);
         $this->assertStringContainsString('Sin despliegue comercial', $html);
     }
 
