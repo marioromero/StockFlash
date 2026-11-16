@@ -11,8 +11,8 @@ guide_status: INTEGRADA_EN_MAIN (2026-11-16)
 guide_content_last_written: 2026-11-16
 covered_features: AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED; ROADMAP-001 VERIFIED; USERS-001 VERIFIED; CFG-001 VERIFIED; CFG-002 VERIFIED; CFG-003 VERIFIED (045b8c8)
 latest_covered_code_sha: `045b8c8f33a351315bd26194fae7fcadfb6597b3` (CFG-003 y anteriores)
-next_feature: pendiente de decisión del propietario (sin feature seleccionada tras CORESEQ-001)
-internal_only_features: CORESEQ-001 (servicio interno invisible; sin entrada de guía requerida)
+next_feature: CORELIC-001 activa; CORESEQ-001 servicio interno VERIFIED, sin tema de manual requerido
+internal_only_features: CORESEQ-001 VERIFIED (servicio interno invisible; sin entrada nueva en guía)
 last_guide_integration_sha: `e6ffeea6123950f7213e1c71443cbbcfd6e863d1` (ChatGPT, 22 temas)
 last_guide_integration_date: 2026-11-16
 pending_docs: NINGUNO

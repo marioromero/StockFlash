@@ -2,7 +2,7 @@
 
 **Última revisión por ChatGPT:** 2026-11-16
 **Repositorio:** `marioromero/StockFlash` · rama de desarrollo `main`
-**Estado de referencia observado:** `045b8c8f33a351315bd26194fae7fcadfb6597b3` (CFG-003 código verificado; guía a 22 temas `e6ffeea6123950f7213e1c71443cbbcfd6e863d1`; CORESEQ-001 activa; comprobar HEAD vigente)
+**Estado de referencia observado:** `ceb50e02616d9d1185e4f849c7f2a8760d80f6fc` (CORESEQ-001 verificado contra QA/CI, servicio interno sin manual nuevo; CORELIC-001 activa; comprobar HEAD)
 **Aviso de vigencia:** este SHA es un punto de control histórico, NO el HEAD garantizado al abrir una nueva sesión. Verificar HEAD, PR abiertos y documentación actual antes de actuar.
 
 ## 1. INSTRUCCIONES PARA CUALQUIER SESIÓN NUEVA DE CHATGPT
@@ -73,7 +73,7 @@ Si el propietario solicita «continuar StockFlash», «revisar lo que hizo OpenC
 ## 5. TRABAJO ABIERTO Y SIGUIENTE PASO
 
 1. USERS-001 y HCTX-001: VERIFIED técnico, informes de cierre publicados el 2026-11-16; sin despliegue. Concurrencia MariaDB real y UX visual quedan explícitamente pendientes para predespliegue.
-2. CFG-001/002/003 VERIFIED técnico; CFG-003 código `045b8c8`, gates 16/16, 260 pruebas, QA y CI verde, guía 22 temas. Siguiente CORESEQ-001 — numeración por ámbito RN-74, requisito del contrato ya aprobado.
+2. CFG-001/002/003 y CORESEQ-001: VERIFIED técnico. CORESEQ-001 SHA `ceb50e0`, 16 gates, 282 pruebas, QA/CI verde; sin concurrencia MariaDB real. CORELIC-001 activa: contrato local de licencia, avisos y modo solo lectura, sin servidor comercial.
 3. SFH1: mantener un issue activo por tarea; no exigir autorizaciones administrativas de cierre repetidas. ChatGPT verifica y registra el cierre, OpenCode solo lo publica.
 
 ## 6. FORMATO BREVE DE ACTUALIZACIÓN DE ESTE ARCHIVO

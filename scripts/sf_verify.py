@@ -687,7 +687,7 @@ GATES_BY_PACKET: dict[str, list[dict]] = {
     ],
     "CORESEQ-001": [
         {"id": "CQ1", "kind": "shell",
-         "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\np=(R/'docs/work/features/CORESEQ-001.md').read_text(encoding='utf-8')\nc=(R/'docs/work/CURRENT.md').read_text(encoding='utf-8')\nok=('status: APPROVED' in p and 'publication_mode: AUTO_GIT' in p and 'execution_mode: ONE_SMALL_WAVE' in p and 'CORESEQ-001' in c)\nsys.exit(0 if ok else 1)"],
+         "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\np=(R/'docs/work/features/CORESEQ-001.md').read_text(encoding='utf-8')\nc=(R/'docs/work/CURRENT.md').read_text(encoding='utf-8')\nok=(('status: APPROVED' in p or 'status: VERIFIED' in p) and 'publication_mode: AUTO_GIT' in p and 'execution_mode: ONE_SMALL_WAVE' in p and 'CORESEQ-001' in c)\nsys.exit(0 if ok else 1)"],
          "mandatory": True, "timeout_s": 60},
         {"id": "CQ2", "kind": "shell",
          "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\nreq=['app/Support/DocumentSequenceAllocator.php','tests/Feature/Core/DocumentSequenceAllocatorTest.php','docs/work/CORESEQ-001-NOTES-20261116.md']\nsys.exit(0 if all((R/x).exists() for x in req) else 1)"],

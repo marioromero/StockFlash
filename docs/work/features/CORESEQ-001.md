@@ -1,6 +1,6 @@
 # CORESEQ-001 — Asignación de numeración transaccional (CORE-13 / RN-74)
 
-status: APPROVED
+status: VERIFIED
 approval_basis: existing_approved_contract_owner_delegation_2026-11-16
 new_business_decisions: NONE
 publication_mode: AUTO_GIT
@@ -35,3 +35,12 @@ Implementar el servicio técnico de numeración que utilizarán POS/Bodega/Compr
 ## Límites
 
 No modificar contratos v2.2 ni tablas/migraciones, no endpoints públicos, no fiscal integrado/DTE, no implementar ticket/cotización/venta/devolución/compra/stock/caja, no nuevas dependencias/agentes/scripts/locks externos/servicios web, no desplegar, no tocar BD remota, secretos, `.env`, manual HTML o roadmap HTML (autoría GPT). Si surge una decisión comercial material genuina, documentar alternativas/recomendación y bloquear solo la parte afectada. No pedir aprobación de este orden técnico ni crear nuevos protocolos.
+
+## Cierre técnico externo (2026-11-16)
+
+status: VERIFIED
+verificador_externo: ChatGPT
+registro: `docs/work/CORESEQ-001-CLOSURE-20261116.md`
+code_sha: `ceb50e02616d9d1185e4f849c7f2a8760d80f6fc`
+resultado: 16/16 gates PASS, 282 pruebas PHP / 1936 aserciones, QA independiente APROBADO, CI 2/2 SUCCESS
+limites: concurrencia simultánea real sobre MariaDB NO ejecutada; pendiente predespliegue. Sin DB remota ni deploy.
