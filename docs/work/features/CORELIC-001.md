@@ -1,6 +1,6 @@
 # CORELIC-001 — Contrato local de licencia y avisos de estado (CORE-08)
 
-status: APPROVED
+status: VERIFIED
 approval_basis: existing_approved_contract_owner_delegation_2026-11-16
 new_business_decisions: NONE
 publication_mode: AUTO_GIT
@@ -36,3 +36,12 @@ Completar CORE-08: interfaz local `LicenseValidator` con stub ilimitado para pru
 ## Prohibiciones
 
 No crear ni mutar licencias reales, planes comerciales, endpoints Control, heartbeats, llamadas salientes, claves/firma criptográfica, tokens, cron, migraciones, cambios a contratos v2.2, nuevos permisos, nuevas pantallas de administración completas, dependencias nuevas, despliegue, BD remota o secretos de `.env`. No interpretar sin licencia como comercialmente ilimitada. Si surge política comercial nueva no resuelta, bloquear solo ese punto y documentar pregunta material concreta con opciones/recomendación. Ninguna aprobación genérica adicional del propietario.
+
+## Cierre técnico externo (2026-11-16)
+
+status: VERIFIED
+reviewer_externo: ChatGPT
+registro: `docs/work/CORELIC-001-CLOSURE-20261116.md`
+code_sha: `a2cc8992b3f13d14423d5d222628f895a568ee3f`
+resultado: 17/17 gates PASS; 308 PHP tests/2145 assertions; QA APROBADO; CI GitHub 2/2 SUCCESS; guía 23 temas en `aa3ba75b65f228c9ef68c85958bad77bc14a9666`
+limites: E2E visual y validación operativa real pendientes de predespliegue. Stub solo simulación sin binding comercial; no heartbeat, Ed25519, DB remota ni deploy.

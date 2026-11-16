@@ -9,13 +9,13 @@ guide_branch: `docs/guia-usuario-interactiva-20261110`
 guide_pr: https://github.com/marioromero/StockFlash/pull/2
 guide_status: INTEGRADA_EN_MAIN (2026-11-16)
 guide_content_last_written: 2026-11-16
-covered_features: AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED; ROADMAP-001 VERIFIED; USERS-001 VERIFIED; CFG-001 VERIFIED; CFG-002 VERIFIED; CFG-003 VERIFIED (045b8c8)
-latest_covered_code_sha: `045b8c8f33a351315bd26194fae7fcadfb6597b3` (CFG-003 y anteriores)
-next_feature: CORELIC-001 activa; CORESEQ-001 servicio interno VERIFIED, sin tema de manual requerido
+covered_features: AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED; ROADMAP-001 VERIFIED; USERS-001 VERIFIED; CFG-001/002/003 VERIFIED; CORELIC-001 VERIFIED (a2cc899)
+latest_covered_code_sha: `a2cc8992b3f13d14423d5d222628f895a568ee3f` (CORELIC-001 y anteriores)
+next_feature: COREMOD-001 activa; servicio interno de módulos sin nueva pantalla de usuario
 internal_only_features: CORESEQ-001 VERIFIED (servicio interno invisible; sin entrada nueva en guía)
-last_guide_integration_sha: `e6ffeea6123950f7213e1c71443cbbcfd6e863d1` (ChatGPT, 22 temas)
+last_guide_integration_sha: `aa3ba75b65f228c9ef68c85958bad77bc14a9666` (ChatGPT, 23 temas, avisos de licencia)
 last_guide_integration_date: 2026-11-16
-pending_docs: CORELIC-001 (GUIA_PENDIENTE_CHATGPT)
+pending_docs: NINGUNO
 
 ## Cómo mantener este archivo
 - OpenCode puede actualizar solamente los metadatos y el registro de pendientes aquí, no los textos para usuarios en `public/docs/index.html`.
@@ -45,5 +45,5 @@ pending_docs: CORELIC-001 (GUIA_PENDIENTE_CHATGPT)
 - pantalla: `/dashboard` (banner de estado visible para cualquier usuario autenticado; no es una pantalla de administración de licencias).
 - contenido a redactar por ChatGPT: significado de los avisos de licencia (`expiring_soon`, `suspended` dentro de gracia, `suspended` fuera de gracia/sin gracia y «sin licencia configurada»), diferencia entre aviso y bloqueo de altas, modo solo lectura tras la gracia, y aclaración de que la licencia es informativa y no se administra desde el Dashboard.
 - fecha: 2026-11-16.
-- estado: implementado, pendiente de redacción/publicación de guía por ChatGPT; gates y QA se registran en el cierre de la feature.
+- estado: implementado y documentado por ChatGPT en `aa3ba75b65f228c9ef68c85958bad77bc14a9666`;
 - OpenCode no edita `public/docs/index.html`; este registro es solo metadato técnico.
