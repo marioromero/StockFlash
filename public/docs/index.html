@@ -73,12 +73,12 @@ details.accordion{border:1px solid var(--line);border-radius:9px;margin:9px 0;ba
 </header>
 <div class="hero"><div class="eyebrow">Aprende a tu ritmo</div><h1>Tu guía para usar StockFlash</h1>
 <p>Todo lo que necesitas para comenzar, explicado sin términos complicados. Elige un tema en el menú izquierdo o escribe lo que buscas. Abre las preguntas de cada sección para ver los detalles.</p>
-<div class="meta"><span class="pill verified">Acceso y sucursales verificados</span><span class="pill">Usuarios implementados; cierre pendiente</span><span class="pill">Actualizada: 13-11-2026</span></div>
+<div class="meta"><span class="pill verified">Acceso y sucursales verificados</span><span class="pill">Usuarios verificados técnicamente</span><span class="pill">Actualizada: 16-11-2026</span></div>
 <p id="search-status" role="status" aria-live="polite">19 temas disponibles.</p></div>
 <main id="manual">
 <section class="topic" id="bienvenida" data-keywords="introduccion comienzo que es stockflash primer uso ayuda"><div class="kicker">Primeros pasos</div><h2>¿Qué es StockFlash?</h2>
 <p>Es el sistema con el que podrás administrar las operaciones de tu negocio. Incluye una zona de administración y, a medida que se vayan incorporando funciones, módulos como punto de venta e inventario.</p>
-<div class="grid"><div class="tile"><h3>¿Qué puedes hacer ahora?</h3><p>Ingresar, cambiar contraseña y, si tienes permiso, administrar sucursales y usuarios en el entorno de desarrollo. La gestión de usuarios aún espera el cierre formal VERIFIED.</p></div><div class="tile"><h3>¿Qué se agregará después?</h3><p>Inventario, punto de venta, caja y otras funciones comerciales, cada una en su etapa de desarrollo y verificación.</p></div></div>
+<div class="grid"><div class="tile"><h3>¿Qué puedes hacer ahora?</h3><p>Ingresar, cambiar contraseña y, si tienes permiso, administrar sucursales y usuarios en el entorno de desarrollo. La gestión de usuarios está VERIFIED técnicamente, pero el sistema no se ha desplegado.</p></div><div class="tile"><h3>¿Qué se agregará después?</h3><p>Inventario, punto de venta, caja y otras funciones comerciales, cada una en su etapa de desarrollo y verificación.</p></div></div>
 <div class="callout">Esta guía describe el <strong>desarrollo local</strong>. Que una función esté documentada no significa que ya esté desplegada para clientes.</div></section>
 <section class="topic" id="panel" data-keywords="dashboard inicio pantalla principal botonera navegar cambiar contrasena ayuda manual guia documentacion avance del proyecto roadmap hitos etapas versiones comercial"><div class="kicker">Primeros pasos</div><h2>Conocer el panel principal</h2>
 <p>Después de iniciar sesión llegarás al <strong>Dashboard</strong>. Es el punto de partida para acceder a las funciones disponibles.</p>
@@ -144,7 +144,7 @@ details.accordion{border:1px solid var(--line);border-radius:9px;margin:9px 0;ba
 <details class="accordion"><summary>¿Necesito escribir configuración JSON?</summary><div class="answer">No. Es un campo avanzado y opcional. Si no sabes qué es, déjalo vacío; las opciones habituales se controlan desde los campos del formulario.</div></details></section>
 <section class="topic" id="usuarios" data-keywords="usuarios administrar listado buscar cuentas nombre correo roles permisos"><div class="kicker">Usuarios · Implementado en desarrollo</div><h2>Administrar usuarios</h2>
 <p>El <strong>Admin Central</strong> puede abrir <strong>Usuarios</strong> desde el Dashboard o acceder a <code>/users</code>. El listado permite buscar por nombre o correo, revisar roles, sucursales, estado y si una cuenta tiene PIN configurado.</p>
-<div class="callout warn">USERS-001 está implementado, publicado en GitHub y con pruebas automáticas aprobadas, pero su cierre formal <strong>VERIFIED sigue pendiente</strong>. No implica despliegue a clientes.</div>
+<div class="callout warn">USERS-001 está <strong>VERIFIED técnicamente</strong> con pruebas y CI aprobadas. La concurrencia real sobre MariaDB y la revisión visual responsive aún están pendientes para predespliegue. No implica despliegue a clientes.</div>
 <details class="accordion"><summary>¿Por qué no veo el menú Usuarios?</summary><div class="answer">Se necesita el permiso <code>users.manage</code>, correspondiente a Admin Central. El servidor rechaza operaciones sin permiso, incluso si se escribe la dirección manualmente.</div></details></section>
 <section class="topic" id="usuario-crear" data-keywords="usuario nuevo crear contraseña temporal nombre correo agregar cuenta"><div class="kicker">Usuarios</div><h2>Crear una cuenta</h2>
 <ol class="steps"><li>Abre <strong>Usuarios</strong> y selecciona <strong>Nuevo usuario</strong>.</li><li>Completa nombre, correo único y contraseña temporal de <strong>15 a 64 caracteres</strong>.</li><li>Elige rol global o asignaciones por sucursal y, opcionalmente, sucursal inicial.</li><li>Configura opcionalmente PIN y topes de descuento/devolución.</li><li>Selecciona <strong>Crear usuario</strong>. En su primer ingreso tendrá que cambiar la contraseña.</li></ol>
@@ -173,7 +173,7 @@ details.accordion{border:1px solid var(--line);border-radius:9px;margin:9px 0;ba
 <ul><li><strong>Dashboard:</strong> pantalla principal de StockFlash.</li><li><strong>Rol:</strong> conjunto de permisos de un usuario.</li><li><strong>Sucursal:</strong> local, bodega u operación online registrada en el sistema.</li><li><strong>Activa:</strong> habilitada para nuevas operaciones.</li><li><strong>Heredar:</strong> tomar la configuración general sin sobrescribirla.</li><li><strong>Borrado lógico:</strong> ocultar y deshabilitar un registro sin eliminar su historial.</li><li><strong>JSON:</strong> formato de texto para ajustes avanzados; normalmente no necesitas utilizarlo.</li></ul></section>
 </main>
 <div id="empty-state" role="status"><strong>No encontramos ese tema.</strong><p>Prueba con otra palabra, por ejemplo «sucursal», «contraseña» o «caja».</p><button id="clear-search" type="button">Ver todos los temas</button></div>
-<footer class="footer">StockFlash · Guía interactiva de usuario · AUTH-001 y BRANCH-001 VERIFIED; USERS-001 implementado, aún pendiente de VERIFIED. Desarrollo local, sin despliegue comercial.</footer>
+<footer class="footer">StockFlash · Guía interactiva de usuario · AUTH-001 y BRANCH-001 VERIFIED; USERS-001 VERIFIED técnicamente, sin despliegue comercial. Desarrollo local, sin despliegue comercial.</footer>
 </div></div></div>
 <script>
 (function () {
