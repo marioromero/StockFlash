@@ -1,7 +1,7 @@
 # Estado operativo — StockFlash
 
 ## Feature activa
-- **CFG-001 — configuración de comprobante interno (CORE-09, alcance acotado): APPROVED y ACTIVA**, `docs/work/features/CFG-001.md`. ChatGPT la priorizó a partir de contratos v2.2 ya aprobados, sin decisión comercial nueva; `AUTO_GIT`. Desarrollo local, sin instalador, migraciones ni despliegue.
+- **NINGUNA feature activa tras CFG-001.** Siguiente packet técnico derivado de CORE-09 en preparación, sin requerir aprobación genérica.
 
 ## Estados por feature (una línea por hito)
 - **BOOT-001: VERIFIED** (2026-10-14). Laravel 13.35.0 + Vue 3 + Inertia 3.5.1 + TypeScript/Vite; scaffold publicado en `bcbf16f`; gates PASS y QA APROBADO. Sin deploy ni migraciones.
@@ -14,6 +14,8 @@
 - DOCS-001: VERIFIED (2026-11-10), publicado en `90254e5`; cierre `docs/work/DOCS-001-CLOSURE-20261110.md`.
 - ROADMAP-001: VERIFIED (2026-11-10), publicado en `a9c19d4`; cierre `docs/work/ROADMAP-001-CLOSURE-20261110.md`.
 - **USERS-001: VERIFIED** (2026-11-16, revisión ChatGPT), SHA `2aec038`, gates 11/11, QA/CI verde, manual/roadmap integrados. Cierre `docs/work/USERS-001-CLOSURE-20261116.md`; pruebas MariaDB concurrente y visual real diferidas para predespliegue.
+
+- **CFG-001: VERIFIED** (2026-11-16), SHA `fd12693`, 15 gates PASS, 220 pruebas PHP, QA APROBADO, CI 2/2 SUCCESS; guía de 20 temas. Cierre `docs/work/CFG-001-CLOSURE-20261116.md`.
 
 ## Pendientes y bloqueos reales
 - **STAGING-001: APPROVED**, sin deploy demostrado ni VERIFIED. FTPS solo hacia `/home/grupoint/stockflash-dev-app`; raíz pública y smoke pendientes de comprobar. No habilita despliegue por sí sola.
