@@ -1,6 +1,6 @@
 # StockFlash — CONTEXTO PARA CHATGPT (continuidad entre sesiones)
 
-**Última revisión por ChatGPT:** 2026-11-13
+**Última revisión por ChatGPT:** 2026-11-16
 **Repositorio:** `marioromero/StockFlash` · rama de desarrollo `main`
 **Estado de referencia observado:** `79c3b0f5af573b956cbcfb8c95c50aef251f5bd5` (USERS-001 código `2aec038` corregido, QA+CI verde; guía y roadmap HTML editados; cierre VERIFIED pendiente)
 **Aviso de vigencia:** este SHA es un punto de control histórico, NO el HEAD garantizado al abrir una nueva sesión. Verificar HEAD, PR abiertos y documentación actual antes de actuar.
@@ -16,7 +16,7 @@ Si el propietario solicita «continuar StockFlash», «revisar lo que hizo OpenC
 5. **Actualizar ESTE archivo en GitHub cuando una revisión cambie materialmente el estado del proyecto, los compromisos o los próximos pasos**, conservando el histórico de hitos con referencia SHA. Autoría y mantenimiento de este archivo: **ChatGPT**. OpenCode lo lee sin editarlo.
 6. Si la revisión incluye una funcionalidad visible nueva o modificada, actualizar como autor exclusivo el contenido del manual `public/docs/index.html`, o preparar una rama/PR con la modificación hasta que el harness la integre. Comprobar nombres de campos y pantallas reales, no inventarlos.
 7. Para cambios en el contexto, preferir un commit documental acotado solo a este archivo, con control del SHA previo y sin sobrescribir trabajo paralelo. Si el flujo de Git disponible o el protocolo vigente exige PR, usar PR y dejar identificada la revisión pendiente.
-8. SFH1 permite intercambio asíncrono por GitHub issue bajo demanda: el propietario escribe `ok` a la IA destinataria, quien consulta el issue y procesa mensajes dirigidos a ella. Sin despertador automático ni copia de informes. `ok` no equivale a aprobar nuevos packets, VERIFIED, migraciones remotas o deploy.
+8. SFH1 permite intercambio asíncrono por GitHub issue bajo demanda: el propietario escribe `ok` a la IA destinataria, quien consulta el issue y procesa mensajes dirigidos a ella. Sin despertador automático ni copia de informes. `ok` no aprueba nuevos packets, migraciones remotas ni deploy. VERIFIED requiere dictamen externo técnico de ChatGPT sobre evidencia del packet previamente aprobado; no una segunda firma.
 9. Revisar también el roadmap HTML del propietario (`resources/roadmap/index.html`) y su protocolo. Cuando los hitos reales, las funcionalidades listas o el camino a R7 cambien, actualizarlo **solo desde ChatGPT**, sin plazos ni porcentajes inventados. OpenCode no edita ese archivo.
 
 **Idea central:** este archivo es un índice de continuidad y decisiones, no sustituye la fuente de verdad (el repositorio, Feature Packets y código).
@@ -31,7 +31,7 @@ Si el propietario solicita «continuar StockFlash», «revisar lo que hizo OpenC
 
 **Contratos prevalentes:** `AGENTS.md`; `docs/governance/CONSTITUTION.md`; archivos `docs/product/especificacion-v2.2-*-CONSOLIDADO-EN-REVISION.md`; `docs/work/features/*.md`.
 
-**Flujo actual (2026-11-13):** propietario aprueba una feature UNA vez → OpenCode implementa → gates `GATES_PASS` → QA independiente `APROBADO` → publisher Git automático (modo `AUTO_GIT`) → GitHub Actions en SHA → ChatGPT revisa al recibir `ok` → correcciones SFH1 con informe `.md`, sin nueva autorización Git → cierre `VERIFIED` solo por decisión externa expresa. No staging/producción ni BD remota sin autorización propia. Permisos amplios `allow/deny` según harness.
+**Flujo actual (2026-11-13):** propietario aprueba una feature UNA vez → OpenCode implementa → gates `GATES_PASS` → QA independiente `APROBADO` → publisher Git automático (modo `AUTO_GIT`) → GitHub Actions en SHA → ChatGPT revisa al recibir `ok` → correcciones SFH1 con informe `.md`, sin nueva autorización Git → cierre `VERIFIED` por dictamen técnico externo ChatGPT respaldado por aprobación inicial y evidencia; sin segunda firma. No staging/producción ni BD remota sin autorización propia. Permisos amplios `allow/deny` según harness.
 
 ## 3. HITOS VALIDOS EN LA FECHA DE ESTE SNAPSHOT
 

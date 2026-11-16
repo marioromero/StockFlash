@@ -9,7 +9,7 @@ agent: stockflash-publisher
 
 Si la salida empieza con `SYNC_BLOCKED` o falta `SYNC_OK`, detener y solicitar revisión del estado Git. No usar reset/stash/clean.
 
-Dos operaciones permanentes (no ampliar permisos, no declarar VERIFIED automáticamente):
+Dos operaciones permanentes (no ampliar permisos; OpenCode no decide VERIFIED):
 
 **A. Publicación ordinaria** — Feature Packet $ARGUMENTS (p. ej. `BOOT-001`) solo si:
 - Política de aprobación única (2026-11-13): feature `APPROVED` y activa autoriza publicación en GitHub tras gates y QA sin autorización separada. Default `AUTO_GIT` aunque el campo falte; `OWNER_GATE` expresamente definido por el propietario exige autorización separada (nunca inferirla de `ok`).
@@ -17,8 +17,8 @@ Dos operaciones permanentes (no ampliar permisos, no declarar VERIFIED automáti
 - Existe veredicto reviewer `APROBADO` (cero bloqueantes o bloqueantes resueltos) y reporte `docs/work/$ARGUMENTS-VERIFY-*.md` con `GATES_PASS` ejecutado para el estado exacto a publicar.
 - Flujo respetado: `/sf-feature → /sf-verify → /sf-review → /sf-publish`. No publicar tras edición aislada sin gates+review.
 
-**B. Publicación de cierre documental** — registrar decisión VERIFIED externa ya documentada, solo si:
-- `docs/work/features/$ARGUMENTS.md` tiene `status: VERIFIED` con fecha, decisión externa y referencias de evidencia.
+**B. Publicación de cierre documental** — publicar el dictamen técnico VERIFIED de ChatGPT sobre una feature previamente aprobada por el propietario, sin pedir una segunda firma, solo si:
+- `docs/work/features/$ARGUMENTS.md` tiene `status: VERIFIED` con fecha, dictamen externo ChatGPT y referencias SHA/gates/QA/CI y límites de pruebas.
 - Implementación previamente publicada (SHA en `origin/main` verificable).
 - Gates y QA originales verificables (`VERIFY-*.md` GATES_PASS + `REVIEW-*.md` APROBADO existentes).
 - Alcance exclusivamente documental: estado, evidencias y registros de cierre autorizados. Sin código, dependencias, configuración funcional ni contratos normativos.
