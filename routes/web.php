@@ -88,6 +88,17 @@ Route::middleware(['auth', 'password.change', 'verify.session'])->group(function
             ->name('settings.receipt.update');
     });
 
+    // --- Datos del comercio y contacto responsable (CFG-002 · CORE-09) ---
+    // Configuración global de las nueve claves de Parte 1 §8.1 / Parte 2 §3.1.
+    // No usa `branch.access`: no es configuración por sucursal. PATCH queda
+    // deshabilitado a propósito para evitar actualizaciones parciales.
+    Route::middleware('can.permission:settings.manage')->group(function () {
+        Route::get('/settings/business', [\App\Http\Controllers\Settings\BusinessSettingsController::class, 'edit'])
+            ->name('settings.business.edit');
+        Route::put('/settings/business', [\App\Http\Controllers\Settings\BusinessSettingsController::class, 'update'])
+            ->name('settings.business.update');
+    });
+
     // --- Administración global de sucursales (BRANCH-001 · CORE-05) ---
     // Es administración global: NO usa `branch.access`.
     Route::middleware('can.permission:settings.manage')->group(function () {

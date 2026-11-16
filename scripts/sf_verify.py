@@ -585,240 +585,53 @@ GATES_BY_PACKET: dict[str, list[dict]] = {
          "cmd": ["git", "diff", "--check", "HEAD"],
          "mandatory": True, "timeout_s": 60},
     ],
-}
-
-
-def _changed_ui_files() -> list[str]:
-    """Rutas de UI modificadas en el arbol de trabajo (solo lectura)."""
-    prefixes = (
-        "resources/js/",
-        "resources/views/",
-        "routes/web.php",
-        "app/Http/Controllers/",
-    )
-    files: list[str] = []
-    try:
-        status_out = subprocess.run(
-            ["git", "status", "--porcelain=v1", "--untracked-files=all"],
-            cwd=ROOT,
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            errors="replace",
-            timeout=30,
-        ).stdout
-        for line in status_out.splitlines():
-            if len(line) < 4:
-                continue
-            path = line[3:].strip()
-            if " -> " in path:
-                path = path.split(" -> ")[-1]
-            if path.startswith(prefixes):
-                files.append(path)
-    except Exception:
-        pass
-    return sorted(set(files))
-
-
-def _doc_handoff(
-    state_path: Path,
-    status_field: str,
-    pending_field: str,
-    integrated_marker: str,
-    updated_status: str,
-    pending_status: str,
-    sha_fields: tuple[str, ...],
-    label: str,
-    instruction: str,
-) -> dict:
-    """Estado documental comun para GUIA y ROADMAP (no redacta contenido)."""
-    result = {
-        "status": pending_status,
-        "covered": "",
-        "sha": "",
-        "pending": "",
-        "ui_files": _changed_ui_files(),
-        "instruction": instruction,
-        "label": label,
-    }
-    if not state_path.exists():
-        result["pending"] = f"Falta {state_path.name}"
-        return result
-
-    text = state_path.read_text(encoding="utf-8")
-
-    def field(name: str) -> str:
-        match = re.search(rf"^{re.escape(name)}:\s*(.+)$", text, re.M)
-        return match.group(1).strip() if match else ""
-
-    result["covered"] = field("covered_features")
-    result["sha"] = next((field(name) for name in sha_fields if field(name)), "")
-    result["pending"] = field(pending_field)
-
-    pending_norm = result["pending"].upper()
-    no_pending = pending_norm in ("", "NINGUNO", "NINGUNA", "NO APLICA", "NO_APLICA")
-    if integrated_marker in field(status_field).upper() and no_pending:
-        result["status"] = updated_status
-        result["instruction"] = "Documento integrado; no hay pendientes de redaccion declarados."
-    else:
-        result["status"] = pending_status
-        if not result["pending"]:
-            result["pending"] = "Estado documental no integrado o sin metadatos suficientes."
-
-    return result
-
-
-def guide_handoff(packet: str) -> dict:
-    result = _doc_handoff(
-        ROOT / "docs" / "work" / "GUIA-HTML-ESTADO.md",
-        "guide_status",
-        "pending_docs",
-        "INTEGRADA_EN_MAIN",
-        "GUIA_ACTUALIZADA",
-        "GUIA_PENDIENTE_CHATGPT",
-        ("latest_covered_code_sha", "last_guide_integration_sha"),
-        "GUIA",
-        "Comparte este cierre con ChatGPT para actualizar /docs/.",
-    )
-    result["packet"] = packet
-    return result
-
-
-def roadmap_handoff(packet: str) -> dict:
-    result = _doc_handoff(
-        ROOT / "docs" / "work" / "ROADMAP-HTML-ESTADO.md",
-        "roadmap_content_status",
-        "pending",
-        "INTEGRADA_EN_MAIN",
-        "ROADMAP_ACTUALIZADA",
-        "ROADMAP_PENDIENTE_CHATGPT",
-        ("baseline_code_sha", "roadmap_integration_sha"),
-        "ROADMAP",
-        "Comparte este cierre con ChatGPT para actualizar el roadmap.",
-    )
-    result["packet"] = packet
-    return result
-
-
-def write_report(packet: str, results: list[dict], verdict: str, guide: dict, roadmap: dict) -> Path:
-    ts = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-    REPORT_DIR.mkdir(parents=True, exist_ok=True)
-    path = REPORT_DIR / f"{packet}-VERIFY-{ts}.md"
-    lines = [
-        f"# {packet} — Reporte de verificacion de gates ({ts})",
-        "",
-        f"Veredicto: **{verdict}** (GATES_PASS/GATES_FAIL; nunca VERIFIED).",
-        "Ejecutor: `scripts/sf_verify.py` (determinista, separado del reviewer).",
-        "Nota: resultados EJECUTADOS ahora; no se aceptan valores solo reportados.",
-        "",
-        "## Gates",
-    ]
-    for r in results:
-        mark = "PASS" if r["ok"] else "FAIL"
-        lines += [
-            f"### {r['id']} — {mark} (exit={r['exit']}, {r['elapsed_s']}s)",
-            f"Comando: `{r['cmd']}`",
-            "stdout (extracto):",
-            "```",
-            clean_extract(r["stdout"][:4000]) or "(vacio)",
-            "```",
-            "stderr/nota (extracto):",
-            "```",
-            clean_extract(r["stderr"][:2000]) or "(vacio)",
-            "```",
-            "",
-        ]
-    lines += ["## Estado documental (GUIA y ROADMAP)"]
-    for doc in (guide, roadmap):
-        lines += [
-            f"### {doc.get('label', 'DOC')}",
-            f"- Estado: **{doc.get('status')}**",
-            f"- Cobertura declarada: {doc.get('covered') or '(no declarada)'}",
-            f"- SHA de referencia: {doc.get('sha') or '(no declarado)'}",
-            f"- Pendientes de redacción ChatGPT: {doc.get('pending') or 'NINGUNO'}",
-            f"- Archivos UI modificados: {', '.join(doc.get('ui_files', [])) or '(ninguno detectado)'}",
-            f"- Handoff: {doc.get('instruction')}",
-            "",
-        ]
-    lines += [
-        "## Restricciones respetadas",
-        "- Sin migraciones/seeders, sin lectura de .env, sin secretos registrados.",
-        "- Sin commit/push/deploy, sin cambios a contratos v2.2.",
-        "- Servidor temporal cerrado al terminar (try/finally).",
-    ]
-    path.write_text("\n".join(lines), encoding="utf-8")
-    return path
-
-
-def main() -> int:
-    ap = argparse.ArgumentParser(description="Verificador determinista de gates StockFlash.")
-    ap.add_argument("packet", help="ID de Feature Packet (p. ej. BOOT-001)")
-    ap.add_argument("--port", type=int, default=18733)
-    ap.add_argument("--no-build", action="store_true", help="Omitir G3 (solo depuracion; el gate queda como SKIP=FAIL si es obligatorio)")
-    args = ap.parse_args()
-
-    packet = args.packet.strip().upper()
-    if packet not in GATES_BY_PACKET:
-        print(f"FAIL: packet sin gates definidos: {packet}. Definir en GATES_BY_PACKET antes de verificar.")
-        return 1
-    if packet != "BOOT-001":
-        print(f"Nota: verificando {packet} con definicion declarativa correspondiente.")
-
-    results: list[dict] = []
-    for gate in GATES_BY_PACKET[packet]:
-        gid = gate["id"]
-        print(f"== {gid} :: {' '.join(gate['cmd']) if gate['kind']=='shell' else 'serve-temporal + GET ' + gate.get('path', '/')}")
-        if args.no_build and gid.startswith("G3-"):
-            results.append({"id": gid, "cmd": "npm run build (omitido por --no-build)",
-                            "exit": 99, "ok": False, "elapsed_s": 0.0,
-                            "stdout": "", "stderr": "omitido; gate obligatorio => FAIL"})
-            print(f"-- {gid} SKIP (tratado como FAIL por ser obligatorio)")
-            continue
-        if gate["kind"] == "shell":
-            r = run_shell(gate["cmd"], gate["timeout_s"])
-        elif gate["kind"] == "http_serve":
-            port = find_free_port(args.port)
-            if port != args.port:
-                print(f"-- puerto {args.port} ocupado, usando {port}")
-            r = gate_http_serve(
-                port,
-                gate["timeout_s"],
-                gate.get("path", "/"),
-                tuple(gate.get("expect", ("StockFlash",))),
-            )
-        else:
-            r = {"cmd": gid, "exit": 99, "ok": False, "elapsed_s": 0.0,
-                 "stdout": "", "stderr": f"kind desconocido: {gate['kind']}"}
-        r["id"] = gid
-        r["mandatory"] = gate["mandatory"]
-        results.append(r)
-        print(f"-- {gid} {'PASS' if r['ok'] else 'FAIL'} (exit={r['exit']})")
-
-    mandatory_fail = [r for r in results if r.get("mandatory") and not r["ok"]]
-    verdict = "GATES_PASS" if not mandatory_fail else "GATES_FAIL"
-    guide = guide_handoff(packet)
-    roadmap = roadmap_handoff(packet)
-    report = write_report(packet, results, verdict, guide, roadmap)
-    for doc in (guide, roadmap):
-        print(f"Estado documental {doc['label']}: {doc['status']}")
-        if doc["status"] in ("GUIA_PENDIENTE_CHATGPT", "ROADMAP_PENDIENTE_CHATGPT"):
-            print(f"Pendiente ChatGPT ({doc['label']}): {doc['pending']}")
-            print(f"Handoff ({doc['label']}): {doc['instruction']}")
-    print(f"Reporte: {report}")
-    print(f"Veredicto: {verdict}")
-    if verdict != "GATES_PASS":
-        print("FAIL: al menos un gate obligatorio fallo; no presentar como PASS.")
-        return 1
-    return 0
-
-
-if __name__ == "__main__":
-    sys.exit(main())
-,s,re.M)
-c=covered.group(1) if covered else ''
-ok=('CFG-001' in c and p.upper() in no_pending) or ('CFG-001' in s and p.upper() not in no_pending)\nsys.exit(0 if ok else 1)"],
+    "CFG-002": [
+        {"id": "CFG2-1-packet-approved-activo", "kind": "shell",
+         "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\np=(R/'docs/work/features/CFG-002.md').read_text(encoding='utf-8')\nc=(R/'docs/work/CURRENT.md').read_text(encoding='utf-8')\nok=(('status: APPROVED' in p or 'status: VERIFIED' in p) and 'publication_mode: AUTO_GIT' in p and 'execution_mode: ONE_SMALL_WAVE' in p and 'CFG-002' in c)\nsys.exit(0 if ok else 1)"],
          "mandatory": True, "timeout_s": 60},
-        {"id": "CF15-diff-check", "kind": "shell",
+        {"id": "CFG2-2-archivos-backend-ui-tests", "kind": "shell",
+         "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\nreq=['app/Http/Controllers/Settings/BusinessSettingsController.php','app/Http/Requests/BusinessSettingsRequest.php','resources/js/Pages/Settings/Business.vue','resources/js/Pages/Dashboard.vue','tests/Feature/Settings/BusinessSettingsTestCase.php','tests/Feature/Settings/BusinessSettingsAuthorizationTest.php','tests/Feature/Settings/BusinessSettingsTest.php']\nsys.exit(0 if all((R/x).exists() for x in req) else 1)"],
+         "mandatory": True, "timeout_s": 60},
+        {"id": "CFG2-3-rutas-middleware-enlace-sin-patch", "kind": "shell",
+         "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\nw=(R/'routes/web.php').read_text(encoding='utf-8')\nd=(R/'resources/js/Pages/Dashboard.vue').read_text(encoding='utf-8')\nok=(w.count('/settings/business')>=2 and 'settings.business.edit' in w and 'settings.business.update' in w and 'can.permission:settings.manage' in w and 'password.change' in w and 'verify.session' in w and '/settings/business' in d and 'Datos del comercio' in d and 'settings.manage' in d and 'v-if=\"canManageSettings\"' in d and \"Route::patch('/settings/business'\" not in w and \"Route::match(['put', 'patch'], '/settings/business'\" not in w and \"Route::match(['patch', 'put'], '/settings/business'\" not in w)\nsys.exit(0 if ok else 1)"],
+         "mandatory": True, "timeout_s": 60},
+        {"id": "CFG2-4-allowlist-auditoria-estatica", "kind": "shell",
+         "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\nc=(R/'app/Http/Controllers/Settings/BusinessSettingsController.php').read_text(encoding='utf-8')\nkeys=['business_name','fiscal_id','fiscal_name','commercial_activity','fiscal_address','fiscal_commune','responsible_name','responsible_email','responsible_phone']\nok=(all(k in c for k in keys) and 'recordRead' in c and \"whereIn('config_key', self::KEYS)\" in c and 'pluck(' in c and 'core.business_settings.pii_viewed' in c and 'core.business_settings.updated' in c and 'select' not in c.lower())\nsys.exit(0 if ok else 1)"],
+         "mandatory": True, "timeout_s": 60},
+        {"id": "CFG2-5-protegidos-intactos", "kind": "shell",
+         "cmd": ["git", "diff", "--quiet", "HEAD", "--", "AGENTS.md", "opencode.json", "docs/governance/CONSTITUTION.md", "docs/product", "docs/branding", "docs/harness/CONTEXTO-CHATGPT.md", "public/docs/index.html", "resources/roadmap/index.html", "docs/work/ROADMAP-HTML-ESTADO.md"],
+         "mandatory": True, "timeout_s": 60},
+        {"id": "CFG2-6-database-sin-cambios", "kind": "shell",
+         "cmd": ["py", "-3", "-c", "import subprocess,sys\nout=subprocess.run(['git','status','--porcelain','--','database'],cwd='.',capture_output=True,text=True,encoding='utf-8',errors='replace').stdout\nsys.exit(0 if not out.strip() else 1)"],
+         "mandatory": True, "timeout_s": 60},
+        {"id": "CFG2-7-contratos", "kind": "shell",
+         "cmd": ["py", "-3", "scripts/check_contracts.py"],
+         "mandatory": True, "timeout_s": 120},
+        {"id": "CFG2-8-tests-settings", "kind": "shell",
+         "cmd": ["php", "artisan", "test", "tests/Feature/Settings"],
+         "mandatory": True, "timeout_s": 600},
+        {"id": "CFG2-9-regresion-auth", "kind": "shell",
+         "cmd": ["php", "artisan", "test", "tests/Feature/Auth"],
+         "mandatory": True, "timeout_s": 600},
+        {"id": "CFG2-10-regresion-branches", "kind": "shell",
+         "cmd": ["php", "artisan", "test", "tests/Feature/Branches"],
+         "mandatory": True, "timeout_s": 600},
+        {"id": "CFG2-11-regresion-users", "kind": "shell",
+         "cmd": ["php", "artisan", "test", "tests/Feature/Users"],
+         "mandatory": True, "timeout_s": 600},
+        {"id": "CFG2-12-suite-completa", "kind": "shell",
+         "cmd": ["php", "artisan", "test"],
+         "mandatory": True, "timeout_s": 900},
+        {"id": "CFG2-13-typecheck", "kind": "shell",
+         "cmd": ["npm", "run", "typecheck"],
+         "mandatory": True, "timeout_s": 300},
+        {"id": "CFG2-14-build", "kind": "shell",
+         "cmd": ["npm", "run", "build"],
+         "mandatory": True, "timeout_s": 600},
+        {"id": "CFG2-15-guia-metadatos", "kind": "shell",
+         "cmd": ["py", "-3", "-c", "import pathlib as P,re,sys\nR=P.Path('.')\ns=(R/'docs/work/GUIA-HTML-ESTADO.md').read_text(encoding='utf-8')\nm=re.search(r'^pending_docs:\\s*(.+)$',s,re.M)\np=m.group(1).strip() if m else ''\nno_pending={'','NINGUNO','NINGUNA','NO APLICA','NO_APLICA'}\nok=('CFG-002' in s and p.upper() not in no_pending) or ('CFG-002 VERIFIED' in s and p.upper() in no_pending)\nsys.exit(0 if ok else 1)"],
+         "mandatory": True, "timeout_s": 60},
+        {"id": "CFG2-16-diff-check", "kind": "shell",
          "cmd": ["git", "diff", "--check", "HEAD"],
          "mandatory": True, "timeout_s": 60},
     ],

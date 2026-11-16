@@ -28,6 +28,9 @@
                     <Link v-if="canManageSettings" href="/settings/receipt" class="sf-button sf-button-primary">
                         Ajustes de comprobante
                     </Link>
+                    <Link v-if="canManageSettings" href="/settings/business" class="sf-button sf-button-primary">
+                        Datos del comercio
+                    </Link>
                     <a
                         v-if="canViewRoadmap"
                         href="/roadmap"
