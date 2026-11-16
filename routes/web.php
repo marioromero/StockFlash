@@ -78,6 +78,16 @@ Route::middleware(['auth', 'password.change', 'verify.session'])->group(function
             ->name('users.destroy');
     });
 
+    // --- Ajustes del comprobante interno (CFG-001 · CORE-09) ---
+    // Solo las tres claves de Parte 2 §3.1; autenticación y permiso real en
+    // servidor. No usa `branch.access`: es configuración global.
+    Route::middleware('can.permission:settings.manage')->group(function () {
+        Route::get('/settings/receipt', [\App\Http\Controllers\Settings\ReceiptSettingsController::class, 'edit'])
+            ->name('settings.receipt.edit');
+        Route::put('/settings/receipt', [\App\Http\Controllers\Settings\ReceiptSettingsController::class, 'update'])
+            ->name('settings.receipt.update');
+    });
+
     // --- Administración global de sucursales (BRANCH-001 · CORE-05) ---
     // Es administración global: NO usa `branch.access`.
     Route::middleware('can.permission:settings.manage')->group(function () {

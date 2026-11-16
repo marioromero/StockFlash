@@ -11,10 +11,10 @@ guide_status: INTEGRADA_EN_MAIN (2026-11-16)
 guide_content_last_written: 2026-11-16
 covered_features: AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED (2026-11-10); ROADMAP-001 VERIFIED (2026-11-10); USERS-001 VERIFIED técnico 2026-11-16 (código 2aec038)
 latest_covered_code_sha: `2aec03893c78bc7180544930e0b6f741599df9ed` (USERS-001 corregido; DOCS/AUTH/BRANCH/ROADMAP previos)
-next_feature: NINGUNO (USERS-001 documentada y VERIFIED técnico; siguiente feature por definir)
+next_feature: CFG-001 implementada 2026-11-16, texto de guía pendiente
 last_guide_integration_sha: `79c3b0f5af573b956cbcfb8c95c50aef251f5bd5` (commit de ChatGPT que amplió el manual a 19 temas)
 last_guide_integration_date: 2026-11-16
-pending_docs: NINGUNO
+pending_docs: CFG-001 — nueva pantalla Ajustes de comprobante (encabezado, pie, papel); requiere textos de ChatGPT
 
 ## Cómo mantener este archivo
 - OpenCode puede actualizar solamente los metadatos y el registro de pendientes aquí, no los textos para usuarios en `public/docs/index.html`.

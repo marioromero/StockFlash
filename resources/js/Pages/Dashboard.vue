@@ -25,6 +25,9 @@
                     <Link v-if="canManageBranches" href="/branches" class="sf-button sf-button-primary">
                         Sucursales
                     </Link>
+                    <Link v-if="canManageSettings" href="/settings/receipt" class="sf-button sf-button-primary">
+                        Ajustes de comprobante
+                    </Link>
                     <a
                         v-if="canViewRoadmap"
                         href="/roadmap"
@@ -79,6 +82,9 @@ const canManageBranches = computed(() =>
     (page.props.auth?.permissions ?? []).includes('settings.manage')
 );
 const canViewRoadmap = computed(() =>
+    (page.props.auth?.permissions ?? []).includes('settings.manage')
+);
+const canManageSettings = computed(() =>
     (page.props.auth?.permissions ?? []).includes('settings.manage')
 );
 
