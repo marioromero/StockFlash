@@ -115,7 +115,7 @@ class DocsIntegrationTest extends TestCase
         $html = $this->manual();
 
         $this->assertStringContainsString('id="comprobante"', $html);
-        $this->assertStringContainsString('22 temas disponibles.', $html);
+        $this->assertStringContainsString('23 temas disponibles.', $html);
         $this->assertStringContainsString('Ajustes de comprobante', $html);
         $this->assertStringContainsString('settings.manage', $html);
         $this->assertStringContainsString('no tributario', $html);
@@ -127,7 +127,7 @@ class DocsIntegrationTest extends TestCase
         $html = $this->manual();
 
         $this->assertStringContainsString('id="datos-comercio"', $html);
-        $this->assertStringContainsString('22 temas disponibles.', $html);
+        $this->assertStringContainsString('23 temas disponibles.', $html);
         $this->assertStringContainsString('Datos del comercio', $html);
         $this->assertStringContainsString('settings.manage', $html);
         $this->assertStringContainsString('no valida el RUT ante el SII', $html);
@@ -139,10 +139,21 @@ class DocsIntegrationTest extends TestCase
         $html = $this->manual();
 
         $this->assertStringContainsString('id="preferencias"', $html);
-        $this->assertStringContainsString('22 temas disponibles.', $html);
+        $this->assertStringContainsString('23 temas disponibles.', $html);
         $this->assertStringContainsString('America/Santiago', $html);
         $this->assertStringContainsString('settings.manage', $html);
         $this->assertStringContainsString('no modifica documentos anteriores', $html);
+    }
+
+    public function test_corelic_001_license_notices_are_documented_without_deploy_claims(): void
+    {
+        $html = $this->manual();
+
+        $this->assertStringContainsString('id="estado-licencia"', $html);
+        $this->assertStringContainsString('23 temas disponibles.', $html);
+        $this->assertStringContainsString('Modo solo lectura', $html);
+        $this->assertStringContainsString('No es una pantalla para comprar', $html);
+        $this->assertStringContainsString('sin despliegue comercial', $html);
     }
 
     private function manual(): string

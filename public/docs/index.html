@@ -58,6 +58,7 @@ details.accordion{border:1px solid var(--line);border-radius:9px;margin:9px 0;ba
       <li><a href="#usuario-acceso">Roles y sucursales</a></li>
       <li><a href="#usuario-seguridad">Claves, PIN y estados</a></li>
       <li><a href="#usuario-licencia">Licencias y límites</a></li>
+      <li><a href="#estado-licencia">Avisos de licencia</a></li>
     </ul></details>
     <details class="navgroup" open><summary>Configuración</summary><ul>
       <li><a href="#comprobante">Ajustes de comprobante</a></li>
@@ -79,7 +80,7 @@ details.accordion{border:1px solid var(--line);border-radius:9px;margin:9px 0;ba
 <div class="hero"><div class="eyebrow">Aprende a tu ritmo</div><h1>Tu guía para usar StockFlash</h1>
 <p>Todo lo que necesitas para comenzar, explicado sin términos complicados. Elige un tema en el menú izquierdo o escribe lo que buscas. Abre las preguntas de cada sección para ver los detalles.</p>
 <div class="meta"><span class="pill verified">Acceso y sucursales verificados</span><span class="pill">Usuarios verificados técnicamente</span><span class="pill">Actualizada: 16-11-2026</span></div>
-<p id="search-status" role="status" aria-live="polite">22 temas disponibles.</p></div>
+<p id="search-status" role="status" aria-live="polite">23 temas disponibles.</p></div>
 <main id="manual">
 <section class="topic" id="bienvenida" data-keywords="introduccion comienzo que es stockflash primer uso ayuda"><div class="kicker">Primeros pasos</div><h2>¿Qué es StockFlash?</h2>
 <p>Es el sistema con el que podrás administrar las operaciones de tu negocio. Incluye una zona de administración y, a medida que se vayan incorporando funciones, módulos como punto de venta e inventario.</p>
@@ -168,6 +169,14 @@ details.accordion{border:1px solid var(--line);border-radius:9px;margin:9px 0;ba
 <p>Los topes individuales de descuento (0–100 %) y devolución (monto no negativo) son opcionales. Si los dejas vacíos, se heredan los del rol.</p>
 <details class="accordion"><summary>¿Qué se registra al consultar o editar una cuenta?</summary><div class="answer">El sistema registra quién consultó la ficha/listado o realizó un cambio, con fecha y tipo de operación. El registro identifica el recurso, pero no copia nombres ni correos de usuarios en los valores auditados.</div></details>
 <details class="accordion"><summary>¿Por qué no puedo activar un usuario?</summary><div class="answer">Puede faltar una licencia válida, haberse alcanzado el máximo de usuarios activos o estar suspendida fuera del período de gracia.</div></details></section>
+<section class="topic" id="estado-licencia" data-keywords="licencia estado expiracion vencimiento suspendida aviso gracia lectura dashboard soporte">
+<div class="kicker">Licencia · CORELIC-001</div><h2>Comprender los avisos de licencia</h2>
+<p>El Dashboard muestra un aviso cuando la licencia está próxima a vencer, suspendida o no configurada. <strong>No es una pantalla para comprar, activar ni administrar licencias</strong>; informa el estado local disponible en la instalación.</p>
+<details class="accordion"><summary>¿Qué significa «Próxima a vencer»?</summary><div class="answer">Existe una advertencia de vigencia. El aviso no bloquea por sí mismo las operaciones; solicita revisar el estado de la licencia.</div></details>
+<details class="accordion"><summary>¿Qué sucede si está suspendida pero continúa el período de gracia?</summary><div class="answer">Aparece una advertencia y la operación sigue habilitada hasta que termine el período de gracia indicado. El aviso distingue esa situación del bloqueo efectivo.</div></details>
+<details class="accordion"><summary>¿Qué significa «Modo solo lectura»?</summary><div class="answer">La licencia fue suspendida y la gracia terminó o no existe. Las operaciones de escritura sujetas al control de licencia se bloquean, mientras se mantiene la consulta de información. La implementación de las funciones comerciales y de exportación se completará en sus respectivas etapas.</div></details>
+<details class="accordion"><summary>¿Qué pasa cuando no existe licencia configurada?</summary><div class="answer">El Dashboard lo advierte. No es una autorización para crear usuarios, sucursales ni realizar operaciones comerciales; permanecen vigentes los controles de permiso y licencia.</div></details>
+<div class="callout">El aviso de estado no envía información al control central ni valida una suscripción con un servidor externo. StockFlash sigue en desarrollo, sin despliegue comercial.</div></section>
 <section class="topic" id="comprobante" data-keywords="configuración ajustes comprobante interno boleta no tributaria impresión encabezado pie papel 58mm 80mm A4 licencia">
 <div class="kicker">Configuración · CFG-001</div><h2>Ajustes del comprobante interno</h2>
 <p>Un administrador autorizado puede definir el texto que aparecerá en la parte superior e inferior de los comprobantes internos y su formato de impresión. Desde el <strong>Dashboard</strong>, abre <strong>Ajustes de comprobante</strong>; también puedes acceder a <code>/settings/receipt</code>.</p>
@@ -205,7 +214,7 @@ details.accordion{border:1px solid var(--line);border-radius:9px;margin:9px 0;ba
 <ul><li><strong>Dashboard:</strong> pantalla principal de StockFlash.</li><li><strong>Rol:</strong> conjunto de permisos de un usuario.</li><li><strong>Sucursal:</strong> local, bodega u operación online registrada en el sistema.</li><li><strong>Activa:</strong> habilitada para nuevas operaciones.</li><li><strong>Heredar:</strong> tomar la configuración general sin sobrescribirla.</li><li><strong>Borrado lógico:</strong> ocultar y deshabilitar un registro sin eliminar su historial.</li><li><strong>JSON:</strong> formato de texto para ajustes avanzados; normalmente no necesitas utilizarlo.</li></ul></section>
 </main>
 <div id="empty-state" role="status"><strong>No encontramos ese tema.</strong><p>Prueba con otra palabra, por ejemplo «sucursal», «contraseña» o «caja».</p><button id="clear-search" type="button">Ver todos los temas</button></div>
-<footer class="footer">StockFlash · Guía de desarrollo · Acceso, sucursales y usuarios verificados; CFG-001, CFG-002 y CFG-003 verificados técnicamente. Sin despliegue comercial.</footer>
+<footer class="footer">StockFlash · Guía de desarrollo · Acceso, sucursales y usuarios verificados; CFG-001/002/003 y CORELIC-001 verificados técnicamente. Sin despliegue comercial.</footer>
 </div></div></div>
 <script>
 (function () {
