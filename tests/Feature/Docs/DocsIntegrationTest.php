@@ -110,6 +110,18 @@ class DocsIntegrationTest extends TestCase
         $this->assertStringContainsString('No implica despliegue a clientes', $html);
     }
 
+    public function test_cfg_001_receipt_settings_are_explained_without_fiscal_claims(): void
+    {
+        $html = $this->manual();
+
+        $this->assertStringContainsString('id="comprobante"', $html);
+        $this->assertStringContainsString('20 temas disponibles.', $html);
+        $this->assertStringContainsString('Ajustes de comprobante', $html);
+        $this->assertStringContainsString('settings.manage', $html);
+        $this->assertStringContainsString('no tributario', $html);
+        $this->assertStringContainsString('Sin despliegue comercial', $html);
+    }
+
     private function manual(): string
     {
         return $this->file('public/docs/index.html');

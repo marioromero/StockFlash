@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light">
-<meta name="description" content="Guía interactiva StockFlash: acceso, sucursales, usuarios, roles y seguridad.">
+<meta name="description" content="Guía interactiva StockFlash: acceso, sucursales, usuarios y ajustes de comprobantes internos.">
 <title>Guía de usuario | StockFlash</title>
 <style>
 :root{--ink:#303846;--blue:#0856ff;--teal:#03a7a2;--bg:#f5f7fb;--line:#dce4ef;--muted:#5b687e;--white:#fff;--radius:13px}
@@ -59,6 +59,9 @@ details.accordion{border:1px solid var(--line);border-radius:9px;margin:9px 0;ba
       <li><a href="#usuario-seguridad">Claves, PIN y estados</a></li>
       <li><a href="#usuario-licencia">Licencias y límites</a></li>
     </ul></details>
+    <details class="navgroup" open><summary>Configuración</summary><ul>
+      <li><a href="#comprobante">Ajustes de comprobante</a></li>
+    </ul></details>
     <details class="navgroup" open><summary>Ayuda</summary><ul>
       <li><a href="#problemas">Problemas frecuentes</a></li>
       <li><a href="#glosario">Palabras que debes conocer</a></li>
@@ -74,7 +77,7 @@ details.accordion{border:1px solid var(--line);border-radius:9px;margin:9px 0;ba
 <div class="hero"><div class="eyebrow">Aprende a tu ritmo</div><h1>Tu guía para usar StockFlash</h1>
 <p>Todo lo que necesitas para comenzar, explicado sin términos complicados. Elige un tema en el menú izquierdo o escribe lo que buscas. Abre las preguntas de cada sección para ver los detalles.</p>
 <div class="meta"><span class="pill verified">Acceso y sucursales verificados</span><span class="pill">Usuarios verificados técnicamente</span><span class="pill">Actualizada: 16-11-2026</span></div>
-<p id="search-status" role="status" aria-live="polite">19 temas disponibles.</p></div>
+<p id="search-status" role="status" aria-live="polite">20 temas disponibles.</p></div>
 <main id="manual">
 <section class="topic" id="bienvenida" data-keywords="introduccion comienzo que es stockflash primer uso ayuda"><div class="kicker">Primeros pasos</div><h2>¿Qué es StockFlash?</h2>
 <p>Es el sistema con el que podrás administrar las operaciones de tu negocio. Incluye una zona de administración y, a medida que se vayan incorporando funciones, módulos como punto de venta e inventario.</p>
@@ -82,7 +85,7 @@ details.accordion{border:1px solid var(--line);border-radius:9px;margin:9px 0;ba
 <div class="callout">Esta guía describe el <strong>desarrollo local</strong>. Que una función esté documentada no significa que ya esté desplegada para clientes.</div></section>
 <section class="topic" id="panel" data-keywords="dashboard inicio pantalla principal botonera navegar cambiar contrasena ayuda manual guia documentacion avance del proyecto roadmap hitos etapas versiones comercial"><div class="kicker">Primeros pasos</div><h2>Conocer el panel principal</h2>
 <p>Después de iniciar sesión llegarás al <strong>Dashboard</strong>. Es el punto de partida para acceder a las funciones disponibles.</p>
-<ul><li><strong>Sucursales:</strong> abre la administración de locales y bodegas. Solo aparece si tienes el permiso correspondiente.</li><li><strong>Usuarios:</strong> administra cuentas, roles y asignaciones de sucursal. Solo aparece al administrador autorizado.</li><li><strong>Cambiar contraseña:</strong> abre el formulario para modificar tu contraseña.</li><li><strong>Ayuda:</strong> abre esta guía en una pestaña nueva. Úsala cuando necesites saber para qué sirve una opción o cómo completar un procedimiento.</li><li><strong>Avance del proyecto:</strong> muestra la línea de hitos de StockFlash, las funciones listas y lo que falta para la primera versión comercial. Solo aparece para quienes tienen permisos de administración y abre una pestaña nueva.</li><li><strong>Cerrar sesión:</strong> está en la parte superior, junto a tu nombre.</li></ul>
+<ul><li><strong>Sucursales:</strong> abre la administración de locales y bodegas. Solo aparece si tienes el permiso correspondiente.</li><li><strong>Usuarios:</strong> administra cuentas, roles y asignaciones de sucursal. Solo aparece al administrador autorizado.</li><li><strong>Ajustes de comprobante:</strong> modifica el encabezado, pie y formato del comprobante interno. Solo aparece con permiso administrativo.</li><li><strong>Cambiar contraseña:</strong> abre el formulario para modificar tu contraseña.</li><li><strong>Ayuda:</strong> abre esta guía en una pestaña nueva. Úsala cuando necesites saber para qué sirve una opción o cómo completar un procedimiento.</li><li><strong>Avance del proyecto:</strong> muestra la línea de hitos de StockFlash, las funciones listas y lo que falta para la primera versión comercial. Solo aparece para quienes tienen permisos de administración y abre una pestaña nueva.</li><li><strong>Cerrar sesión:</strong> está en la parte superior, junto a tu nombre.</li></ul>
 <details class="accordion"><summary>¿Cómo busco ayuda sobre una función?</summary><div class="answer">Selecciona <strong>Ayuda</strong> en el Dashboard. En la guía, escribe el nombre del tema en el buscador superior o elígelo en el menú de la izquierda. Haz clic en las preguntas desplegables para ver explicaciones adicionales. Puedes dejar abierta la guía mientras usas StockFlash en la pestaña original.</div></details>
 <details class="accordion"><summary>¿Para qué sirve «Avance del proyecto»?</summary><div class="answer">Es un resumen de cómo progresa StockFlash. Puedes revisar los hitos completados, los pendientes y el objetivo de la primera versión comercial. Si tienes acceso de administración, selecciónalo desde el Dashboard. Los hitos tienen apartados desplegables para conocer sus detalles.</div></details>
 <details class="accordion"><summary>¿Por qué no veo el botón «Avance del proyecto»?</summary><div class="answer">Esta página es exclusiva de la administración del proyecto. Si tu cuenta no tiene el permiso necesario, el botón no aparece.</div></details>
@@ -163,6 +166,15 @@ details.accordion{border:1px solid var(--line);border-radius:9px;margin:9px 0;ba
 <p>Los topes individuales de descuento (0–100 %) y devolución (monto no negativo) son opcionales. Si los dejas vacíos, se heredan los del rol.</p>
 <details class="accordion"><summary>¿Qué se registra al consultar o editar una cuenta?</summary><div class="answer">El sistema registra quién consultó la ficha/listado o realizó un cambio, con fecha y tipo de operación. El registro identifica el recurso, pero no copia nombres ni correos de usuarios en los valores auditados.</div></details>
 <details class="accordion"><summary>¿Por qué no puedo activar un usuario?</summary><div class="answer">Puede faltar una licencia válida, haberse alcanzado el máximo de usuarios activos o estar suspendida fuera del período de gracia.</div></details></section>
+<section class="topic" id="comprobante" data-keywords="configuración ajustes comprobante interno boleta no tributaria impresión encabezado pie papel 58mm 80mm A4 licencia">
+<div class="kicker">Configuración · CFG-001</div><h2>Ajustes del comprobante interno</h2>
+<p>Un administrador autorizado puede definir el texto que aparecerá en la parte superior e inferior de los comprobantes internos y su formato de impresión. Desde el <strong>Dashboard</strong>, abre <strong>Ajustes de comprobante</strong>; también puedes acceder a <code>/settings/receipt</code>.</p>
+<ol class="steps"><li>Escribe un <strong>encabezado</strong>, si deseas mostrar un texto al comienzo del comprobante.</li><li>Escribe un <strong>pie</strong>, si quieres añadir un mensaje al final.</li><li>Selecciona el <strong>tamaño de papel</strong>: 58 mm, 80 mm o A4.</li><li>Selecciona <strong>Guardar ajustes</strong> para conservar los cambios.</li></ol>
+<div class="callout warn"><strong>Importante:</strong> estos ajustes corresponden al <strong>comprobante interno, no tributario</strong>. No generan boletas ni facturas del SII. La funcionalidad está implementada y probada en desarrollo; no implica despliegue comercial.</div>
+<details class="accordion"><summary>¿Puedo dejar el encabezado o el pie vacíos?</summary><div class="answer">Sí. Ambos son opcionales y admiten hasta 1000 caracteres. Si no necesitas un texto, deja el campo en blanco.</div></details>
+<details class="accordion"><summary>¿Por qué no aparece «Ajustes de comprobante»?</summary><div class="answer">Solo los usuarios con permiso <code>settings.manage</code> pueden abrir y guardar estos ajustes. Pide al administrador que revise tus permisos.</div></details>
+<details class="accordion"><summary>¿Por qué no puedo guardar?</summary><div class="answer">Revisa que el papel sea uno de los tres formatos admitidos y que los textos no superen el máximo. Si la licencia está suspendida fuera del período de gracia, la pantalla se presenta en modo solo lectura y no permite cambios.</div></details>
+<details class="accordion"><summary>¿Estos cambios afectan comprobantes anteriores?</summary><div class="answer">La pantalla solo guarda las preferencias para usos posteriores; no edita ventas ni documentos existentes. Todavía no incorpora una vista previa ni imprime un comprobante.</div></details></section>
 <section class="topic" id="problemas" data-keywords="ayuda error 403 404 correo bloqueo no funciona pantalla busqueda problemas"><div class="kicker">Ayuda</div><h2>Problemas frecuentes</h2>
 <details class="accordion"><summary>Me aparece «403» o «No tiene permiso»</summary><div class="answer">Tu cuenta no tiene permiso para esa operación o la sucursal no está habilitada. Pide al administrador que revise tu rol o sucursal.</div></details>
 <details class="accordion"><summary>No puedo entrar con mi contraseña</summary><div class="answer">Revisa correo y contraseña. Después de 5 intentos fallidos puedes quedar bloqueado temporalmente. Si olvidaste la clave, contacta al administrador.</div></details>
@@ -173,7 +185,7 @@ details.accordion{border:1px solid var(--line);border-radius:9px;margin:9px 0;ba
 <ul><li><strong>Dashboard:</strong> pantalla principal de StockFlash.</li><li><strong>Rol:</strong> conjunto de permisos de un usuario.</li><li><strong>Sucursal:</strong> local, bodega u operación online registrada en el sistema.</li><li><strong>Activa:</strong> habilitada para nuevas operaciones.</li><li><strong>Heredar:</strong> tomar la configuración general sin sobrescribirla.</li><li><strong>Borrado lógico:</strong> ocultar y deshabilitar un registro sin eliminar su historial.</li><li><strong>JSON:</strong> formato de texto para ajustes avanzados; normalmente no necesitas utilizarlo.</li></ul></section>
 </main>
 <div id="empty-state" role="status"><strong>No encontramos ese tema.</strong><p>Prueba con otra palabra, por ejemplo «sucursal», «contraseña» o «caja».</p><button id="clear-search" type="button">Ver todos los temas</button></div>
-<footer class="footer">StockFlash · Guía interactiva de usuario · AUTH-001 y BRANCH-001 VERIFIED; USERS-001 VERIFIED técnicamente, sin despliegue comercial. Desarrollo local, sin despliegue comercial.</footer>
+<footer class="footer">StockFlash · Guía de desarrollo · Acceso, sucursales y usuarios verificados; CFG-001 implementado y probado. Sin despliegue comercial.</footer>
 </div></div></div>
 <script>
 (function () {
