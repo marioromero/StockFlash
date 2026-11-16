@@ -2,7 +2,7 @@
 
 **Última revisión por ChatGPT:** 2026-11-16
 **Repositorio:** `marioromero/StockFlash` · rama de desarrollo `main`
-**Estado de referencia observado:** `fd1269361b19633502f34044317a63968d6376ad` (CFG-001 publicado y VERIFIED técnico, guía 20 temas en `d5a25f8`; CFG-002 activa, comprobar HEAD)
+**Estado de referencia observado:** `81ba73419bcffada59cea86efec4ac80f8a32c6f` (CFG-002 QA/CI/verificación externa, manual 21 temas en `6a55e363684aa73ddb0a1c1c605b790871bdae4e`; CFG-003 activa; comprobar HEAD vigente)
 **Aviso de vigencia:** este SHA es un punto de control histórico, NO el HEAD garantizado al abrir una nueva sesión. Verificar HEAD, PR abiertos y documentación actual antes de actuar.
 
 ## 1. INSTRUCCIONES PARA CUALQUIER SESIÓN NUEVA DE CHATGPT
@@ -73,7 +73,7 @@ Si el propietario solicita «continuar StockFlash», «revisar lo que hizo OpenC
 ## 5. TRABAJO ABIERTO Y SIGUIENTE PASO
 
 1. USERS-001 y HCTX-001: VERIFIED técnico, informes de cierre publicados el 2026-11-16; sin despliegue. Concurrencia MariaDB real y UX visual quedan explícitamente pendientes para predespliegue.
-2. CFG-001: VERIFIED técnico (SHA fd12693, gates 15/15, QA/CI verde, manual 20 temas). Siguiente CFG-002: datos del comercio y contacto responsable, ya definida/activa sin decisiones comerciales nuevas.
+2. CFG-001 y CFG-002: VERIFIED técnico (código CFG-002 `81ba734`, gates 16/16, QA/CI verde; manual 21 temas). Siguiente CFG-003: preferencias regionales y monetarias ya definidas, sin decisión nueva del propietario.
 3. SFH1: mantener un issue activo por tarea; no exigir autorizaciones administrativas de cierre repetidas. ChatGPT verifica y registra el cierre, OpenCode solo lo publica.
 
 ## 6. FORMATO BREVE DE ACTUALIZACIÓN DE ESTE ARCHIVO

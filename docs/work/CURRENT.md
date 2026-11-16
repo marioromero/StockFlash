@@ -1,7 +1,7 @@
 # Estado operativo — StockFlash
 
 ## Feature activa
-- **CFG-002 — Datos del comercio y contacto responsable: APPROVED y ACTIVA**, packet `docs/work/features/CFG-002.md`. CORE-09/Parte 2 §3.1, sin decisiones comerciales nuevas, AUTO_GIT, sin deploy ni BD remota.
+- **CFG-003 — Preferencias generales y monetarias del comercio (CORE-09): APPROVED y ACTIVA**, `docs/work/features/CFG-003.md`. Contrato existente Parte 2 §3.1; sin decisiones nuevas, sin deploy/BD remota.
 
 ## Estados por feature (una línea por hito)
 - **BOOT-001: VERIFIED** (2026-10-14). Laravel 13.35.0 + Vue 3 + Inertia 3.5.1 + TypeScript/Vite; scaffold publicado en `bcbf16f`; gates PASS y QA APROBADO. Sin deploy ni migraciones.
@@ -16,11 +16,12 @@
 - **USERS-001: VERIFIED** (2026-11-16, revisión ChatGPT), SHA `2aec038`, gates 11/11, QA/CI verde, manual/roadmap integrados. Cierre `docs/work/USERS-001-CLOSURE-20261116.md`; pruebas MariaDB concurrente y visual real diferidas para predespliegue.
 
 - **CFG-001: VERIFIED** (2026-11-16), SHA `fd12693`, 15 gates PASS, 220 pruebas PHP, QA APROBADO, CI 2/2 SUCCESS; guía de 20 temas. Cierre `docs/work/CFG-001-CLOSURE-20261116.md`.
+- **CFG-002: VERIFIED técnico** (2026-11-16), SHA `81ba734`, 16 gates PASS, 239 pruebas PHP, QA APROBADO, CI 2/2 SUCCESS, guía 21 temas. Cierre `docs/work/CFG-002-CLOSURE-20261116.md`; sin navegador real ni despliegue.
 
 ## Pendientes y bloqueos reales
 - **STAGING-001: APPROVED**, sin deploy demostrado ni VERIFIED. FTPS solo hacia `/home/grupoint/stockflash-dev-app`; raíz pública y smoke pendientes de comprobar. No habilita despliegue por sí sola.
 - Restricción SSH vigente: no usar la credencial `grupoint`; vía FTPS separada sin publicar secretos.
-- R2 staging seguro pendiente. R3 CFG-002 activo; CORE-02 (onboarding), CORE-17 (instalador) y R4 Bodega posteriores según dependencias. ADR abiertos sin improvisar.
+- R2 staging seguro pendiente. CFG-003 activa para completar configuración general de R3; después onboarding CORE-02, instalador CORE-17 según dependencias, R4 Bodega. No inventar ADR comerciales abiertos.
 - VERIFIED exige dictamen técnico externo registrado; concurrencia MariaDB real y UX visual de USERS-001 NO ejecutadas (pendientes antes de despliegue).
 
 ## Reglas operativas vigentes
