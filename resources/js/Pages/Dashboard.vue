@@ -31,6 +31,9 @@
                     <Link v-if="canManageSettings" href="/settings/business" class="sf-button sf-button-primary">
                         Datos del comercio
                     </Link>
+                    <Link v-if="canManageSettings" href="/settings/general" class="sf-button sf-button-primary">
+                        Preferencias generales
+                    </Link>
                     <a
                         v-if="canViewRoadmap"
                         href="/roadmap"

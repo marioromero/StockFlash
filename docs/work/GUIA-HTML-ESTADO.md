@@ -11,10 +11,10 @@ guide_status: INTEGRADA_EN_MAIN (2026-11-16)
 guide_content_last_written: 2026-11-16
 covered_features: AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED; ROADMAP-001 VERIFIED; USERS-001 VERIFIED; CFG-001 VERIFIED (fd12693); CFG-002 VERIFIED (81ba734)
 latest_covered_code_sha: `81ba73419bcffada59cea86efec4ac80f8a32c6f` (CFG-002 y anteriores)
-next_feature: CFG-003 activa; sin implementación publicada todavía
+next_feature: CFG-003 implementado; guía pendiente de redacción ChatGPT
 last_guide_integration_sha: `6a55e363684aa73ddb0a1c1c605b790871bdae4e` (ChatGPT, 21 temas, CFG-002)
 last_guide_integration_date: 2026-11-16
-pending_docs: NINGUNO
+pending_docs: GUIA_PENDIENTE_CHATGPT
 
 ## Cómo mantener este archivo
 - OpenCode puede actualizar solamente los metadatos y el registro de pendientes aquí, no los textos para usuarios en `public/docs/index.html`.
@@ -29,4 +29,12 @@ pending_docs: NINGUNO
 - contenido a redactar por ChatGPT: dos grupos (Comercio y Responsable), campos opcionales, aviso de auditoría de lectura de datos personales y alcance no tributario (sin prometer validación SII/RUT ni emisión DTE).
 - fecha: 2026-11-16.
 - estado: implementado, QA y CI verificadas; guía publicada por ChatGPT en `6a55e363684aa73ddb0a1c1c605b790871bdae4e`.
+- OpenCode no edita `public/docs/index.html`; este registro es solo metadato técnico.
+
+## GUIA_PENDIENTE_CHATGPT — CFG-003
+- feature: CFG-003 — Preferencias generales del comercio (CORE-09).
+- pantalla: `/settings/general` (acceso "Preferencias generales" desde el dashboard, con permiso `settings.manage`).
+- contenido a redactar por ChatGPT: dos grupos («Región y moneda» y «Precios y efectivo»), las siete claves contractuales (`country`, `currency_code`, `currency_decimals`, `timezone`, `locale`, `prices_include_tax`, `cash_rounding_step`) con sus defaults (CL, CLP, 0, America/Santiago, es-CL, true, 1), y alcance informativo sin prometer cálculo, emisión fiscal ni modificación de ventas existentes.
+- fecha: 2026-11-16.
+- estado: implementado localmente; `pending_docs` registrado por OpenCode. Guía aún no redactada ni integrada.
 - OpenCode no edita `public/docs/index.html`; este registro es solo metadato técnico.

@@ -99,6 +99,16 @@ Route::middleware(['auth', 'password.change', 'verify.session'])->group(function
             ->name('settings.business.update');
     });
 
+    // --- Preferencias generales del comercio (CFG-003 · CORE-09) ---
+    // Configuración global de las siete claves de Parte 2 §3.1. No usa
+    // `branch.access`. PATCH queda deshabilitado a propósito: PUT es completo.
+    Route::middleware('can.permission:settings.manage')->group(function () {
+        Route::get('/settings/general', [\App\Http\Controllers\Settings\GeneralSettingsController::class, 'edit'])
+            ->name('settings.general.edit');
+        Route::put('/settings/general', [\App\Http\Controllers\Settings\GeneralSettingsController::class, 'update'])
+            ->name('settings.general.update');
+    });
+
     // --- Administración global de sucursales (BRANCH-001 · CORE-05) ---
     // Es administración global: NO usa `branch.access`.
     Route::middleware('can.permission:settings.manage')->group(function () {
