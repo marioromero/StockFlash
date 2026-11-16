@@ -1,7 +1,7 @@
 # Estado operativo — StockFlash
 
 ## Feature activa
-- **COREMOD-001 — Registro técnico de módulos y dependencias (CORE-06 / RN-67–68): APPROVED y ACTIVA**, packet `docs/work/features/COREMOD-001.md`; lógica interna desde contrato aprobado, sin capacidades comerciales nuevas ni despliegue.
+- **COREPIN-001 — Autorizaciones internas mediante PIN (CORE-11 / SEC-12): APPROVED y ACTIVA**, packet `docs/work/features/COREPIN-001.md`. Utiliza tabla `authorization_overrides` y PIN existente; no introduce nuevas decisiones comerciales, pantallas ni despliegues.
 
 ## Estados por feature (una línea por hito)
 - **BOOT-001: VERIFIED** (2026-10-14). Laravel 13.35.0 + Vue 3 + Inertia 3.5.1 + TypeScript/Vite; scaffold publicado en `bcbf16f`; gates PASS y QA APROBADO. Sin deploy ni migraciones.
@@ -20,11 +20,12 @@
 - **CFG-003: VERIFIED técnico** (2026-11-16), SHA `045b8c8`, gates 16/16, 260 pruebas PHP, QA/CI verde, guía 22 temas. Cierre `docs/work/CFG-003-CLOSURE-20261116.md`; sin navegador real.
 - **CORESEQ-001: VERIFIED técnico** (2026-11-16), SHA `ceb50e0`, 16 gates PASS, 282 pruebas, QA/CI 2/2 verde; concurrencia real MariaDB diferida. Cierre `docs/work/CORESEQ-001-CLOSURE-20261116.md`.
 - **CORELIC-001: VERIFIED técnico** (2026-11-16), SHA `a2cc899`, gates 17/17, 308 pruebas, QA/CI 2/2 verde; guía 23 temas, sin conexión central. Cierre `docs/work/CORELIC-001-CLOSURE-20261116.md`.
+- **COREMOD-001: VERIFIED técnico** (2026-11-16), SHA `cd6d39d`, 18/18 gates, 328 pruebas PHP, QA/CI 2/2 verde. Servicio interno, sin interfaz; concurrencia MariaDB real pendiente. Cierre `docs/work/COREMOD-001-CLOSURE-20261116.md`.
 
 ## Pendientes y bloqueos reales
 - **STAGING-001: APPROVED**, sin deploy demostrado ni VERIFIED. FTPS solo hacia `/home/grupoint/stockflash-dev-app`; raíz pública y smoke pendientes de comprobar. No habilita despliegue por sí sola.
 - Restricción SSH vigente: no usar la credencial `grupoint`; vía FTPS separada sin publicar secretos.
-- R2 staging seguro pendiente. COREMOD-001 activa para CORE-06; CORE-02/17 onboarding/instalador y R4 Bodega seguirán por dependencias, sin nuevas reglas comerciales ni deploy.
+- R2 staging seguro pendiente. COREPIN-001 activa: autorización segura y reutilizable para POS/caja, sin UI todavía. Posteriormente módulos de catálogo/inventario y flujos de negocio según dependencias, sin decidir nuevas reglas de producto por intuición.
 - VERIFIED exige dictamen técnico externo registrado; concurrencia MariaDB real y UX visual de USERS-001 NO ejecutadas (pendientes antes de despliegue).
 
 ## Reglas operativas vigentes

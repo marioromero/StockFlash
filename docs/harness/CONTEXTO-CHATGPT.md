@@ -2,7 +2,7 @@
 
 **Última revisión por ChatGPT:** 2026-11-16
 **Repositorio:** `marioromero/StockFlash` · rama de desarrollo `main`
-**Estado de referencia observado:** `a2cc8992b3f13d14423d5d222628f895a568ee3f` (CORELIC-001 código revisado y CI verde; guía 23 temas `aa3ba75b65f228c9ef68c85958bad77bc14a9666`; COREMOD-001 activa; confirmar HEAD)
+**Estado de referencia observado:** `cd6d39d0c5497499d7df474bcde21b948321c422` (COREMOD-001 código/QA/CI verificados, sin nueva UI; COREPIN-001 activa; comprobar HEAD vigente)
 **Aviso de vigencia:** este SHA es un punto de control histórico, NO el HEAD garantizado al abrir una nueva sesión. Verificar HEAD, PR abiertos y documentación actual antes de actuar.
 
 ## 1. INSTRUCCIONES PARA CUALQUIER SESIÓN NUEVA DE CHATGPT
@@ -73,7 +73,7 @@ Si el propietario solicita «continuar StockFlash», «revisar lo que hizo OpenC
 ## 5. TRABAJO ABIERTO Y SIGUIENTE PASO
 
 1. USERS-001 y HCTX-001: VERIFIED técnico, informes de cierre publicados el 2026-11-16; sin despliegue. Concurrencia MariaDB real y UX visual quedan explícitamente pendientes para predespliegue.
-2. CFG-001/002/003, CORESEQ-001 y CORELIC-001: VERIFIED técnico; CORELIC-001 SHA `a2cc899`, gates 17/17, 308 pruebas, QA/CI verde, guía 23 temas. Siguiente COREMOD-001: registro técnico de módulos y dependencias ya especificadas, sin habilitación comercial.
+2. CFG-001/002/003, CORESEQ-001, CORELIC-001 y COREMOD-001: VERIFIED técnico. COREMOD-001 SHA `cd6d39d`, 18 gates, 328 pruebas, QA/CI verde; concurrencia real MariaDB pendiente. Siguiente COREPIN-001: verificaciones y autorizaciones por PIN según CORE-11/SEC-12.
 3. SFH1: mantener un issue activo por tarea; no exigir autorizaciones administrativas de cierre repetidas. ChatGPT verifica y registra el cierre, OpenCode solo lo publica.
 
 ## 6. FORMATO BREVE DE ACTUALIZACIÓN DE ESTE ARCHIVO

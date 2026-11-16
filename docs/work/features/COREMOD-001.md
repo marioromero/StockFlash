@@ -1,6 +1,6 @@
 # COREMOD-001 — Registro técnico y control de dependencias de módulos (CORE-06 / RN-67–68)
 
-status: APPROVED
+status: VERIFIED
 approval_basis: existing_approved_contract_owner_delegation_2026-11-16
 new_business_decisions: NONE
 publication_mode: AUTO_GIT
@@ -38,3 +38,12 @@ Definir un único catálogo de códigos y **dependencias duras** idénticas a Pa
 ## Exclusiones estrictas
 
 Sin editar contrato v2.2 ni `config/modules.php` (matriz RBAC existente), sin resembrar/migrar DB, sin cambios remotos/secretos/deploy, sin gestionar suscripciones ni marcar productos comerciales comprados, sin clientes/POS/inventario real, sin módulo fiscal integrado, sin UI ni rutas públicas nuevas, sin plan comercial nuevo, sin agentes/índices/protocolos. Si aparece una decisión nueva material, informar pregunta concreta con opciones y bloquear solo lo afectado. No pedir aprobación genérica.
+
+## Cierre técnico externo — 2026-11-16
+
+status: VERIFIED
+reviewer_externo: ChatGPT
+registro: `docs/work/COREMOD-001-CLOSURE-20261116.md`
+code_sha: `cd6d39d0c5497499d7df474bcde21b948321c422`
+evidencia: 18/18 gates PASS; 328 PHP tests/2256 assertions; QA independiente APROBADO; CI 2/2 SUCCESS.
+limites: concurrencia real MariaDB no ejecutada; sin rutas, UI, permisos comerciales nuevos, despliegue ni BD remota.
