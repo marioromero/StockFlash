@@ -679,7 +679,7 @@ GATES_BY_PACKET: dict[str, list[dict]] = {
          "cmd": ["npm", "run", "build"],
          "mandatory": True, "timeout_s": 600},
         {"id": "CFG3-15-guia-metadatos", "kind": "shell",
-         "cmd": ["py", "-3", "-c", "import pathlib as P,re,sys\nR=P.Path('.')\ns=(R/'docs/work/GUIA-HTML-ESTADO.md').read_text(encoding='utf-8')\nm=re.search(r'^pending_docs:\\s*(.+)$',s,re.M)\np=m.group(1).strip() if m else ''\nno_pending={'','NINGUNO','NINGUNA','NO APLICA','NO_APLICA'}\nok=('CFG-003' in s and p.upper() not in no_pending) or ('CFG-003 VERIFIED' in s and p.upper() in no_pending)\nsys.exit(0 if ok else 1)"],
+         "cmd": ["py", "-3", "-c", "import pathlib as P,re,sys\nR=P.Path('.')\ns=(R/'docs/work/GUIA-HTML-ESTADO.md').read_text(encoding='utf-8')\nm=re.search(r'^pending_docs:\\s*(.+)$',s,re.M)\np=m.group(1).strip() if m else ''\nno_pending={'','NINGUNO','NINGUNA','NO APLICA','NO_APLICA'}\nok=('CFG-003' in s and p.upper() not in no_pending) or ('CFG-003 VERIFIED' in s and p.upper() in no_pending) or ('CFG-003 VERIFIED' in s and p.upper() in no_pending)\nsys.exit(0 if ok else 1)"],
          "mandatory": True, "timeout_s": 60},
         {"id": "CFG3-16-diff-check", "kind": "shell",
          "cmd": ["git", "diff", "--check", "HEAD"],

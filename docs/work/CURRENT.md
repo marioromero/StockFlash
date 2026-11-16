@@ -1,7 +1,7 @@
 # Estado operativo — StockFlash
 
 ## Feature activa
-- **CFG-003 — Preferencias generales y monetarias del comercio (CORE-09): APPROVED y ACTIVA**, `docs/work/features/CFG-003.md`. Contrato existente Parte 2 §3.1; sin decisiones nuevas, sin deploy/BD remota.
+- **NUEVA FEATURE: CORESEQ-001 — Numeración transaccional por ámbito (CORE-13 / RN-74), APPROVED y ACTIVA**, `docs/work/features/CORESEQ-001.md`. Contrato existente, sin migraciones ni despliegue.
 
 ## Estados por feature (una línea por hito)
 - **BOOT-001: VERIFIED** (2026-10-14). Laravel 13.35.0 + Vue 3 + Inertia 3.5.1 + TypeScript/Vite; scaffold publicado en `bcbf16f`; gates PASS y QA APROBADO. Sin deploy ni migraciones.
@@ -17,11 +17,12 @@
 
 - **CFG-001: VERIFIED** (2026-11-16), SHA `fd12693`, 15 gates PASS, 220 pruebas PHP, QA APROBADO, CI 2/2 SUCCESS; guía de 20 temas. Cierre `docs/work/CFG-001-CLOSURE-20261116.md`.
 - **CFG-002: VERIFIED técnico** (2026-11-16), SHA `81ba734`, 16 gates PASS, 239 pruebas PHP, QA APROBADO, CI 2/2 SUCCESS, guía 21 temas. Cierre `docs/work/CFG-002-CLOSURE-20261116.md`; sin navegador real ni despliegue.
+- **CFG-003: VERIFIED técnico** (2026-11-16), SHA `045b8c8`, gates 16/16, 260 pruebas PHP, QA/CI verde, guía 22 temas. Cierre `docs/work/CFG-003-CLOSURE-20261116.md`; sin navegador real.
 
 ## Pendientes y bloqueos reales
 - **STAGING-001: APPROVED**, sin deploy demostrado ni VERIFIED. FTPS solo hacia `/home/grupoint/stockflash-dev-app`; raíz pública y smoke pendientes de comprobar. No habilita despliegue por sí sola.
 - Restricción SSH vigente: no usar la credencial `grupoint`; vía FTPS separada sin publicar secretos.
-- R2 staging seguro pendiente. CFG-003 activa para completar configuración general de R3; después onboarding CORE-02, instalador CORE-17 según dependencias, R4 Bodega. No inventar ADR comerciales abiertos.
+- R2 staging seguro pendiente. CORESEQ-001 activa para CORE-13 antes de POS/Bodega; CORE-02 onboarding y CORE-17 instalador siguen por dependencias. No inventar ADR abiertos.
 - VERIFIED exige dictamen técnico externo registrado; concurrencia MariaDB real y UX visual de USERS-001 NO ejecutadas (pendientes antes de despliegue).
 
 ## Reglas operativas vigentes

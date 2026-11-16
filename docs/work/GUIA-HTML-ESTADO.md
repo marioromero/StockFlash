@@ -9,12 +9,12 @@ guide_branch: `docs/guia-usuario-interactiva-20261110`
 guide_pr: https://github.com/marioromero/StockFlash/pull/2
 guide_status: INTEGRADA_EN_MAIN (2026-11-16)
 guide_content_last_written: 2026-11-16
-covered_features: AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED; ROADMAP-001 VERIFIED; USERS-001 VERIFIED; CFG-001 VERIFIED (fd12693); CFG-002 VERIFIED (81ba734)
-latest_covered_code_sha: `81ba73419bcffada59cea86efec4ac80f8a32c6f` (CFG-002 y anteriores)
-next_feature: CFG-003 implementado; guía pendiente de redacción ChatGPT
-last_guide_integration_sha: `6a55e363684aa73ddb0a1c1c605b790871bdae4e` (ChatGPT, 21 temas, CFG-002)
+covered_features: AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED; ROADMAP-001 VERIFIED; USERS-001 VERIFIED; CFG-001 VERIFIED; CFG-002 VERIFIED; CFG-003 VERIFIED (045b8c8)
+latest_covered_code_sha: `045b8c8f33a351315bd26194fae7fcadfb6597b3` (CFG-003 y anteriores)
+next_feature: CORESEQ-001 activa, no implementada aún
+last_guide_integration_sha: `e6ffeea6123950f7213e1c71443cbbcfd6e863d1` (ChatGPT, 22 temas)
 last_guide_integration_date: 2026-11-16
-pending_docs: GUIA_PENDIENTE_CHATGPT
+pending_docs: NINGUNO
 
 ## Cómo mantener este archivo
 - OpenCode puede actualizar solamente los metadatos y el registro de pendientes aquí, no los textos para usuarios en `public/docs/index.html`.
@@ -36,5 +36,5 @@ pending_docs: GUIA_PENDIENTE_CHATGPT
 - pantalla: `/settings/general` (acceso "Preferencias generales" desde el dashboard, con permiso `settings.manage`).
 - contenido a redactar por ChatGPT: dos grupos («Región y moneda» y «Precios y efectivo»), las siete claves contractuales (`country`, `currency_code`, `currency_decimals`, `timezone`, `locale`, `prices_include_tax`, `cash_rounding_step`) con sus defaults (CL, CLP, 0, America/Santiago, es-CL, true, 1), y alcance informativo sin prometer cálculo, emisión fiscal ni modificación de ventas existentes.
 - fecha: 2026-11-16.
-- estado: implementado localmente; `pending_docs` registrado por OpenCode. Guía aún no redactada ni integrada.
+- estado: publicado, QA/CI comprobadas y guía actualizada por ChatGPT en `e6ffeea6123950f7213e1c71443cbbcfd6e863d1`.
 - OpenCode no edita `public/docs/index.html`; este registro es solo metadato técnico.

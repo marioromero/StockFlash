@@ -2,7 +2,7 @@
 
 **Última revisión por ChatGPT:** 2026-11-16
 **Repositorio:** `marioromero/StockFlash` · rama de desarrollo `main`
-**Estado de referencia observado:** `81ba73419bcffada59cea86efec4ac80f8a32c6f` (CFG-002 QA/CI/verificación externa, manual 21 temas en `6a55e363684aa73ddb0a1c1c605b790871bdae4e`; CFG-003 activa; comprobar HEAD vigente)
+**Estado de referencia observado:** `045b8c8f33a351315bd26194fae7fcadfb6597b3` (CFG-003 código verificado; guía a 22 temas `e6ffeea6123950f7213e1c71443cbbcfd6e863d1`; CORESEQ-001 activa; comprobar HEAD vigente)
 **Aviso de vigencia:** este SHA es un punto de control histórico, NO el HEAD garantizado al abrir una nueva sesión. Verificar HEAD, PR abiertos y documentación actual antes de actuar.
 
 ## 1. INSTRUCCIONES PARA CUALQUIER SESIÓN NUEVA DE CHATGPT
@@ -73,7 +73,7 @@ Si el propietario solicita «continuar StockFlash», «revisar lo que hizo OpenC
 ## 5. TRABAJO ABIERTO Y SIGUIENTE PASO
 
 1. USERS-001 y HCTX-001: VERIFIED técnico, informes de cierre publicados el 2026-11-16; sin despliegue. Concurrencia MariaDB real y UX visual quedan explícitamente pendientes para predespliegue.
-2. CFG-001 y CFG-002: VERIFIED técnico (código CFG-002 `81ba734`, gates 16/16, QA/CI verde; manual 21 temas). Siguiente CFG-003: preferencias regionales y monetarias ya definidas, sin decisión nueva del propietario.
+2. CFG-001/002/003 VERIFIED técnico; CFG-003 código `045b8c8`, gates 16/16, 260 pruebas, QA y CI verde, guía 22 temas. Siguiente CORESEQ-001 — numeración por ámbito RN-74, requisito del contrato ya aprobado.
 3. SFH1: mantener un issue activo por tarea; no exigir autorizaciones administrativas de cierre repetidas. ChatGPT verifica y registra el cierre, OpenCode solo lo publica.
 
 ## 6. FORMATO BREVE DE ACTUALIZACIÓN DE ESTE ARCHIVO
