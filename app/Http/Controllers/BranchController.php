@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\BranchRequest;
 use App\Models\Branch;
 use App\Support\AuditLogger;
-use Carbon\Carbon;
+use App\Support\License\LicenseReadOnlyRule;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
@@ -241,7 +241,7 @@ class BranchController extends Controller
             ]);
         }
 
-        if (Carbon::parse((string) $license->grace_until)->endOfDay()->isPast()) {
+        if (LicenseReadOnlyRule::isReadOnly($license)) {
             throw ValidationException::withMessages([
                 'max_branches' => 'La licencia está suspendida fuera del período de gracia; el sistema está en modo solo lectura.',
             ]);

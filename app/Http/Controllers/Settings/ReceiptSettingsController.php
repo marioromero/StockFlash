@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Settings;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ReceiptSettingsRequest;
 use App\Support\AuditLogger;
-use Carbon\Carbon;
+use App\Support\License\LicenseReadOnlyRule;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -191,14 +191,6 @@ class ReceiptSettingsController extends Controller
 
     private function licenseRowIsReadOnly(?object $license): bool
     {
-        if ($license === null || $license->status !== 'suspended') {
-            return false;
-        }
-
-        if ($license->grace_until === null) {
-            return true;
-        }
-
-        return Carbon::parse((string) $license->grace_until)->endOfDay()->isPast();
+        return LicenseReadOnlyRule::isReadOnly($license);
     }
 }

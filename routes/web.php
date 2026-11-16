@@ -31,9 +31,10 @@ Route::middleware(['auth', 'verify.session'])->group(function () {
 
 // --- Dashboard protegido (AUTH-001) ---
 Route::middleware(['auth', 'password.change', 'verify.session'])->group(function () {
-    Route::get('/dashboard', function () {
-        return inertia('Dashboard');
-    })->name('dashboard');
+    // El aviso de estado de licencia se calcula solo lectura desde
+    // `license_states`; no expone secretos ni administra la licencia (CORE-08).
+    Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])
+        ->name('dashboard');
 
     // Rutas de prueba de autorización (AUTH-001). No son CRUD: devuelven
     // un payload simple para verificar que el middleware de permisos y de

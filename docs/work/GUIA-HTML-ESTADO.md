@@ -15,7 +15,7 @@ next_feature: CORELIC-001 activa; CORESEQ-001 servicio interno VERIFIED, sin tem
 internal_only_features: CORESEQ-001 VERIFIED (servicio interno invisible; sin entrada nueva en guía)
 last_guide_integration_sha: `e6ffeea6123950f7213e1c71443cbbcfd6e863d1` (ChatGPT, 22 temas)
 last_guide_integration_date: 2026-11-16
-pending_docs: NINGUNO
+pending_docs: CORELIC-001 (GUIA_PENDIENTE_CHATGPT)
 
 ## Cómo mantener este archivo
 - OpenCode puede actualizar solamente los metadatos y el registro de pendientes aquí, no los textos para usuarios en `public/docs/index.html`.
@@ -38,4 +38,12 @@ pending_docs: NINGUNO
 - contenido a redactar por ChatGPT: dos grupos («Región y moneda» y «Precios y efectivo»), las siete claves contractuales (`country`, `currency_code`, `currency_decimals`, `timezone`, `locale`, `prices_include_tax`, `cash_rounding_step`) con sus defaults (CL, CLP, 0, America/Santiago, es-CL, true, 1), y alcance informativo sin prometer cálculo, emisión fiscal ni modificación de ventas existentes.
 - fecha: 2026-11-16.
 - estado: publicado, QA/CI comprobadas y guía actualizada por ChatGPT en `e6ffeea6123950f7213e1c71443cbbcfd6e863d1`.
+- OpenCode no edita `public/docs/index.html`; este registro es solo metadato técnico.
+
+## GUIA_PENDIENTE_CHATGPT — CORELIC-001
+- feature: CORELIC-001 — Estado local de licencia, aviso en Dashboard y modo solo lectura tras la gracia (CORE-08 · RN-67–70).
+- pantalla: `/dashboard` (banner de estado visible para cualquier usuario autenticado; no es una pantalla de administración de licencias).
+- contenido a redactar por ChatGPT: significado de los avisos de licencia (`expiring_soon`, `suspended` dentro de gracia, `suspended` fuera de gracia/sin gracia y «sin licencia configurada»), diferencia entre aviso y bloqueo de altas, modo solo lectura tras la gracia, y aclaración de que la licencia es informativa y no se administra desde el Dashboard.
+- fecha: 2026-11-16.
+- estado: implementado, pendiente de redacción/publicación de guía por ChatGPT; gates y QA se registran en el cierre de la feature.
 - OpenCode no edita `public/docs/index.html`; este registro es solo metadato técnico.

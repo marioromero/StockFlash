@@ -3,7 +3,7 @@
 namespace App\Support;
 
 use App\Models\User;
-use Carbon\Carbon;
+use App\Support\License\LicenseReadOnlyRule;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -219,7 +219,7 @@ class UserAccessManager
             ]);
         }
 
-        if (Carbon::parse((string) $license->grace_until)->endOfDay()->isPast()) {
+        if (LicenseReadOnlyRule::isReadOnly($license)) {
             throw ValidationException::withMessages([
                 'license' => 'La licencia está suspendida fuera del período de gracia; el sistema está en modo solo lectura.',
             ]);

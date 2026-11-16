@@ -13,6 +13,19 @@
         </header>
 
         <main class="sf-main">
+            <section
+                v-if="licenseNotice"
+                class="sf-license-banner"
+                :class="`sf-license-banner--${licenseNotice.severity}`"
+                :role="licenseNotice.severity === 'danger' ? 'alert' : 'status'"
+            >
+                <p class="sf-license-banner-message">{{ licenseNotice.message }}</p>
+                <p v-if="licenseNotice.date" class="sf-license-banner-date">
+                    {{ licenseNotice.date_label }}:
+                    <time :datetime="licenseNotice.date">{{ licenseNotice.date }}</time>
+                </p>
+            </section>
+
             <section class="sf-card">
                 <h2 class="sf-section-title">Dashboard</h2>
                 <p class="sf-text">
@@ -75,9 +88,20 @@ interface SharedPageProps {
     };
 }
 
+interface LicenseNotice {
+    type: string;
+    severity: string;
+    message: string;
+    date: string | null;
+    date_label: string | null;
+}
+
 const props = defineProps<{
     user_name?: string;
+    license_notice?: LicenseNotice | null;
 }>();
+
+const licenseNotice = computed(() => props.license_notice ?? null);
 
 const page = usePage<SharedPageProps>();
 const userName = computed(() => page.props.auth?.user?.name ?? props.user_name ?? 'Usuario');
@@ -149,6 +173,47 @@ async function logout(event: SubmitEvent) {
     flex: 1;
     padding: 2rem;
     background: #f3f4f6;
+}
+
+.sf-license-banner {
+    max-width: 640px;
+    margin-bottom: 1rem;
+    padding: 0.85rem 1rem;
+    border-left: 4px solid #d97706;
+    border-radius: 0.5rem;
+    background: #fffbeb;
+    color: #78350f;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.sf-license-banner--warning {
+    border-left-color: #d97706;
+    background: #fffbeb;
+    color: #78350f;
+}
+
+.sf-license-banner--danger {
+    border-left-color: #dc2626;
+    background: #fef2f2;
+    color: #7f1d1d;
+}
+
+.sf-license-banner--info {
+    border-left-color: #2563eb;
+    background: #eff6ff;
+    color: #1e3a8a;
+}
+
+.sf-license-banner-message {
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.sf-license-banner-date {
+    margin-top: 0.25rem;
+    font-size: 0.8125rem;
+    line-height: 1.4;
 }
 
 .sf-card {
