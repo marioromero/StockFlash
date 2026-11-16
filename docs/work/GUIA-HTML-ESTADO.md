@@ -9,12 +9,12 @@ guide_branch: `docs/guia-usuario-interactiva-20261110`
 guide_pr: https://github.com/marioromero/StockFlash/pull/2
 guide_status: INTEGRADA_EN_MAIN (2026-11-16)
 guide_content_last_written: 2026-11-16
-covered_features: AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED (2026-11-10); ROADMAP-001 VERIFIED (2026-11-10); USERS-001 VERIFIED técnico 2026-11-16 (código 2aec038)
-latest_covered_code_sha: `2aec03893c78bc7180544930e0b6f741599df9ed` (USERS-001 corregido; DOCS/AUTH/BRANCH/ROADMAP previos)
-next_feature: CFG-001 implementada 2026-11-16, texto de guía pendiente
-last_guide_integration_sha: `79c3b0f5af573b956cbcfb8c95c50aef251f5bd5` (commit de ChatGPT que amplió el manual a 19 temas)
+covered_features: AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED; ROADMAP-001 VERIFIED; USERS-001 VERIFIED; CFG-001 VERIFIED (fd12693)
+latest_covered_code_sha: `fd1269361b19633502f34044317a63968d6376ad` (CFG-001; incluye anteriores)
+next_feature: CFG-002 activa (sin pantalla publicada aún)
+last_guide_integration_sha: `d5a25f8e684a8bc85ee79d9435a7abe34af4996d` (ChatGPT guía 20 temas)
 last_guide_integration_date: 2026-11-16
-pending_docs: CFG-001 — nueva pantalla Ajustes de comprobante (encabezado, pie, papel); requiere textos de ChatGPT
+pending_docs: NINGUNO
 
 ## Cómo mantener este archivo
 - OpenCode puede actualizar solamente los metadatos y el registro de pendientes aquí, no los textos para usuarios en `public/docs/index.html`.

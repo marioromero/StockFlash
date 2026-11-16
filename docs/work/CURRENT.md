@@ -1,7 +1,7 @@
 # Estado operativo — StockFlash
 
 ## Feature activa
-- **NINGUNA feature activa tras CFG-001.** Siguiente packet técnico derivado de CORE-09 en preparación, sin requerir aprobación genérica.
+- **CFG-002 — Datos del comercio y contacto responsable: APPROVED y ACTIVA**, packet `docs/work/features/CFG-002.md`. CORE-09/Parte 2 §3.1, sin decisiones comerciales nuevas, AUTO_GIT, sin deploy ni BD remota.
 
 ## Estados por feature (una línea por hito)
 - **BOOT-001: VERIFIED** (2026-10-14). Laravel 13.35.0 + Vue 3 + Inertia 3.5.1 + TypeScript/Vite; scaffold publicado en `bcbf16f`; gates PASS y QA APROBADO. Sin deploy ni migraciones.
@@ -20,7 +20,7 @@
 ## Pendientes y bloqueos reales
 - **STAGING-001: APPROVED**, sin deploy demostrado ni VERIFIED. FTPS solo hacia `/home/grupoint/stockflash-dev-app`; raíz pública y smoke pendientes de comprobar. No habilita despliegue por sí sola.
 - Restricción SSH vigente: no usar la credencial `grupoint`; vía FTPS separada sin publicar secretos.
-- R2 staging seguro sigue pendiente. R3 CFG-001 activo; instalador CORE-17/onboarding CORE-02 y R4 Bodega seguirán por dependencias técnicas. ADR de negocio abiertos no se implementan por intuición.
+- R2 staging seguro pendiente. R3 CFG-002 activo; CORE-02 (onboarding), CORE-17 (instalador) y R4 Bodega posteriores según dependencias. ADR abiertos sin improvisar.
 - VERIFIED exige dictamen técnico externo registrado; concurrencia MariaDB real y UX visual de USERS-001 NO ejecutadas (pendientes antes de despliegue).
 
 ## Reglas operativas vigentes

@@ -8,11 +8,11 @@ route: `/roadmap` (restringida a Admin Central / `settings.manage`)
 created_on: 2026-11-10
 baseline_code_sha: `2aec03893c78bc7180544930e0b6f741599df9ed`
 roadmap_content_status: INTEGRADA_EN_MAIN (2026-11-16)
-roadmap_integration_sha: `79c3b0f5af573b956cbcfb8c95c50aef251f5bd5` (commit de ChatGPT que actualizó el roadmap)
+roadmap_integration_sha: `d5a25f8e684a8bc85ee79d9435a7abe34af4996d` (CFG-001 incorporada a R3)
 roadmap_integration_date: 2026-11-16
 roadmap_last_review: 2026-11-16
-covered_features: BOOT-001 VERIFIED; CI-001 VERIFIED; AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED (cierre 3fde691); ROADMAP-001 VERIFIED (2026-11-10); USERS-001 VERIFIED técnico 2026-11-16 (código 2aec038)
-in_progress: R3_CORE — USERS-001 VERIFIED técnico; configuración/instalador y validaciones operativas pendientes
+covered_features: BOOT-001 VERIFIED; CI-001 VERIFIED; AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED; ROADMAP-001 VERIFIED; USERS-001 VERIFIED; CFG-001 VERIFIED (fd12693)
+in_progress: R3_CORE — CFG-001 VERIFIED; CFG-002 activa; instalador y licencias técnicas pendientes
 first_commercial_release: R7 — POS + Bodega sin emisión DTE integrada y con piloto/controles de salida
 pending: NINGUNO
 report_state: ROADMAP_ACTUALIZADA
