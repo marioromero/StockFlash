@@ -2,7 +2,7 @@
 
 **Última revisión por ChatGPT:** 2026-11-17
 **Repositorio:** `marioromero/StockFlash` · rama de desarrollo `main`
-**Estado de referencia observado:** `a331099caeacd4f6c153f7ff4f6122fb13d18cf1` (CATPROD-001 VERIFIED técnico: código `c8e1338c5814a9c8741cf1a010cb1346636638a7`, CI GitHub 2/2 SUCCESS runs `44142115506`/`44142115528`, 19/19 gates, QA APROBADO, cierre en `docs/work/CATPROD-001-CLOSURE-20261117.md`; guía 25 temas `b3938efd`, roadmap actualizado `b1ca40eb`; SETUP-001 CORE-02 activo packet `3ac73b9f`, issue SFH1 #25 abierto `i=001 dst=OC`). Verificar HEAD e issue antes de actuar.
+**Estado de referencia observado:** corrección de CI documental publicada en `46688eb6a030e87314fc51373f97d62a5d08aa09`: cinco aserciones obsoletas `24 temas disponibles.` sustituidas por verificación dinámica del índice y cobertura CATPROD. La base anterior `59d66c43` falló PHP GitHub run `44145778518`, contratos verde run `44145778535`; nueva CI del SHA correctivo PENDING de verificación. SETUP-001 sigue APPROVED/ACTIVA pero no inicia hasta base CI 2/2 SUCCESS. Issue #25 i=002 BLOCK atendido; i=003 instructivo de recuperación al día. No deploy/BD remota.
 **Aviso de vigencia:** este SHA es un punto de control histórico, NO el HEAD garantizado al abrir una nueva sesión. Verificar HEAD, PR abiertos y documentación actual antes de actuar.
 
 ## 1. INSTRUCCIONES PARA CUALQUIER SESIÓN NUEVA DE CHATGPT
@@ -24,6 +24,8 @@ Si el propietario solicita «continuar StockFlash», «revisar lo que hizo OpenC
 
 
 12. **REVISIÓN VISUAL POR HITOS — propietario 2026-11-17.** ChatGPT decide de manera autónoma cuándo es útil que el propietario pruebe visualmente **un conjunto funcional de características o una pantalla ya integrada**, no por cada subtarea. Solicitarlo solo cuando el entorno sea realmente accesible y el estado técnico lo justifique; **nunca autoriza automáticamente deploy ni migración/uso de BD remota**. Indicar en 2–4 puntos breves la URL/entorno real, acción a probar y resultado observable; si aún no existe entorno accesible, registrar pendiente para predespliegue y seguir la secuencia autónoma. No presentar un resultado visual como probado si no se ejecutó.
+
+13. **NO INICIAR OTRA FEATURE CON CI BASE ROJA — reparación preventiva 2026-11-17.** Cuando ChatGPT publica una edición propia de `public/docs/index.html` o `resources/roadmap/index.html`, debe comprobar el efecto sobre `tests/Feature/Docs/DocsIntegrationTest.php` y demás pruebas de documentación (no dejar cantidades fijas obsoletas), obtener CI GitHub **2/2 SUCCESS sobre el nuevo HEAD** y **solo entonces** activar/hacer handoff de otra feature. Si la CI falla por edición editorial propia, ChatGPT identifica y corrige el desacople, verifica el nuevo SHA y emite el siguiente SFH1; no delega al propietario un bloqueo técnico. No alterar un indicador verdadero solo para satisfacer una prueba desactualizada. Si GitHub no permite observar la CI inmediatamente, registrar PENDING y condicionar el handoff a su confirmación; nunca afirmar verde sin comprobación.
 
 **Idea central:** este archivo es un índice de continuidad y decisiones, no sustituye la fuente de verdad (el repositorio, Feature Packets y código).
 
@@ -82,6 +84,7 @@ Si el propietario solicita «continuar StockFlash», «revisar lo que hizo OpenC
 
 1. USERS-001 y HCTX-001: VERIFIED técnico, informes de cierre publicados el 2026-11-16; sin despliegue. Concurrencia MariaDB real y UX visual quedan explícitamente pendientes para predespliegue.
 2. CFG-001/002/003, CORESEQ/CORELIC/COREMOD/COREPIN, CATDB-001 y CATMAST-001 y **CATPROD-001**: VERIFIED técnico. CATPROD código `c8e1338`, 19/19 gates, 476 PHP/4192, QA independiente APROBADO, CI 2/2 SUCCESS. Cierre `docs/work/CATPROD-001-CLOSURE-20261117.md`; manual 25 temas, roadmap actualizado. Issue SFH1 #24 cerrado con i=005 GPT. QA R2 N-01 tasa inactiva diferida **antes de POS/Fiscal**; N-02/N-03 menores. MariaDB y UI real no ejecutadas. **Siguiente SETUP-001 (CORE-02) APPROVED**, packet `docs/work/features/SETUP-001.md`, solo SQLite/CI, BKP-08 P1★ pendiente para producción, sin deploy/DB remota; iniciar con `ok` en OpenCode: issue SFH1 #25 `i=001 dst=OC`.
+3. **CI base SETUP-001 temporalmente roja por guía HTML:** GPT agregó tema CATPROD de 24 a 25, cinco tests DocsIntegrationTest seguían fijos en 24. Reparado con prueba de conteo/navegación dinámica en commit `46688eb6`; no representa defecto en funcionalidades CFG/CATMAST. CI del commit correctivo debe comprobarse antes de iniciar SETUP. OC mantiene 3 reportes CATPROD untracked; para sincronizar, preservarlos sin borrar/sobrescribir (p. ej. mover selectivamente a `docs/work/.run/` ignorado), luego `safe_git_pull.py`, y ejecutar solo con CI base verde. OpenCode salida de bloqueo 1–3 líneas, `OK` solo rutina satisfactoria.
 3. SFH1: mantener un issue activo por tarea; no exigir autorizaciones administrativas de cierre repetidas. ChatGPT verifica y registra el cierre, OpenCode solo lo publica.
 
 ## 6. FORMATO BREVE DE ACTUALIZACIÓN DE ESTE ARCHIVO
