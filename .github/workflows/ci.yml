@@ -139,7 +139,15 @@ jobs:
             exit 1
           fi
           if [ "$ROADMAP_STATUS" != "302" ] && [ "$ROADMAP_STATUS" != "403" ]; then
-            echo "Smoke FAIL: /roadmap respuesta inesperada ($ROADMAP_STATUS)"
-            exit 1
+            if [ "$ROADMAP_STATUS" = "503" ]; then
+              curl -s "http://127.0.0.1:${PORT}/roadmap" -o /tmp/sf-roadmap.html
+              if ! grep -q 'esquema de la base de datos' /tmp/sf-roadmap.html; then
+                echo "Smoke FAIL: /roadmap 503 sin mensaje de esquema no preparado"
+                exit 1
+              fi
+            else
+              echo "Smoke FAIL: /roadmap respuesta inesperada ($ROADMAP_STATUS)"
+              exit 1
+            fi
           fi
-          echo "Smoke OK: HTTP 200 + lang es-CL + /docs/ 200 + /roadmap protegido ($ROADMAP_STATUS)"
+          echo "Smoke OK: HTTP 200 + lang es-CL + /docs/ 200 + /roadmap protegido o 503 controlado sin esquema ($ROADMAP_STATUS)"

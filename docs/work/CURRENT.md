@@ -1,7 +1,7 @@
 # Estado operativo — StockFlash
 
 ## Feature activa
-- **SETUP-001 — Asistente de primer inicio CORE-02: IMPLEMENTADO, sin VERIFIED**, `docs/work/features/SETUP-001.md`, sobre contratos v2.2 aprobados, sin nuevas decisiones comerciales. `/setup` transaccional con guard server-side, token de flujo y una sola sucursal/Admin Central. Producción no demo bloqueada con `NOT_READY_FOR_PRODUCTION` (BKP-08 no implementado). Ciclo correctivo QA aplicado (password fuera de old input, caché `no-store`, defaults, foco/errores UI, aviso DEV). Pruebas SQLite `:memory:`: 50 nuevas / 465 aserciones; suite 528 / 4662. Pendientes: QA independiente final, publicación y CI. Sin migraciones, DB remota ni despliegue.
+- **SETUP-001 — Asistente de primer inicio CORE-02: IMPLEMENTADO, sin VERIFIED**, `docs/work/features/SETUP-001.md`, sobre contratos v2.2 aprobados, sin nuevas decisiones comerciales. `/setup` transaccional con guard server-side, token de flujo y una sola sucursal/Admin Central. Producción no demo bloqueada con `NOT_READY_FOR_PRODUCTION` (BKP-08 no implementado). Ciclo correctivo QA aplicado (password fuera de old input, caché `no-store`, defaults, foco/errores UI, aviso DEV, smoke `/roadmap` 503 controlado sin esquema). Pruebas SQLite `:memory:`: 51 nuevas / 468 aserciones; suite 529 / 4665. Pendientes: QA independiente final, publicación y CI. Sin migraciones, DB remota ni despliegue.
 
 ## Estados por feature
 - BOOT-001: VERIFIED (2026-10-14), Laravel 13.35.0 + Vue 3/Inertia/TS; `bcbf16f`.
