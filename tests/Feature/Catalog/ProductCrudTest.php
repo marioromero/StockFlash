@@ -167,7 +167,6 @@ class ProductCrudTest extends ProductTestCase
     public function test_valida_enums_precision_negativos_y_fk_de_variante(): void
     {
         $cases = [
-            ['origin' => 'api'],
             ['variants' => [$this->variantPayload(['unit' => 'ton'])], 'type' => 'simple'],
             ['variants' => [$this->variantPayload(['price' => '-1.00'])], 'type' => 'simple'],
             ['variants' => [$this->variantPayload(['price' => '10.123'])], 'type' => 'simple'],

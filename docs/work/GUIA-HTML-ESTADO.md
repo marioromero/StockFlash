@@ -69,5 +69,6 @@ pending_docs: CATPROD-001 (productos, variantes y códigos de barras)
 - permisos: lectura `catalog.view`, escritura `catalog.manage`, costos/margen/markup `catalog.view_cost`.
 - contenido a redactar por ChatGPT: uso de la pantalla, simple/variable/combo, unicidad de SKU/código interno/código de barras, costos protegidos, bajas lógicas que conservan identificadores, RN-70 en modo solo lectura y exclusiones (sin inventario/stock, POS, caja, ventas, combos funcionales P1, promociones, CSV, WooCommerce ni DTE/SII).
 - fecha: 2026-11-17.
-- estado: implementado en SQLite :memory:; gates y QA independiente pendientes de cierre. Guía NO redactada todavía.
+- estado: ciclo correctivo H-01/H-02/H-03 aplicado en SQLite :memory: (origen manual siempre POS, margen/markup sobre precio neto RN-25 y calculadora CAT-04). Catalog 116/1810 y suite 476/4192; gates, QA externa y CI pendientes de cierre. Guía NO redactada todavía.
+- nota correctiva para ChatGPT: documentar que el origen del CRUD manual es siempre POS y no editable; que el margen/markup se calculan sobre precio neto según `prices_include_tax`, tasa de variante/producto/predeterminada y exención; y que la calculadora de precio por margen o markup es una sugerencia visible solo con `catalog.view_cost`, no una regla automática de venta.
 - OpenCode no edita `public/docs/index.html`; este registro es solo metadato técnico.

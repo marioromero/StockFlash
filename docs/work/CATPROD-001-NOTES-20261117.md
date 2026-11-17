@@ -103,6 +103,17 @@ Nuevos conteos de este ciclo: Catalog **105 pruebas / 1617 aserciones**; suite c
 - No se ejecutó navegador real; la verificación visual/responsive queda para predespliegue.
 - No se modificaron migraciones, seeders, contratos, permisos, licencias, HTML editorial del manual ni roadmap.
 
+## Ciclo correctivo externo 2026-11-17 (H-01/H-02/H-03)
+
+Correcciones aplicadas dentro del mismo alcance autorizado, sin decisiones comerciales nuevas, sin migraciones ni cambios de esquema. Base de la corrección: `8be4e8157905cf4bc4f482e5d5e837547b8bae16`.
+
+- **H-01 origen/procedencia:** el CRUD manual `/catalog/products` crea siempre `origin=pos` en el servidor e ignora `origin=channel|import` del payload. Al editar se preserva el origen existente (incluido uno externo preexistente) y el campo ya no se actualiza desde el request. `Products.vue` quitó el selector editable; el origen solo se muestra como texto informativo. Sin cambios de modelo, esquema ni integraciones.
+- **H-02 margen/markup RN-25:** se agregó `app/Support/Catalog/CatalogPricing.php` para calcular el precio neto según `prices_include_tax` de CFG-003 y la tasa efectiva variante → producto → predeterminada `is_default`, con exención (`is_exempt`). `margin` = neto - costo; `margin_percent` = (neto-costo)/neto; `markup_percent` = (neto-costo)/costo. Se manejan costo/precio cero y redondeos sin INF/NAN. `net_price`, `margin`, `margin_percent`, `markup_percent`, `effective_tax_rate`, `tax_is_exempt` y `tax_source` solo viajan con `catalog.view_cost`; sin permiso siguen ausentes `cost_price`, `last_cost` y derivados.
+- **H-03 calculadora CAT-04:** alta/edición de variante y variante inicial del alta de producto incluyen calculadora visible solo con `catalog.view_cost`. Permite objetivo margen% o markup%, deriva el precio neto desde el costo neto y lo convierte al campo `price` según `prices_include_tax` y tasa efectiva. Rechaza margen ≥100%, costo 0, objetivos inválidos y resultados fuera de rango; el resultado solo reemplaza el campo editable y el servidor valida al guardar. La UI recibe `prices_include_tax` y las tasas con `rate`, `is_exempt` e `is_default`; no se agregaron columnas, tablas, API ni reglas nuevas.
+- **Pruebas nuevas:** `tests/Feature/Catalog/ProductOriginTest.php` (3 pruebas) y `tests/Feature/Catalog/ProductPricingTest.php` (8 pruebas), más ajuste de la prueba de enums para aceptar que `origin` es ignorado. Cubren payload manipulado en alta/edición, origen externo preservado, precios inclusivos/exclusivos, herencia de tasa, exención, costo/precio cero, redondeo y actor sin `catalog.view_cost`.
+- **Conteos de este ciclo:** Catalog **116 pruebas / 1810 aserciones**; suite completa **476 pruebas / 4192 aserciones**; typecheck y build Vite PASS.
+- Límites sin cambios: `maria=NOT_RUN`, `remote_db=UNTOUCHED`; sin navegador real, MariaDB concurrente/FULLTEXT, deploy ni migraciones. HTML editorial y roadmap permanecen sin edición de OpenCode.
+
 ## Gates
 
 Definición declarativa en `scripts/sf_verify.py` (`CATPROD-001`), 19 gates. Reutiliza infraestructura existente; no se agregaron scripts, agentes ni protocolos.

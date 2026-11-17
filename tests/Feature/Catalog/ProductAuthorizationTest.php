@@ -83,7 +83,9 @@ class ProductAuthorizationTest extends ProductTestCase
                 ->where('can_view_cost', true)
                 ->where('selected.variants.0.cost_price', '500.0000')
                 ->where('selected.variants.0.last_cost', null)
+                ->where('selected.variants.0.net_price', '1000.0000')
                 ->where('selected.variants.0.margin', '500.00')
+                ->where('selected.variants.0.margin_percent', '50.00')
                 ->where('selected.variants.0.markup_percent', '100.00')
             );
     }

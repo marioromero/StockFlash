@@ -11,6 +11,7 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\Tag;
 use App\Models\TaxRate;
+use App\Support\Catalog\CatalogPricing;
 use App\Support\Catalog\CatalogWriteGuard;
 use App\Support\Catalog\ProductCatalogService;
 use App\Support\Catalog\ProductPresenter;
@@ -33,6 +34,7 @@ class ProductController extends Controller
         private readonly ProductCatalogService $service,
         private readonly ProductPresenter $presenter,
         private readonly CatalogWriteGuard $guard,
+        private readonly CatalogPricing $pricing,
     ) {}
 
     public function index(Request $request): Response
@@ -195,11 +197,14 @@ class ProductController extends Controller
                 'tax_rates' => TaxRate::query()
                     ->where('is_active', true)
                     ->orderBy('code')
-                    ->get(['id', 'code', 'name'])
+                    ->get(['id', 'code', 'name', 'rate', 'is_exempt', 'is_default'])
                     ->map(fn (TaxRate $taxRate): array => [
                         'id' => (int) $taxRate->id,
                         'code' => $taxRate->code,
                         'name' => $taxRate->name,
+                        'rate' => (string) $taxRate->rate,
+                        'is_exempt' => (bool) $taxRate->is_exempt,
+                        'is_default' => (bool) $taxRate->is_default,
                     ])
                     ->values()
                     ->all(),
@@ -232,6 +237,9 @@ class ProductController extends Controller
             ],
             'can_manage' => $user !== null && CheckPermission::allows($user, 'catalog.manage'),
             'can_view_cost' => $canViewCost,
+            'pricing' => [
+                'prices_include_tax' => $this->pricing->pricesIncludeTax(),
+            ],
             'read_only' => $this->guard->isReadOnly(),
         ];
     }

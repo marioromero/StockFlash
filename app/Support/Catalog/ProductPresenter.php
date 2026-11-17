@@ -5,16 +5,19 @@ namespace App\Support\Catalog;
 use App\Models\Product;
 use App\Models\ProductBarcode;
 use App\Models\ProductVariant;
+use App\Models\TaxRate;
 
 /**
  * Serialización explícita de productos para Inertia.
  *
- * `cost_price`, `last_cost`, margen y markup solo se incluyen cuando el actor
- * tiene `catalog.view_cost`. Sin ese permiso las claves ni siquiera existen
- * en las props entregadas al cliente.
+ * `cost_price`, `last_cost`, precio neto, margen y markup solo se incluyen
+ * cuando el actor tiene `catalog.view_cost`. Sin ese permiso las claves ni
+ * siquiera existen en las props entregadas al cliente.
  */
 final class ProductPresenter
 {
+    public function __construct(private readonly CatalogPricing $pricing) {}
+
     /**
      * @return array<string, mixed>
      */
@@ -47,6 +50,9 @@ final class ProductPresenter
      */
     public function detail(Product $product, bool $canViewCost): array
     {
+        $taxRates = $canViewCost ? $this->activeTaxRates() : [];
+        $pricesIncludeTax = $canViewCost && $this->pricing->pricesIncludeTax();
+
         return [
             'id' => (int) $product->id,
             'category_id' => $product->category_id,
@@ -68,17 +74,29 @@ final class ProductPresenter
             ])->values()->all(),
             'variants' => $product->variants
                 ->sortBy('id')
-                ->map(fn (ProductVariant $variant): array => $this->variant($variant, $canViewCost))
+                ->map(fn (ProductVariant $variant): array => $this->variant(
+                    $variant,
+                    $canViewCost,
+                    $product,
+                    $taxRates,
+                    $pricesIncludeTax,
+                ))
                 ->values()
                 ->all(),
         ];
     }
 
     /**
+     * @param  array<int|string, array{rate?: mixed, is_exempt?: mixed, is_default?: mixed}>  $taxRates
      * @return array<string, mixed>
      */
-    public function variant(ProductVariant $variant, bool $canViewCost): array
-    {
+    public function variant(
+        ProductVariant $variant,
+        bool $canViewCost,
+        ?Product $product = null,
+        array $taxRates = [],
+        bool $pricesIncludeTax = false,
+    ): array {
         $base = [
             'id' => (int) $variant->id,
             'sku' => $variant->sku,
@@ -121,17 +139,50 @@ final class ProductPresenter
             return $base;
         }
 
-        $price = (float) $variant->price;
-        $cost = (float) $variant->cost_price;
+        $productTaxRateId = $product?->tax_rate_id;
+        $productTaxRateId = $productTaxRateId === null ? null : (int) $productTaxRateId;
+        $tax = $this->pricing->resolveTax($variant->tax_rate_id, $productTaxRateId, $taxRates);
+        $metrics = $this->pricing->metrics(
+            $variant->price,
+            $variant->cost_price,
+            $tax,
+            $pricesIncludeTax,
+        );
 
         return $base + [
             'cost_price' => (string) $variant->cost_price,
             'last_cost' => $variant->last_cost === null ? null : (string) $variant->last_cost,
-            'margin' => number_format($price - $cost, 2, '.', ''),
-            'markup_percent' => $cost > 0
-                ? number_format((($price - $cost) / $cost) * 100, 2, '.', '')
-                : null,
+            'net_price' => number_format($metrics['net_price'], 4, '.', ''),
+            'margin' => number_format($metrics['margin'], 2, '.', ''),
+            'margin_percent' => $metrics['margin_percent'] === null
+                ? null
+                : number_format($metrics['margin_percent'], 2, '.', ''),
+            'markup_percent' => $metrics['markup_percent'] === null
+                ? null
+                : number_format($metrics['markup_percent'], 2, '.', ''),
+            'effective_tax_rate' => number_format($tax['rate'], 2, '.', ''),
+            'tax_is_exempt' => $tax['is_exempt'],
+            'tax_source' => $tax['source'],
         ];
+    }
+
+    /**
+     * @return array<int, array{rate: string, is_exempt: bool, is_default: bool}>
+     */
+    private function activeTaxRates(): array
+    {
+        return TaxRate::query()
+            ->where('is_active', true)
+            ->orderBy('id')
+            ->get(['id', 'rate', 'is_exempt', 'is_default'])
+            ->mapWithKeys(fn (TaxRate $taxRate): array => [
+                (int) $taxRate->id => [
+                    'rate' => (string) $taxRate->rate,
+                    'is_exempt' => (bool) $taxRate->is_exempt,
+                    'is_default' => (bool) $taxRate->is_default,
+                ],
+            ])
+            ->all();
     }
 
     /**

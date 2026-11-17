@@ -15,7 +15,8 @@ use Illuminate\Validation\Validator;
  * El costo solo entra a `validated()` cuando el actor tiene
  * `catalog.view_cost`; sin ese permiso un payload con `cost_price` es
  * ignorado y los costos existentes se preservan. `last_cost` nunca tiene
- * regla: no es editable desde esta pantalla.
+ * regla: no es editable desde esta pantalla. `origin` tampoco tiene regla:
+ * el servicio crea siempre `pos` y preserva el origen existente al editar.
  */
 class ProductRequest extends FormRequest
 {
@@ -99,7 +100,6 @@ class ProductRequest extends FormRequest
             'tracks_stock' => ['sometimes', 'boolean'],
             'is_sellable' => ['sometimes', 'boolean'],
             'is_active' => ['sometimes', 'boolean'],
-            'origin' => ['required', 'string', Rule::in(['pos', 'channel', 'import'])],
             'tag_ids' => ['sometimes', 'array'],
             'tag_ids.*' => ['integer', 'distinct', 'exists:tags,id'],
         ];
@@ -200,7 +200,6 @@ class ProductRequest extends FormRequest
             'internal_code.unique' => 'Ya existe un producto con ese código interno (incluidos los eliminados).',
             'image_url.max' => 'La URL de imagen no puede superar los 500 caracteres.',
             'tax_rate_id.exists' => 'La tasa de impuesto seleccionada no existe o está inactiva.',
-            'origin.in' => 'El origen debe ser pos, channel o import.',
             'tag_ids.*.exists' => 'Una de las etiquetas seleccionadas no existe.',
             'variants.required' => 'Debe registrar al menos una variante.',
             'variants.min' => 'Debe registrar al menos una variante.',

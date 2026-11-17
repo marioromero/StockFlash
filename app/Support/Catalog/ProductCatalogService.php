@@ -443,7 +443,9 @@ final class ProductCatalogService
             'tracks_stock' => (bool) ($data['tracks_stock'] ?? true),
             'is_sellable' => (bool) ($data['is_sellable'] ?? true),
             'is_active' => (bool) ($data['is_active'] ?? true),
-            'origin' => $data['origin'],
+            // El CRUD manual siempre nace como POS. El payload no puede
+            // atribuir un origen de canal o importación ficticio.
+            'origin' => 'pos',
         ];
     }
 
@@ -453,10 +455,11 @@ final class ProductCatalogService
      */
     private function productUpdateAttributes(array $data): array
     {
+        // `origin` no se actualiza desde el CRUD manual: se preserva la
+        // procedencia real ya guardada (incluida la de integraciones futuras).
         $attributes = [
             'type' => $data['type'],
             'name' => $data['name'],
-            'origin' => $data['origin'],
         ];
 
         foreach ([

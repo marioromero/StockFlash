@@ -147,7 +147,7 @@
                         <h2 id="product-detail-title" class="sf-section-title">{{ selected.name }}</h2>
                         <p class="sf-text-muted">
                             {{ typeLabel(selected.type) }} · {{ selected.is_active ? 'Activo' : 'Inactivo' }} ·
-                            Origen {{ selected.origin }}
+                            Origen: {{ originLabel(selected.origin) }} (informativo)
                         </p>
                     </div>
                     <div class="sf-actions">
@@ -245,7 +245,14 @@
                                 </td>
                                 <td v-if="can_view_cost" data-label="Margen / markup">
                                     {{ money(variant.margin ?? '0') }}
-                                    <span class="sf-text-muted"> / {{ variant.markup_percent === null ? '—' : `${variant.markup_percent}%` }}</span>
+                                    <div class="sf-text-muted">
+                                        Margen {{ variant.margin_percent === null || variant.margin_percent === undefined ? '—' : `${variant.margin_percent}%` }}
+                                        · markup {{ variant.markup_percent === null || variant.markup_percent === undefined ? '—' : `${variant.markup_percent}%` }}
+                                    </div>
+                                    <div class="sf-text-muted">
+                                        Neto {{ money(variant.net_price ?? variant.price) }} ·
+                                        tasa {{ variant.tax_is_exempt ? 'exenta' : `${variant.effective_tax_rate ?? '0.00'}%` }}
+                                    </div>
                                 </td>
                                 <td data-label="Unidad">{{ unitLabel(variant.unit) }}</td>
                                 <td data-label="Atributos">
@@ -308,11 +315,40 @@
                         <div class="sf-field">
                             <label class="sf-label" for="variant-tax">Tasa de impuesto</label>
                             <select id="variant-tax" v-model="variantForm.tax_rate_id" class="sf-input">
-                                <option value="">Sin tasa</option>
+                                <option value="">Heredar del producto / predeterminada</option>
                                 <option v-for="tax in catalogs.tax_rates" :key="`variant-tax-${tax.id}`" :value="String(tax.id)">
                                     {{ tax.code }} — {{ tax.name }}
                                 </option>
                             </select>
+                        </div>
+                        <div v-if="can_view_cost" class="sf-field sf-field-wide">
+                            <div class="sf-calculator">
+                                <p class="sf-calculator-title">Calculadora de precio (sugerencia)</p>
+                                <p class="sf-section-hint">
+                                    Usa el costo neto y la tasa efectiva. El resultado reemplaza el campo Precio base;
+                                    usted puede ajustarlo antes de guardar. El servidor valida el precio al guardar.
+                                </p>
+                                <div class="sf-grid">
+                                    <div class="sf-field">
+                                        <label class="sf-label" for="variant-calc-mode">Calcular por</label>
+                                        <select id="variant-calc-mode" v-model="variantForm.calculator_mode" class="sf-input">
+                                            <option value="margin">Margen (%)</option>
+                                            <option value="markup">Markup (%)</option>
+                                        </select>
+                                    </div>
+                                    <div class="sf-field">
+                                        <label class="sf-label" for="variant-calc-percent">Objetivo (%)</label>
+                                        <input id="variant-calc-percent" v-model="variantForm.calculator_percent" type="number" min="0" step="0.01" class="sf-input" />
+                                    </div>
+                                    <div class="sf-field sf-calculator-action">
+                                        <button type="button" class="sf-button sf-button-secondary" @click="calculateVariantPrice">
+                                            Calcular precio
+                                        </button>
+                                    </div>
+                                </div>
+                                <p class="sf-hint">{{ taxHint(variantForm.tax_rate_id, selectedProductTaxRateId) }}</p>
+                                <p v-if="variantCalculatorError" class="sf-error-text" role="alert">{{ variantCalculatorError }}</p>
+                            </div>
                         </div>
                         <div class="sf-field">
                             <label class="sf-label" for="variant-discount">Descuento máximo (%)</label>
@@ -432,15 +468,6 @@
                             </select>
                         </div>
                         <div class="sf-field">
-                            <label class="sf-label" for="product-origin">Origen</label>
-                            <select id="product-origin" v-model="productForm.origin" class="sf-input">
-                                <option value="pos">POS</option>
-                                <option value="channel">Canal</option>
-                                <option value="import">Importación</option>
-                            </select>
-                            <p class="sf-hint">El origen no habilita canales ni crea integraciones.</p>
-                        </div>
-                        <div class="sf-field">
                             <label class="sf-label" for="product-image">URL de imagen</label>
                             <input id="product-image" v-model="productForm.image_url" type="text" maxlength="500" class="sf-input" />
                         </div>
@@ -490,12 +517,35 @@
                                 <div class="sf-field">
                                     <label class="sf-label" :for="`draft-tax-${index}`">Tasa</label>
                                     <select :id="`draft-tax-${index}`" v-model="variant.tax_rate_id" class="sf-input">
-                                        <option value="">Sin tasa</option>
+                                        <option value="">Heredar del producto / predeterminada</option>
                                         <option v-for="tax in catalogs.tax_rates" :key="`draft-tax-${index}-${tax.id}`" :value="String(tax.id)">
                                             {{ tax.code }} — {{ tax.name }}
                                         </option>
                                     </select>
                                 </div>
+                            </div>
+                            <div v-if="can_view_cost" class="sf-calculator">
+                                <p class="sf-calculator-title">Calculadora de precio (sugerencia)</p>
+                                <div class="sf-grid">
+                                    <div class="sf-field">
+                                        <label class="sf-label" :for="`draft-calc-mode-${index}`">Calcular por</label>
+                                        <select :id="`draft-calc-mode-${index}`" v-model="variant.calculator_mode" class="sf-input">
+                                            <option value="margin">Margen (%)</option>
+                                            <option value="markup">Markup (%)</option>
+                                        </select>
+                                    </div>
+                                    <div class="sf-field">
+                                        <label class="sf-label" :for="`draft-calc-percent-${index}`">Objetivo (%)</label>
+                                        <input :id="`draft-calc-percent-${index}`" v-model="variant.calculator_percent" type="number" min="0" step="0.01" class="sf-input" />
+                                    </div>
+                                    <div class="sf-field sf-calculator-action">
+                                        <button type="button" class="sf-button sf-button-secondary" @click="calculateDraftPrice(index)">
+                                            Calcular precio
+                                        </button>
+                                    </div>
+                                </div>
+                                <p class="sf-hint">{{ taxHint(variant.tax_rate_id, productForm.tax_rate_id) }}</p>
+                                <p v-if="draftCalculatorErrors[index]" class="sf-error-text" role="alert">{{ draftCalculatorErrors[index] }}</p>
                             </div>
                             <div class="sf-checks">
                                 <label class="sf-check"><input v-model="variant.sold_by_weight" type="checkbox" /> Por peso</label>
@@ -588,8 +638,13 @@ interface VariantRow {
     barcodes: BarcodeRow[];
     cost_price?: string;
     last_cost?: string | null;
+    net_price?: string;
     margin?: string;
+    margin_percent?: string | null;
     markup_percent?: string | null;
+    effective_tax_rate?: string;
+    tax_is_exempt?: boolean;
+    tax_source?: string;
 }
 
 interface ProductDetail {
@@ -622,10 +677,19 @@ interface AttributeOption {
     values: AttributeValueOption[];
 }
 
+interface TaxRateOption {
+    id: number;
+    code: string;
+    name: string;
+    rate: string;
+    is_exempt: boolean;
+    is_default: boolean;
+}
+
 interface Catalogs {
     categories: { id: number; name: string }[];
     brands: { id: number; name: string }[];
-    tax_rates: { id: number; code: string; name: string }[];
+    tax_rates: TaxRateOption[];
     tags: TagOption[];
     attributes: AttributeOption[];
 }
@@ -652,6 +716,8 @@ interface DraftVariantForm {
     tax_rate_id: string;
     combo_deducts_components: boolean;
     is_active: boolean;
+    calculator_mode: 'margin' | 'markup';
+    calculator_percent: string;
 }
 
 interface VariantFormState extends DraftVariantForm {
@@ -665,7 +731,6 @@ interface ProductFormState {
     category_id: string;
     brand_id: string;
     tax_rate_id: string;
-    origin: string;
     image_url: string;
     description: string;
     tracks_stock: boolean;
@@ -697,6 +762,7 @@ const props = defineProps<{
     catalogs: Catalogs;
     can_manage: boolean;
     can_view_cost: boolean;
+    pricing: { prices_include_tax: boolean };
     read_only: boolean;
 }>();
 
@@ -708,6 +774,8 @@ const productMode = ref<'create' | 'edit' | null>(null);
 const variantEditingId = ref<number | null>(null);
 const barcodeTargetVariantId = ref<number | null>(null);
 const barcodeEditingId = ref<number | null>(null);
+const variantCalculatorError = ref('');
+const draftCalculatorErrors = ref<Record<number, string>>({});
 
 const units = [
     { value: 'unit', label: 'Unidad' },
@@ -748,6 +816,12 @@ const errorMessage = computed(() => {
 
 const minimumDraftVariants = computed(() => (productForm.type === 'variable' ? 2 : 1));
 
+const selectedProductTaxRateId = computed(() =>
+    props.selected?.tax_rate_id === null || props.selected?.tax_rate_id === undefined
+        ? ''
+        : String(props.selected.tax_rate_id),
+);
+
 const productForm = reactive<ProductFormState>(emptyProductForm());
 
 const variantForm = reactive<VariantFormState>(emptyVariantForm());
@@ -787,6 +861,8 @@ function emptyDraftVariant(): DraftVariantForm {
         tax_rate_id: '',
         combo_deducts_components: true,
         is_active: true,
+        calculator_mode: 'margin',
+        calculator_percent: '',
     };
 }
 
@@ -798,7 +874,6 @@ function emptyProductForm(): ProductFormState {
         category_id: '',
         brand_id: '',
         tax_rate_id: '',
-        origin: 'pos',
         image_url: '',
         description: '',
         tracks_stock: true,
@@ -818,10 +893,12 @@ function emptyVariantForm(): VariantFormState {
 
 function resetProductForm(): void {
     Object.assign(productForm, emptyProductForm());
+    draftCalculatorErrors.value = {};
 }
 
 function resetVariantForm(): void {
     variantEditingId.value = null;
+    variantCalculatorError.value = '';
     Object.assign(variantForm, emptyVariantForm());
 }
 
@@ -886,6 +963,7 @@ function startProductEdit(): void {
 
     const selected = props.selected;
 
+    draftCalculatorErrors.value = {};
     Object.assign(productForm, {
         name: selected.name,
         type: selected.type,
@@ -893,7 +971,6 @@ function startProductEdit(): void {
         category_id: selected.category_id === null ? '' : String(selected.category_id),
         brand_id: selected.brand_id === null ? '' : String(selected.brand_id),
         tax_rate_id: selected.tax_rate_id === null ? '' : String(selected.tax_rate_id),
-        origin: selected.origin,
         image_url: selected.image_url ?? '',
         description: selected.description ?? '',
         tracks_stock: selected.tracks_stock,
@@ -928,6 +1005,7 @@ function syncDraftVariants(): void {
 
 function addDraftVariant(): void {
     productForm.variants.push(emptyDraftVariant());
+    draftCalculatorErrors.value = {};
 }
 
 function removeDraftVariant(index: number): void {
@@ -936,6 +1014,7 @@ function removeDraftVariant(index: number): void {
     }
 
     productForm.variants.splice(index, 1);
+    draftCalculatorErrors.value = {};
 }
 
 function draftVariantPayload(variant: DraftVariantForm): Payload {
@@ -967,7 +1046,6 @@ function productPayload(includeVariants: boolean): Payload {
         category_id: productForm.category_id === '' ? null : Number(productForm.category_id),
         brand_id: productForm.brand_id === '' ? null : Number(productForm.brand_id),
         tax_rate_id: productForm.tax_rate_id === '' ? null : Number(productForm.tax_rate_id),
-        origin: productForm.origin,
         image_url: productForm.image_url === '' ? null : productForm.image_url,
         description: productForm.description === '' ? null : productForm.description,
         tracks_stock: productForm.tracks_stock,
@@ -1022,8 +1100,11 @@ function editVariant(variant: VariantRow): void {
         tax_rate_id: variant.tax_rate_id === null ? '' : String(variant.tax_rate_id),
         combo_deducts_components: variant.combo_deducts_components,
         is_active: variant.is_active,
+        calculator_mode: 'margin',
+        calculator_percent: '',
         attribute_value_ids: [...variant.attribute_value_ids],
     });
+    variantCalculatorError.value = '';
 }
 
 function variantPayload(): Payload {
@@ -1132,6 +1213,137 @@ function removeBarcode(variant: VariantRow, barcode: BarcodeRow): void {
     );
 }
 
+interface EffectiveTax {
+    rate: number;
+    isExempt: boolean;
+    source: 'variant' | 'product' | 'default' | 'none';
+}
+
+function resolveEffectiveTax(variantTaxId: string, productTaxId: string): EffectiveTax {
+    const variantId = variantTaxId === '' ? null : Number(variantTaxId);
+    const productId = productTaxId === '' ? null : Number(productTaxId);
+    const candidate = variantId ?? productId;
+    let source: EffectiveTax['source'] = variantId !== null ? 'variant' : (productId !== null ? 'product' : 'none');
+    let tax = candidate === null
+        ? undefined
+        : props.catalogs.tax_rates.find((option) => option.id === candidate);
+
+    if (!tax) {
+        tax = props.catalogs.tax_rates.find((option) => option.is_default);
+        source = 'default';
+    }
+
+    if (!tax) {
+        return { rate: 0, isExempt: false, source: 'none' };
+    }
+
+    const rate = Number(tax.rate);
+    const safeRate = Number.isFinite(rate) ? Math.max(0, Math.min(100, rate)) : 0;
+
+    return {
+        rate: tax.is_exempt ? 0 : safeRate,
+        isExempt: tax.is_exempt,
+        source,
+    };
+}
+
+function taxHint(variantTaxId: string, productTaxId: string): string {
+    const tax = resolveEffectiveTax(variantTaxId, productTaxId);
+    const mode = props.pricing.prices_include_tax
+        ? 'El precio guardado incluye impuesto.'
+        : 'El precio guardado no incluye impuesto.';
+    const rate = tax.isExempt
+        ? 'exenta (0%)'
+        : `${tax.rate.toFixed(2).replace('.', ',')}%`;
+    const source = {
+        variant: 'de la variante',
+        product: 'del producto',
+        default: 'predeterminada',
+        none: 'sin tasa configurada',
+    }[tax.source];
+
+    return `${mode} Tasa efectiva: ${rate}, ${source}. El resultado es una sugerencia editable, no una regla automática.`;
+}
+
+function suggestedPriceFor(
+    target: DraftVariantForm,
+    productTaxId: string,
+): { price?: string; error?: string } {
+    const cost = Number(target.cost_price);
+
+    if (target.cost_price.trim() === '' || !Number.isFinite(cost) || cost <= 0) {
+        return { error: 'Ingrese un costo neto mayor que 0 para calcular el precio.' };
+    }
+
+    const percent = Number(target.calculator_percent);
+
+    if (target.calculator_percent.trim() === '' || !Number.isFinite(percent) || percent < 0) {
+        return { error: 'Ingrese un objetivo porcentual válido (0 o mayor).' };
+    }
+
+    if (target.calculator_mode === 'margin' && percent >= 100) {
+        return { error: 'El margen objetivo debe ser menor que 100%.' };
+    }
+
+    if (percent > 10000) {
+        return { error: 'El objetivo porcentual es demasiado alto.' };
+    }
+
+    const net = target.calculator_mode === 'margin'
+        ? cost / (1 - percent / 100)
+        : cost * (1 + percent / 100);
+
+    if (!Number.isFinite(net) || net < 0) {
+        return { error: 'No fue posible calcular un precio neto válido con esos datos.' };
+    }
+
+    const tax = resolveEffectiveTax(target.tax_rate_id, productTaxId);
+    const gross = props.pricing.prices_include_tax && !tax.isExempt
+        ? net * (1 + tax.rate / 100)
+        : net;
+    const rounded = Math.round((gross + Number.EPSILON) * 100) / 100;
+
+    if (!Number.isFinite(rounded) || rounded < 0 || rounded > 999999999999.99) {
+        return { error: 'El precio sugerido excede el máximo permitido; ajuste costo u objetivo.' };
+    }
+
+    return { price: rounded.toFixed(2) };
+}
+
+function calculateDraftPrice(index: number): void {
+    const variant = productForm.variants[index];
+
+    if (!variant) {
+        return;
+    }
+
+    const result = suggestedPriceFor(variant, productForm.tax_rate_id);
+
+    if (result.error) {
+        draftCalculatorErrors.value = { ...draftCalculatorErrors.value, [index]: result.error };
+
+        return;
+    }
+
+    variant.price = result.price ?? variant.price;
+    const nextErrors = { ...draftCalculatorErrors.value };
+    delete nextErrors[index];
+    draftCalculatorErrors.value = nextErrors;
+}
+
+function calculateVariantPrice(): void {
+    const result = suggestedPriceFor(variantForm, selectedProductTaxRateId.value);
+
+    if (result.error) {
+        variantCalculatorError.value = result.error;
+
+        return;
+    }
+
+    variantForm.price = result.price ?? variantForm.price;
+    variantCalculatorError.value = '';
+}
+
 function catalogLabel(options: { id: number; name: string }[], id: number | null): string {
     if (id === null) {
         return '—';
@@ -1156,6 +1368,10 @@ function typeLabel(type: string): string {
 
 function unitLabel(unit: string): string {
     return units.find((option) => option.value === unit)?.label ?? unit;
+}
+
+function originLabel(origin: string): string {
+    return { pos: 'POS (alta manual)', channel: 'Canal', import: 'Importación' }[origin] ?? origin;
 }
 
 function money(value: string): string {
@@ -1521,6 +1737,32 @@ function money(value: string): string {
     display: flex;
     flex-direction: column;
     gap: 0.65rem;
+}
+
+.sf-calculator {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.sf-calculator-title {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.sf-calculator-action {
+    justify-content: flex-end;
+}
+
+.sf-error-text {
+    color: #b91c1c;
+    font-size: 0.75rem;
+    line-height: 1.4;
 }
 
 .sf-actions {
