@@ -1,6 +1,6 @@
 # SETUP-001 — Asistente de primer inicio CORE-02 (una instalación)
 
-status: APPROVED
+status: VERIFIED
 approval_basis: existing_approved_contract_owner_delegation_2026-11-16
 new_business_decisions: NONE
 publication_mode: AUTO_GIT
@@ -41,3 +41,14 @@ El onboarding sirve **una instalación nueva cuyo esquema y semillas ya están p
 ## Exclusiones
 
 `/install` CORE-17, actualización de Laravel/cPanel, migraciones/seeders, claves de servidor, recovery package real BKP-08, datos de prueba remotos, emisión SII/DTE, creación masiva de sucursales/usuarios, UI de suscripciones, POS/inventario, cambios comerciales/ADR pendientes, nuevas dependencias o autores HTML ajenos. Sin BD DEV remota ni deploy sin autorización explícita del propietario. Un bloqueo de producción por BKP-08 se registra como `NOT_READY_FOR_PRODUCTION` sin falsear VERIFIED técnico en ambiente DEV si los criterios P0 se prueban correctamente.
+
+## Cierre técnico externo — ChatGPT (2026-11-17)
+
+status: VERIFIED
+code_sha: `13cdd6a6f1ae3a986884e8079f81fb34d5f259e4`
+qa: `APROBADO` (R3, 0 bloqueantes)
+gates: `19/19 PASS`
+tests: `529 PHP / 4665 assertions; 51 SETUP / 468 assertions`
+ci: `2/2 SUCCESS` ([PHP/Node/smoke](https://github.com/marioromero/StockFlash/actions/runs/44180835960), [contratos](https://github.com/marioromero/StockFlash/actions/runs/44180836253))
+closure: `docs/work/SETUP-001-CLOSURE-20261117.md`
+limits: `BKP08=NOT_READY_FOR_PRODUCTION`, `CORE17_install=NOT_IMPLEMENTED`, `MariaDB/browser/deploy=NOT_RUN`. Verificar nueva CI editorial antes de iniciar otra feature.
