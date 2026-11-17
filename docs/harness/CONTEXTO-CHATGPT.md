@@ -65,7 +65,9 @@ Si el propietario solicita «continuar StockFlash», «revisar lo que hizo OpenC
 
 **Estado actual:** la restricción DRAFT dejó de aplicar. USERS-001 ya está implementada, publicada y documentada con aviso expreso de que VERIFIED formal aún no se declara; no mostrarla como desplegada a clientes.
 
-**Guía CATPROD-001 25 temas (2026-11-17):** `public/docs/index.html` actualizado en `b3938efd151444fed9aaed869e3cb3f696521453`, sección `#catalogo-productos`, tras QA y CI de código `c8e1338`. Sin despliegue; visual real pendiente. El registro técnico `GUIA-HTML-ESTADO.md` puede requerir sincronización por OpenCode, que no edita HTML.\n\n## 4B. ROADMAP HTML DEL PROPIETARIO — AUTORÍA EXCLUSIVA CHATGPT
+**Guía CATPROD-001 25 temas (2026-11-17):** `public/docs/index.html` actualizado en `b3938efd151444fed9aaed869e3cb3f696521453`, sección `#catalogo-productos`, tras QA y CI de código `c8e1338`. Sin despliegue; visual real pendiente. El registro técnico `GUIA-HTML-ESTADO.md` puede requerir sincronización por OpenCode, que no edita HTML.
+
+## 4B. ROADMAP HTML DEL PROPIETARIO — AUTORÍA EXCLUSIVA CHATGPT
 
 **Decisión expresa (2026-11-10):** ChatGPT redacta y mantiene por sí solo la página visual de progreso y sus estados. Archivo canónico: `resources/roadmap/index.html`, fuera del directorio público. URL prevista tras integración: **`/roadmap`**, protegida para usuario autenticado con `settings.manage` (Admin Central).
 
