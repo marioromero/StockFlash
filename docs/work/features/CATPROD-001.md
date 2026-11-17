@@ -1,6 +1,6 @@
 # CATPROD-001 — Productos, variantes, códigos de barras y clasificación P0
 
-status: APPROVED
+status: VERIFIED
 approval_basis: existing_approved_contract_owner_delegation_2026-11-16
 new_business_decisions: NONE
 publication_mode: AUTO_GIT
@@ -35,3 +35,15 @@ CATDB-001 (11 tablas P0) y CATMAST-001 (maestros de impuestos/categorías/marcas
 ## Exclusiones y seguridad operativa
 
 NO migraciones/seeders ni BD DEV remota, NO leer `.env`/secretos, NO despliegue/FTP, NO DTE/SII, NO stock/current_stock/Kardex ni POS/caja/ventas, NO combos P1 funcionales, promociones, importación CSV ni sincronización WooCommerce, NO modificar contratos Parte 1/2, permisos, licencias comerciales, campos de tablas, HTML manual/roadmap o CONTEXTO-CHATGPT (ChatGPT exclusivo). MariaDB real, FULLTEXT y concurrencia simultánea: NOT_RUN y pendientes predespliegue. Toda prueba únicamente en SQLite :memory: y CI; no ejecutar SQL contra DB externa sin autorización expresa del propietario. Solo escalar decisiones NUEVAS y MATERIALES de negocio con preguntas concretas y recomendación.
+
+## Cierre técnico externo — ChatGPT, 2026-11-17
+
+status: VERIFIED
+code_sha: `c8e1338c5814a9c8741cf1a010cb1346636638a7`
+qa: `APROBADO` (reviewer R2)
+gates: `19/19 PASS`
+tests: `476 PHP / 4192 assertions`
+ci: `2/2 SUCCESS` ([PHP/Node/smoke](https://github.com/marioromero/StockFlash/actions/runs/44142115506), [contratos](https://github.com/marioromero/StockFlash/actions/runs/44142115528))
+closure: `docs/work/CATPROD-001-CLOSURE-20261117.md`
+limits: `MariaDB REAL_NOT_RUN`, `browser_real NOT_RUN`, `remote_db UNTOUCHED`, `deploy NO`.
+pre_pos_guard: Resolver QA R2 N-01 (tasa referenciada desactivada) antes de integrar cálculos a POS/Fiscal; N-02/N-03 menores pendientes.
