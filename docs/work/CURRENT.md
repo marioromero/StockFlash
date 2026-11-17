@@ -1,7 +1,7 @@
 # Estado operativo — StockFlash
 
 ## Feature activa
-- **Sin feature de implementación activa mientras se comprueba la CI del HEAD editorial.** SETUP-001 cerrada como VERIFIED técnico (código `13cdd6a`, gates 19/19, QA aprobado y CI del código 2/2 SUCCESS). El siguiente Feature Packet se determina según dependencias contractuales, sin pedir al propietario aprobar una secuencia técnica. No se habilita producción ni BD remota.
+- **INSTALL-001 — Instalador web CORE-17 P0: APPROVED / ACTIVO**, packet `docs/work/features/INSTALL-001.md`, derivado de contrato v2.2 existente sin decisión comercial nueva. Código/pruebas solamente; NUNCA ejecutar instalador real ni tocar `.env`/BD remota/cron/deploy. Antes de empezar se debe confirmar CI GitHub 2/2 SUCCESS en HEAD exacto después de este packet y de la documentación. CORE-02 SETUP-001 VERIFIED; BKP-08 sigue bloqueando producción no demo.
 
 ## Estados por feature
 - BOOT-001: VERIFIED (2026-10-14), Laravel 13.35.0 + Vue 3/Inertia/TS; `bcbf16f`.
@@ -22,7 +22,7 @@
 ## Pendientes y bloqueos reales
 - STAGING-001: APPROVED, sin deploy demostrado ni VERIFIED; FTPS separado solo hacia `stockflash-dev-app`. No habilita despliegue por sí sola.
 - Restricción SSH vigente: no usar la credencial `grupoint`; no publicar secretos.
-- SETUP-001: cierre técnico VERIFIED publicado; **CI de los cambios editoriales posteriores al SHA de código requiere nueva comprobación antes del siguiente handoff**. BKP-08 no implementado: instalación de producción no demo bloqueada. `/install` CORE-17 pendiente; no modificar `is_setup_completed` en BD DEV preexistente sin plan seguro.
+- INSTALL-001: packet APPROVED pero **implementación prohibida hasta verificar CI base 2/2 SUCCESS**; scope local de código/test sin ejecución real de instalación, secreto bootstrap obligatorio, protección contra reinstalación, integración con /setup. BKP-08 P1★ sigue pendiente; no habilitar producción no demo.
 - MariaDB real/índices, concurrencia y UX visual no probados; no migrar BD remota ni desplegar sin autorización.
 
 ## Reglas operativas vigentes
