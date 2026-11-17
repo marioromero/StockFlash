@@ -6,16 +6,16 @@ policy: `docs/harness/ROADMAP-HTML-PROYECTO.md`
 roadmap_path: `resources/roadmap/index.html`
 route: `/roadmap` (restringida a Admin Central / `settings.manage`)
 created_on: 2026-11-10
-baseline_code_sha: `2aec03893c78bc7180544930e0b6f741599df9ed`
+baseline_code_sha: `13cdd6a6f1ae3a986884e8079f81fb34d5f259e4`
 roadmap_content_status: INTEGRADA_EN_MAIN (2026-11-16)
-roadmap_integration_sha: `7aa19fd39192f74ed265c5571b0930c9b4f61670` (ChatGPT incorporó CATMAST-001 a R3)
+roadmap_integration_sha: `c6fa1fce028968ab3ba137f83a20d9ac4705ea5d` (ChatGPT incorporó SETUP-001 y BKP-08 a R3)
 roadmap_integration_date: 2026-11-17
 roadmap_last_review: 2026-11-17
-covered_features: BOOT-001 VERIFIED; CI-001 VERIFIED; AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED; ROADMAP-001 VERIFIED; USERS-001 VERIFIED; CFG-001/002/003 VERIFIED; CORESEQ/CORELIC/COREMOD/COREPIN VERIFIED; CATDB-001 VERIFIED; CATMAST-001 VERIFIED (9279d57)
-in_progress: R3_CORE — SETUP-001 implementada (`/setup`: comercio, preferencias, sucursal inicial y Admin Central); gates/QA externos pendientes. Producción no demo bloqueada por BKP-08 `NOT_READY_FOR_PRODUCTION`. MariaDB concurrente y visual real pendientes de etapa predespliegue
+covered_features: BOOT-001 VERIFIED; CI-001 VERIFIED; AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED; ROADMAP-001 VERIFIED; USERS-001 VERIFIED; CFG-001/002/003 VERIFIED; CORESEQ/CORELIC/COREMOD/COREPIN VERIFIED; CATDB-001 VERIFIED; CATMAST-001 VERIFIED (9279d57); SETUP-001 VERIFIED (13cdd6a)
+in_progress: R3_CORE — SETUP-001 VERIFIED; siguiente feature según dependencias; producción no demo bloqueada por BKP-08 `NOT_READY_FOR_PRODUCTION`
 first_commercial_release: R7 — POS + Bodega sin emisión DTE integrada y con piloto/controles de salida
-pending: SETUP-001 — ChatGPT debe actualizar R3 con el onboarding `/setup` y el bloqueo BKP-08; no declarar producción lista
-report_state: ROADMAP_PENDIENTE_CHATGPT
+pending: NINGUNO
+report_state: ROADMAP_ACTUALIZADA
 
 ## Mantenimiento por OpenCode
 
