@@ -2,7 +2,7 @@
 
 **Última revisión por ChatGPT:** 2026-11-17
 **Repositorio:** `marioromero/StockFlash` · rama de desarrollo `main`
-**Estado de referencia observado:** corrección de CI documental publicada en `46688eb6a030e87314fc51373f97d62a5d08aa09`: cinco aserciones obsoletas `24 temas disponibles.` sustituidas por verificación dinámica del índice y cobertura CATPROD. La base anterior `59d66c43` falló PHP GitHub run `44145778518`, contratos verde run `44145778535`; nueva CI del SHA correctivo PENDING de verificación. SETUP-001 sigue APPROVED/ACTIVA pero no inicia hasta base CI 2/2 SUCCESS. Issue #25 i=002 BLOCK atendido; i=003 instructivo de recuperación al día. No deploy/BD remota.
+**Estado de referencia observado:** SETUP-001 CORE-02 VERIFIED técnico, código `13cdd6a6f1ae3a986884e8079f81fb34d5f259e4`, gates 19/19, 529 PHP / 4665 aserciones, QA independiente R3 APROBADO; GitHub Actions 2/2 SUCCESS (`44180835960` PHP/Node/smoke y `44180836253` contratos), verificados por ChatGPT. Guía 26 temas (`e09069c`) y roadmap (`c6fa1fc`) publicados. Cierre `docs/work/SETUP-001-CLOSURE-20261117.md`. CI sobre HEAD editorial posterior pendiente de verificar ANTES de crear siguiente Feature Packet/issue. SFH1 #25 i=006 dst=GPT respondido al cierre; no deploy/BD remota. Producción no demo bloqueada BKP-08, instalador CORE-17 pendiente.
 **Aviso de vigencia:** este SHA es un punto de control histórico, NO el HEAD garantizado al abrir una nueva sesión. Verificar HEAD, PR abiertos y documentación actual antes de actuar.
 
 ## 1. INSTRUCCIONES PARA CUALQUIER SESIÓN NUEVA DE CHATGPT
@@ -67,7 +67,7 @@ Si el propietario solicita «continuar StockFlash», «revisar lo que hizo OpenC
 
 **Estado actual:** la restricción DRAFT dejó de aplicar. USERS-001 ya está implementada, publicada y documentada con aviso expreso de que VERIFIED formal aún no se declara; no mostrarla como desplegada a clientes.
 
-**Guía CATPROD-001 25 temas (2026-11-17):** `public/docs/index.html` actualizado en `b3938efd151444fed9aaed869e3cb3f696521453`, sección `#catalogo-productos`, tras QA y CI de código `c8e1338`. Sin despliegue; visual real pendiente. El registro técnico `GUIA-HTML-ESTADO.md` puede requerir sincronización por OpenCode, que no edita HTML.
+**Guía CATPROD-001 y SETUP-001 (26 temas, 2026-11-17):** `public/docs/index.html` actualizado en `b3938efd151444fed9aaed869e3cb3f696521453`, sección `#catalogo-productos`, tras QA y CI de código `c8e1338`. Sin despliegue; visual real pendiente. Se añadió `#setup-inicial` en `e09069c1179bc400495a6bb896fd557913b32ce4`; el registro técnico `GUIA-HTML-ESTADO.md` debe sincronizarlo OpenCode, sin editar HTML.
 
 ## 4B. ROADMAP HTML DEL PROPIETARIO — AUTORÍA EXCLUSIVA CHATGPT
 
@@ -75,7 +75,7 @@ Si el propietario solicita «continuar StockFlash», «revisar lo que hizo OpenC
 
 **Fuentes de avance:** `docs/harness/ROADMAP-STOCKFLASH.md`, `docs/work/CURRENT.md`, Feature Packets, QA/gates y CI verificadas. Refleja R0–R10, capacidades realmente terminadas, pendientes para comercializar y versiones posteriores. No asigna fechas ni porcentajes arbitrarios.
 
-**Estado editorial vigente (2026-11-17):** `resources/roadmap/index.html` actualizado por ChatGPT en `b1ca40eb37968d9a49d87ac7add84e478048cdcf`: R3 incluye CATPROD-001 VERIFIED técnico; R4 Bodega sigue pendiente de existencias/kardex/transferencias; R7 primera comercial POS+Bodega sin DTE integrado. Ningún porcentaje ni fecha comprometida. La bitácora `ROADMAP-HTML-ESTADO.md` es responsabilidad de OpenCode.
+**Estado editorial vigente (2026-11-17):** `resources/roadmap/index.html` ahora incluye CATPROD-001 y SETUP-001 VERIFIED técnico, commit `c6fa1fce028968ab3ba137f83a20d9ac4705ea5d`. R4 existencias/kardex/traspasos pendientes, R7 primera comercial POS+Bodega sin DTE integrado; recuperación de secretos BKP-08 e instalador CORE-17 pendientes. Bitácora técnica `ROADMAP-HTML-ESTADO.md` la sincroniza OpenCode; sin porcentajes ni plazos prometidos.
 
 **Continuidad:** `docs/harness/ROADMAP-HTML-PROYECTO.md` contiene reglas obligatorias de autoría; `docs/work/ROADMAP-HTML-ESTADO.md` es una bitácora técnica que OpenCode puede modificar (no el HTML). Tras cada feature relevante OpenCode informa `ROADMAP_PENDIENTE_CHATGPT` con evidencia; el propietario lo traslada a ChatGPT; ChatGPT revisa y redacta actualización si corresponde. La nueva sesión de ChatGPT debe comprobar ambos archivos antes de intervenir.
 
@@ -83,8 +83,8 @@ Si el propietario solicita «continuar StockFlash», «revisar lo que hizo OpenC
 ## 5. TRABAJO ABIERTO Y SIGUIENTE PASO
 
 1. USERS-001 y HCTX-001: VERIFIED técnico, informes de cierre publicados el 2026-11-16; sin despliegue. Concurrencia MariaDB real y UX visual quedan explícitamente pendientes para predespliegue.
-2. CFG-001/002/003, CORESEQ/CORELIC/COREMOD/COREPIN, CATDB-001 y CATMAST-001 y **CATPROD-001**: VERIFIED técnico. CATPROD código `c8e1338`, 19/19 gates, 476 PHP/4192, QA independiente APROBADO, CI 2/2 SUCCESS. Cierre `docs/work/CATPROD-001-CLOSURE-20261117.md`; manual 25 temas, roadmap actualizado. Issue SFH1 #24 cerrado con i=005 GPT. QA R2 N-01 tasa inactiva diferida **antes de POS/Fiscal**; N-02/N-03 menores. MariaDB y UI real no ejecutadas. **Siguiente SETUP-001 (CORE-02) APPROVED**, packet `docs/work/features/SETUP-001.md`, solo SQLite/CI, BKP-08 P1★ pendiente para producción, sin deploy/DB remota; iniciar con `ok` en OpenCode: issue SFH1 #25 `i=001 dst=OC`.
-3. **CI base SETUP-001 temporalmente roja por guía HTML:** GPT agregó tema CATPROD de 24 a 25, cinco tests DocsIntegrationTest seguían fijos en 24. Reparado con prueba de conteo/navegación dinámica en commit `46688eb6`; no representa defecto en funcionalidades CFG/CATMAST. CI del commit correctivo debe comprobarse antes de iniciar SETUP. OC mantiene 3 reportes CATPROD untracked; para sincronizar, preservarlos sin borrar/sobrescribir (p. ej. mover selectivamente a `docs/work/.run/` ignorado), luego `safe_git_pull.py`, y ejecutar solo con CI base verde. OpenCode salida de bloqueo 1–3 líneas, `OK` solo rutina satisfactoria.
+2. **SETUP-001 VERIFIED técnico** (2026-11-17): código `13cdd6a`, gates 19/19, 529 PHP/4665, QA independiente APROBADO, CI SHA 2/2 SUCCESS, cierre `docs/work/SETUP-001-CLOSURE-20261117.md`; guía 26 temas y roadmap actualizados por ChatGPT. CATPROD-001 también VERIFIED técnico. Riesgos pendientes: BKP-08 bloquea producción no demo, `/install` CORE-17 no implementado, MariaDB y navegador real no probados. CATPROD R2 N-01 debe resolverse antes de POS/Fiscal. NO desplegar ni tocar DB remota.
+3. **Siguiente paso real:** verificar 2/2 GitHub Actions en HEAD posterior a guía/roadmap/cierre, previo a abrir siguiente feature SFH1. Hasta CI verde, no activar otra feature ni pedir aprobación de orden técnico al propietario. Reconciliar `docs/work/GUIA-HTML-ESTADO.md`, `docs/work/ROADMAP-HTML-ESTADO.md` y `docs/work/CURRENT.md` si corresponde. La CI base anterior presentó dos fallos editoriales corregidos en `46688eb6` y `c26be5e`; SETUP se implementó luego con CI 2/2 verde.
 3. SFH1: mantener un issue activo por tarea; no exigir autorizaciones administrativas de cierre repetidas. ChatGPT verifica y registra el cierre, OpenCode solo lo publica.
 
 ## 6. FORMATO BREVE DE ACTUALIZACIÓN DE ESTE ARCHIVO
