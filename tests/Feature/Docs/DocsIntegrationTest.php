@@ -115,7 +115,6 @@ class DocsIntegrationTest extends TestCase
         $html = $this->manual();
 
         $this->assertStringContainsString('id="comprobante"', $html);
-        $this->assertStringContainsString('24 temas disponibles.', $html);
         $this->assertStringContainsString('Ajustes de comprobante', $html);
         $this->assertStringContainsString('settings.manage', $html);
         $this->assertStringContainsString('no tributario', $html);
@@ -127,7 +126,6 @@ class DocsIntegrationTest extends TestCase
         $html = $this->manual();
 
         $this->assertStringContainsString('id="datos-comercio"', $html);
-        $this->assertStringContainsString('24 temas disponibles.', $html);
         $this->assertStringContainsString('Datos del comercio', $html);
         $this->assertStringContainsString('settings.manage', $html);
         $this->assertStringContainsString('no valida el RUT ante el SII', $html);
@@ -139,7 +137,6 @@ class DocsIntegrationTest extends TestCase
         $html = $this->manual();
 
         $this->assertStringContainsString('id="preferencias"', $html);
-        $this->assertStringContainsString('24 temas disponibles.', $html);
         $this->assertStringContainsString('America/Santiago', $html);
         $this->assertStringContainsString('settings.manage', $html);
         $this->assertStringContainsString('no modifica documentos anteriores', $html);
@@ -150,7 +147,6 @@ class DocsIntegrationTest extends TestCase
         $html = $this->manual();
 
         $this->assertStringContainsString('id="estado-licencia"', $html);
-        $this->assertStringContainsString('24 temas disponibles.', $html);
         $this->assertStringContainsString('Modo solo lectura', $html);
         $this->assertStringContainsString('No es una pantalla para comprar', $html);
         $this->assertStringContainsString('sin despliegue comercial', $html);
@@ -161,11 +157,42 @@ class DocsIntegrationTest extends TestCase
         $html = $this->manual();
 
         $this->assertStringContainsString('id="catalogo-maestros"', $html);
-        $this->assertStringContainsString('24 temas disponibles.', $html);
         $this->assertStringContainsString('/catalog/masters', $html);
         $this->assertStringContainsString('catalog.view', $html);
         $this->assertStringContainsString('catalog.manage', $html);
         $this->assertStringContainsString('no emite boletas', $html);
+    }
+
+    public function test_manual_topic_counter_and_navigation_match_real_sections(): void
+    {
+        $html = $this->manual();
+
+        preg_match_all('/<section class="topic" id="([^"]+)"/', $html, $sections);
+        preg_match_all('/<li><a href="#([^"]+)"/', $html, $navigation);
+
+        $sectionIds = $sections[1];
+        $navigationIds = $navigation[1];
+
+        $this->assertNotEmpty($sectionIds);
+        $this->assertCount(count($sectionIds), array_unique($sectionIds), 'Hay secciones con ID duplicado.');
+        $this->assertCount(count($navigationIds), array_unique($navigationIds), 'Hay enlaces del índice duplicados.');
+
+        sort($sectionIds);
+        sort($navigationIds);
+
+        $this->assertSame($sectionIds, $navigationIds, 'El índice debe incluir exactamente los temas existentes.');
+        $this->assertStringContainsString(count($sectionIds).' temas disponibles.', $html);
+    }
+
+    public function test_catprod_001_products_variants_and_cost_permissions_are_documented(): void
+    {
+        $html = $this->manual();
+
+        $this->assertStringContainsString('id="catalogo-productos"', $html);
+        $this->assertStringContainsString('/catalog/products', $html);
+        $this->assertStringContainsString('catalog.view_cost', $html);
+        $this->assertStringContainsString('Calculadora de precio', $html);
+        $this->assertStringContainsString('sin despliegue comercial', $html);
     }
 
     private function manual(): string
