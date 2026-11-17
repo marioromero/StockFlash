@@ -32,6 +32,9 @@
                     Bienvenido al sistema StockFlash. Desde aquí puede acceder a los módulos disponibles según su rol y sucursal.
                 </p>
                 <nav class="sf-nav" aria-label="Accesos rápidos">
+                    <Link v-if="canViewCatalog" href="/catalog/products" class="sf-button sf-button-primary">
+                        Productos
+                    </Link>
                     <Link v-if="canViewCatalog" href="/catalog/masters" class="sf-button sf-button-primary">
                         Maestros de catálogo
                     </Link>

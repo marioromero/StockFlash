@@ -162,6 +162,40 @@ Route::middleware(['auth', 'password.change', 'verify.session'])->group(function
             ->name('catalog.masters.attribute-values.destroy');
     });
 
+    // --- Productos, variantes y códigos de barras P0 (CATPROD-001 · CAT-01/03/04/05/07/08) ---
+    // Catálogo común a la instalación: NO usa `branch.access` ni lee `branch_id`
+    // desde query/body. Lectura con `catalog.view`; mutaciones con
+    // `catalog.manage`. Los costos se filtran en servidor con `catalog.view_cost`.
+    Route::middleware('can.permission:catalog.view')->group(function () {
+        Route::get('/catalog/products', [\App\Http\Controllers\Catalog\ProductController::class, 'index'])
+            ->name('catalog.products.index');
+        Route::get('/catalog/products/{product}', [\App\Http\Controllers\Catalog\ProductController::class, 'show'])
+            ->name('catalog.products.show');
+    });
+
+    Route::middleware('can.permission:catalog.manage')->group(function () {
+        Route::post('/catalog/products', [\App\Http\Controllers\Catalog\ProductController::class, 'store'])
+            ->name('catalog.products.store');
+        Route::put('/catalog/products/{product}', [\App\Http\Controllers\Catalog\ProductController::class, 'update'])
+            ->name('catalog.products.update');
+        Route::delete('/catalog/products/{product}', [\App\Http\Controllers\Catalog\ProductController::class, 'destroy'])
+            ->name('catalog.products.destroy');
+
+        Route::post('/catalog/products/{product}/variants', [\App\Http\Controllers\Catalog\ProductVariantController::class, 'store'])
+            ->name('catalog.products.variants.store');
+        Route::put('/catalog/products/{product}/variants/{variant}', [\App\Http\Controllers\Catalog\ProductVariantController::class, 'update'])
+            ->name('catalog.products.variants.update');
+        Route::delete('/catalog/products/{product}/variants/{variant}', [\App\Http\Controllers\Catalog\ProductVariantController::class, 'destroy'])
+            ->name('catalog.products.variants.destroy');
+
+        Route::post('/catalog/products/{product}/variants/{variant}/barcodes', [\App\Http\Controllers\Catalog\ProductBarcodeController::class, 'store'])
+            ->name('catalog.products.barcodes.store');
+        Route::put('/catalog/products/{product}/variants/{variant}/barcodes/{barcode}', [\App\Http\Controllers\Catalog\ProductBarcodeController::class, 'update'])
+            ->name('catalog.products.barcodes.update');
+        Route::delete('/catalog/products/{product}/variants/{variant}/barcodes/{barcode}', [\App\Http\Controllers\Catalog\ProductBarcodeController::class, 'destroy'])
+            ->name('catalog.products.barcodes.destroy');
+    });
+
     // --- Administración global de sucursales (BRANCH-001 · CORE-05) ---
     // Es administración global: NO usa `branch.access`.
     Route::middleware('can.permission:settings.manage')->group(function () {

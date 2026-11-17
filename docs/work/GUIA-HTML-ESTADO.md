@@ -11,11 +11,11 @@ guide_status: INTEGRADA_EN_MAIN (2026-11-16)
 guide_content_last_written: 2026-11-17
 covered_features: AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED; ROADMAP-001 VERIFIED; USERS-001 VERIFIED; CFG-001/002/003 VERIFIED; CORELIC-001 VERIFIED; CATMAST-001 VERIFIED (9279d57)
 latest_covered_code_sha: `9279d57996ca2592a7c03fcdc7822e588621e2fe` (CATMAST-001 y anteriores)
-next_feature: CATPROD-001 activa, productos/variantes/códigos con UI aún no implementada
+next_feature: CATPROD-001 implementada en `/catalog/products` (productos, variantes, códigos, atributos y etiquetas); guía pendiente de redacción por ChatGPT
 internal_only_features: CATDB-001 VERIFIED (11 tablas internas, sin UI ni página nueva); CORESEQ-001 VERIFIED (servicio interno invisible; sin entrada nueva en guía); COREMOD-001 VERIFIED técnico (servicio interno invisible de módulos; sin página nueva); COREPIN-001 VERIFIED (servicio interno invisible de autorización PIN; sin página nueva)
 last_guide_integration_sha: `7aa19fd39192f74ed265c5571b0930c9b4f61670` (ChatGPT, guía 24 temas CATMAST-001)
 last_guide_integration_date: 2026-11-17
-pending_docs: NINGUNO
+pending_docs: CATPROD-001 (productos, variantes y códigos de barras)
 
 ## Cómo mantener este archivo
 - OpenCode puede actualizar solamente los metadatos y el registro de pendientes aquí, no los textos para usuarios en `public/docs/index.html`.
@@ -60,4 +60,14 @@ pending_docs: NINGUNO
 - contenido a redactar por ChatGPT: uso de la pantalla, lectura con `catalog.view` y escritura con `catalog.manage`, catálogo común a la instalación, slugs automáticos/no renombrados, jerarquía y bloqueos de baja por referencias, tasa predeterminada atómica, modo solo lectura por licencia suspendida fuera de gracia, y aclaración de que esta pantalla no calcula impuestos ni emite documentos tributarios.
 - fecha: 2026-11-17.
 - estado: implementado; 17/17 gates PASS, 405 pruebas PHP y QA independiente APROBADO en SQLite :memory:. Pendiente publicación y redacción por ChatGPT; guía NO redactada todavía.
+- OpenCode no edita `public/docs/index.html`; este registro es solo metadato técnico.
+
+## GUIA_PENDIENTE_CHATGPT — CATPROD-001
+- feature: CATPROD-001 — Productos, variantes, códigos de barras, valores de atributo y etiquetas (CAT-01/03/04/05/07/08).
+- pantalla: `/catalog/products` (acceso «Productos» desde el dashboard con `catalog.view` efectivo).
+- campos reales: producto con `category_id`, `brand_id`, `type`, `name`, `description`, `internal_code`, `image_url`, `tax_rate_id`, `tracks_stock`, `is_sellable`, `is_active`, `origin` y etiquetas; variante con `sku`, `price`, `cost_price` protegido, `last_cost` solo lectura, `unit`, `sold_by_weight`, `max_discount_percent`, `min_price`, `allow_price_override`, `tax_rate_id`, `combo_deducts_components`, `is_active` y soft delete; códigos de barras con `barcode` único global, `type` y un solo `is_primary` por variante; máximo un valor de atributo por atributo en cada variante.
+- permisos: lectura `catalog.view`, escritura `catalog.manage`, costos/margen/markup `catalog.view_cost`.
+- contenido a redactar por ChatGPT: uso de la pantalla, simple/variable/combo, unicidad de SKU/código interno/código de barras, costos protegidos, bajas lógicas que conservan identificadores, RN-70 en modo solo lectura y exclusiones (sin inventario/stock, POS, caja, ventas, combos funcionales P1, promociones, CSV, WooCommerce ni DTE/SII).
+- fecha: 2026-11-17.
+- estado: implementado en SQLite :memory:; gates y QA independiente pendientes de cierre. Guía NO redactada todavía.
 - OpenCode no edita `public/docs/index.html`; este registro es solo metadato técnico.
