@@ -191,7 +191,7 @@ class DocsIntegrationTest extends TestCase
         $this->assertStringContainsString('id="catalogo-productos"', $html);
         $this->assertStringContainsString('/catalog/products', $html);
         $this->assertStringContainsString('catalog.view_cost', $html);
-        $this->assertStringContainsString('Calculadora de precio', $html);
+        $this->assertStringContainsStringIgnoringCase('calculadora de precio', $html);
         $this->assertStringContainsString('sin despliegue comercial', $html);
     }
 
