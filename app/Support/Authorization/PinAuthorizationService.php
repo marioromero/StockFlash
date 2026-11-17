@@ -139,29 +139,25 @@ final class PinAuthorizationService
             $reasonCodeId,
             $reason,
         ): array {
-            $locked = DB::table('users')
-                ->where('id', $authorizerId)
-                ->lockForUpdate()
-                ->first([
-                    'id',
-                    'is_active',
-                    'deleted_at',
-                    'pin_hash',
-                    'pin_failed_attempts',
-                    'pin_locked_until',
-                ]);
+            // Revalidación autoritativa desde filas bloqueadas. La prevalidación
+            // previa solo sirve como rechazo temprano: la política que decide la
+            // inserción del AO es SIEMPRE esta, ya dentro de la transacción.
+            $policy = $this->lockAndRevalidatePolicy(
+                $requesterId,
+                $authorizerId,
+                $branchId,
+                $posStationId,
+                $reasonCodeId,
+                $reason,
+                $type,
+            );
 
-            if ($locked === null || $locked->deleted_at !== null) {
-                $this->auditDenial('authorizer_not_found', $branchId, $requesterId, $authorizerId, $type);
-
-                return ['denied' => 'authorizer_not_found'];
+            if (isset($policy['denied'])) {
+                return ['denied' => $policy['denied']];
             }
 
-            if ((int) $locked->is_active !== 1) {
-                $this->auditDenial('authorizer_inactive', $branchId, $requesterId, $authorizerId, $type);
-
-                return ['denied' => 'authorizer_inactive'];
-            }
+            /** @var object $locked */
+            $locked = $policy['authorizer'];
 
             $lockedUntil = $locked->pin_locked_until;
 
@@ -181,7 +177,7 @@ final class PinAuthorizationService
 
             if (! Hash::check((string) $pin, $hash)) {
                 $attempts = (int) $locked->pin_failed_attempts + 1;
-                $maxAttempts = $this->configInt('pin_max_attempts', self::DEFAULT_PIN_MAX_ATTEMPTS);
+                $maxAttempts = (int) $policy['pin_max_attempts'];
                 $lockedNow = $attempts >= $maxAttempts;
 
                 $updates = [
@@ -255,6 +251,220 @@ final class PinAuthorizationService
         }
 
         return ['authorization_override_id' => (int) $outcome['authorization_override_id']];
+    }
+
+    /**
+     * Adquiere locks en orden estable y revalida la política completa.
+     *
+     * Orden de locks (siempre ascendente y documentado para evitar deadlocks):
+     *   1. `users` solicitante y autorizador, ordenados por `id`.
+     *   2. `branch_user` aplicables a la sucursal, orden `(user_id, branch_id)`.
+     *   3. `roles`, `permissions` y `role_permissions` del rol aplicable.
+     *   4. `branches` de la sucursal solicitada.
+     *   5. `pos_stations` si se informó estación.
+     *   6. `reason_codes` si se informó motivo.
+     *   7. `system_configs` relevantes, ordenados por `config_key`.
+     *
+     * Ninguna fila fuera de la decisión se bloquea. La evaluación se hace
+     * exclusivamente con estas filas bloqueadas: si un permiso, rol, asignación
+     * de sucursal, sucursal, estación o motivo cambió después de la
+     * prevalidación, la transacción rechaza y audita sin crear AO.
+     *
+     * @return array{denied: string}|array{authorizer: object, pin_max_attempts: int}
+     */
+    private function lockAndRevalidatePolicy(
+        int $requesterId,
+        int $authorizerId,
+        int $branchId,
+        ?int $posStationId,
+        ?int $reasonCodeId,
+        ?string $reason,
+        string $type,
+    ): array {
+        $userIds = array_values(array_unique([$requesterId, $authorizerId]));
+        sort($userIds);
+
+        $userRows = DB::table('users')
+            ->whereIn('id', $userIds)
+            ->orderBy('id')
+            ->lockForUpdate()
+            ->get([
+                'id',
+                'global_role_id',
+                'is_active',
+                'deleted_at',
+                'pin_hash',
+                'pin_failed_attempts',
+                'pin_locked_until',
+            ]);
+
+        $usersById = [];
+        foreach ($userRows as $row) {
+            $usersById[(int) $row->id] = $row;
+        }
+
+        $branchUserRows = DB::table('branch_user')
+            ->where('branch_id', $branchId)
+            ->whereIn('user_id', $userIds)
+            ->orderBy('user_id')
+            ->orderBy('branch_id')
+            ->lockForUpdate()
+            ->get(['user_id', 'branch_id', 'role_id']);
+
+        $authorizer = $usersById[$authorizerId] ?? null;
+        $authorizerBranchRoleId = null;
+
+        foreach ($branchUserRows as $row) {
+            if ((int) $row->user_id === $authorizerId) {
+                $authorizerBranchRoleId = $row->role_id;
+                break;
+            }
+        }
+
+        $roleId = $authorizer?->global_role_id ?? $authorizerBranchRoleId;
+        $roleId = $roleId === null ? null : (int) $roleId;
+
+        $role = $roleId === null
+            ? null
+            : DB::table('roles')
+                ->where('id', $roleId)
+                ->lockForUpdate()
+                ->first(['id', 'authority_level']);
+
+        $permission = DB::table('permissions')
+            ->where('code', 'override.authorize')
+            ->lockForUpdate()
+            ->first(['id']);
+
+        $rolePermission = ($roleId === null || $permission === null)
+            ? null
+            : DB::table('role_permissions')
+                ->where('role_id', $roleId)
+                ->where('permission_id', (int) $permission->id)
+                ->lockForUpdate()
+                ->first(['role_id', 'permission_id']);
+
+        $branch = DB::table('branches')
+            ->where('id', $branchId)
+            ->lockForUpdate()
+            ->first(['id', 'is_active', 'deleted_at']);
+
+        $station = $posStationId === null
+            ? null
+            : DB::table('pos_stations')
+                ->where('id', $posStationId)
+                ->lockForUpdate()
+                ->first(['id', 'branch_id', 'deleted_at']);
+
+        $reasonCode = $reasonCodeId === null
+            ? null
+            : DB::table('reason_codes')
+                ->where('id', $reasonCodeId)
+                ->lockForUpdate()
+                ->first(['id', 'scope', 'is_active', 'requires_note']);
+
+        $configValues = DB::table('system_configs')
+            ->whereIn('config_key', ['override_min_authority', 'pin_max_attempts'])
+            ->orderBy('config_key')
+            ->lockForUpdate()
+            ->pluck('config_value', 'config_key')
+            ->all();
+
+        $minimumAuthority = $this->configIntFrom(
+            $configValues,
+            'override_min_authority',
+            self::DEFAULT_OVERRIDE_MIN_AUTHORITY,
+        );
+        $pinMaxAttempts = $this->configIntFrom(
+            $configValues,
+            'pin_max_attempts',
+            self::DEFAULT_PIN_MAX_ATTEMPTS,
+        );
+
+        $requester = $usersById[$requesterId] ?? null;
+
+        if ($requester === null || $requester->deleted_at !== null || (int) $requester->is_active !== 1) {
+            return $this->transactionDenial('requester_inactive', $branchId, $requesterId, $authorizerId, $type);
+        }
+
+        $hasBranchAccess = $requester->global_role_id !== null;
+
+        if (! $hasBranchAccess) {
+            foreach ($branchUserRows as $row) {
+                if ((int) $row->user_id === $requesterId) {
+                    $hasBranchAccess = true;
+                    break;
+                }
+            }
+        }
+
+        if (! $hasBranchAccess) {
+            return $this->transactionDenial('branch_access_denied', $branchId, $requesterId, $authorizerId, $type);
+        }
+
+        if ($branch === null || $branch->deleted_at !== null) {
+            return $this->transactionDenial('branch_not_found', $branchId, $requesterId, $authorizerId, $type);
+        }
+
+        if ((int) $branch->is_active !== 1) {
+            return $this->transactionDenial('branch_inactive', $branchId, $requesterId, $authorizerId, $type);
+        }
+
+        if ($authorizer === null || $authorizer->deleted_at !== null) {
+            return $this->transactionDenial('authorizer_not_found', $branchId, $requesterId, $authorizerId, $type);
+        }
+
+        if ((int) $authorizer->is_active !== 1) {
+            return $this->transactionDenial('authorizer_inactive', $branchId, $requesterId, $authorizerId, $type);
+        }
+
+        if ($roleId === null || $role === null) {
+            return $this->transactionDenial('authorizer_role_missing', $branchId, $requesterId, $authorizerId, $type);
+        }
+
+        if ($permission === null || $rolePermission === null) {
+            return $this->transactionDenial('authorizer_permission_denied', $branchId, $requesterId, $authorizerId, $type);
+        }
+
+        if ((int) $role->authority_level < $minimumAuthority) {
+            return $this->transactionDenial('authorizer_authority_insufficient', $branchId, $requesterId, $authorizerId, $type);
+        }
+
+        if ($posStationId !== null) {
+            if ($station === null || $station->deleted_at !== null || (int) $station->branch_id !== $branchId) {
+                return $this->transactionDenial('pos_station_invalid', $branchId, $requesterId, $authorizerId, $type);
+            }
+        }
+
+        if ($reasonCodeId !== null) {
+            if ($reasonCode === null || (int) $reasonCode->is_active !== 1 || $reasonCode->scope !== 'override') {
+                return $this->transactionDenial('reason_code_invalid', $branchId, $requesterId, $authorizerId, $type);
+            }
+
+            if ((int) $reasonCode->requires_note === 1 && trim((string) $reason) === '') {
+                return $this->transactionDenial('reason_note_required', $branchId, $requesterId, $authorizerId, $type);
+            }
+        }
+
+        return ['authorizer' => $authorizer, 'pin_max_attempts' => $pinMaxAttempts];
+    }
+
+    /**
+     * Persiste la auditoría de una denegación transaccional y retorna el
+     * outcome para que la transacción confirme antes de lanzar la excepción.
+     *
+     * @return array{denied: string}
+     */
+    private function transactionDenial(
+        string $reason,
+        int $branchId,
+        int $requesterId,
+        int $authorizerId,
+        string $type,
+    ): array {
+        $this->auditDenial($reason, $branchId, $requesterId, $authorizerId, $type);
+
+        return ['denied' => $reason];
     }
 
     private function assertPinFormat(
@@ -669,8 +879,18 @@ final class PinAuthorizationService
     private function denialMessage(string $reason): string
     {
         return match ($reason) {
+            'requester_inactive' => 'El usuario solicitante no está activo.',
+            'branch_access_denied' => 'El usuario solicitante no tiene acceso a la sucursal indicada.',
+            'branch_not_found' => 'La sucursal indicada no existe.',
+            'branch_inactive' => 'La sucursal indicada no está activa.',
             'authorizer_not_found' => 'El autorizador indicado no existe.',
             'authorizer_inactive' => 'El autorizador indicado no está activo.',
+            'authorizer_role_missing' => 'El autorizador no tiene un rol aplicable en la sucursal indicada.',
+            'authorizer_permission_denied' => 'El autorizador no tiene permiso para autorizar excepciones.',
+            'authorizer_authority_insufficient' => 'El autorizador no tiene autoridad suficiente para esta operación.',
+            'pos_station_invalid' => 'La estación de venta no existe o no pertenece a la sucursal indicada.',
+            'reason_code_invalid' => 'El motivo indicado no es válido para una autorización.',
+            'reason_note_required' => 'El motivo seleccionado exige una nota explicativa.',
             'pin_locked' => 'El PIN del autorizador está bloqueado temporalmente.',
             default => 'No fue posible autorizar la operación.',
         };
@@ -681,6 +901,22 @@ final class PinAuthorizationService
         $value = DB::table('system_configs')
             ->where('config_key', $key)
             ->value('config_value');
+
+        if ($value === null || $value === '') {
+            return $fallback;
+        }
+
+        $int = (int) $value;
+
+        return $int > 0 ? $int : $fallback;
+    }
+
+    /**
+     * @param  array<string, mixed>  $values
+     */
+    private function configIntFrom(array $values, string $key, int $fallback): int
+    {
+        $value = $values[$key] ?? null;
 
         if ($value === null || $value === '') {
             return $fallback;

@@ -8,7 +8,9 @@ use App\Models\User;
 use App\Support\AuditLogger;
 use App\Support\Authorization\AuthorizationDeniedException;
 use App\Support\Authorization\PinAuthorizationService;
+use Illuminate\Database\Events\TransactionBeginning;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Hash;
 use RuntimeException;
 use Tests\Feature\Users\UserTestCase;
@@ -699,6 +701,185 @@ class PinAuthorizationServiceTest extends UserTestCase
             ->toArray();
 
         $this->assertSame($before, $after);
+    }
+
+    public function test_transactional_revalidation_rejects_permission_revoked_after_prevalidation(): void
+    {
+        $this->actingAs($this->admin);
+        $branch = $this->makeBranch();
+        $role = $this->role('supervisor');
+        $authorizer = $this->makeAuthorizer($role);
+
+        $permissionId = (int) DB::table('permissions')
+            ->where('code', 'override.authorize')
+            ->value('id');
+
+        // La prevalidación ya pasó. La revocación ocurre al iniciar la
+        // transacción del servicio y antes de sus locks: la revalidación
+        // transaccional debe ser la que rechace.
+        $this->revokeOnTransactionBeginning(function () use ($role, $permissionId): void {
+            DB::table('role_permissions')
+                ->where('role_id', $role->id)
+                ->where('permission_id', $permissionId)
+                ->delete();
+        });
+
+        try {
+            $this->assertDenied(
+                'authorizer_permission_denied',
+                fn () => (new PinAuthorizationService())->authorize(
+                    'price_override',
+                    $branch->id,
+                    $authorizer,
+                    '1234',
+                ),
+            );
+        } finally {
+            Event::forget(TransactionBeginning::class);
+        }
+
+        $this->assertSame(0, DB::table('authorization_overrides')->count());
+        $this->assertSame(0, (int) $authorizer->fresh()->pin_failed_attempts);
+        $this->assertNull($authorizer->fresh()->pin_locked_until);
+        $this->assertSame(
+            0,
+            DB::table('audit_logs')->where('event', 'authorization_override.approved')->count(),
+        );
+        $this->assertSame(
+            1,
+            DB::table('audit_logs')
+                ->where('event', 'authorization_override.denied')
+                ->where('is_security_event', 1)
+                ->where('new_values', 'like', '%authorizer_permission_denied%')
+                ->count(),
+        );
+    }
+
+    public function test_transactional_revalidation_rejects_branch_assignment_revoked_after_prevalidation(): void
+    {
+        $branch = $this->makeBranch();
+        $requester = $this->makeUser(['global_role_id' => null]);
+        DB::table('branch_user')->insert([
+            'user_id' => $requester->id,
+            'branch_id' => $branch->id,
+            'role_id' => $this->role('seller')->id,
+        ]);
+
+        $authorizer = $this->makeUser([
+            'global_role_id' => null,
+            'pin_hash' => Hash::make('4321'),
+        ]);
+        DB::table('branch_user')->insert([
+            'user_id' => $authorizer->id,
+            'branch_id' => $branch->id,
+            'role_id' => $this->role('supervisor')->id,
+        ]);
+
+        $this->actingAs($requester);
+
+        $this->revokeOnTransactionBeginning(function () use ($authorizer, $branch): void {
+            DB::table('branch_user')
+                ->where('user_id', $authorizer->id)
+                ->where('branch_id', $branch->id)
+                ->delete();
+        });
+
+        try {
+            $this->assertDenied(
+                'authorizer_role_missing',
+                fn () => (new PinAuthorizationService())->authorize(
+                    'discount_over_cap',
+                    $branch->id,
+                    $authorizer,
+                    '4321',
+                ),
+            );
+        } finally {
+            Event::forget(TransactionBeginning::class);
+        }
+
+        $this->assertSame(0, DB::table('authorization_overrides')->count());
+        $this->assertSame(0, (int) $authorizer->fresh()->pin_failed_attempts);
+        $this->assertNull($authorizer->fresh()->pin_locked_until);
+        $this->assertSame(
+            1,
+            DB::table('audit_logs')
+                ->where('event', 'authorization_override.denied')
+                ->where('is_security_event', 1)
+                ->where('new_values', 'like', '%authorizer_role_missing%')
+                ->count(),
+        );
+        $this->assertSame(
+            0,
+            DB::table('audit_logs')->where('event', 'authorization_override.approved')->count(),
+        );
+    }
+
+    public function test_transactional_revalidation_rejects_reason_code_deactivated_after_prevalidation(): void
+    {
+        $this->actingAs($this->admin);
+        $branch = $this->makeBranch();
+        $reasonCodeId = $this->makeReasonCode('override', 'revocado_en_transaccion');
+        $authorizer = $this->makeAuthorizer($this->role('supervisor'));
+
+        $this->revokeOnTransactionBeginning(function () use ($reasonCodeId): void {
+            DB::table('reason_codes')->where('id', $reasonCodeId)->update([
+                'is_active' => 0,
+                'updated_at' => now(),
+            ]);
+        });
+
+        try {
+            $this->assertDenied(
+                'reason_code_invalid',
+                fn () => (new PinAuthorizationService())->authorize(
+                    'price_override',
+                    $branch->id,
+                    $authorizer,
+                    '1234',
+                    reasonCodeId: $reasonCodeId,
+                    reason: 'Motivo informado',
+                ),
+            );
+        } finally {
+            Event::forget(TransactionBeginning::class);
+        }
+
+        $this->assertSame(0, DB::table('authorization_overrides')->count());
+        $this->assertSame(0, (int) $authorizer->fresh()->pin_failed_attempts);
+        $this->assertSame(
+            1,
+            DB::table('audit_logs')
+                ->where('event', 'authorization_override.denied')
+                ->where('is_security_event', 1)
+                ->where('new_values', 'like', '%reason_code_invalid%')
+                ->count(),
+        );
+        $this->assertSame(
+            0,
+            DB::table('audit_logs')->where('event', 'authorization_override.approved')->count(),
+        );
+    }
+
+    /**
+     * Ejecuta una sola revocación al iniciar la transacción del servicio.
+     *
+     * No se añaden hooks de test al código de producción: el evento real
+     * `TransactionBeginning` dispara la revocación entre la prevalidación y
+     * la adquisición de locks, y la revalidación real decide el rechazo.
+     */
+    private function revokeOnTransactionBeginning(callable $revoke): void
+    {
+        $revoked = false;
+
+        Event::listen(TransactionBeginning::class, function () use (&$revoked, $revoke): void {
+            if ($revoked) {
+                return;
+            }
+
+            $revoked = true;
+            $revoke();
+        });
     }
 
     /**
