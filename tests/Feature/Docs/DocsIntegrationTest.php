@@ -115,7 +115,7 @@ class DocsIntegrationTest extends TestCase
         $html = $this->manual();
 
         $this->assertStringContainsString('id="comprobante"', $html);
-        $this->assertStringContainsString('23 temas disponibles.', $html);
+        $this->assertStringContainsString('24 temas disponibles.', $html);
         $this->assertStringContainsString('Ajustes de comprobante', $html);
         $this->assertStringContainsString('settings.manage', $html);
         $this->assertStringContainsString('no tributario', $html);
@@ -127,7 +127,7 @@ class DocsIntegrationTest extends TestCase
         $html = $this->manual();
 
         $this->assertStringContainsString('id="datos-comercio"', $html);
-        $this->assertStringContainsString('23 temas disponibles.', $html);
+        $this->assertStringContainsString('24 temas disponibles.', $html);
         $this->assertStringContainsString('Datos del comercio', $html);
         $this->assertStringContainsString('settings.manage', $html);
         $this->assertStringContainsString('no valida el RUT ante el SII', $html);
@@ -139,7 +139,7 @@ class DocsIntegrationTest extends TestCase
         $html = $this->manual();
 
         $this->assertStringContainsString('id="preferencias"', $html);
-        $this->assertStringContainsString('23 temas disponibles.', $html);
+        $this->assertStringContainsString('24 temas disponibles.', $html);
         $this->assertStringContainsString('America/Santiago', $html);
         $this->assertStringContainsString('settings.manage', $html);
         $this->assertStringContainsString('no modifica documentos anteriores', $html);
@@ -150,10 +150,22 @@ class DocsIntegrationTest extends TestCase
         $html = $this->manual();
 
         $this->assertStringContainsString('id="estado-licencia"', $html);
-        $this->assertStringContainsString('23 temas disponibles.', $html);
+        $this->assertStringContainsString('24 temas disponibles.', $html);
         $this->assertStringContainsString('Modo solo lectura', $html);
         $this->assertStringContainsString('No es una pantalla para comprar', $html);
         $this->assertStringContainsString('sin despliegue comercial', $html);
+    }
+
+    public function test_catmast_001_catalog_masters_guide_explains_permissions_and_scope(): void
+    {
+        $html = $this->manual();
+
+        $this->assertStringContainsString('id="catalogo-maestros"', $html);
+        $this->assertStringContainsString('24 temas disponibles.', $html);
+        $this->assertStringContainsString('/catalog/masters', $html);
+        $this->assertStringContainsString('catalog.view', $html);
+        $this->assertStringContainsString('catalog.manage', $html);
+        $this->assertStringContainsString('no emite boletas', $html);
     }
 
     private function manual(): string
