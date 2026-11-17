@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Artisan;
 
 class AdminSetupCommand extends Command
 {
-    protected $signature = 'admin:setup {--email= : Correo del administrador} {--password= : Contrase�a del administrador}';
+    protected $signature = 'admin:setup {--email= : Correo del administrador} {--password= : Contrase�a del administrador}';
 
     protected $description = 'Ejecuta migraciones, seeders y crea el administrador inicial (DEV)';
 
@@ -33,12 +33,13 @@ class AdminSetupCommand extends Command
         }
 
         if (strlen($password) < 15) {
-            $this->error('La contrase�a debe tener al menos 15 caracteres.');
+            $this->error('La contrase�a debe tener al menos 15 caracteres.');
             return 1;
         }
 
         if (User::where('email', $email)->exists()) {
             $this->info("Ya existe un usuario con el correo {$email}.");
+            $this->showOnboardingNotice();
             return 0;
         }
 
@@ -58,7 +59,18 @@ class AdminSetupCommand extends Command
         ]);
 
         $this->info("Administrador creado: {$email} (rol central_admin).");
+        $this->showOnboardingNotice();
         return 0;
+    }
+
+    /**
+     * M-02: aclara el estado del onboarding público sin auto-marcar la
+     * instalación ni modificar `is_demo`/licencias.
+     */
+    private function showOnboardingNotice(): void
+    {
+        $this->warn('Aviso: el onboarding público /setup queda pendiente.');
+        $this->line('Con el guard de primer inicio, una instancia con usuarios no se marca automáticamente como configurada. Use /setup como bootstrap para completar el asistente; este comando no cambia is_setup_completed, is_demo ni licencias.');
     }
 }
 

@@ -17,6 +17,9 @@ return Application::configure(basePath: dirname(__DIR__))
             // redirección de cambio de contraseña; si no, una sesión invalidada
             // podría navegar a /password/change sin ser rechazada.
             \App\Http\Middleware\VerifySession::class,
+            // SETUP-001: el guard de primer inicio va después de verificar la
+            // sesión y antes de exigir cambio de contraseña.
+            \App\Http\Middleware\EnsureSetupCompleted::class,
             \App\Http\Middleware\RequirePasswordChange::class,
         ]);
 
@@ -26,7 +29,25 @@ return Application::configure(basePath: dirname(__DIR__))
             'password.change' => \App\Http\Middleware\RequirePasswordChange::class,
             'verify.session' => \App\Http\Middleware\VerifySession::class,
         ]);
+
+        // SETUP-001: el guard debe ejecutarse después de VerifySession y antes
+        // del middleware `auth` de rutas. Sin esta prioridad, `auth` (que sí
+        // está en la lista de prioridad de Laravel) se adelanta al guard y las
+        // rutas privadas responderían con el redirect de login.
+        $middleware->prependToPriorityList(
+            \Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests::class,
+            \App\Http\Middleware\EnsureSetupCompleted::class,
+        );
+        $middleware->prependToPriorityList(
+            \App\Http\Middleware\EnsureSetupCompleted::class,
+            \App\Http\Middleware\VerifySession::class,
+        );
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        // SETUP-001 · M-01: las credenciales del Admin Central nunca deben
+        // quedar en el old input/flash de sesión ante un error de validación.
+        $exceptions->dontFlash([
+            'admin_password',
+            'admin_password_confirmation',
+        ]);
     })->create();

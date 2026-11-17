@@ -17,10 +17,18 @@ Route::get('/docs/', fn () => response(
     ['Content-Type' => 'text/html; charset=UTF-8']
 ))->name('docs.index');
 
+// --- Asistente de primer inicio (SETUP-001 · CORE-02) ---
+// Público por diseño: el estado de instalación y el token de flujo lo
+// protegen. Las rutas privadas quedan bloqueadas por EnsureSetupCompleted.
+Route::get('/setup', [\App\Http\Controllers\SetupController::class, 'show'])->name('setup.show');
+Route::post('/setup', [\App\Http\Controllers\SetupController::class, 'store'])->name('setup.store');
+
 // --- Autenticación (AUTH-001) ---
 
 Route::get('/login', [\App\Http\Controllers\Auth\LoginController::class, 'show'])->name('login');
-Route::post('/login', [\App\Http\Controllers\Auth\LoginController::class, 'store']);
+// Nombre propio para poder eximir exactamente el POST de ingreso del guard de
+// instalación sin abrir un prefijo de rutas.
+Route::post('/login', [\App\Http\Controllers\Auth\LoginController::class, 'store'])->name('login.store');
 Route::post('/logout', [\App\Http\Controllers\Auth\LogoutController::class, 'destroy'])->name('logout');
 
 // Cambio de contraseña (autenticados; también verifica el fingerprint SEC-05)

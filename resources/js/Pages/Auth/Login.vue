@@ -8,6 +8,10 @@
             <h1 class="sf-title">{{ $page.props.welcome ?? 'Ingreso al sistema' }}</h1>
 
             <form @submit.prevent="submit" class="sf-form">
+                <div v-if="successMessage" class="sf-success" role="status">
+                    {{ successMessage }}
+                </div>
+
                 <div v-if="error" class="sf-error" role="alert">
                     {{ error }}
                 </div>
@@ -55,13 +59,24 @@
 </template>
 
 <script setup lang="ts">
-import { useForm } from '@inertiajs/vue3';
+import { useForm, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 
+interface LoginPageProps {
+    [key: string]: unknown;
+    flash?: {
+        success?: string | null;
+    };
+}
+
 const props = defineProps<{
+    success?: string;
     error?: string;
     warning?: string;
 }>();
+
+const page = usePage<LoginPageProps>();
+const successMessage = computed(() => props.success ?? page.props.flash?.success ?? null);
 
 const form = useForm({
     email: '',
@@ -197,6 +212,15 @@ async function submit() {
 .sf-warning {
     background: #fef3c7;
     color: #92400e;
+    padding: 0.75rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+}
+
+.sf-success {
+    background: #dcfce7;
+    color: #166534;
     padding: 0.75rem;
     border-radius: 0.375rem;
     font-size: 0.875rem;

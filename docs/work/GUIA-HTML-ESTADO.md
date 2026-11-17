@@ -11,11 +11,11 @@ guide_status: INTEGRADA_EN_MAIN (2026-11-16)
 guide_content_last_written: 2026-11-17
 covered_features: AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED; ROADMAP-001 VERIFIED; USERS-001 VERIFIED; CFG-001/002/003 VERIFIED; CORELIC-001 VERIFIED; CATMAST-001 VERIFIED (9279d57)
 latest_covered_code_sha: `9279d57996ca2592a7c03fcdc7822e588621e2fe` (CATMAST-001 y anteriores)
-next_feature: CATPROD-001 implementada en `/catalog/products` (productos, variantes, códigos, atributos y etiquetas); guía pendiente de redacción por ChatGPT
+next_feature: SETUP-001 implementada en `/setup` (asistente de primer inicio CORE-02); guía pendiente de redacción por ChatGPT
 internal_only_features: CATDB-001 VERIFIED (11 tablas internas, sin UI ni página nueva); CORESEQ-001 VERIFIED (servicio interno invisible; sin entrada nueva en guía); COREMOD-001 VERIFIED técnico (servicio interno invisible de módulos; sin página nueva); COREPIN-001 VERIFIED (servicio interno invisible de autorización PIN; sin página nueva)
 last_guide_integration_sha: `7aa19fd39192f74ed265c5571b0930c9b4f61670` (ChatGPT, guía 24 temas CATMAST-001)
 last_guide_integration_date: 2026-11-17
-pending_docs: CATPROD-001 (productos, variantes y códigos de barras)
+pending_docs: SETUP-001 (asistente `/setup`: comercio, preferencias, sucursal inicial y Admin Central)
 
 ## Cómo mantener este archivo
 - OpenCode puede actualizar solamente los metadatos y el registro de pendientes aquí, no los textos para usuarios en `public/docs/index.html`.
@@ -71,4 +71,17 @@ pending_docs: CATPROD-001 (productos, variantes y códigos de barras)
 - fecha: 2026-11-17.
 - estado: ciclo correctivo H-01/H-02/H-03 aplicado en SQLite :memory: (origen manual siempre POS, margen/markup sobre precio neto RN-25 y calculadora CAT-04). Catalog 116/1810 y suite 476/4192; gates, QA externa y CI pendientes de cierre. Guía NO redactada todavía.
 - nota correctiva para ChatGPT: documentar que el origen del CRUD manual es siempre POS y no editable; que el margen/markup se calculan sobre precio neto según `prices_include_tax`, tasa de variante/producto/predeterminada y exención; y que la calculadora de precio por margen o markup es una sugerencia visible solo con `catalog.view_cost`, no una regla automática de venta.
+- OpenCode no edita `public/docs/index.html`; este registro es solo metadato técnico.
+
+## GUIA_PENDIENTE_CHATGPT — SETUP-001
+- feature: SETUP-001 — Asistente de primer inicio CORE-02 (una instalación).
+- pantalla: `/setup` (pública solo mientras la instalación está pendiente y virgen; luego redirige al login).
+- campos reales por paso:
+  - Comercio y responsable (9 claves CFG-002, todas opcionales): `business_name`, `fiscal_id`, `fiscal_name`, `commercial_activity`, `fiscal_address`, `fiscal_commune`, `responsible_name`, `responsible_email`, `responsible_phone`.
+  - Región y precios (7 claves CFG-003, obligatorias): `country` (default CL), `currency_code` (CLP), `currency_decimals` (0), `timezone` (America/Santiago), `locale` (es-CL), `prices_include_tax` (true), `cash_rounding_step` (1).
+  - Sucursal inicial: `branch_code` (mayúsculas, `^[A-Z0-9-]+$`, máx. 30), `branch_name` (máx. 150), `branch_type` (store/warehouse/online) y dirección/comuna/ciudad/región/teléfono opcionales.
+  - Admin Central: `admin_name`, `admin_email`, `admin_password` (15–64 caracteres), confirmación; se crea exactamente una cuenta activa con el rol de sistema `central_admin`.
+- contenido a redactar por ChatGPT: uso del asistente por pasos, qué campos son opcionales, creación única de sucursal y Admin Central, ingreso posterior con esa cuenta, bloqueo informativo si la instancia ya contiene usuarios o sucursales (sin reiniciar datos), y bloqueo de producción no demo por BKP-08 con código `NOT_READY_FOR_PRODUCTION` (paquete de recuperación no implementado). Aclarar que no se ejecutan migraciones, no se emiten documentos tributarios y no se muestran contraseñas.
+- fecha: 2026-11-17.
+- estado: implementado en SQLite `:memory:` (50 pruebas nuevas, 465 aserciones; suite 528/4662). Ciclo correctivo QA aplicado (password fuera de old input, caché `no-store`, defaults, foco/errores UI, aviso DEV). Gates `GATES_PASS` 19/19; QA independiente final, publicación y CI pendientes; guía NO redactada todavía.
 - OpenCode no edita `public/docs/index.html`; este registro es solo metadato técnico.
