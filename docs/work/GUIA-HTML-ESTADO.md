@@ -8,14 +8,14 @@ guide_url: `/docs/`
 guide_branch: `docs/guia-usuario-interactiva-20261110`
 guide_pr: https://github.com/marioromero/StockFlash/pull/2
 guide_status: INTEGRADA_EN_MAIN (2026-11-16)
-guide_content_last_written: 2026-11-16
-covered_features: AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED; ROADMAP-001 VERIFIED; USERS-001 VERIFIED; CFG-001/002/003 VERIFIED; CORELIC-001 VERIFIED (a2cc899)
-latest_covered_code_sha: `a2cc8992b3f13d14423d5d222628f895a568ee3f` (CORELIC-001 y anteriores)
-next_feature: CATMAST-001 activa (maestros de Catálogo: UI y CRUD implementados; guía pendiente de ChatGPT)
+guide_content_last_written: 2026-11-17
+covered_features: AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED; ROADMAP-001 VERIFIED; USERS-001 VERIFIED; CFG-001/002/003 VERIFIED; CORELIC-001 VERIFIED; CATMAST-001 VERIFIED (9279d57)
+latest_covered_code_sha: `9279d57996ca2592a7c03fcdc7822e588621e2fe` (CATMAST-001 y anteriores)
+next_feature: CATPROD-001 activa, productos/variantes/códigos con UI aún no implementada
 internal_only_features: CATDB-001 VERIFIED (11 tablas internas, sin UI ni página nueva); CORESEQ-001 VERIFIED (servicio interno invisible; sin entrada nueva en guía); COREMOD-001 VERIFIED técnico (servicio interno invisible de módulos; sin página nueva); COREPIN-001 VERIFIED (servicio interno invisible de autorización PIN; sin página nueva)
-last_guide_integration_sha: `aa3ba75b65f228c9ef68c85958bad77bc14a9666` (ChatGPT, 23 temas, avisos de licencia)
-last_guide_integration_date: 2026-11-16
-pending_docs: CATMAST-001 (maestros de Catálogo P0; guía pendiente de redacción por ChatGPT)
+last_guide_integration_sha: `7aa19fd39192f74ed265c5571b0930c9b4f61670` (ChatGPT, guía 24 temas CATMAST-001)
+last_guide_integration_date: 2026-11-17
+pending_docs: NINGUNO
 
 ## Cómo mantener este archivo
 - OpenCode puede actualizar solamente los metadatos y el registro de pendientes aquí, no los textos para usuarios en `public/docs/index.html`.

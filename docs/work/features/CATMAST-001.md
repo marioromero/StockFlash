@@ -1,6 +1,6 @@
 # CATMAST-001 — Maestros de Catálogo P0 (categorías, marcas, etiquetas, atributos e impuestos)
 
-status: APPROVED
+status: VERIFIED
 approval_basis: existing_approved_contract_owner_delegation_2026-11-16
 new_business_decisions: NONE
 publication_mode: AUTO_GIT
@@ -37,3 +37,12 @@ Fuentes aprobadas: Parte 1 §8.2 CAT-02 (categorías jerárquicas, marcas, etiqu
 ## Límites y seguridad
 
 Prohibido: migraciones nuevas, cambios a CORE o Parte 2, edición/ejecución de BD remota, lectura de `.env`/credenciales, DTE/SII, venta/impuestos efectivos sobre transacciones, productos/variantes, stock, importaciones/exports, etiquetas impresas, reglas comerciales nuevas, deploy, cambios a contratos, agentes/índices/scripts/plugins nuevos, sistema CRUD genérico o endpoints públicos de integración. Toda prueba solo en SQLite :memory:/CI ya aislados; MariaDB real se validará en entorno autorizado antes de deploy. Si surge una **decisión comercial genuinamente nueva**, documentar pregunta precisa y opciones recomendadas; NO pedir aprobación genérica ni el orden.
+
+## Cierre técnico externo — 2026-11-17
+
+status: VERIFIED
+reviewer_externo: ChatGPT
+cierre: `docs/work/CATMAST-001-CLOSURE-20261117.md`
+code_sha: `9279d57996ca2592a7c03fcdc7822e588621e2fe`
+resultado: gates 17/17 PASS, 414 pruebas PHP / 3423 assertions, QA correctivo APROBADO 0 bloqueantes, Actions 2/2 SUCCESS; guía ChatGPT 24 temas.
+limites: concurrencia real MariaDB NO ejecutada; UX navegador no ejecutada; sin DB remota ni deploy.

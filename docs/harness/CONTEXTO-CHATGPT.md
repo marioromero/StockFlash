@@ -2,7 +2,7 @@
 
 **Última revisión por ChatGPT:** 2026-11-17
 **Repositorio:** `marioromero/StockFlash` · rama de desarrollo `main`
-**Estado de referencia observado:** `93fe5de92e63ec4cc8c8bd53df5001fab0382774` (CATDB-001 esquema P0 revisado, QA y CI verde; CATMAST-001 activa; verificar HEAD del proyecto en sesión futura)
+**Estado de referencia observado:** `9279d57996ca2592a7c03fcdc7822e588621e2fe` (CATMAST-001 publicada y aprobada, 17 gates/414 PHP/QA/CI, guía 24 temas en `7aa19fd39192f74ed265c5571b0930c9b4f61670`; CATPROD-001 activa. **Verificar HEAD e issue SFH1 en nuevo chat**)
 **Aviso de vigencia:** este SHA es un punto de control histórico, NO el HEAD garantizado al abrir una nueva sesión. Verificar HEAD, PR abiertos y documentación actual antes de actuar.
 
 ## 1. INSTRUCCIONES PARA CUALQUIER SESIÓN NUEVA DE CHATGPT
@@ -75,7 +75,7 @@ Si el propietario solicita «continuar StockFlash», «revisar lo que hizo OpenC
 ## 5. TRABAJO ABIERTO Y SIGUIENTE PASO
 
 1. USERS-001 y HCTX-001: VERIFIED técnico, informes de cierre publicados el 2026-11-16; sin despliegue. Concurrencia MariaDB real y UX visual quedan explícitamente pendientes para predespliegue.
-2. CFG-001/002/003, CORESEQ-001, CORELIC-001, COREMOD-001, COREPIN-001 y CATDB-001: VERIFIED técnico. CATDB-001 código `93fe5de`, 15 gates, 383 pruebas, QA/CI verde; MariaDB real pendiente. Siguiente CATMAST-001: maestros del Catálogo P0, sin decisiones nuevas.
+2. CFG-001/002/003, CORESEQ/CORELIC/COREMOD/COREPIN, CATDB-001 y CATMAST-001: VERIFIED técnico. CATMAST-001 `9279d57`, 17 gates, 414 pruebas PHP, QA/CI verde; correcciones H-01–H-06. Próxima CATPROD-001, Productos, variantes y códigos, Parte 2 §5.4–5.6, sin decisiones nuevas. MariaDB concurrencia pendiente.
 3. SFH1: mantener un issue activo por tarea; no exigir autorizaciones administrativas de cierre repetidas. ChatGPT verifica y registra el cierre, OpenCode solo lo publica.
 
 ## 6. FORMATO BREVE DE ACTUALIZACIÓN DE ESTE ARCHIVO

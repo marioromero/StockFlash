@@ -1,7 +1,7 @@
 # Estado operativo — StockFlash
 
 ## Feature activa
-- **CATMAST-001 — Administración de maestros del Catálogo P0 (CAT-02/CAT-05): APPROVED y ACTIVA**, packet `docs/work/features/CATMAST-001.md`. Solo desarrollo y pruebas SQLite locales; sin migraciones ni cambios en BD remota.
+- **CATPROD-001 — Productos, variantes y códigos de barras P0 (CAT-01/03/04/05/07/08): APPROVED y ACTIVA**, `docs/work/features/CATPROD-001.md`, bajo delegación técnica sobre contratos ya aprobados. Solo SQLite `:memory:`/CI, sin migraciones remotas ni despliegue.
 
 ## Estados por feature (una línea por hito)
 - **BOOT-001: VERIFIED** (2026-10-14). Laravel 13.35.0 + Vue 3 + Inertia 3.5.1 + TypeScript/Vite; scaffold publicado en `bcbf16f`; gates PASS y QA APROBADO. Sin deploy ni migraciones.
@@ -23,11 +23,12 @@
 - **COREMOD-001: VERIFIED técnico** (2026-11-16), SHA `cd6d39d`, 18/18 gates, 328 pruebas PHP, QA/CI 2/2 verde. Servicio interno, sin interfaz; concurrencia MariaDB real pendiente. Cierre `docs/work/COREMOD-001-CLOSURE-20261116.md`.
 - **COREPIN-001: VERIFIED técnico** (2026-11-16), SHA `5ea1b3b`, gates 17/17, QA independiente APROBADO y CI 2/2 verde, 359 pruebas PHP. Corrección AUTH_TOCTOU validada con revocaciones durante transacción; MariaDB real diferida. Cierre `docs/work/COREPIN-001-CLOSURE-20261116.md`.
 - **CATDB-001: VERIFIED técnico** (2026-11-17), SHA `93fe5de`, 15/15 gates, 383 pruebas PHP, QA independiente APROBADO y CI 2/2 SUCCESS. Esquema de 11 tablas probado en SQLite :memory:; sin MariaDB real ni BD remota. Cierre `docs/work/CATDB-001-CLOSURE-20261117.md`.
+- **CATMAST-001: VERIFIED técnico** (2026-11-17), SHA `9279d57`, gates 17/17, 414 pruebas PHP / 3423 aserciones, QA independiente APROBADO y CI 2/2 verde. H-01..H-06 corregidos; guía 24 temas. MariaDB concurrente y UI real pendientes predespliegue. Cierre `docs/work/CATMAST-001-CLOSURE-20261117.md`.
 
 ## Pendientes y bloqueos reales
 - **STAGING-001: APPROVED**, sin deploy demostrado ni VERIFIED. FTPS solo hacia `/home/grupoint/stockflash-dev-app`; raíz pública y smoke pendientes de comprobar. No habilita despliegue por sí sola.
 - Restricción SSH vigente: no usar la credencial `grupoint`; vía FTPS separada sin publicar secretos.
-- R2 staging seguro pendiente. CATDB-001 VERIFIED técnico; CATMAST-001 activa para CRUD de maestros, seguida de catálogo de productos/variantes. MariaDB/InnoDB/FULLTEXT y validación visual pendientes predespliegue. CORE-02/17 instalador sigue pendiente por dependencias. NO ejecutar migraciones remotas sin autorización explícita.
+- R2 staging seguro pendiente. CATMAST-001 VERIFIED técnico. CATPROD-001 activa (CRUD de productos/variantes/códigos y catálogo P0), seguida de desarrollo de inventario según dependencias. Concurrencia/índices MariaDB y UX real no probados; no migrar BD remota ni desplegar sin autorización.
 - VERIFIED exige dictamen técnico externo registrado; concurrencia MariaDB real y UX visual de USERS-001 NO ejecutadas (pendientes antes de despliegue).
 
 ## Reglas operativas vigentes
