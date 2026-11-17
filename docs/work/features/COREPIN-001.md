@@ -1,6 +1,6 @@
 # COREPIN-001 — Autorizaciones reutilizables mediante PIN (CORE-11 / SEC-12)
 
-status: APPROVED
+status: VERIFIED
 approval_basis: existing_approved_contract_owner_delegation_2026-11-16
 new_business_decisions: NONE
 publication_mode: AUTO_GIT
@@ -35,3 +35,12 @@ Fuentes **ya aprobadas**: Parte 1 §8.1 `CORE-11`; §9.3 `SEC-12` (PIN hasheado,
 ## Límites
 
 No construir POS-05 UI ni rutas públicas, no manejar DTE, no activar ventas/caja reales, no cambiar contrato v2.2, migraciones, RBAC, seeds o políticas de empresa, no enviar PIN por email/red ni colocarlo en logs, no editar `public/docs/index.html`/`resources/roadmap/index.html`/`CONTEXTO-CHATGPT.md` (exclusivos ChatGPT), no desplegar ni tocar BD remota, no crear nuevas dependencias ni protocolos. Si un caso exige una decisión **comercial nueva/material**, documentar la pregunta concreta y opciones/recomendación; continuar las partes independientes sin pedir aprobación genérica del packet.
+
+## Cierre técnico externo — 2026-11-16
+
+status: VERIFIED
+reviewer_externo: ChatGPT
+registro: `docs/work/COREPIN-001-CLOSURE-20261116.md`
+code_sha: `5ea1b3b602cffa86baeb1739c9e0a7547e8e56a1`
+resultado: 17/17 gates PASS; 359 PHP tests/2376 assertions; QA correctivo APROBADO; CI GitHub 2/2 SUCCESS
+limites: concurrencia real MariaDB NO ejecutada, bloqueo/orden intertransaccional pendiente antes del despliegue. Servicio sin endpoints ni UI, sin despliegue.

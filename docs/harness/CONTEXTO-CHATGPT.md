@@ -2,7 +2,7 @@
 
 **Última revisión por ChatGPT:** 2026-11-16
 **Repositorio:** `marioromero/StockFlash` · rama de desarrollo `main`
-**Estado de referencia observado:** `cd6d39d0c5497499d7df474bcde21b948321c422` (COREMOD-001 código/QA/CI verificados, sin nueva UI; COREPIN-001 activa; comprobar HEAD vigente)
+**Estado de referencia observado:** `5ea1b3b602cffa86baeb1739c9e0a7547e8e56a1` (COREPIN-001 corregido, QA/CI 2/2 verde y cierre VERIFIED técnico; CATDB-001 activa, comprobar HEAD)
 **Aviso de vigencia:** este SHA es un punto de control histórico, NO el HEAD garantizado al abrir una nueva sesión. Verificar HEAD, PR abiertos y documentación actual antes de actuar.
 
 ## 1. INSTRUCCIONES PARA CUALQUIER SESIÓN NUEVA DE CHATGPT
@@ -73,7 +73,7 @@ Si el propietario solicita «continuar StockFlash», «revisar lo que hizo OpenC
 ## 5. TRABAJO ABIERTO Y SIGUIENTE PASO
 
 1. USERS-001 y HCTX-001: VERIFIED técnico, informes de cierre publicados el 2026-11-16; sin despliegue. Concurrencia MariaDB real y UX visual quedan explícitamente pendientes para predespliegue.
-2. CFG-001/002/003, CORESEQ-001, CORELIC-001 y COREMOD-001: VERIFIED técnico. COREMOD-001 SHA `cd6d39d`, 18 gates, 328 pruebas, QA/CI verde; concurrencia real MariaDB pendiente. Siguiente COREPIN-001: verificaciones y autorizaciones por PIN según CORE-11/SEC-12.
+2. CFG-001/002/003, CORESEQ-001, CORELIC-001, COREMOD-001 y COREPIN-001: VERIFIED técnico. COREPIN-001 fix AUTH_TOCTOU `5ea1b3b`, 17 gates, 359 PHP pruebas, QA/CI verde; concurrencia MariaDB real pendiente. Próxima CATDB-001: migraciones P0 Catálogo basadas en Parte 2 §5.1–5.6.
 3. SFH1: mantener un issue activo por tarea; no exigir autorizaciones administrativas de cierre repetidas. ChatGPT verifica y registra el cierre, OpenCode solo lo publica.
 
 ## 6. FORMATO BREVE DE ACTUALIZACIÓN DE ESTE ARCHIVO

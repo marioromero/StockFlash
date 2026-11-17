@@ -11,8 +11,8 @@ roadmap_content_status: INTEGRADA_EN_MAIN (2026-11-16)
 roadmap_integration_sha: `aa3ba75b65f228c9ef68c85958bad77bc14a9666` (ChatGPT incluyó CORELIC-001 en R3)
 roadmap_integration_date: 2026-11-16
 roadmap_last_review: 2026-11-16
-covered_features: BOOT-001 VERIFIED; CI-001 VERIFIED; AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED; ROADMAP-001 VERIFIED; USERS-001 VERIFIED; CFG-001/002/003 VERIFIED; CORESEQ-001 VERIFIED; CORELIC-001 VERIFIED; COREMOD-001 VERIFIED (cd6d39d)
-in_progress: R3_CORE — COREMOD-001 VERIFIED técnico; COREPIN-001 activa, catálogo/Bodega y POS siguientes por dependencias; CI verde
+covered_features: BOOT-001 VERIFIED; CI-001 VERIFIED; AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED; ROADMAP-001 VERIFIED; USERS-001 VERIFIED; CFG-001/002/003 VERIFIED; CORESEQ-001 VERIFIED; CORELIC-001 VERIFIED; COREMOD-001 VERIFIED; COREPIN-001 VERIFIED (5ea1b3b)
+in_progress: R3_CORE — COREPIN-001 VERIFIED técnico; CATDB-001 activa para Catálogo P0; luego gestión de productos/variantes, onboarding/instalador pendientes
 first_commercial_release: R7 — POS + Bodega sin emisión DTE integrada y con piloto/controles de salida
 pending: NINGUNO
 report_state: ROADMAP_ACTUALIZADA
