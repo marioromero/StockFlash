@@ -53,6 +53,11 @@ class HandleInertiaRequests extends Middleware
      * Códigos de permiso efectivos del usuario para la interfaz.
      * La interfaz solo oculta accesos; la autorización real es server-side.
      *
+     * Debe usar el mismo ámbito que `CheckPermission::allows`: rol global para
+     * usuarios globales o el rol de la sucursal por defecto para usuarios por
+     * sucursal. No se agregan asignaciones de otras sucursales porque esas
+     * rutas responderían 403 y el enlace no debe mostrarse.
+     *
      * @return list<string>
      */
     private function permissionCodes(?User $user): array
@@ -69,7 +74,14 @@ class HandleInertiaRequests extends Middleware
                 : $role->permissions()->pluck('permissions.code')->unique()->values()->all();
         }
 
+        $branchId = $user->default_branch_id;
+
+        if ($branchId === null) {
+            return [];
+        }
+
         $roleIds = $user->branchAssignments()
+            ->where('branch_id', $branchId)
             ->pluck('role_id')
             ->unique()
             ->values()

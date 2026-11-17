@@ -109,9 +109,11 @@ const licenseNotice = computed(() => props.license_notice ?? null);
 const page = usePage<SharedPageProps>();
 const userName = computed(() => page.props.auth?.user?.name ?? props.user_name ?? 'Usuario');
 const canViewCatalog = computed(() => {
-    const permissions = page.props.auth?.permissions ?? [];
-
-    return permissions.includes('catalog.view') || permissions.includes('catalog.manage');
+    // `auth.permissions` ya está acotado por servidor a la sucursal por
+    // defecto. La ruta GET exige 'catalog.view'; 'catalog.manage' habilita
+    // escrituras dentro de la pantalla, pero por sí solo recibiría 403 en el
+    // GET, así que no se muestra el enlace con solo manage.
+    return (page.props.auth?.permissions ?? []).includes('catalog.view');
 });
 const canManageUsers = computed(() =>
     (page.props.auth?.permissions ?? []).includes('users.manage')

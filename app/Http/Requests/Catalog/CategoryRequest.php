@@ -52,7 +52,13 @@ class CategoryRequest extends FormRequest
         $category = $this->route('category');
 
         return [
-            'parent_id' => ['nullable', 'integer', 'exists:categories,id'],
+            // Un padre soft-deleted no es una referencia válida: no aparece en
+            // la lista y dejaría la categoría colgando de una fila invisible.
+            'parent_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('categories', 'id')->whereNull('deleted_at'),
+            ],
             'name' => ['required', 'string', 'max:150'],
             'slug' => [
                 'nullable',
@@ -119,7 +125,7 @@ class CategoryRequest extends FormRequest
     {
         return [
             'parent_id.integer' => 'La categoría padre no es válida.',
-            'parent_id.exists' => 'La categoría padre seleccionada no existe.',
+            'parent_id.exists' => 'La categoría padre seleccionada no existe o está eliminada.',
             'name.required' => 'El nombre de la categoría es obligatorio.',
             'name.max' => 'El nombre de la categoría no puede superar los 150 caracteres.',
             'slug.max' => 'El slug no puede superar los 170 caracteres.',

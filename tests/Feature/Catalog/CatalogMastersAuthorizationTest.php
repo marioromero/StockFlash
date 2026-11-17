@@ -187,4 +187,86 @@ class CatalogMastersAuthorizationTest extends CatalogMastersTestCase
                 ->where('auth.permissions', fn ($permissions): bool => collect($permissions)->contains('catalog.view'))
             );
     }
+
+    public function test_visibilidad_del_enlace_usa_el_permiso_de_la_sucursal_por_defecto(): void
+    {
+        $default = $this->makeBranch(['code' => 'CAT-DEF']);
+        $other = $this->makeBranch(['code' => 'CAT-OTHER']);
+
+        // catalog.view SOLO en una sucursal distinta de la default: ni enlace ni acceso.
+        $outside = $this->makeUser([
+            'email' => 'view-otra-sucursal@prueba.cl',
+            'default_branch_id' => $default->id,
+            'global_role_id' => null,
+        ]);
+
+        DB::table('branch_user')->insert([
+            ['user_id' => $outside->id, 'branch_id' => $default->id, 'role_id' => $this->makeNoPermissionRole()->id],
+            ['user_id' => $outside->id, 'branch_id' => $other->id, 'role_id' => $this->role('cashier')->id],
+        ]);
+
+        $this->actingAs($outside)
+            ->get('/dashboard')
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('auth.permissions', fn ($permissions): bool => ! collect($permissions)->contains('catalog.view'))
+            );
+
+        $this->actingAs($outside)->get('/catalog/masters')->assertForbidden();
+
+        // Mismo permiso en la sucursal default: enlace visible y acceso 200.
+        $inside = $this->makeBranchUser($default, 'cashier');
+
+        $this->actingAs($inside)
+            ->get('/dashboard')
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('auth.permissions', fn ($permissions): bool => collect($permissions)->contains('catalog.view'))
+            );
+
+        $this->actingAs($inside)->get('/catalog/masters')->assertOk();
+    }
+
+    public function test_catalog_manage_tambien_se_acota_a_la_sucursal_por_defecto(): void
+    {
+        $default = $this->makeBranch(['code' => 'CAT-M-DEF']);
+        $other = $this->makeBranch(['code' => 'CAT-M-OTHER']);
+
+        $outside = $this->makeUser([
+            'email' => 'manage-otra-sucursal@prueba.cl',
+            'default_branch_id' => $default->id,
+            'global_role_id' => null,
+        ]);
+
+        DB::table('branch_user')->insert([
+            ['user_id' => $outside->id, 'branch_id' => $default->id, 'role_id' => $this->makeNoPermissionRole()->id],
+            ['user_id' => $outside->id, 'branch_id' => $other->id, 'role_id' => $this->role('supervisor')->id],
+        ]);
+
+        $this->actingAs($outside)
+            ->get('/dashboard')
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('auth.permissions', fn ($permissions): bool => ! collect($permissions)->contains('catalog.manage'))
+            );
+
+        $this->actingAs($outside)
+            ->post('/catalog/masters/tags', $this->tagPayload(['name' => 'No autorizada fuera']))
+            ->assertForbidden();
+
+        $this->assertDatabaseMissing('tags', ['name' => 'No autorizada fuera']);
+
+        // supervisor en la sucursal default: manage visible y escritura permitida.
+        $manager = $this->makeBranchUser($default, 'supervisor');
+
+        $this->actingAs($manager)
+            ->get('/dashboard')
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('auth.permissions', fn ($permissions): bool => collect($permissions)->contains('catalog.manage'))
+            );
+
+        $this->actingAs($manager)->get('/catalog/masters')->assertOk();
+        $this->actingAs($manager)
+            ->post('/catalog/masters/tags', $this->tagPayload(['name' => 'Autorizada default']))
+            ->assertRedirect(route('catalog.masters.index'));
+
+        $this->assertDatabaseHas('tags', ['name' => 'Autorizada default']);
+    }
 }

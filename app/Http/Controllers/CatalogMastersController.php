@@ -97,7 +97,7 @@ class CatalogMastersController extends Controller
             $this->assertLicenseAllowsWrites();
 
             if ($this->boolValue($data, 'is_default', false)) {
-                $this->clearOtherDefaultTaxRates(null);
+                $this->displaceOtherDefaultTaxRates(null);
             }
 
             $taxRate = TaxRate::create($this->taxRateAttributes($data, true));
@@ -124,7 +124,7 @@ class CatalogMastersController extends Controller
             $oldValues = $this->taxRateAuditValues($taxRate);
 
             if (array_key_exists('is_default', $data) && (bool) $data['is_default']) {
-                $this->clearOtherDefaultTaxRates((int) $taxRate->id);
+                $this->displaceOtherDefaultTaxRates((int) $taxRate->id);
             }
 
             $taxRate->fill($this->taxRateAttributes($data, false));
@@ -181,6 +181,7 @@ class CatalogMastersController extends Controller
 
         return $this->mutate(function () use ($data): void {
             $this->assertLicenseAllowsWrites();
+            $this->assertCategoryHierarchyIsValid($data['parent_id'] ?? null, null);
 
             $category = Category::create($this->categoryAttributes($data, true));
 
@@ -202,6 +203,10 @@ class CatalogMastersController extends Controller
 
         return $this->mutate(function () use ($data, $category): void {
             $this->assertLicenseAllowsWrites();
+            $this->assertCategoryHierarchyIsValid(
+                array_key_exists('parent_id', $data) ? $data['parent_id'] : $category->parent_id,
+                (int) $category->id,
+            );
 
             $oldValues = $this->categoryAuditValues($category);
 
@@ -226,6 +231,9 @@ class CatalogMastersController extends Controller
             $this->assertLicenseAllowsWrites();
 
             $id = (int) $category->id;
+
+            // Serializa la baja con las validaciones de jerarquía concurrentes.
+            $this->lockCategoryHierarchy();
 
             if (DB::table('categories')->where('parent_id', $id)->exists()) {
                 throw ValidationException::withMessages([
@@ -661,15 +669,119 @@ class CatalogMastersController extends Controller
         return $attributes;
     }
 
-    private function clearOtherDefaultTaxRates(?int $exceptId): void
+    /**
+     * Deja una sola tasa predeterminada bloqueando las filas relevantes.
+     *
+     * El lock recorre `tax_rates` completo (tabla pequeña, orden determinista).
+     * En InnoDB el rango queda bloqueado incluso sin filas de licencia o sin
+     * tasas existentes, de modo que dos altas concurrentes de default no
+     * pueden confirmarse ambas. En SQLite `:memory:` las escrituras ya están
+     * serializadas. Cada tasa desplazada se audita en la misma transacción.
+     */
+    private function displaceOtherDefaultTaxRates(?int $exceptId): void
     {
-        $query = TaxRate::query()->where('is_default', 1);
+        $locked = TaxRate::query()
+            ->orderBy('id')
+            ->lockForUpdate()
+            ->get();
 
-        if ($exceptId !== null) {
-            $query->whereKeyNot($exceptId);
+        foreach ($locked as $taxRate) {
+            if (! (bool) $taxRate->is_default) {
+                continue;
+            }
+
+            if ($exceptId !== null && (int) $taxRate->id === $exceptId) {
+                continue;
+            }
+
+            $taxRate->is_default = false;
+            $taxRate->save();
+
+            $this->auditLogger->record(
+                'catalog.tax_rates.default_displaced',
+                'tax_rates',
+                (int) $taxRate->id,
+                null,
+                ['code' => $taxRate->code, 'is_default' => true],
+                ['code' => $taxRate->code, 'is_default' => false],
+                'catalog',
+            );
+        }
+    }
+
+    /**
+     * Revalida la jerarquía de categorías dentro de la transacción.
+     *
+     * La validación del Form Request es solo UX: entre esa validación y el
+     * guardado otra transacción puede cambiar `parent_id`. Se bloquean todas
+     * las filas de `categories` (incluidas las soft-deleted) en orden de id
+     * para serializar mutaciones de jerarquía de forma portable.
+     *
+     * @return \Illuminate\Support\Collection<int, object>
+     */
+    private function lockCategoryHierarchy(): \Illuminate\Support\Collection
+    {
+        return DB::table('categories')
+            ->select('id', 'parent_id', 'deleted_at')
+            ->orderBy('id')
+            ->lockForUpdate()
+            ->get()
+            ->keyBy('id');
+    }
+
+    private function assertCategoryHierarchyIsValid(mixed $parentId, ?int $currentId): void
+    {
+        $parentId = ($parentId === null || $parentId === '') ? null : (int) $parentId;
+
+        $rows = $this->lockCategoryHierarchy();
+
+        if ($parentId === null) {
+            return;
         }
 
-        $query->update(['is_default' => false]);
+        $parent = $rows->get($parentId);
+
+        if ($parent === null) {
+            throw ValidationException::withMessages([
+                'parent_id' => 'La categoría padre seleccionada no existe.',
+            ]);
+        }
+
+        if ($parent->deleted_at !== null) {
+            throw ValidationException::withMessages([
+                'parent_id' => 'La categoría padre seleccionada está eliminada.',
+            ]);
+        }
+
+        if ($currentId !== null && $parentId === $currentId) {
+            throw ValidationException::withMessages([
+                'parent_id' => 'Una categoría no puede ser su propio padre.',
+            ]);
+        }
+
+        $visited = [];
+        $cursor = $parentId;
+
+        while ($cursor !== null) {
+            if ($currentId !== null && $cursor === $currentId) {
+                throw ValidationException::withMessages([
+                    'parent_id' => 'La categoría padre seleccionada depende de esta categoría y generaría un ciclo.',
+                ]);
+            }
+
+            if (isset($visited[$cursor])) {
+                break;
+            }
+
+            $visited[$cursor] = true;
+            $row = $rows->get($cursor);
+
+            if ($row === null) {
+                break;
+            }
+
+            $cursor = $row->parent_id === null ? null : (int) $row->parent_id;
+        }
     }
 
     /**
@@ -678,7 +790,8 @@ class CatalogMastersController extends Controller
     private function mutate(callable $operation, string $message): RedirectResponse
     {
         try {
-            DB::transaction($operation);
+            // Reintenta ante deadlocks detectados por el motor.
+            DB::transaction($operation, 3);
         } catch (QueryException $exception) {
             $this->rethrowUniqueViolation($exception);
         }
@@ -688,32 +801,82 @@ class CatalogMastersController extends Controller
             ->with('success', $message);
     }
 
+    /**
+     * Convierte una violación UNIQUE de base en error de validación estable.
+     *
+     * La validación de los Form Request cubre el flujo secuencial; este mapeo
+     * protege ante carreras. Se reconocen los formatos de SQLite
+     * (`UNIQUE constraint failed: table.column`) y de MySQL/MariaDB
+     * (`Duplicate entry ... for key 'table.index_unique'` o vendor 1062).
+     */
     private function rethrowUniqueViolation(QueryException $exception): void
     {
-        $sqlState = (string) ($exception->errorInfo[0] ?? '');
-
-        if (! in_array($sqlState, ['23000', '23505'], true)) {
+        if (! $this->isUniqueConstraintViolation($exception)) {
             throw $exception;
         }
 
         $message = strtolower($exception->getMessage());
 
         $map = [
-            'tax_rates.code' => ['code', 'Ya existe una tasa de impuesto con ese código.'],
-            'categories.slug' => ['slug', 'Ya existe una categoría con ese slug (incluidas las eliminadas).'],
-            'brands.slug' => ['slug', 'Ya existe una marca con ese slug (incluidas las eliminadas).'],
-            'tags.slug' => ['slug', 'Ya existe una etiqueta con ese slug.'],
-            'attributes.name' => ['name', 'Ya existe un atributo con ese nombre.'],
-            'attribute_values.attribute_id' => ['value', 'Ese valor ya existe para el atributo seleccionado.'],
+            [
+                'needles' => ['tax_rates_code_unique', 'tax_rates.code'],
+                'field' => 'code',
+                'text' => 'Ya existe una tasa de impuesto con ese código.',
+            ],
+            [
+                'needles' => ['categories_slug_unique', 'categories.slug'],
+                'field' => 'slug',
+                'text' => 'Ya existe una categoría con ese slug (incluidas las eliminadas).',
+            ],
+            [
+                'needles' => ['brands_slug_unique', 'brands.slug'],
+                'field' => 'slug',
+                'text' => 'Ya existe una marca con ese slug (incluidas las eliminadas).',
+            ],
+            [
+                'needles' => ['tags_slug_unique', 'tags.slug'],
+                'field' => 'slug',
+                'text' => 'Ya existe una etiqueta con ese slug.',
+            ],
+            [
+                'needles' => ['attributes_name_unique', 'attributes.name'],
+                'field' => 'name',
+                'text' => 'Ya existe un atributo con ese nombre.',
+            ],
+            [
+                'needles' => [
+                    'attribute_values_attribute_id_value_unique',
+                    'attribute_values.attribute_id',
+                    'attribute_values.value',
+                ],
+                'field' => 'value',
+                'text' => 'Ese valor ya existe para el atributo seleccionado.',
+            ],
         ];
 
-        foreach ($map as $needle => [$field, $text]) {
-            if (str_contains($message, $needle)) {
-                throw ValidationException::withMessages([$field => $text]);
+        foreach ($map as $entry) {
+            foreach ($entry['needles'] as $needle) {
+                if (str_contains($message, $needle)) {
+                    throw ValidationException::withMessages([
+                        $entry['field'] => $entry['text'],
+                    ]);
+                }
             }
         }
 
         throw $exception;
+    }
+
+    private function isUniqueConstraintViolation(QueryException $exception): bool
+    {
+        $sqlState = (string) ($exception->errorInfo[0] ?? '');
+        $driverCode = $exception->errorInfo[1] ?? null;
+
+        if (in_array($sqlState, ['23000', '23505'], true)) {
+            return true;
+        }
+
+        return (int) $driverCode === 1062;
     }
 
     /**
