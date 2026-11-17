@@ -110,6 +110,58 @@ Route::middleware(['auth', 'password.change', 'verify.session'])->group(function
             ->name('settings.general.update');
     });
 
+    // --- Maestros del catálogo P0 (CATMAST-001 · CAT-02/CAT-05) ---
+    // Catálogo común a la instalación: NO usa `branch.access`. La lectura
+    // exige `catalog.view`; cada escritura exige `catalog.manage` en servidor.
+    Route::middleware('can.permission:catalog.view')->group(function () {
+        Route::get('/catalog/masters', [\App\Http\Controllers\CatalogMastersController::class, 'index'])
+            ->name('catalog.masters.index');
+    });
+
+    Route::middleware('can.permission:catalog.manage')->group(function () {
+        Route::post('/catalog/masters/tax-rates', [\App\Http\Controllers\CatalogMastersController::class, 'storeTaxRate'])
+            ->name('catalog.masters.tax-rates.store');
+        Route::put('/catalog/masters/tax-rates/{taxRate}', [\App\Http\Controllers\CatalogMastersController::class, 'updateTaxRate'])
+            ->name('catalog.masters.tax-rates.update');
+        Route::delete('/catalog/masters/tax-rates/{taxRate}', [\App\Http\Controllers\CatalogMastersController::class, 'destroyTaxRate'])
+            ->name('catalog.masters.tax-rates.destroy');
+
+        Route::post('/catalog/masters/categories', [\App\Http\Controllers\CatalogMastersController::class, 'storeCategory'])
+            ->name('catalog.masters.categories.store');
+        Route::put('/catalog/masters/categories/{category}', [\App\Http\Controllers\CatalogMastersController::class, 'updateCategory'])
+            ->name('catalog.masters.categories.update');
+        Route::delete('/catalog/masters/categories/{category}', [\App\Http\Controllers\CatalogMastersController::class, 'destroyCategory'])
+            ->name('catalog.masters.categories.destroy');
+
+        Route::post('/catalog/masters/brands', [\App\Http\Controllers\CatalogMastersController::class, 'storeBrand'])
+            ->name('catalog.masters.brands.store');
+        Route::put('/catalog/masters/brands/{brand}', [\App\Http\Controllers\CatalogMastersController::class, 'updateBrand'])
+            ->name('catalog.masters.brands.update');
+        Route::delete('/catalog/masters/brands/{brand}', [\App\Http\Controllers\CatalogMastersController::class, 'destroyBrand'])
+            ->name('catalog.masters.brands.destroy');
+
+        Route::post('/catalog/masters/tags', [\App\Http\Controllers\CatalogMastersController::class, 'storeTag'])
+            ->name('catalog.masters.tags.store');
+        Route::put('/catalog/masters/tags/{tag}', [\App\Http\Controllers\CatalogMastersController::class, 'updateTag'])
+            ->name('catalog.masters.tags.update');
+        Route::delete('/catalog/masters/tags/{tag}', [\App\Http\Controllers\CatalogMastersController::class, 'destroyTag'])
+            ->name('catalog.masters.tags.destroy');
+
+        Route::post('/catalog/masters/attributes', [\App\Http\Controllers\CatalogMastersController::class, 'storeAttribute'])
+            ->name('catalog.masters.attributes.store');
+        Route::put('/catalog/masters/attributes/{attribute}', [\App\Http\Controllers\CatalogMastersController::class, 'updateAttribute'])
+            ->name('catalog.masters.attributes.update');
+        Route::delete('/catalog/masters/attributes/{attribute}', [\App\Http\Controllers\CatalogMastersController::class, 'destroyAttribute'])
+            ->name('catalog.masters.attributes.destroy');
+
+        Route::post('/catalog/masters/attribute-values', [\App\Http\Controllers\CatalogMastersController::class, 'storeAttributeValue'])
+            ->name('catalog.masters.attribute-values.store');
+        Route::put('/catalog/masters/attribute-values/{attributeValue}', [\App\Http\Controllers\CatalogMastersController::class, 'updateAttributeValue'])
+            ->name('catalog.masters.attribute-values.update');
+        Route::delete('/catalog/masters/attribute-values/{attributeValue}', [\App\Http\Controllers\CatalogMastersController::class, 'destroyAttributeValue'])
+            ->name('catalog.masters.attribute-values.destroy');
+    });
+
     // --- Administración global de sucursales (BRANCH-001 · CORE-05) ---
     // Es administración global: NO usa `branch.access`.
     Route::middleware('can.permission:settings.manage')->group(function () {

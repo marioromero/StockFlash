@@ -32,6 +32,9 @@
                     Bienvenido al sistema StockFlash. Desde aquí puede acceder a los módulos disponibles según su rol y sucursal.
                 </p>
                 <nav class="sf-nav" aria-label="Accesos rápidos">
+                    <Link v-if="canViewCatalog" href="/catalog/masters" class="sf-button sf-button-primary">
+                        Maestros de catálogo
+                    </Link>
                     <Link v-if="canManageUsers" href="/users" class="sf-button sf-button-primary">
                         Usuarios
                     </Link>
@@ -105,6 +108,11 @@ const licenseNotice = computed(() => props.license_notice ?? null);
 
 const page = usePage<SharedPageProps>();
 const userName = computed(() => page.props.auth?.user?.name ?? props.user_name ?? 'Usuario');
+const canViewCatalog = computed(() => {
+    const permissions = page.props.auth?.permissions ?? [];
+
+    return permissions.includes('catalog.view') || permissions.includes('catalog.manage');
+});
 const canManageUsers = computed(() =>
     (page.props.auth?.permissions ?? []).includes('users.manage')
 );

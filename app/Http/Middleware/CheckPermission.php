@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -30,39 +31,50 @@ class CheckPermission
             return redirect()->route('login');
         }
 
-        // `branch` puede llegar como modelo por Route Model Binding; se
-        // normaliza a su clave para consultar asignaciones por sucursal.
-        $routeBranch = $request->route('branch');
-
-        if ($routeBranch instanceof Model) {
-            $routeBranch = $routeBranch->getKey();
-        }
-
-        $branchId = $routeBranch ?? $request->input('branch_id') ?? $user->default_branch_id;
-
-        $hasPermission = false;
-
-        if ($user->isGlobal()) {
-            // Usuario global: permisos del rol global, aplican en toda la instalación.
-            $hasPermission = $user->globalRole()
-                ->join('role_permissions', 'role_permissions.role_id', '=', 'roles.id')
-                ->join('permissions', 'permissions.id', '=', 'role_permissions.permission_id')
-                ->where('permissions.code', $permission)
-                ->exists();
-        } elseif ($branchId !== null) {
-            // Usuario por sucursal: permisos del rol asignado en esa sucursal.
-            $hasPermission = $user->branchAssignments()
-                ->where('branch_id', $branchId)
-                ->join('role_permissions', 'role_permissions.role_id', '=', 'branch_user.role_id')
-                ->join('permissions', 'permissions.id', '=', 'role_permissions.permission_id')
-                ->where('permissions.code', $permission)
-                ->exists();
-        }
-
-        if (! $hasPermission) {
+        if (! self::allows($user, $permission, $request->route('branch'))) {
             abort(403, 'No tiene permiso para realizar esta acción.');
         }
 
         return $next($request);
+    }
+
+    /**
+     * Permiso efectivo del usuario en el ámbito solicitado.
+     *
+     * El ámbito SOLO puede provenir de la ruta (`{branch}`) o de la sucursal
+     * por defecto del usuario. Nunca se lee `branch_id` desde query/body:
+     * un parámetro de request no puede elevar ni cambiar el ámbito de
+     * autorización.
+     */
+    public static function allows(User $user, string $permission, mixed $routeBranch = null): bool
+    {
+        // `branch` puede llegar como modelo por Route Model Binding; se
+        // normaliza a su clave para consultar asignaciones por sucursal.
+        if ($routeBranch instanceof Model) {
+            $routeBranch = $routeBranch->getKey();
+        }
+
+        if ($user->isGlobal()) {
+            // Usuario global: permisos del rol global, aplican en toda la instalación.
+            return $user->globalRole()
+                ->join('role_permissions', 'role_permissions.role_id', '=', 'roles.id')
+                ->join('permissions', 'permissions.id', '=', 'role_permissions.permission_id')
+                ->where('permissions.code', $permission)
+                ->exists();
+        }
+
+        $branchId = $routeBranch ?? $user->default_branch_id;
+
+        if ($branchId === null) {
+            return false;
+        }
+
+        // Usuario por sucursal: permisos del rol asignado en esa sucursal.
+        return $user->branchAssignments()
+            ->where('branch_id', $branchId)
+            ->join('role_permissions', 'role_permissions.role_id', '=', 'branch_user.role_id')
+            ->join('permissions', 'permissions.id', '=', 'role_permissions.permission_id')
+            ->where('permissions.code', $permission)
+            ->exists();
     }
 }

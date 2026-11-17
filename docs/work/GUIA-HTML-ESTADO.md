@@ -11,11 +11,11 @@ guide_status: INTEGRADA_EN_MAIN (2026-11-16)
 guide_content_last_written: 2026-11-16
 covered_features: AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED; ROADMAP-001 VERIFIED; USERS-001 VERIFIED; CFG-001/002/003 VERIFIED; CORELIC-001 VERIFIED (a2cc899)
 latest_covered_code_sha: `a2cc8992b3f13d14423d5d222628f895a568ee3f` (CORELIC-001 y anteriores)
-next_feature: CATMAST-001 activa (maestros de Catálogo, UI de administración en desarrollo)
+next_feature: CATMAST-001 activa (maestros de Catálogo: UI y CRUD implementados; guía pendiente de ChatGPT)
 internal_only_features: CATDB-001 VERIFIED (11 tablas internas, sin UI ni página nueva); CORESEQ-001 VERIFIED (servicio interno invisible; sin entrada nueva en guía); COREMOD-001 VERIFIED técnico (servicio interno invisible de módulos; sin página nueva); COREPIN-001 VERIFIED (servicio interno invisible de autorización PIN; sin página nueva)
 last_guide_integration_sha: `aa3ba75b65f228c9ef68c85958bad77bc14a9666` (ChatGPT, 23 temas, avisos de licencia)
 last_guide_integration_date: 2026-11-16
-pending_docs: NINGUNO
+pending_docs: CATMAST-001 (maestros de Catálogo P0; guía pendiente de redacción por ChatGPT)
 
 ## Cómo mantener este archivo
 - OpenCode puede actualizar solamente los metadatos y el registro de pendientes aquí, no los textos para usuarios en `public/docs/index.html`.
@@ -46,4 +46,18 @@ pending_docs: NINGUNO
 - contenido a redactar por ChatGPT: significado de los avisos de licencia (`expiring_soon`, `suspended` dentro de gracia, `suspended` fuera de gracia/sin gracia y «sin licencia configurada»), diferencia entre aviso y bloqueo de altas, modo solo lectura tras la gracia, y aclaración de que la licencia es informativa y no se administra desde el Dashboard.
 - fecha: 2026-11-16.
 - estado: implementado y documentado por ChatGPT en `aa3ba75b65f228c9ef68c85958bad77bc14a9666`;
+- OpenCode no edita `public/docs/index.html`; este registro es solo metadato técnico.
+
+## GUIA_PENDIENTE_CHATGPT — CATMAST-001
+- feature: CATMAST-001 — Maestros de Catálogo P0 (CAT-02/CAT-05).
+- pantalla: `/catalog/masters` (acceso «Maestros de catálogo» desde el dashboard con `catalog.view` o `catalog.manage`).
+- agrupaciones y campos reales:
+  - «Impuestos»: `code` (único, máx. 20), `name` (máx. 80), `rate` (0–100, decimal), `is_exempt`, `is_default`, `fiscal_code` (máx. 10), `is_active`. Marcar una tasa como predeterminada desmarca las demás.
+  - «Categorías»: `parent_id` (jerarquía sin ciclos), `name` (máx. 150), `slug` (único, máx. 170; se genera al crear y no cambia solo al editar), `max_discount_percent` (0–100), `default_tax_rate_id`, `sort_order` (0–65535), `is_active`.
+  - «Marcas»: `name` (máx. 150), `slug` único (máx. 170), `description` (máx. 255), `logo_url` (máx. 500), `is_active`.
+  - «Etiquetas»: `name` (máx. 100), `slug` único (máx. 120).
+  - «Atributos y valores»: `attributes.name` único (máx. 100); `attribute_values.attribute_id` + `value` únicos por atributo (máx. 100).
+- contenido a redactar por ChatGPT: uso de la pantalla, lectura con `catalog.view` y escritura con `catalog.manage`, catálogo común a la instalación, slugs automáticos/no renombrados, jerarquía y bloqueos de baja por referencias, tasa predeterminada atómica, modo solo lectura por licencia suspendida fuera de gracia, y aclaración de que esta pantalla no calcula impuestos ni emite documentos tributarios.
+- fecha: 2026-11-17.
+- estado: implementado; 17/17 gates PASS, 405 pruebas PHP y QA independiente APROBADO en SQLite :memory:. Pendiente publicación y redacción por ChatGPT; guía NO redactada todavía.
 - OpenCode no edita `public/docs/index.html`; este registro es solo metadato técnico.
