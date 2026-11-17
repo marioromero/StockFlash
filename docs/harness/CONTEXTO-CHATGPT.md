@@ -2,7 +2,7 @@
 
 **Última revisión por ChatGPT:** 2026-11-17
 **Repositorio:** `marioromero/StockFlash` · rama de desarrollo `main`
-**Estado de referencia observado:** `9279d57996ca2592a7c03fcdc7822e588621e2fe` (CATMAST-001 publicada y aprobada, 17 gates/414 PHP/QA/CI, guía 24 temas en `7aa19fd39192f74ed265c5571b0930c9b4f61670`; CATPROD-001 activa. **Verificar HEAD e issue SFH1 en nuevo chat**)
+**Estado de referencia observado:** `e8b97ccdb2a2b5799ad8d010d05c37e829015500` (documentación de revisión externa CATPROD-001; código OpenCode `a2c60730b4dc0c3d99a8086db71a218690493e3f` publicado, `VERIFIED` pendiente; SFH1 issue #24 `i=003 dst=OC` requiere correcciones H-01..H-03. Verificar HEAD/CI al reabrir).
 **Aviso de vigencia:** este SHA es un punto de control histórico, NO el HEAD garantizado al abrir una nueva sesión. Verificar HEAD, PR abiertos y documentación actual antes de actuar.
 
 ## 1. INSTRUCCIONES PARA CUALQUIER SESIÓN NUEVA DE CHATGPT
@@ -75,7 +75,7 @@ Si el propietario solicita «continuar StockFlash», «revisar lo que hizo OpenC
 ## 5. TRABAJO ABIERTO Y SIGUIENTE PASO
 
 1. USERS-001 y HCTX-001: VERIFIED técnico, informes de cierre publicados el 2026-11-16; sin despliegue. Concurrencia MariaDB real y UX visual quedan explícitamente pendientes para predespliegue.
-2. CFG-001/002/003, CORESEQ/CORELIC/COREMOD/COREPIN, CATDB-001 y CATMAST-001: VERIFIED técnico. CATMAST-001 `9279d57`, 17 gates, 414 pruebas PHP, QA/CI verde; correcciones H-01–H-06. Próxima CATPROD-001, Productos, variantes y códigos, Parte 2 §5.4–5.6, sin decisiones nuevas. MariaDB concurrencia pendiente.
+2. CFG-001/002/003, CORESEQ/CORELIC/COREMOD/COREPIN, CATDB-001 y CATMAST-001: VERIFIED técnico. **CATPROD-001 publicada pero NO VERIFIED:** SHA `a2c60730b4dc0c3d99a8086db71a218690493e3f`; OpenCode informó 19 gates, 465 PHP/3999 aserciones, QA APROBADO y CI SUCCESS (esta última sin enlaces verificables mediante el conector). Revisión externa ChatGPT `docs/work/CATPROD-001-EXTERNAL-REVIEW-20261117.md` en `e8b97ccd`: H-01 procedencia `origin`, H-02 rentabilidad sobre precio neto RN-25, H-03 calculadora CAT-04 omitida. **SFH1 #24 `i=003 dst=OC` pendiente**, mismo alcance autorizado; tras corrección y verificación de CI exacta, ChatGPT decidirá VERIFIED y redactará la guía. MariaDB concurrente y navegador real diferidos.
 3. SFH1: mantener un issue activo por tarea; no exigir autorizaciones administrativas de cierre repetidas. ChatGPT verifica y registra el cierre, OpenCode solo lo publica.
 
 ## 6. FORMATO BREVE DE ACTUALIZACIÓN DE ESTE ARCHIVO
