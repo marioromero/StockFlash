@@ -2,7 +2,7 @@
 
 **Última revisión por ChatGPT:** 2026-11-17
 **Repositorio:** `marioromero/StockFlash` · rama de desarrollo `main`
-**Estado de referencia observado:** código `c8e1338c5814a9c8741cf1a010cb1346636638a7` (CATPROD-001 correcciones H-01..H-03 publicadas, gates 19/19, QA independiente APROBADO; GitHub CI 2/2 SUCCESS verificada mediante jobs de runs `44142115506` y `44142115528`). SFH1 issue #24 `i=004 dst=GPT`, revisión/cierre GPT y guía de usuario pendientes. Harness de salida mínima actualizado 2026-11-17; verificar HEAD al reabrir.
+**Estado de referencia observado:** `a331099caeacd4f6c153f7ff4f6122fb13d18cf1` (CATPROD-001 VERIFIED técnico: código `c8e1338c5814a9c8741cf1a010cb1346636638a7`, CI GitHub 2/2 SUCCESS runs `44142115506`/`44142115528`, 19/19 gates, QA APROBADO, cierre en `docs/work/CATPROD-001-CLOSURE-20261117.md`; guía 25 temas `b3938efd`, roadmap actualizado `b1ca40eb`; SETUP-001 CORE-02 activo packet `3ac73b9f`, issue SFH1 nuevo pendiente de creación). Verificar HEAD e issue antes de actuar.
 **Aviso de vigencia:** este SHA es un punto de control histórico, NO el HEAD garantizado al abrir una nueva sesión. Verificar HEAD, PR abiertos y documentación actual antes de actuar.
 
 ## 1. INSTRUCCIONES PARA CUALQUIER SESIÓN NUEVA DE CHATGPT
@@ -65,20 +65,21 @@ Si el propietario solicita «continuar StockFlash», «revisar lo que hizo OpenC
 
 **Estado actual:** la restricción DRAFT dejó de aplicar. USERS-001 ya está implementada, publicada y documentada con aviso expreso de que VERIFIED formal aún no se declara; no mostrarla como desplegada a clientes.
 
-## 4B. ROADMAP HTML DEL PROPIETARIO — AUTORÍA EXCLUSIVA CHATGPT
+**Guía CATPROD-001 25 temas (2026-11-17):** `public/docs/index.html` actualizado en `b3938efd151444fed9aaed869e3cb3f696521453`, sección `#catalogo-productos`, tras QA y CI de código `c8e1338`. Sin despliegue; visual real pendiente. El registro técnico `GUIA-HTML-ESTADO.md` puede requerir sincronización por OpenCode, que no edita HTML.\n\n## 4B. ROADMAP HTML DEL PROPIETARIO — AUTORÍA EXCLUSIVA CHATGPT
 
 **Decisión expresa (2026-11-10):** ChatGPT redacta y mantiene por sí solo la página visual de progreso y sus estados. Archivo canónico: `resources/roadmap/index.html`, fuera del directorio público. URL prevista tras integración: **`/roadmap`**, protegida para usuario autenticado con `settings.manage` (Admin Central).
 
 **Fuentes de avance:** `docs/harness/ROADMAP-STOCKFLASH.md`, `docs/work/CURRENT.md`, Feature Packets, QA/gates y CI verificadas. Refleja R0–R10, capacidades realmente terminadas, pendientes para comercializar y versiones posteriores. No asigna fechas ni porcentajes arbitrarios.
 
-**Estado al 2026-11-13:** `resources/roadmap/index.html` actualizado por ChatGPT en `79c3b0f` para reflejar USERS-001 implementada y publicada, pendiente de VERIFIED; ruta `/roadmap` mantiene permiso `settings.manage`; R0–R10 sin porcentajes ni fechas ficticias. BOOT/CI/AUTH/BRANCH/DOCS/ROADMAP verificados. Primera comercial R7 POS+Bodega sin DTE integrado; R4 Bodega, R5 licencias, R6 POS y controles R7 pendientes. Después R8 SyncWP, R9 Fiscal, R10 Compras/Analítica.
+**Estado editorial vigente (2026-11-17):** `resources/roadmap/index.html` actualizado por ChatGPT en `b1ca40eb37968d9a49d87ac7add84e478048cdcf`: R3 incluye CATPROD-001 VERIFIED técnico; R4 Bodega sigue pendiente de existencias/kardex/transferencias; R7 primera comercial POS+Bodega sin DTE integrado. Ningún porcentaje ni fecha comprometida. La bitácora `ROADMAP-HTML-ESTADO.md` es responsabilidad de OpenCode.
 
 **Continuidad:** `docs/harness/ROADMAP-HTML-PROYECTO.md` contiene reglas obligatorias de autoría; `docs/work/ROADMAP-HTML-ESTADO.md` es una bitácora técnica que OpenCode puede modificar (no el HTML). Tras cada feature relevante OpenCode informa `ROADMAP_PENDIENTE_CHATGPT` con evidencia; el propietario lo traslada a ChatGPT; ChatGPT revisa y redacta actualización si corresponde. La nueva sesión de ChatGPT debe comprobar ambos archivos antes de intervenir.
 
+**Nueva norma de ahorro de respuestas (2026-11-17):** ChatGPT responde normalmente en 1–3 líneas; OpenCode responde `OK` por rutina, pero guarda evidencia completa en GitHub. ChatGPT decide por hitos cuándo solicitar revisión visual al usuario; sin entorno publicado no inventa accesibilidad.\n
 ## 5. TRABAJO ABIERTO Y SIGUIENTE PASO
 
 1. USERS-001 y HCTX-001: VERIFIED técnico, informes de cierre publicados el 2026-11-16; sin despliegue. Concurrencia MariaDB real y UX visual quedan explícitamente pendientes para predespliegue.
-2. CFG-001/002/003, CORESEQ/CORELIC/COREMOD/COREPIN, CATDB-001 y CATMAST-001: VERIFIED técnico. **CATPROD-001**, SHA `c8e1338c5814a9c8741cf1a010cb1346636638a7`, correcciones H-01..H-03 documentadas en `docs/work/CATPROD-001-REVIEW-20261117-R2.md`, QA APROBADO, gates 19/19, 476 PHP tests/4192 aserciones; GitHub Actions **2/2 SUCCESS verificados por jobs**, runs `44142115506`, `44142115528`. Aún **NO VERIFIED** al registrar este snapshot: pendiente cierre externo ChatGPT y guía HTML. QA reporta N-01 caso de tasa referenciada desactivada (diferible antes de POS/fiscal); N-02/N-03 menores. Issue SFH1 #24 `i=004 dst=GPT`. Sin MariaDB real ni navegador; no deploy ni BD remota.
+2. CFG-001/002/003, CORESEQ/CORELIC/COREMOD/COREPIN, CATDB-001 y CATMAST-001 y **CATPROD-001**: VERIFIED técnico. CATPROD código `c8e1338`, 19/19 gates, 476 PHP/4192, QA independiente APROBADO, CI 2/2 SUCCESS. Cierre `docs/work/CATPROD-001-CLOSURE-20261117.md`; manual 25 temas, roadmap actualizado. Issue SFH1 #24 cerrado con i=005 GPT. QA R2 N-01 tasa inactiva diferida **antes de POS/Fiscal**; N-02/N-03 menores. MariaDB y UI real no ejecutadas. **Siguiente SETUP-001 (CORE-02) APPROVED**, packet `docs/work/features/SETUP-001.md`, solo SQLite/CI, BKP-08 P1★ pendiente para producción, sin deploy/DB remota; iniciar por SFH1 según issue abierto.
 3. SFH1: mantener un issue activo por tarea; no exigir autorizaciones administrativas de cierre repetidas. ChatGPT verifica y registra el cierre, OpenCode solo lo publica.
 
 ## 6. FORMATO BREVE DE ACTUALIZACIÓN DE ESTE ARCHIVO
