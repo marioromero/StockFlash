@@ -1,6 +1,6 @@
 # CATDB-001 — Esquema base de Catálogo P0 (Parte 2 §5.1–5.6)
 
-status: APPROVED
+status: VERIFIED
 approval_basis: existing_approved_contract_owner_delegation_2026-11-16
 new_business_decisions: NONE
 publication_mode: AUTO_GIT
@@ -39,3 +39,15 @@ Se completaron dependencias CORE-03/04/05/06/08/09/11/13. La etapa R3 contempla 
 ## Límites
 
 No modificar BD remota ni desplegar; no cambiar contratos ni esquema P0, no inventar reglas de impuestos ni defaults comerciales adicionales, no implementar etapa R4, combos/promociones/listas de precios P1, fiscal, UI o catalog CRUD todavía. No modificar `public/docs/index.html`, `resources/roadmap/index.html` o `docs/harness/CONTEXTO-CHATGPT.md` (ChatGPT). No pedir nueva aprobación administrativa; SOLO escalar preguntas de negocio materiales NUEVAS, con opciones concretas/recomendación.
+
+## Cierre externo por ChatGPT — 2026-11-17
+
+status: VERIFIED
+reviewer_externo: ChatGPT
+registro: `docs/work/CATDB-001-CLOSURE-20261117.md`
+code_sha: `93fe5de92e63ec4cc8c8bd53df5001fab0382774`
+gates: 15/15 PASS
+php_tests: 383 passed / 2929 assertions
+qa: `docs/work/CATDB-001-REVIEW-20261116-R2.md` APROBADO, 0 bloqueantes, B1 MariaDB FULLTEXT cerrado
+ci: PHP/Node y contratos 2/2 SUCCESS exact SHA
+limites: MariaDB real, FULLTEXT efectivo y EXPLAIN NO ejecutados. Sin CRUD ni UI; remote_db UNTOUCHED; sin despliegue.

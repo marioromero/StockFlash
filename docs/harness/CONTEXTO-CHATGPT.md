@@ -1,8 +1,8 @@
 # StockFlash — CONTEXTO PARA CHATGPT (continuidad entre sesiones)
 
-**Última revisión por ChatGPT:** 2026-11-16
+**Última revisión por ChatGPT:** 2026-11-17
 **Repositorio:** `marioromero/StockFlash` · rama de desarrollo `main`
-**Estado de referencia observado:** `5ea1b3b602cffa86baeb1739c9e0a7547e8e56a1` (COREPIN-001 corregido, QA/CI 2/2 verde y cierre VERIFIED técnico; CATDB-001 activa, comprobar HEAD)
+**Estado de referencia observado:** `93fe5de92e63ec4cc8c8bd53df5001fab0382774` (CATDB-001 esquema P0 revisado, QA y CI verde; CATMAST-001 activa; verificar HEAD del proyecto en sesión futura)
 **Aviso de vigencia:** este SHA es un punto de control histórico, NO el HEAD garantizado al abrir una nueva sesión. Verificar HEAD, PR abiertos y documentación actual antes de actuar.
 
 ## 1. INSTRUCCIONES PARA CUALQUIER SESIÓN NUEVA DE CHATGPT
@@ -19,6 +19,8 @@ Si el propietario solicita «continuar StockFlash», «revisar lo que hizo OpenC
 8. SFH1 permite intercambio asíncrono por GitHub issue bajo demanda: el propietario escribe `ok` a la IA destinataria, quien consulta el issue y procesa mensajes dirigidos a ella. Sin despertador automático ni copia de informes. `ok` no aprueba nuevos packets, migraciones remotas ni deploy. VERIFIED requiere dictamen externo técnico de ChatGPT sobre evidencia del packet previamente aprobado; no una segunda firma.
 9. Revisar también el roadmap HTML del propietario (`resources/roadmap/index.html`) y su protocolo. Cuando los hitos reales, las funcionalidades listas o el camino a R7 cambien, actualizarlo **solo desde ChatGPT**, sin plazos ni porcentajes inventados. OpenCode no edita ese archivo.
 10. **FIN DE CADA RESPUESTA SIN LIMBO — INSTRUCCIÓN PERMANENTE DEL PROPIETARIO (2026-11-16).** **En toda interacción de StockFlash, sea revisión, consulta o trabajo realizado, finalizar siempre con UNA acción concreta, útil e inequívoca que el propietario deba realizar**, bajo el rótulo `**Tu siguiente acción:**`; especificar exactamente en qué chat/aplicación, qué debe escribir o decidir y qué se espera después. Prioridad normal: `escribe ok en OpenCode` **SOLO** si se comprobó un issue SFH1 ABIERTO con mensaje nuevo `dst=OC` aún no procesado y alcance previamente autorizado; `escribe ok aquí` solo cuando realmente corresponda a un mensaje `dst=GPT` pendiente. **Nunca inventar un OK** ni enviarlo a una IA sin trabajo listo, no crear issues o trabajo artificial solo para mantener el circuito. Si no hay trabajo pendiente de OC, presentar **el siguiente paso REAL**: por ejemplo, un conjunto breve de características/decisiones nuevas, explicadas en lenguaje del propietario para que las apruebe, o una acción específica de revisión/elección. No pedir aprobación de características que solo implementan obligaciones previamente aprobadas ni reaprobar publicación/VERIFIED. ChatGPT debe seleccionar la siguiente feature segura, preparar packet + SFH1 y finalizar con `ok` para OC cuando efectivamente haya tarea. Si hace falta una decisión comercial nueva, preguntar eso concretamente, nunca «¿apruebas esta lista genérica?» o «¿continuamos con R3?». Si una herramienta/CI impide continuar, indicar **qué acción práctica** debe realizar el propietario para desbloquear; no afirmar avance inexistente. **Prohibido terminar solo con estados, enlaces, resumen, «¿qué sigue?» o propuestas vagas.** Esta regla no obliga a inventar trabajo ni aprobación cuando no se necesitan.
+
+11. **AVISO DE CAMBIO DE SESIÓN — propietario 2026-11-17.** Comprobar periódicamente si la conversación acumula mucho contexto, referencias contradictorias, repeticiones o dificultad para mantener decisiones y SHA. Si una sesión nueva mejorará fiabilidad, **avisar explícitamente al propietario antes de pedir el próximo `ok`**, preferentemente en un handoff limpio: asegurar que `docs/work/CURRENT.md` y este archivo estén actualizados con HEAD, issue SFH1 pendiente, feature y estado CI; indicar acción concreta «Abre un nuevo chat en este proyecto y escribe `Continuar StockFlash desde docs/work/CURRENT.md`». No fingir un medidor exacto de tokens, no forzar sesiones nuevas por rutina y no prometer avisos mientras el usuario no esté interactuando.
 
 **Idea central:** este archivo es un índice de continuidad y decisiones, no sustituye la fuente de verdad (el repositorio, Feature Packets y código).
 
@@ -73,7 +75,7 @@ Si el propietario solicita «continuar StockFlash», «revisar lo que hizo OpenC
 ## 5. TRABAJO ABIERTO Y SIGUIENTE PASO
 
 1. USERS-001 y HCTX-001: VERIFIED técnico, informes de cierre publicados el 2026-11-16; sin despliegue. Concurrencia MariaDB real y UX visual quedan explícitamente pendientes para predespliegue.
-2. CFG-001/002/003, CORESEQ-001, CORELIC-001, COREMOD-001 y COREPIN-001: VERIFIED técnico. COREPIN-001 fix AUTH_TOCTOU `5ea1b3b`, 17 gates, 359 PHP pruebas, QA/CI verde; concurrencia MariaDB real pendiente. Próxima CATDB-001: migraciones P0 Catálogo basadas en Parte 2 §5.1–5.6.
+2. CFG-001/002/003, CORESEQ-001, CORELIC-001, COREMOD-001, COREPIN-001 y CATDB-001: VERIFIED técnico. CATDB-001 código `93fe5de`, 15 gates, 383 pruebas, QA/CI verde; MariaDB real pendiente. Siguiente CATMAST-001: maestros del Catálogo P0, sin decisiones nuevas.
 3. SFH1: mantener un issue activo por tarea; no exigir autorizaciones administrativas de cierre repetidas. ChatGPT verifica y registra el cierre, OpenCode solo lo publica.
 
 ## 6. FORMATO BREVE DE ACTUALIZACIÓN DE ESTE ARCHIVO
