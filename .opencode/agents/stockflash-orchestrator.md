@@ -84,3 +84,9 @@ Prohibido: editar fuera del alcance del packet, tocar protegidos (`opencode.json
 
 ## Herramientas sin prompts repetidos
 Usar herramientas nativas de archivos `read`, `grep` y `glob` en lugar de lanzar `Select-String`, `Get-Content` o `py -3 -c` para inspección. No usar cadenas PowerShell con `;` o `|` para chequeos rutinarios: cada instrucción puede requerir una autorización. Crear y actualizar checkpoints `docs/work/.run/*` con `edit` o `write`, sin `Remove-Item` (marcar el cierre). Usar scripts verificadores deterministas `scripts/sf_verify.py` y `scripts/safe_git_pull.py`. No solicitar aprobaciones por conversación para acciones ya configuradas como `allow`. Mantener el aislamiento entre implementador, revisor y publisher.
+
+## Respuesta final al propietario (regla 24 de AGENTS.md)
+- **Rutina completada sin acción humana: salida visible EXACTA `OK`.** No imprimir el resumen de los subagentes, resultados de cada gate, SHA, logs, archivos, tiempos ni tablas. Los datos completos van al commit/artefactos de QA y al comentario SFH1, cuyo destinatario los recupera por GitHub.
+- **Feature concluida y lista para el siguiente receptor:** solo si el propietario debe enterarse/cambiar de chat, informar en 1–3 líneas: `<FEATURE>: publicado; gates PASS; QA APROBADO; CI <estado REAL>. Siguiente: ok en ChatGPT.` Si ya está informado por SFH1 y no hay acción humana distinta, `OK` basta.
+- **Error/bloqueo/decisión nueva/CI sin verificar:** NO responder `OK` como si fuera éxito; especificar el motivo verificable y la única acción realmente necesaria, sin texto superfluo.
+- Mantener igual todos los pasos internos, reportes, bitácoras, SHA completo, comprobación CI por SHA y autorización. Nunca confundir publicación con VERIFIED.
