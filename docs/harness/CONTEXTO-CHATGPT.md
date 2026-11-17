@@ -2,7 +2,7 @@
 
 **Última revisión por ChatGPT:** 2026-11-17
 **Repositorio:** `marioromero/StockFlash` · rama de desarrollo `main`
-**Estado de referencia observado:** `a331099caeacd4f6c153f7ff4f6122fb13d18cf1` (CATPROD-001 VERIFIED técnico: código `c8e1338c5814a9c8741cf1a010cb1346636638a7`, CI GitHub 2/2 SUCCESS runs `44142115506`/`44142115528`, 19/19 gates, QA APROBADO, cierre en `docs/work/CATPROD-001-CLOSURE-20261117.md`; guía 25 temas `b3938efd`, roadmap actualizado `b1ca40eb`; SETUP-001 CORE-02 activo packet `3ac73b9f`, issue SFH1 nuevo pendiente de creación). Verificar HEAD e issue antes de actuar.
+**Estado de referencia observado:** `a331099caeacd4f6c153f7ff4f6122fb13d18cf1` (CATPROD-001 VERIFIED técnico: código `c8e1338c5814a9c8741cf1a010cb1346636638a7`, CI GitHub 2/2 SUCCESS runs `44142115506`/`44142115528`, 19/19 gates, QA APROBADO, cierre en `docs/work/CATPROD-001-CLOSURE-20261117.md`; guía 25 temas `b3938efd`, roadmap actualizado `b1ca40eb`; SETUP-001 CORE-02 activo packet `3ac73b9f`, issue SFH1 #25 abierto `i=001 dst=OC`). Verificar HEAD e issue antes de actuar.
 **Aviso de vigencia:** este SHA es un punto de control histórico, NO el HEAD garantizado al abrir una nueva sesión. Verificar HEAD, PR abiertos y documentación actual antes de actuar.
 
 ## 1. INSTRUCCIONES PARA CUALQUIER SESIÓN NUEVA DE CHATGPT
@@ -81,7 +81,7 @@ Si el propietario solicita «continuar StockFlash», «revisar lo que hizo OpenC
 ## 5. TRABAJO ABIERTO Y SIGUIENTE PASO
 
 1. USERS-001 y HCTX-001: VERIFIED técnico, informes de cierre publicados el 2026-11-16; sin despliegue. Concurrencia MariaDB real y UX visual quedan explícitamente pendientes para predespliegue.
-2. CFG-001/002/003, CORESEQ/CORELIC/COREMOD/COREPIN, CATDB-001 y CATMAST-001 y **CATPROD-001**: VERIFIED técnico. CATPROD código `c8e1338`, 19/19 gates, 476 PHP/4192, QA independiente APROBADO, CI 2/2 SUCCESS. Cierre `docs/work/CATPROD-001-CLOSURE-20261117.md`; manual 25 temas, roadmap actualizado. Issue SFH1 #24 cerrado con i=005 GPT. QA R2 N-01 tasa inactiva diferida **antes de POS/Fiscal**; N-02/N-03 menores. MariaDB y UI real no ejecutadas. **Siguiente SETUP-001 (CORE-02) APPROVED**, packet `docs/work/features/SETUP-001.md`, solo SQLite/CI, BKP-08 P1★ pendiente para producción, sin deploy/DB remota; iniciar por SFH1 según issue abierto.
+2. CFG-001/002/003, CORESEQ/CORELIC/COREMOD/COREPIN, CATDB-001 y CATMAST-001 y **CATPROD-001**: VERIFIED técnico. CATPROD código `c8e1338`, 19/19 gates, 476 PHP/4192, QA independiente APROBADO, CI 2/2 SUCCESS. Cierre `docs/work/CATPROD-001-CLOSURE-20261117.md`; manual 25 temas, roadmap actualizado. Issue SFH1 #24 cerrado con i=005 GPT. QA R2 N-01 tasa inactiva diferida **antes de POS/Fiscal**; N-02/N-03 menores. MariaDB y UI real no ejecutadas. **Siguiente SETUP-001 (CORE-02) APPROVED**, packet `docs/work/features/SETUP-001.md`, solo SQLite/CI, BKP-08 P1★ pendiente para producción, sin deploy/DB remota; iniciar con `ok` en OpenCode: issue SFH1 #25 `i=001 dst=OC`.
 3. SFH1: mantener un issue activo por tarea; no exigir autorizaciones administrativas de cierre repetidas. ChatGPT verifica y registra el cierre, OpenCode solo lo publica.
 
 ## 6. FORMATO BREVE DE ACTUALIZACIÓN DE ESTE ARCHIVO
