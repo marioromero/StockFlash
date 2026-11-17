@@ -21,3 +21,6 @@ No se inventan reglas de negocio, dependencias materiales, esquema no aprobado, 
 
 ### Contexto y memoria
 Un feature por sesión; sólo lectura puntual de normativa; Engram opcional y consultivo; memoria resumida sin credenciales. No ruteo dinámico de modelos a mitad de trabajo.
+
+### Comunicación de bajo consumo (propietario 2026-11-17)
+Al final de cada interacción normal, OpenCode responde al propietario **solo `OK`**; al cerrar una feature o requerir intervención humana, como máximo 1–3 líneas con estado real y acción. Los reportes técnicos extensos siguen siendo obligatorios **en archivos Git/QA/gates/SFH1**, no como respuesta conversacional. ChatGPT también entrega resúmenes mínimos (CI, revisión, estado y siguiente acción **si existe**); decide por sí mismo cuándo solicitar validación visual de un conjunto funcional de pantallas, respetando que sin despliegue autorizado o entorno accesible no puede exigir una prueba real. Ver regla 24 de `AGENTS.md` y el archivo de continuidad de ChatGPT.
