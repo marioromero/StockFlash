@@ -12,10 +12,10 @@ roadmap_integration_sha: `c6fa1fce028968ab3ba137f83a20d9ac4705ea5d` (ChatGPT inc
 roadmap_integration_date: 2026-11-17
 roadmap_last_review: 2026-11-17
 covered_features: BOOT-001 VERIFIED; CI-001 VERIFIED; AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED; ROADMAP-001 VERIFIED; USERS-001 VERIFIED; CFG-001/002/003 VERIFIED; CORESEQ/CORELIC/COREMOD/COREPIN VERIFIED; CATDB-001 VERIFIED; CATMAST-001 VERIFIED (9279d57); SETUP-001 VERIFIED (13cdd6a)
-in_progress: R3_CORE — SETUP-001 VERIFIED; siguiente feature según dependencias; producción no demo bloqueada por BKP-08 `NOT_READY_FOR_PRODUCTION`
+in_progress: R3_CORE — INSTALL-001 implementado en código/pruebas (instalador técnico CORE-17); SETUP-001 VERIFIED; producción no demo bloqueada por BKP-08 `NOT_READY_FOR_PRODUCTION`
 first_commercial_release: R7 — POS + Bodega sin emisión DTE integrada y con piloto/controles de salida
-pending: NINGUNO
-report_state: ROADMAP_ACTUALIZADA
+pending: ROADMAP_PENDIENTE_CHATGPT — INSTALL-001 (instalador web CORE-17): registrar alcance, estado y límites en el HTML del roadmap
+report_state: ROADMAP_PENDIENTE_CHATGPT
 
 ## Mantenimiento por OpenCode
 

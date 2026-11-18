@@ -1,7 +1,7 @@
 # Estado operativo — StockFlash
 
 ## Feature activa
-- **INSTALL-001 — Instalador web CORE-17 P0: APPROVED / ACTIVO**, packet `docs/work/features/INSTALL-001.md`, derivado de contrato v2.2 existente sin decisión comercial nueva. Código/pruebas solamente; NUNCA ejecutar instalador real ni tocar `.env`/BD remota/cron/deploy. Antes de empezar se debe confirmar CI GitHub 2/2 SUCCESS en HEAD exacto después de este packet y de la documentación. CORE-02 SETUP-001 VERIFIED; BKP-08 sigue bloqueando producción no demo.
+- **INSTALL-001 — Instalador web CORE-17 P0: APPROVED / ACTIVO (publicado, no VERIFIED)**, packet `docs/work/features/INSTALL-001.md`, `publication_mode: AUTO_GIT`, derivado de contrato v2.2 existente sin decisión comercial nueva. Código y pruebas implementados y publicados en `main`; gates `GATES_PASS` 32/32 (`docs/work/INSTALL-001-VERIFY-20261117-212833.md`) y QA independiente `APROBADO` (`docs/work/INSTALL-001-REVIEW-20261117-R3.md`, 0 bloqueantes) sobre el mismo estado. CI GitHub queda pendiente de verificación sobre el SHA publicado. NUNCA ejecutar instalador real ni tocar `.env`/BD remota/cron/deploy: la publicación del código no habilita el instalador. CORE-02 SETUP-001 VERIFIED; BKP-08 `NOT_READY_FOR_PRODUCTION` sigue bloqueando producción no demo.
 
 ## Estados por feature
 - BOOT-001: VERIFIED (2026-10-14), Laravel 13.35.0 + Vue 3/Inertia/TS; `bcbf16f`.
@@ -22,7 +22,7 @@
 ## Pendientes y bloqueos reales
 - STAGING-001: APPROVED, sin deploy demostrado ni VERIFIED; FTPS separado solo hacia `stockflash-dev-app`. No habilita despliegue por sí sola.
 - Restricción SSH vigente: no usar la credencial `grupoint`; no publicar secretos.
-- INSTALL-001: packet APPROVED pero **implementación prohibida hasta verificar CI base 2/2 SUCCESS**; scope local de código/test sin ejecución real de instalación, secreto bootstrap obligatorio, protección contra reinstalación, integración con /setup. BKP-08 P1★ sigue pendiente; no habilitar producción no demo.
+- INSTALL-001: APPROVED/AUTO_GIT, código y pruebas del instalador técnico CORE-17 implementados y publicados; gates 32/32 PASS y QA independiente R3 APROBADO sobre el mismo estado; CI pendiente de verificación exact-SHA. Instalador cerrado por defecto (no habilitado por publicar); sin ejecución real, sin `.env`/BD remota/cron/deploy; sin VERIFIED. Scope: secreto bootstrap obligatorio, bloqueo de reinstalación, integración con /setup. BKP-08 P1★ pendiente; producción no demo sigue bloqueada.
 - MariaDB real/índices, concurrencia y UX visual no probados; no migrar BD remota ni desplegar sin autorización.
 
 ## Reglas operativas vigentes

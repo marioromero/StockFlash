@@ -11,11 +11,11 @@ guide_status: INTEGRADA_EN_MAIN (2026-11-16)
 guide_content_last_written: 2026-11-17
 covered_features: AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED; ROADMAP-001 VERIFIED; USERS-001 VERIFIED; CFG-001/002/003 VERIFIED; CORELIC-001 VERIFIED; CATMAST-001 VERIFIED (9279d57); SETUP-001 VERIFIED (13cdd6a)
 latest_covered_code_sha: `13cdd6a6f1ae3a986884e8079f81fb34d5f259e4` (SETUP-001 y anteriores)
-next_feature: NINGUNO (sin feature activa; próxima según dependencias)
+next_feature: INSTALL-001 — Instalador web CORE-17 (una instalación; guía pendiente de redacción)
 internal_only_features: CATDB-001 VERIFIED (11 tablas internas, sin UI ni página nueva); CORESEQ-001 VERIFIED (servicio interno invisible; sin entrada nueva en guía); COREMOD-001 VERIFIED técnico (servicio interno invisible de módulos; sin página nueva); COREPIN-001 VERIFIED (servicio interno invisible de autorización PIN; sin página nueva)
 last_guide_integration_sha: `e09069c1179bc400495a6bb896fd557913b32ce4` (ChatGPT, guía SETUP-001)
 last_guide_integration_date: 2026-11-17
-pending_docs: NINGUNO
+pending_docs: GUIA_PENDIENTE_CHATGPT — INSTALL-001 (instalador técnico CORE-17; pendiente de redacción)
 
 ## Cómo mantener este archivo
 - OpenCode puede actualizar solamente los metadatos y el registro de pendientes aquí, no los textos para usuarios en `public/docs/index.html`.
@@ -84,4 +84,12 @@ pending_docs: NINGUNO
 - contenido a redactar por ChatGPT: uso del asistente por pasos, qué campos son opcionales, creación única de sucursal y Admin Central, ingreso posterior con esa cuenta, bloqueo informativo si la instancia ya contiene usuarios o sucursales (sin reiniciar datos), y bloqueo de producción no demo por BKP-08 con código `NOT_READY_FOR_PRODUCTION` (paquete de recuperación no implementado). Aclarar que no se ejecutan migraciones, no se emiten documentos tributarios y no se muestran contraseñas.
 - fecha: 2026-11-17.
 - estado: implementado en SQLite `:memory:` (50 pruebas nuevas, 465 aserciones; suite 528/4662). Ciclo correctivo QA aplicado (password fuera de old input, caché `no-store`, defaults, foco/errores UI, aviso DEV). Gates `GATES_PASS` 19/19; QA independiente final, publicación y CI pendientes; guía NO redactada todavía.
+- OpenCode no edita `public/docs/index.html`; este registro es solo metadato técnico.
+
+## GUIA_PENDIENTE_CHATGPT — INSTALL-001
+- feature: INSTALL-001 — Instalador web CORE-17 P0 (una sola instalación).
+- pantalla: `/install` (cerrada por defecto; solo se abre con `INSTALL_ENABLED=true` y token de arranque gestionado fuera de la app pública). El éxito redirige a `/setup`, que calcula el aviso determinista de cron desde `installation_info` (sin depender de flash entre sesiones).
+- contenido a redactar por ChatGPT: instalador técnico separado de `/setup`; preflight de PHP/extensiones/dependencias/permisos; prueba de conexión MariaDB/MySQL sin mostrar credenciales; generación de `APP_KEY`, `BLIND_INDEX_KEY` y `BACKUP_ENCRYPTION_KEY` sin exhibirlas; migraciones normales y semillas existentes; bloqueo de reinstalación si ya hay `installation_info`, usuarios o sucursales; una única línea orientativa `php artisan schedule:run` (no instala cron); tras éxito se continúa en `/setup` para crear comercio, sucursal y Admin Central. Aclarar que no se crean usuarios ni datos comerciales desde `/install`, que no se borran datos y que producción no demo sigue bloqueada por BKP-08 `NOT_READY_FOR_PRODUCTION`.
+- fecha: 2026-11-17.
+- estado: implementado en SQLite `:memory:` con 73 pruebas / 939 aserciones del instalador y suite completa 602/5604; ciclo correctivo R2 B-04/B-05/M-05/m-06..m-10 aplicado; gates `GATES_PASS` 32/32; QA independiente, publicación y CI pendientes de cierre. Guía NO redactada todavía.
 - OpenCode no edita `public/docs/index.html`; este registro es solo metadato técnico.

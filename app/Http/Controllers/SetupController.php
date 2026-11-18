@@ -12,6 +12,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -91,8 +92,11 @@ class SetupController extends Controller
             ]);
         }
 
+        $installNotice = $this->installNotice();
+
         $response = Inertia::render('Setup/Wizard', [
             'flow_token' => $this->setup->issueFlowToken($request),
+            'install_notice' => $installNotice,
             'defaults' => $this->setup->initialDefaults(),
             'business_fields' => [
                 'business_name' => 'Nombre del comercio',
@@ -365,6 +369,45 @@ class SetupController extends Controller
         }
 
         return 'string';
+    }
+
+    /**
+     * Aviso determinista de cron posterior al instalador.
+     *
+     * No depende del flash ni de la sesión del instalador: se calcula desde el
+     * estado real (esquema listo, installation_info presente y setup aún no
+     * completado). Tolera fallos de BD devolviendo null sin 500.
+     *
+     * @return array{completed: bool, cron_command: string, app_version: string, release_channel: string}|null
+     */
+    private function installNotice(): ?array
+    {
+        try {
+            if (! $this->setup->schemaReady()) {
+                return null;
+            }
+
+            if (! Schema::hasTable('installation_info')) {
+                return null;
+            }
+
+            $row = DB::table('installation_info')->orderBy('id')->first();
+
+            if ($row === null || $this->setup->isCompleted()) {
+                return null;
+            }
+
+            $channel = (string) ($row->release_channel ?? 'stable');
+
+            return [
+                'completed' => true,
+                'cron_command' => (string) config('install.cron_line', 'php artisan schedule:run'),
+                'app_version' => (string) ($row->app_version ?? ''),
+                'release_channel' => in_array($channel, ['stable', 'beta'], true) ? $channel : 'stable',
+            ];
+        } catch (\Throwable) {
+            return null;
+        }
     }
 
     private function schemaNotReadyResponse(): SymfonyResponse

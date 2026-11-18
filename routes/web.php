@@ -17,6 +17,17 @@ Route::get('/docs/', fn () => response(
     ['Content-Type' => 'text/html; charset=UTF-8']
 ))->name('docs.index');
 
+// --- Instalador técnico (INSTALL-001 · CORE-17) ---
+// Fail-closed: cerrado por defecto en `config/install.php`; solo se abre con
+// un token de arranque presentado fuera de la app pública. Ningún GET migra.
+Route::middleware(\App\Http\Middleware\EnsureInstallerEnabled::class)->group(function (): void {
+    Route::get('/install', [\App\Http\Controllers\InstallController::class, 'show'])->name('install.show');
+    Route::post('/install/bootstrap', [\App\Http\Controllers\InstallController::class, 'bootstrap'])->name('install.bootstrap');
+    Route::post('/install/preflight', [\App\Http\Controllers\InstallController::class, 'preflightStep'])->name('install.preflight');
+    Route::post('/install/connection', [\App\Http\Controllers\InstallController::class, 'connectionStep'])->name('install.connection');
+    Route::post('/install/run', [\App\Http\Controllers\InstallController::class, 'run'])->name('install.run');
+});
+
 // --- Asistente de primer inicio (SETUP-001 · CORE-02) ---
 // Público por diseño: el estado de instalación y el token de flujo lo
 // protegen. Las rutas privadas quedan bloqueadas por EnsureSetupCompleted.

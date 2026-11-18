@@ -27,6 +27,13 @@ class EnsureSetupCompleted
      * @var list<string>
      */
     private const EXEMPT_ROUTES = [
+        // INSTALL-001: se eximen por nombre exacto para que /install pueda
+        // operar sin esquema. No existe exención por prefijo ni comodín.
+        'install.show',
+        'install.bootstrap',
+        'install.preflight',
+        'install.connection',
+        'install.run',
         'setup.show',
         'setup.store',
         'login',

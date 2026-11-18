@@ -26,6 +26,10 @@
 /public/storage
 /storage/*.key
 
+# INSTALL-001: tiendas file locales de pruebas/instalador (nunca repo fuente)
+/storage/framework/install-sessions/
+/storage/framework/testing/
+
 # BOOT-001 scaffold temporal (ignorar hasta fusión revisada)
 /tmp-boot-001/
 docs/work/.run/

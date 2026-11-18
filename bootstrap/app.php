@@ -11,6 +11,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // INSTALL-001 · B-02: las rutas del instalador usan sesión/caché
+        // dedicadas antes de que exista el esquema. Debe ir antes de
+        // StartSession; solo actúa sobre nombres exactos install.*.
+        $middleware->prependToGroup('web', \App\Http\Middleware\UseInstallStores::class);
+
         $middleware->web(append: [
             \App\Http\Middleware\HandleInertiaRequests::class,
             // SEC-05: el fingerprint debe verificarse antes de cualquier
@@ -49,5 +54,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->dontFlash([
             'admin_password',
             'admin_password_confirmation',
+            // INSTALL-001: el token de arranque y la contraseña de BD nunca
+            // se conservan en old input/flash tras un error de validación.
+            'bootstrap_token',
+            'db_password',
         ]);
     })->create();

@@ -57,13 +57,19 @@ class SetupService
      */
     public function schemaReady(): bool
     {
-        foreach (self::REQUIRED_TABLES as $table) {
-            if (! Schema::hasTable($table)) {
-                return false;
+        try {
+            foreach (self::REQUIRED_TABLES as $table) {
+                if (! Schema::hasTable($table)) {
+                    return false;
+                }
             }
-        }
 
-        return true;
+            return true;
+        } catch (\Throwable) {
+            // M-01/B-02: si la BD no responde, el guard debe responder de
+            // forma controlada, nunca con un 500.
+            return false;
+        }
     }
 
     /**

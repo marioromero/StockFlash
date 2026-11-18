@@ -15,6 +15,23 @@
                     la cuenta Admin Central. La información se guarda una sola vez, de forma transaccional.
                 </p>
 
+                <section
+                    v-if="install_notice"
+                    class="sf-install-notice"
+                    role="status"
+                    aria-live="polite"
+                    aria-labelledby="setup-install-notice-title"
+                >
+                    <h2 id="setup-install-notice-title" class="sf-install-notice-title">
+                        Instalación técnica completada
+                    </h2>
+                    <p class="sf-install-notice-text">
+                        El esquema y las semillas autorizadas ya están preparados. Configure manualmente
+                        una entrada de cron por minuto; el instalador no instala cron.
+                    </p>
+                    <p class="sf-install-notice-cron"><code>{{ install_notice.cron_command }}</code></p>
+                </section>
+
                 <div
                     v-if="hasErrors"
                     id="setup-error-summary"
@@ -530,6 +547,12 @@ interface BranchType {
 
 const props = defineProps<{
     flow_token: string;
+    install_notice?: {
+        completed: boolean;
+        cron_command: string;
+        app_version: string;
+        release_channel: string;
+    } | null;
     defaults: Defaults;
     business_fields: Record<string, string>;
     branch_types: BranchType[];
@@ -852,6 +875,37 @@ function submit(): void {
 
 .sf-steps {
     margin-bottom: 1.25rem;
+}
+
+.sf-install-notice {
+    margin: 0 0 1.25rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid #86efac;
+    border-radius: 0.5rem;
+    background: #f0fdf4;
+    color: #166534;
+}
+
+.sf-install-notice-title {
+    margin: 0 0 0.35rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.sf-install-notice-text {
+    margin: 0.25rem 0;
+    font-size: 0.8rem;
+    line-height: 1.5;
+}
+
+.sf-install-notice-cron code {
+    display: inline-block;
+    padding: 0.3rem 0.5rem;
+    border-radius: 0.375rem;
+    background: #303846;
+    color: #ffffff;
+    font-size: 0.8rem;
+    overflow-wrap: anywhere;
 }
 
 .sf-step-heading {
