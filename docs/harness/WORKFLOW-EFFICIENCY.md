@@ -25,5 +25,7 @@
 ## Stage timing
 15. At each genuine stage boundary (implementation, verification, QA, correction, publication and CI wait) spend one tiny CLI call: `py -3 scripts/sf_timeline.py begin <ID> <stage> --actor orchestrator ...` and the matching `end ... --status ...`. Data stays in the ignored `docs/work/.run/<ID>.timeline.jsonl`; `status`/`summary` are read-only recovery aids that report **suma** vs **union** without double counting overlap, while wall-clock idle and model inference remain UNKNOWN. Telemetry never authorizes skipping a gate, and a telemetry failure neither blocks nor unblocks approved work.
 
+On-demand read-only telemetry shortcuts: `/sf-time-status <ID>` and `/sf-time-summary <ID>` wrap the existing local Python CLI. Keep both dormant unless a person or a specific authorized diagnosis invokes them; **do not add automatic model or tool invocations** to ordinary feature runs. Existing stage boundary writes are separate and unchanged.
+
 ## Do not optimize away
 RBAC and entitlement checks, CSRF/session/bootstrap guards, transaction/locking tests, privacy and security adversarial review, exact-SHA CI, safe Git, separate read-only QA, owner decisions for deployment/remote DB, and completeness of the final release gates.
