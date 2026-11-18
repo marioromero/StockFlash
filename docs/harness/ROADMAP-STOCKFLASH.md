@@ -1,19 +1,17 @@
-# Roadmap StockFlash — entregables y puertas (2026-10-12)
-**No son fechas prometidas.** Etapas basadas en dependencias y criterios verificables; algunas podrán avanzar en paralelo.
+# StockFlash milestone roadmap — evidence-based gates, no promised dates
 
-| Etapa | Entregable | Gate antes de avanzar |
+| Stage | Deliverable | Required gate |
 |---|---|---|
-| R0 DOC-001 | Contratos externo/fiscal coherentes, lote 09 corregido, harness y matriz de auditoría | Índice/hash verificados por `scripts/check_contracts.py` y CI `contract-check.yml`; ADR abiertos señalados |
-| R1 BOOT-001 | Laravel compatible PHP8.3 + Vue3/Inertia/TypeScript + marca textual local | `composer validate`, pruebas, `npm run build`, ruta Vue en navegador, cero DB/migración |
-| R2 CI / staging seguro | CI PHP+Node24, artefactos, smoke; despliegue aislado | Pruebas CI, clave/usuario de privilegio mínimo, rollback; NO usar clave SSH general actual para deploy |
-| R3 Core | Instalador, usuarios/RBAC, sucursales, licencias técnicas, catálogo base y BD | Migraciones reproducibles en MariaDB >=10.6, autorización server-side y contratos de dominio probados |
-| R4 Bodega | Productos/variantes, kardex, existencias, ajustes, transferencias y reportes | Pruebas de stock, permisos, concurrencia, UX y trazabilidad |
-| R5 Control | App independiente: clientes comerciales, planes, licencias Ed25519, cobros manuales y free/demo | ADR-01/02/05, modelo físico/API Control, firma, gracia/offline/entitlements probados |
-| R6 POS sin DTE | Ventas, tickets, caja, split pay, devoluciones, pausas por estación, recibo interno | ADR-03, caja/stock transaccionales, NO fiscal_documents en modo external, control de concurrencia |
-| R7 Piloto y primer lanzamiento | POS+Bodega comercializables con control de suscripción | Respaldos+restore, privacidad/seguridad, permisos, emisión externa validada legal/tributariamente |
-| R8 SyncWP | WooCommerce REST/webhooks/polling, catálogo/stock/pedidos/refunds | Replay, reconciliación y fallos idempotentes probados |
-| R9 Fiscal | Adaptador DTE autorizado, XML, NC, documentos por emisor | Integración legal/tributaria, idempotencia, retención/backup y ADR-04 para entradas autónomas |
-| R10 Compras/Analítica | Productos comerciales independientes de evolución | ADR-06, alcance independiente y QA |
+| R0 DOC-001 | Coherent v2.2 business/data/integrations, indexed IDs and contract hashes | `scripts/check_contracts.py`, CI contract workflow; keep open ADR visible |
+| R1 BOOT-001 | PHP 8.3+/Laravel 13, Vue3/Inertia/TypeScript and text brand shell | Composer validation, PHP tests, Node build and GET / es-CL; no real DB bootstrap |
+| R2 CI / staging readiness | GitHub PHP/Node24/docs CI, smoke, isolated staging transport | Exact SHA CI; distinct approved deploy, least-privilege credentials, rollback |
+| R3 Core | Installer, setup, auth/RBAC, users, branches, settings, license core, catalog base | Secure access, approved migrations schema tests, MariaDB 10.6+ predeploy |
+| R4 Bodega | Products, variants, physical Kardex, balances, adjustments, transfers, reports | Locking/idempotence/stock consistency, permission/UX review |
+| R5 Control | Independent central customers/plans/Ed25519 licenses, manual billing, demo/free controls | ADR-01/02/05 and central contracts before commercial claims |
+| R6 POS without integrated DTE | Sales, tickets, cash, split tender, returns, station-held carts | ADR-03 if affected; transactional cash/stock, no fiscal_documents from external-mode sale |
+| R7 First commercial pilot | Sellable POS+Bodega with subscription control, backups and security | Restore, privacy, authorization, fiscal external/legal validation, pilot readiness |
+| R8 SyncWP | Woo REST/webhooks/polling, product/stock/order/refund integration | Replay, reconciliation and idempotent error handling |
+| R9 Fiscal | Authorized DTE adapter, XML, credit notes, fiscal documents | Legal/tax contract, retries/reconciliation, retention/backups and ADR-04 where needed |
+| R10 Compras / Analítica | Independent future commercial products | ADR-06, separate scope and quality gates |
 
-**Paralelismo:** R5 puede progresar junto a R4/R6 después de fijar contratos del servicio central. CI local puede prepararse antes de aislar SSH, pero no el deploy. No entregar R7 solo porque una demo funcione.
-**Autonomía OpenCode:** una Feature Packet aprobada autoriza la implementación y pruebas del alcance, con checkpoints, reviewer independiente y permisos `ask` intactos. Humano y ChatGPT deciden cambios de contrato, nuevas dependencias no aprobadas o releases productivos.
+R5 may overlap R4/R6 after central contracts are fixed; CI can exist before separate staging deployment privileges. R7 is not reached merely because a demo works. **Current actual progress comes from `docs/work/CURRENT.md`, not from this planned row order.** OpenCode autonomous execution covers only APPROVED packets and safe Git, not new ADRs or deployment.
