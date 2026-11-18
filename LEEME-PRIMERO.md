@@ -18,7 +18,7 @@ StockFlash products: POS, Bodega, SyncWP, Fiscal, Compras, Analítica. Control i
 - Sync safely via `scripts/safe_git_pull.py`; never use reset, stash or clean to bypass conflicts. Preserve local changes.
 - QA, Git publication, CI and technical VERIFIED are separate events. Publishing code does not authorize deployment or remote DB activity.
 - The user manually relays `ok` between assistants using the active SFH1 GitHub issue; no unattended cross-chat orchestration.
-- Optional next-cycle token audit is specified in `docs/harness/AUDITORIA-TOKENS-IA.md`; external review prompts are delivered to the owner OUTSIDE the repository.
+- Current token audit HOBS-001 **Phase 0**: read only `docs/work/features/HOBS-001.md`, not the longer GPT planning document `docs/harness/AUDITORIA-TOKENS-IA.md`. It is read-only and needs no Git sync/CI or files. External review prompts are delivered to the owner OUTSIDE the repository.
 
 ## Security
 No secrets, personal data, real `.env` reads, SSH/FTP credentials, production DB access, real migration/seeding or deploy without separate explicit approval. Development/test evidence must be sanitized. Protect /roadmap, /install and /setup as contracted. Do not use `/init` or run cPanel/SSH deploy as a side effect of ordinary code work.
