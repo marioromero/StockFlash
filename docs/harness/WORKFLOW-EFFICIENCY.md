@@ -19,7 +19,7 @@
 12. Treat time-consuming local commands and model token consumption separately. Do not claim savings until native metered counts or a controlled A/B with explicit limitations exists.
 
 ## Instrumentation and privacy
-13. Audit phase is explicitly scoped by `docs/harness/AUDITORIA-TOKENS-IA.md` **v2.1**. In Phase 0, read only safe native session stats (up to 2–3 comparable historical sessions); no collector/parser, no agent-authored JSONL, no extra QA/publisher run or Git commit. Record actual first-subagent-request tokens/context growth only when metered; unknowns null. Never use an extra LLM call to log an event.
+13. For `audit=ON;phase=0`, OpenCode follows **only** `docs/work/features/HOBS-001.md`; do not load the GPT-only future-phase protocol. Use safe native read-only session stats (up to three comparable completed sessions); no sync/CI preflight, collector/parser, agent-written JSONL, extra QA/publisher or commit. First-subagent-request tokens/context growth only if metered; unknowns null.
 14. Phase 1/2 are separately approved. Phase 2 temporary audit records stay in ignored local storage outside feature-code fingerprints. **Generate the audit artifact after original feature QA/publisher/exact-SHA CI** and publish as a distinct audit-only documentation commit with its own privacy review and CI. Its own audit-publication events are excluded from the measured window. The final report distinguishes measured coverage from missing phases and never includes raw exports, stdout, .env, secrets, PII or prompts.
 
 ## Do not optimize away
