@@ -1,7 +1,7 @@
 # Estado operativo — StockFlash
 
 ## Feature activa
-- **INSTALL-001 — Instalador web CORE-17 P0: APPROVED / ACTIVO (publicado, no VERIFIED)**, packet `docs/work/features/INSTALL-001.md`, `publication_mode: AUTO_GIT`, derivado de contrato v2.2 existente sin decisión comercial nueva. Código y pruebas implementados y publicados en `main`; gates `GATES_PASS` 32/32 (`docs/work/INSTALL-001-VERIFY-20261117-212833.md`) y QA independiente `APROBADO` (`docs/work/INSTALL-001-REVIEW-20261117-R3.md`, 0 bloqueantes) sobre el mismo estado. CI GitHub sobre SHA `cbdfacab64263f93ce6a7d756e3074455b40de26`: 2/2 SUCCESS comprobado por ChatGPT (PHP/Node/smoke run `44211358836`, contratos run `44211358876`). Pendientes cierre técnico documental, guía y roadmap de INSTALL-001. NUNCA ejecutar instalador real ni tocar `.env`/BD remota/cron/deploy: la publicación del código no habilita el instalador. CORE-02 SETUP-001 VERIFIED; BKP-08 `NOT_READY_FOR_PRODUCTION` sigue bloqueando producción no demo.
+- **HOBS-001 — Harness runtime + audit tokens: APPROVED / ACTIVO**, packet `docs/work/features/HOBS-001.md`, solicitud explícita del propietario 17-11-2026. Verificar el harness en inglés y comenzar captura JSONL sanitizada de procesos/agentes/subagentes (`audit=ON`) conforme `docs/harness/AUDITORIA-TOKENS-IA.md`. Solo código, pruebas y diagnóstico local. Antes de ejecutar, verificar CI GitHub 2/2 SUCCESS del SHA base exacto, sin tocar BD remota, .env real, instalador, cPanel ni deploy.
 
 ## Estados por feature
 - BOOT-001: VERIFIED (2026-10-14), Laravel 13.35.0 + Vue 3/Inertia/TS; `bcbf16f`.
@@ -17,15 +17,16 @@
 - CATDB-001: VERIFIED técnico (2026-11-17), `93fe5de`; 383 pruebas; sin MariaDB real.
 - CATMAST-001: VERIFIED técnico (2026-11-17), `9279d57`; 414/3423; UI real y MariaDB pendientes.
 - CATPROD-001: VERIFIED técnico (2026-11-17), `c8e1338`; 476/4192; QA R2 N-01 pendiente antes de POS/Fiscal.
-- **SETUP-001: VERIFIED técnico** (2026-11-17), código `13cdd6a`, gates 19/19, QA independiente APROBADO, 529 pruebas / 4665 aserciones y CI 2/2 SUCCESS. Guía 26 temas y roadmap actualizados por ChatGPT; cierre `docs/work/SETUP-001-CLOSURE-20261117.md`. Producción no demo bloqueada por BKP-08 P1★; instalador CORE-17 y MariaDB/browser real pendientes.
+- **SETUP-001: VERIFIED técnico** (2026-11-17), código `13cdd6a`, gates 19/19, QA independiente APROBADO, 529 pruebas / 4665 aserciones y CI 2/2 SUCCESS. Guía 26 temas y roadmap actualizados por ChatGPT; cierre `docs/work/SETUP-001-CLOSURE-20261117.md`. Producción no demo bloqueada por BKP-08 P1★; instalador CORE-17 implementado/verificado solo en código; ejecución real, MariaDB/browser y BKP-08 pendientes.
 
 ## Trabajo documental del harness
-- Auditoría integral de instrucciones/roles/skills/permisos e idioma interno inglés preparada en rama `harness/english-token-audit-20261117`. Incluye `docs/harness/HARNESS-AUDIT-20261117.md`, `WORKFLOW-EFFICIENCY.md`, `AUDITORIA-TOKENS-IA.md` y `CHATGPT-ONLY-INSTRUCTIONS.md`. **No afirmar CI del nuevo HEAD hasta que PR/merge se compruebe.** Próxima feature operativa activa auditoría con `audit=ON`; no se ejecuta retroactivamente en INSTALL-001.
+- Auditoría estática y refactor de todo el harness integrado en `main` por [PR #28](https://github.com/marioromero/StockFlash/pull/28), squash SHA `3fecc0a303a939c87814664c22ac4a06fb2189db`; CI en ese SHA **2/2 SUCCESS** (PHP/Node/smoke `44216504674`, contratos `44216504605`). Instrucciones internas en inglés, interfaz y documentos de usuario en español. Ver `docs/harness/HARNESS-AUDIT-20261117.md`, `WORKFLOW-EFFICIENCY.md`, `AUDITORIA-TOKENS-IA.md`, `CHATGPT-ONLY-INSTRUCTIONS.md`. Auditoría real de eventos pendiente para HOBS-001: los tokens no se infieren.
 
 ## Pendientes y bloqueos reales
+- HOBS-001 solo puede arrancar si **la CI PHP/Node/smoke + contratos del HEAD final posterior a estos cambios** está 2/2 SUCCESS; de lo contrario STOP y diagnóstico. Captura de uso real de tokens solo cuando OpenCode/proveedor la ofrece.
 - STAGING-001: APPROVED, sin deploy demostrado ni VERIFIED; FTPS separado solo hacia `stockflash-dev-app`. No habilita despliegue por sí sola.
 - Restricción SSH vigente: no usar la credencial `grupoint`; no publicar secretos.
-- INSTALL-001: APPROVED/AUTO_GIT, código y pruebas del instalador técnico CORE-17 implementados y publicados; gates 32/32 PASS y QA independiente R3 APROBADO sobre el mismo estado; CI exact-SHA `cbdfacab` comprobada 2/2 SUCCESS; pendiente cierre externo/documentación editorial. Instalador cerrado por defecto (no habilitado por publicar); sin ejecución real, sin `.env`/BD remota/cron/deploy; sin VERIFIED. Scope: secreto bootstrap obligatorio, bloqueo de reinstalación, integración con /setup. BKP-08 P1★ pendiente; producción no demo sigue bloqueada.
+- **INSTALL-001: VERIFIED técnico**, cierre `docs/work/INSTALL-001-CLOSURE-20261117.md`, código `cbdfacab`, 32/32 gates, QA R3 APROBADO y CI 2/2 SUCCESS. Manual `/docs/` y roadmap editorial actualizados por ChatGPT; metadatos técnicos de guía/roadmap deben ser reconciliados por OpenCode. Instalador deshabilitado por defecto; **NO se ejecutó en entorno real** ni tocó .env/BD remota/cron/deploy. BKP-08 P1★ aún bloquea producción no demo.
 - MariaDB real/índices, concurrencia y UX visual no probados; no migrar BD remota ni desplegar sin autorización.
 
 ## Reglas operativas vigentes
