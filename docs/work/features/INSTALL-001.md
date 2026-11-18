@@ -1,6 +1,6 @@
 # INSTALL-001 — Instalador web CORE-17 P0 (una instalación)
 
-status: APPROVED
+status: VERIFIED
 approval_basis: existing_approved_contract_owner_delegation_2026-11-16
 new_business_decisions: NONE
 publication_mode: AUTO_GIT
@@ -32,3 +32,11 @@ active: docs/work/CURRENT.md
 
 ## Hard start guard
 Before implementing, confirm GitHub Actions CI PHP/Node/smoke AND DOC contracts 2/2 SUCCESS on exact latest base HEAD (including this packet/current handoff). On PENDING/FAIL, STOP without code changes and send SFH1 BLOCK. Sync via scripts/safe_git_pull.py; no reset, stash, clean, remote DB or deploy.
+
+## External technical closure — 2026-11-17
+
+status_decision: VERIFIED_TECH (ChatGPT external review)
+code_sha: cbdfacab64263f93ce6a7d756e3074455b40de26
+closure: docs/work/INSTALL-001-CLOSURE-20261117.md
+verification: 32/32 GATES_PASS; independent QA APROBADO R3; CI exact code SHA 2/2 SUCCESS.
+limits: installer real NOT_RUN; MariaDB/browser real NOT_VALIDATED; .env real/remote database/deploy/cron UNTOUCHED; BKP-08 non-demo production gate remains blocked.
