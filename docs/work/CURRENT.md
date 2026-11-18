@@ -1,7 +1,7 @@
 # Estado operativo — StockFlash
 
 ## Feature activa
-- **HOBS-003 — Análisis forense de latencia (APPROVED / ACTIVA)**. Instrucción única de OpenCode: `docs/work/features/HOBS-003.md` (Fase 0C, solo lectura). Investigar demoras de más de una hora el **17-11-2026 entre 20:00–22:00 hora de Chile**, usando marcas de tiempo históricas de mensajes/herramientas/subagentes; diferenciar evidencia y causas no observables; sin tocar la sesión avanzada, parser, código, Git sync, QA, CI ni despliegue. Un resultado SFH1 en el único issue activo. HOBS-001 y HOBS-002 están COMPLETADAS (issues #29/#37); contexto 642.721 confirmado, pero la causa de latencia no fue evaluada por esas fases. El análisis para Claude será externo, sin compartir transcripciones ni secretos.
+- **HOBS-004 — Análisis acotado de camino crítico (APPROVED / ACTIVA)**. Única tarea OpenCode: `docs/work/features/HOBS-004.md` (Fase 0C, solo lectura). Sobre la cadena de espera del 17-11-2026 a las 19:33–21:54 Chile ya confirmada por HOBS-003, efectuar Q0–Q4: integridad de spans, unión/solape de 7 delegaciones, tiempo activo por nieto, herramientas de la hoja (274 solicitudes/368 tools) y configuración/permisos efectivos de OpenCode 1.19.5. **Sin collector, parser, modificación, Git sync, CI, nuevas features ni intervención en sesión avanzada.** Un solo RESULT SFH1 en issue activo. HOBS-001/002/003 completos (issues #29/#37/#40). Cambios C1–C4 pendientes del resultado y revisión crítica, no autorizados aún.
 
 ## Estados por feature
 - BOOT-001: VERIFIED (2026-10-14), Laravel 13.35.0 + Vue 3/Inertia/TS; `bcbf16f`.
