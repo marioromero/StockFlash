@@ -76,16 +76,28 @@ class DocsIntegrationTest extends TestCase
     public function test_agents_and_harness_commands_define_documentation_handoff(): void
     {
         $agents = $this->file('AGENTS.md');
-        $this->assertStringContainsString('Manual HTML de usuarios', $agents);
-        $this->assertStringContainsString('Continuidad ChatGPT', $agents);
+        $this->assertStringContainsString('public/docs/index.html', $agents);
+        $this->assertStringContainsString('docs/harness/CONTEXTO-CHATGPT.md', $agents);
+        $this->assertStringContainsString('All agent instructions', $agents);
+
+        // Check the canonical English ownership contract rather than duplicating
+        // exact Spanish paragraphs in every OpenCode command.
+        $guidePolicy = $this->file('docs/harness/GUIA-HTML-USUARIO.md');
+        $this->assertStringContainsString('exclusive author', $guidePolicy);
+        $this->assertStringContainsString('GUIA_PENDIENTE_CHATGPT', $guidePolicy);
+        $this->assertStringContainsString('public/docs/index.html', $guidePolicy);
+
+        $gptPolicy = $this->file('docs/harness/CHATGPT-ONLY-INSTRUCTIONS.md');
+        $this->assertStringContainsString('English', $gptPolicy);
+        $this->assertStringContainsString('OpenCode MAY READ but MUST NOT EDIT', $gptPolicy);
 
         $sfRun = $this->file('.opencode/commands/sf-run.md');
-        $this->assertStringContainsString('GUIA_PENDIENTE_CHATGPT', $sfRun);
-        $this->assertStringContainsString('CONTEXTO-CHATGPT.md', $sfRun);
+        $this->assertStringContainsString('stockflash-orchestrator', $sfRun);
+        $this->assertStringContainsString('public/docs/index.html', $sfRun);
 
         $sfPublish = $this->file('.opencode/commands/sf-publish.md');
-        $this->assertStringContainsString('GUIA_ACTUALIZADA', $sfPublish);
-        $this->assertStringContainsString('GUIA_PENDIENTE_CHATGPT', $sfPublish);
+        $this->assertStringContainsString('stockflash-publisher', $sfPublish);
+        $this->assertStringContainsString('GPT', $sfPublish);
     }
 
     public function test_harness_documentation_files_are_integrated(): void
@@ -94,6 +106,7 @@ class DocsIntegrationTest extends TestCase
             'public/docs/index.html',
             'docs/harness/GUIA-HTML-USUARIO.md',
             'docs/harness/CONTEXTO-CHATGPT.md',
+            'docs/harness/CHATGPT-ONLY-INSTRUCTIONS.md',
             'docs/work/GUIA-HTML-ESTADO.md',
         ] as $path) {
             $this->assertFileExists(base_path($path), "Falta archivo de documentación: {$path}");
