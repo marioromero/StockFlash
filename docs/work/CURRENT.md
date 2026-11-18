@@ -1,7 +1,7 @@
 # Estado operativo — StockFlash
 
 ## Feature activa
-- **Sin feature activa en ejecución.** HOBS-001 Fase 0 y HOBS-002 Fase 0B **COMPLETADAS** (issues [#29](https://github.com/marioromero/StockFlash/issues/29) y [#37](https://github.com/marioromero/StockFlash/issues/37), respectivamente). Diagnóstico confirmado: la sesión avanzada mostró 642.721 tokens (642.304 caché + 217 entrada + 2 salida + 198 razonamiento), pico posterior 651.860; costos calculados por OpenCode, no factura verificada. El crecimiento de contexto está medido, pero **no se ha demostrado desperdicio ni causa de repeticiones**. No ejecutar más auditorías ni construir parser sin nuevo packet técnico acotado; conservar sesión avanzada. Próximo packet de producto a seleccionar por ChatGPT según contratos aprobados (sin requerir aprobación del propietario para orden técnico).
+- **HOBS-003 — Análisis forense de latencia (APPROVED / ACTIVA)**. Instrucción única de OpenCode: `docs/work/features/HOBS-003.md` (Fase 0C, solo lectura). Investigar demoras de más de una hora el **17-11-2026 entre 20:00–22:00 hora de Chile**, usando marcas de tiempo históricas de mensajes/herramientas/subagentes; diferenciar evidencia y causas no observables; sin tocar la sesión avanzada, parser, código, Git sync, QA, CI ni despliegue. Un resultado SFH1 en el único issue activo. HOBS-001 y HOBS-002 están COMPLETADAS (issues #29/#37); contexto 642.721 confirmado, pero la causa de latencia no fue evaluada por esas fases. El análisis para Claude será externo, sin compartir transcripciones ni secretos.
 
 ## Estados por feature
 - BOOT-001: VERIFIED (2026-10-14), Laravel 13.35.0 + Vue 3/Inertia/TS; `bcbf16f`.
