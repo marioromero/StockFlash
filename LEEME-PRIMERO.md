@@ -17,7 +17,7 @@ StockFlash products: POS, Bodega, SyncWP, Fiscal, Compras, Analítica. Control i
 - `/sf-run <ID>` is the routine delegated workflow. `/sf-plan` or `/sf-feature` apply only if needed. `/sf-diagnostico` is not repeated on every feature.
 - Sync safely via `scripts/safe_git_pull.py`; never use reset, stash or clean to bypass conflicts. Preserve local changes.
 - QA, Git publication, CI and technical VERIFIED are separate events. Publishing code does not authorize deployment or remote DB activity.
-- The user manually relays `ok` between assistants using the active SFH1 GitHub issue; no unattended cross-chat orchestration.
+- An owner `ok` is an **action trigger**, not a request for an acknowledgment: the default Build agent must use tools to read the latest directed SFH1 issue, execute the approved task and publish real evidence (or return a concrete BLOCK). Do not echo `OK` without actual execution. No unattended cross-chat orchestration.
 - Current token audit HOBS-001 **Phase 0**: read only `docs/work/features/HOBS-001.md`, not the longer GPT planning document `docs/harness/AUDITORIA-TOKENS-IA.md`. It is read-only and needs no Git sync/CI or files. External review prompts are delivered to the owner OUTSIDE the repository.
 
 ## Security
