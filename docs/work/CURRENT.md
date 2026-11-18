@@ -1,7 +1,7 @@
 # Estado operativo — StockFlash
 
 ## Feature activa
-- **HOBS-002 — Diagnóstico focalizado de contexto (APPROVED / ACTIVA)**. ÚNICA instrucción OC: `docs/work/features/HOBS-002.md`; `audit_phase: 0B`. Analizar datos numéricos de la sesión avanzada observada al 61% desde **otra sesión de OpenCode**, confirmar si corresponde al caso A de HOBS-001 y resumir evolución histórica, herramientas/subagentes y limitaciones. Solo lectura; resultado SFH1 en issue activo; sin parser/JSONL/CI/sync/commits ni tocar sesión avanzada. **HOBS-001 Fase 0 completó RESULT i=002 en issue #29** (evidencia descriptiva, sin atribuir ahorro ni compaction causal).
+- **Sin feature activa en ejecución.** HOBS-001 Fase 0 y HOBS-002 Fase 0B **COMPLETADAS** (issues [#29](https://github.com/marioromero/StockFlash/issues/29) y [#37](https://github.com/marioromero/StockFlash/issues/37), respectivamente). Diagnóstico confirmado: la sesión avanzada mostró 642.721 tokens (642.304 caché + 217 entrada + 2 salida + 198 razonamiento), pico posterior 651.860; costos calculados por OpenCode, no factura verificada. El crecimiento de contexto está medido, pero **no se ha demostrado desperdicio ni causa de repeticiones**. No ejecutar más auditorías ni construir parser sin nuevo packet técnico acotado; conservar sesión avanzada. Próximo packet de producto a seleccionar por ChatGPT según contratos aprobados (sin requerir aprobación del propietario para orden técnico).
 
 ## Estados por feature
 - BOOT-001: VERIFIED (2026-10-14), Laravel 13.35.0 + Vue 3/Inertia/TS; `bcbf16f`.
