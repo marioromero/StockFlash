@@ -1,15 +1,10 @@
 ---
-description: Ejecutar gates locales de una Feature Packet con verificador determinista, sin revisar ni editar
+description: Run the deterministic mandatory gates for one approved feature without QA or editing.
 agent: general
 ---
 
-Ejecutar el verificador determinista para la Feature Packet $ARGUMENTS (p. ej. `BOOT-001`). Este comando NO revisa como QA ni implementa: solo ejecuta gates y registra evidencia. El reviewer independiente (`/sf-review`, agente `stockflash-reviewer`) mantiene su auditoría en solo lectura y no depende de este comando.
+For `$ARGUMENTS`, execute **once per candidate state**: `py -3 scripts/sf_verify.py $ARGUMENTS`. If no `GATES_BY_PACKET` definition exists, report GATES_FAIL and define required gates under approved scope rather than improvising or bypassing them.
 
-**Ejecutor único:** `py -3 scripts/sf_verify.py $ARGUMENTS`
+This runner alone owns the formal GATES_PASS/FAIL evidence. It is not the independent reviewer, publisher or ChatGPT VERIFIED authority. All mandatory tests (including the full suite where declared), typecheck/build, contracts and security checks must run exactly as specified, never be replaced by prior stale reports. During coding, targeted tests are separate and not substitutes for final gate.
 
-- Para BOOT-001 los gates obligatorios, en orden, son: `composer validate`, `php artisan test`, `npm run build` y comprobación HTTP local de `GET /` mediante servidor temporal que el propio script levanta y cierra siempre (try/finally). No sustituirlos por valores reportados en `docs/work/BOOT-001-EVIDENCE.md` ni por el veredicto de `/sf-review`.
-- Si el packet no tiene gates definidos en `GATES_BY_PACKET`, detenerse con `GATES_FAIL` y proponer la definición concreta antes de continuar; no improvisar comandos.
-- El verificador solo puede generar los artefactos locales necesarios para las pruebas (p. ej. `public/build/`, cachés de test) y su reporte `docs/work/<PACKET>-VERIFY-<timestamp>.md`. No leer ni registrar `.env`, secretos, claves, `vendor/`, `node_modules/` ni dumps.
-- Prohibido: migraciones/seeders (`php artisan migrate*`, `db:*`, `tinker` denegados), commit/push/deploy, cambios a contratos v2.2 (`docs/product/*`, constitución, branding), ampliación de permisos globales y servicios permanentes (`serve` solo temporal dentro del script).
-- Veredicto del script: `GATES_PASS` o `GATES_FAIL`. Ante cualquier gate obligatorio fallido, el resultado es `GATES_FAIL`; no presentarlo como PASS. Nunca declarar `VERIFIED`: eso corresponde al owner/ChatGPT fuera de OpenCode tras revisar el reporte.
-- Entregar: tabla gate/comando/exit/PASS-FAIL, ruta del reporte generado y procesos temporales cerrados. Autorización del propietario 2026-10-16: sin aprobaciones por invocación; ejecutar directo.
+Output only bounded status/evidence path to the model; keep full safe log in deterministic report. Never read .env/credentials, run real DB commands, deploy, commit/push, or leave a permanent dev server. Temporary processes must be closed. English internal instructions; status names remain unchanged.
