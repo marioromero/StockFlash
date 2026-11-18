@@ -1,6 +1,6 @@
 ---
 name: stockflash-requirements
-description: Localiza IDs RN/POS/INV/LIC y evita releer todo el contrato v2.2.
+description: Locate exact contract clauses without rereading all v2.2 specs.
 compatibility: opencode
 metadata:
   product: stockflash
@@ -8,5 +8,4 @@ metadata:
 
 # stockflash-requirements
 
-
-Leer `docs/harness/MAPA-DE-LECTURA.md`, packet actual y solo extractos exactos de Parte 1, Parte 2 o Anexo. Si contradicción con delta pendiente, bloquear y emitir decision request. Nunca convertir una propuesta en norma ni agregar nueva tabla por improvisación.
+Use docs/harness/MAPA-DE-LECTURA.md, active packet and docs/requirements/INDEX-REQUISITOS.md. Search targeted requirement IDs, read exact paragraphs and data fields. Never reinterpret open decisions or invent new tables. Report conflict by ID with the smallest required decision.
