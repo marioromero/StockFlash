@@ -1,7 +1,7 @@
 # Estado operativo — StockFlash
 
 ## Feature activa
-- **HOBS-001 — Auditoría de tokens, FASE 0 (APPROVED / ACTIVA)**. ÚNICA instrucción OC: `docs/work/features/HOBS-001.md`; `audit=ON;phase=0`, diagnóstico local de solo lectura (estadísticas y hasta tres sesiones anteriores), comentario SFH1 en #29 y STOP. **Sin cargar diseño de fases futuras, sin parser/JSONL/QA/CI/sync/commits.** Las fases 1 y 2 requieren autorización técnica posterior; no acceder a secretos ni BD remota.
+- **HOBS-002 — Diagnóstico focalizado de contexto (APPROVED / ACTIVA)**. ÚNICA instrucción OC: `docs/work/features/HOBS-002.md`; `audit_phase: 0B`. Analizar datos numéricos de la sesión avanzada observada al 61% desde **otra sesión de OpenCode**, confirmar si corresponde al caso A de HOBS-001 y resumir evolución histórica, herramientas/subagentes y limitaciones. Solo lectura; resultado SFH1 en issue activo; sin parser/JSONL/CI/sync/commits ni tocar sesión avanzada. **HOBS-001 Fase 0 completó RESULT i=002 en issue #29** (evidencia descriptiva, sin atribuir ahorro ni compaction causal).
 
 ## Estados por feature
 - BOOT-001: VERIFIED (2026-10-14), Laravel 13.35.0 + Vue 3/Inertia/TS; `bcbf16f`.
