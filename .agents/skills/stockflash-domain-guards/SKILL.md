@@ -1,6 +1,6 @@
 ---
 name: stockflash-domain-guards
-description: Protege operaciones de stock, caja, venta, reserva, idempotencia y fronteras de integración.
+description: Protect inventory, cash, sales, reservations, idempotence and integration boundaries.
 compatibility: opencode
 metadata:
   product: stockflash
@@ -8,5 +8,4 @@ metadata:
 
 # stockflash-domain-guards
 
-
-Validar RN-15..32, RN-33..37, RN-38..48 y RN-49..57 sólo según alcance. Kardex físico inmutable; reservas independientes; pagos e inventario transaccionales; 2 trabajos no duplican cambios. WooCommerce es canal, no dominio. No alterar fuente única stock/precios/DTE ni reutilizar efecto externo sin dedupe. Conservar límites fase P0/P1/P2.
+Read only applicable RN-15..57 and approved packet. Physical stock movements immutable; reservations are distinct from stock; transactions and locks protect inventory, cash and split payments; external side effects are idempotent. WooCommerce is a channel adapter, not stock's authority. Do not introduce a new stock/price/fiscal source of truth or expand P0/P1/P2 scope silently.

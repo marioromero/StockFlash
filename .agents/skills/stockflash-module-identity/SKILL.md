@@ -1,6 +1,6 @@
 ---
 name: stockflash-module-identity
-description: Mantiene la marca comercial estable POS/Bodega/SyncWP/Fiscal/Compras/Analítica/Control.
+description: Keep commercial product identities and authorization separate.
 compatibility: opencode
 metadata:
   product: stockflash
@@ -8,5 +8,4 @@ metadata:
 
 # stockflash-module-identity
 
-
-Leer `docs/branding/module-identity-map.md`. Detectar producto activo por contexto comercial de navegación/entitlement, no por ruta interna; Caja y Precios dentro de POS siguen siendo POS. SyncWP marca WooCommerce, pero dominio genérico sigue `channels`. Control es app interna del fabricante. No mezclar permiso RBAC con entitlement comercial; ambos se verifican en servidor. Si no existe una autorización comercial aprobada, detener la funcionalidad.
+Consult docs/branding/module-identity-map.md only when product identity matters. Commercial products POS/Bodega/SyncWP/Fiscal/Compras/Analítica; Control internal; Caja/Precios are POS functions. Determine current product from licensed entitlement and navigation context, not URL alone. RBAC plus commercial entitlement must be checked server-side; an unapproved product capability blocks only its dependent feature.

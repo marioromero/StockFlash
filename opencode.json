@@ -3,13 +3,17 @@
   "permission": {
     "read": {
       "*": "allow",
-      "*.env": "allow",
-      "*.env.*": "allow",
+      "*.env": "deny",
+      "*.env.*": "deny",
       "*.pem": "deny",
       "*.key": "deny",
       "*id_rsa*": "deny",
       "*id_ed25519*": "deny",
-      "*secrets*": "deny"
+      "*secrets*": "deny",
+      "*.env.example": "allow",
+      "**/*.env": "deny",
+      "**/*.env.*": "deny",
+      "**/*.env.example": "allow"
     },
     "edit": {
       "*": "allow",
@@ -18,11 +22,15 @@
       "docs/branding/brand-contract.md": "deny",
       "docs/branding/module-identity-map.md": "deny",
       "AGENTS.md": "deny",
-      "opencode.json": "allow",
+      "opencode.json": "deny",
       "*.env": "deny",
       "*.env.*": "deny",
       "*.pem": "deny",
-      "*.key": "deny"
+      "*.key": "deny",
+      "docs/harness/CONTEXTO-CHATGPT.md": "deny",
+      "docs/harness/CHATGPT-ONLY-INSTRUCTIONS.md": "deny",
+      "public/docs/index.html": "deny",
+      "resources/roadmap/index.html": "deny"
     },
     "bash": {
       "*": "allow",
@@ -172,7 +180,11 @@
           "*.env": "deny",
           "*.env.*": "deny",
           "*.pem": "deny",
-          "*.key": "deny"
+          "*.key": "deny",
+          "docs/harness/CONTEXTO-CHATGPT.md": "deny",
+          "docs/harness/CHATGPT-ONLY-INSTRUCTIONS.md": "deny",
+          "public/docs/index.html": "deny",
+          "resources/roadmap/index.html": "deny"
         }
       },
       "mode": "all"
@@ -205,7 +217,7 @@
       }
     },
     "stockflash-orchestrator": {
-      "description": "Coordina Feature Packets aprobadas, gates, QA y publicación por agentes separados.",
+      "description": "Delegate approved features to implementer, deterministic gates, independent QA and safe publisher.",
       "mode": "all",
       "permission": {
         "edit": {

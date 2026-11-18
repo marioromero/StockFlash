@@ -1,6 +1,6 @@
 ---
-description: Plan técnico breve para una feature aprobada, sin código
+description: Plan one approved feature with small, justified implementation tasks.
 agent: plan
 ---
 
-Para Feature Packet $ARGUMENTS, verificar que existe y tiene estado APPROVED. Leer `AGENTS.md`, el packet y únicamente sus referencias de specs. Si no aprobado, detenerte. Si aprobado, producir plan de máximo 10 subtareas, módulos/archivos previstos, tests, riesgos, skills aplicables y un único punto de escalamiento si hay contradicción. No editar ni crear código.
+For feature packet `$ARGUMENTS`, verify APPROVED and active scope. Read only `AGENTS.md`, the packet and exact referenced contract sections using the reading map. Write a concise plan of at most ten tasks with expected files, acceptance tests, genuine dependencies, security risks and task-specific skills. Do not code or invent a new contract/owner decision. No approval request for routine technical sequencing.

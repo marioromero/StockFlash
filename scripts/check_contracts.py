@@ -29,8 +29,8 @@ require('Solo con Fiscal `integrated`' in sale_section and 'en `external` no' in
 require('simulación exclusivamente de demo/pruebas' in p1, 'FIS-01 incompatible con nueva modalidad')
 require('`sales.sale_number`' in p2, 'Modelo sin comprobante interno desde sales')
 require('BOOT-001' in content('docs/work/CURRENT.md'), 'BOOT-001 no figura como activo')
-require('ausencia de `artisan`' in content('.opencode/commands/sf-feature.md'), 'Bootstrap todavia bloquea ausencia de Laravel')
-require('staging-ssh-check.yml' in content('docs/harness/RELEASE-CI-CD-PLAN.md'), 'CI/CD declara estado obsoleto')
+require('BOOT-001 bootstrap is historical' in content('.opencode/commands/sf-feature.md') and 'No commit/push/deploy' in content('.opencode/commands/sf-feature.md'), 'Bootstrap safety or publisher boundary missing from sf-feature')
+require('Staging deployment' in content('docs/harness/RELEASE-CI-CD-PLAN.md') and 'explicit owner instruction' in content('docs/harness/RELEASE-CI-CD-PLAN.md') and 'No use of old general SSH credential' in content('docs/harness/RELEASE-CI-CD-PLAN.md'), 'Owner-only staging release boundary missing')
 require('grupoint' in content('docs/harness/SEGURIDAD-DE-AGENTES.md'), 'No consta riesgo de SSH general')
 require('ADR-01' in content('docs/governance/DECISIONES-ABIERTAS-v2.2.md'), 'No existe el registro de decisiones pendientes')
 

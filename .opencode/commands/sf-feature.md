@@ -1,22 +1,10 @@
 ---
-description: Implementar íntegramente una Feature Packet aprobada, con checkpoints y pruebas
+description: Implement an approved active packet and relevant tests only; no Git publication.
 agent: stockflash-implementer
 ---
 
-**Sincronización de inicio (automática, una sola vez):**
+A standalone implementer entry point for approved active packet `$ARGUMENTS`. Sync safely **once** at standalone start using `py -3 scripts/safe_git_pull.py`; stop on SYNC_BLOCKED with work preserved. Under the orchestrator, use its already verified sync rather than repeating it.
 
-!`py -3 scripts/safe_git_pull.py`
+Follow `AGENTS.md`, `docs/harness/MAPA-DE-LECTURA.md`, active packet and `WORKFLOW-EFFICIENCY.md`. Implement only approved scope, with targeted tests and checkpoints; do not stop after an initial diagnostic subtask if approved functional work remains. No new dependencies, schema/fiscal/brand/contract changes without decision. BOOT-001 bootstrap is historical, not an instruction to recreate Laravel.
 
-Si la salida empieza con `SYNC_BLOCKED` o falta `SYNC_OK`, detener esta ejecución y solicitar revisión del estado Git. No continuar trabajando con instrucciones posiblemente desactualizadas ni intentar reset/stash/clean para resolverlo.
-
-Ejecutar Feature Packet $ARGUMENTS solamente si tiene `status: APPROVED` y `docs/work/CURRENT.md` lo marca activo y autoriza ejecución. Implementar las subtareas previamente aprobadas hasta cumplir sus criterios de aceptación o producirse un bloqueo real, con tests y checkpoints. NO finalizar tras una subtarea exclusivamente diagnóstica si las siguientes están autorizadas y son ejecutables. No repetir aprobación humana de alcance por cada subtarea ordinaria. Leer las skills y secciones pertinentes bajo demanda. Respetar las dependencias explícitamente autorizadas por el Feature Packet; no ampliar dependencias ni modificar `docs/product`, modelo DB, constitución o branding sin decisión. Generar pruebas pertinentes y registrar la evidencia concreta.
-
-**Excepción necesaria de bootstrap:** Si la feature activa es `BOOT-001`, la ausencia de `artisan`, `composer.json`, `public/` y del framework es el estado inicial esperado, NO un motivo de bloqueo. Crear el scaffold Laravel de acuerdo con `BOOT-001.md` y el plan ya revisado, en una carpeta temporal controlada antes de fusionar archivos selectivamente; preservar los archivos actuales. Inspeccionar colisiones y solicitar autorización antes de sobrescribir archivos existentes. **La necesidad de permiso para `bash` o `edit` NO es por sí sola un bloqueo:** autorización del propietario 2026-10-16: sin aprobaciones; invocar la herramienta pertinente y continuar. No limitarse a declarar «esperando autorización» sin emitir la operación concreta. **Seguridad Composer/Laravel 13:** el scaffold oficial puede incluir `post-create-project-cmd` con una migración SQLite; usar `composer create-project` **con `--no-scripts`** en la carpeta temporal interna (nunca sobre la raíz ocupada). No ejecutar `composer run-script setup`, migraciones ni otros scripts que las disparen. Inspeccionar antes de habilitar scripts normales de Composer. Prohibidas migraciones, despliegues y datos reales. Esta excepción NO se aplica a otras features.
-
-La selección de Laravel 13.x estable compatible con PHP 8.3 ya fue revisada en BOOT-001; continuar desde creación del scaffold sin reabrir esa elección salvo error reproducible de Composer.
-
-Si no hay Feature Packet válido, el trabajo no está autorizado o la tarea necesita decisión de arquitectura fuera del contrato, diagnosticar y detenerse sin escribir la parte afectada. Nunca `git commit`, `git push` ni deploy desde este comando.
-
-**Control de documentación de usuario (obligatorio al cierre funcional):** revisar `docs/harness/GUIA-HTML-USUARIO.md` y `docs/work/GUIA-HTML-ESTADO.md`. Informar qué pantallas/opciones nuevas debe explicar ChatGPT. No escribir ni modificar el contenido explicativo del HTML en `public/docs/index.html`: autoría exclusiva de ChatGPT. No detener implementación del código por estar la guía pendiente.
-
-**Roadmap de proyecto:** verificar al finalizar si la feature modifica los hitos o capacidades de la primera versión comercial. Si corresponde, informar `ROADMAP_PENDIENTE_CHATGPT` con evidencia. No modificar `resources/roadmap/index.html`, cuyo único autor/editor es ChatGPT. Leer `docs/harness/ROADMAP-HTML-PROYECTO.md`.
+No commit/push/deploy, real .env/DB/installer/cron/SSH/FTP operations or contract edits. Respect denied tools; approval for ordinary allowed calls is already granted. After functional changes, flag real user-guide/roadmap semantic gaps for ChatGPT via technical ledgers and SFH1 without writing the HTML. If `audit=ON`, collect only observable events under the approved audit protocol. Internal instructions English; visible UI es-CL.

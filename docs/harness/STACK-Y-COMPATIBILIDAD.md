@@ -1,11 +1,7 @@
-# Stack de referencia verificado — DOC-001 (2026-10-12)
+# StockFlash stack and host compatibility — verified scope
 
-- Backend: PHP 8.3+ (Windows 8.3.4; cPanel web 8.3, CLI 8.3.35). Elegir versión Laravel **estable compatible** en BOOT-001 y fijarla mediante `composer.lock`. No asumir versión exacta antes de Composer.
-- Frontend: Vue 3, Inertia, TypeScript y Vite. Aprobados por el propietario para el bootstrap; no usar kits de autenticación o UI sin Feature Packet.
-- Local: Node 24.8.0 y npm 11.6.0. cPanel: Node 20.19.3/npm 10.8.2, sin obligación de compilación en servidor.
-- CI objetivo: Node 24 LTS para compilar y publicar `public/build` con manifest; PHP tests, seguridad y dependencias validados antes de artefacto.
-- BD objetivo MariaDB InnoDB 10.11 LTS recomendado / mínimo 10.6 por contrato; no se ha verificado automáticamente la versión exacta del hosting.
-- La aplicación privada vive fuera de document root, y solo el contenido de `public/` se expone en staging. No copiar .env, llaves, backups o vendor al webroot.
+App: Laravel 13 (PHP 8.3+), Vue 3, Inertia 3.5.x, TypeScript, Vite. Exact locked versions come from composer.lock/package-lock.json at current SHA; do not trust October historical guesses. Local Windows PHP/Node versions and cPanel runtime can differ; Node 24 CI build does not imply Node24 on cPanel.
 
-## Gates BOOT-001
-`composer validate`, lockfiles, tests PHP y ruta Inertia sin DB, `npm run build`, evidencia navegador, revisiones sobre diff. No migraciones, ni despliegue. No instalar herramientas no requeridas.
+MariaDB target >=10.6, InnoDB and predeployment ARQ-13 checks for special generated/unique columns; isolated SQLite :memory: PHP tests do **not** prove real MariaDB compatibility or concurrency. Hosting uses one cron/minute scheduler with bounded queue workers; no Supervisor requirement. Deploy Laravel application outside public webroot, exposing only public/. Never expose .env, vendor, backups or private keys.
+
+Feature tests, typecheck/build, es-CL HTTP smoke, independent QA, exact-SHA CI and security restrictions apply to each packet as approved. No implicit remote DB migrations or deployment from a local test.

@@ -1,22 +1,9 @@
-# Engram, MCP y CLI: implantación gradual
+# Engram, MCP and CLI tools — conservative optional integrations
 
-## Fase 0 (paquete actual)
-No se instalan ni habilitan MCPs; `opencode.json` NO incluye servidor MCP. Ningún secreto de DB/FTP/SSH aparece aquí. `git` CLI funciona sin MCP.
+Engram is optional local context memory, not policy. Never store secrets, RUT/PII, customer data, credentials or full transcripts. Save only short reproducible learnings with a reference to feature/commit/ADR if useful.
 
-## Engram
-Engram es memoria local consultiva, NO fuente normativa. Guardar únicamente aprendizajes de errores reproducibles, notas de compatibilidad cPanel, solución documentada, enlace de ADR/commit/feature, nunca contraseñas, datos de clientes, base operativa ni transcripciones completas.
-- Confirmar versión OpenCode y versión estable Engram; descargar SOLO desde repo del desarrollador verificado.
-- Primera evaluación: CLI/consulta puntual con almacenamiento local (sin plugin invasivo), en una carpeta/perfil de usuario separado.
-- Segunda evaluación: integración `engram setup opencode` tras revisar qué configuración global modifica y cuántas herramientas carga. Respaldar opencode global primero.
-- Comparar A/B consumo de tokens, recuperación de contexto y calidad; mantener opción más eficiente.
-- La configuración de Engram puede variar entre versiones y ejecutar `engram setup opencode` cambia archivos en perfil del usuario: NO ejecutarlo automáticamente desde un agente.
+Install **no new MCP or global tool integration** without reviewing exact installed client version, permissions, token overhead, exit/disable plan and user-approved security exposure. The system may support Playwright smoke tests, DevTools, Context7, MariaDB read-only MCP and provider models, but support is not evidence that it is already configured. Use native CLI/file operations by default.
 
-## Otras herramientas
-- Navegador: Playwright CLI prioritaria para smoke tests; DevTools MCP solo para diagnóstico difícil.
-- MariaDB MCP: instancia DEV, cuenta exclusiva SELECT/SHOW limitada a esquemas sanitizados; preferir además configurar read-only en el servidor MCP. JAMÁS cuenta de app/producción.
-- Context7 apagado salvo tarea con documentación técnica fresca.
-- Caveman: sólo después de métricas reales; comprimir salidas ruidosas, nunca especificaciones ni logs de errores necesarios.
-- FTP, SSH, MariaDB productiva, servicios DTE, GitHub Secrets: fuera del contexto y de los permisos de los agentes.
+Any MariaDB MCP must use a separate read-only test account and synthetic data. No production database or general-purpose staging accounts. `engram setup opencode` may change user-global settings, so do not run automatically. Measure A/B benefit with equivalent tasks before enabling a tool that expands context.
 
-## Criterio de alta
-Cada MCP nuevo requiere ficha: propósito, versión, permisos, comandos ejecutables, seguridad, coste de tokens, benchmark y procedimiento de apagado. No habilitar MCPs en cascada.
+For current efficiency and token audit use MAPA-DE-LECTURA.md, WORKFLOW-EFFICIENCY.md and AUDITORIA-TOKENS-IA.md; external AI analysis prompts stay outside Git.

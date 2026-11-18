@@ -1,33 +1,16 @@
 ---
-description: Ejecuta una Feature Packet aprobada y publica Git tras gates y QA
+description: Run an approved active packet with delegated implementation, deterministic gates, independent QA and safe publication.
 agent: stockflash-orchestrator
 ---
 
-**Sincronización de inicio (una sola vez, sin descartar trabajo local):**
+This is the single routine entry point for approved active Feature Packet `$ARGUMENTS`. Delegate to `stockflash-orchestrator`. **The orchestrator performs the one required safe sync**, so do NOT add another automatic pre-command sync here.
 
-!`py -3 scripts/safe_git_pull.py`
+Preflight: packet `status: APPROVED`; active in `docs/work/CURRENT.md`; base exact-SHA CI gate satisfied. STOP on mismatch, missing approval, real owner decision, unsafe remote DB or deployment need.
 
-Si la salida empieza con `SYNC_BLOCKED` o falta `SYNC_OK`, detener y solicitar revisión del estado Git. No usar reset/stash/clean.
+Delegate `stockflash-implementer` -> `py -3 scripts/sf_verify.py $ARGUMENTS` (all mandatory gates) -> read-only `stockflash-reviewer` -> `stockflash-publisher` after matching GATES_PASS and APROBADO. Default AUTO_GIT; only explicit OWNER_GATE needs separate authorization. Max three correction rounds. Checkpoint `docs/work/.run/$ARGUMENTS.json`. Reuse hashed evidence when unchanged; after code changes rerun all mandatory final gates and independent QA. Publisher checks Git HEAD/origin/main and CI exact SHA. No local `/init`, production, staging, real installation, secrets, DB operations or destructive Git.
 
-**Nota de versión (anti-caché):** este comando es `sf-run v2` (publicación Git autónoma tras gates+QA, salvo OWNER_GATE explícito). Antes de coordinar, el agente debe confirmar que el procedimiento visible coincide con este archivo; ante discrepancia, informar y pedir reinicio de OpenCode una sola vez (los `.opencode/commands/` se registran al iniciar sesión).
+If current SFH1 includes `audit=ON`, initialize a sanitized token/process audit as defined by `docs/harness/AUDITORIA-TOKENS-IA.md`. Include **all observable** orchestrator and subagent stages/tool activity where accessible; when not, mark `summary_only`. Delegate append-only artifact writes to an authorized role, publish sanitized JSONL + analysis with normal safe Git review, and report their paths in SFH1. Do NOT add a model call for every log entry.
 
-Coordinar Feature Packet $ARGUMENTS con el agente `stockflash-orchestrator`:
+User guide `public/docs/index.html`, roadmap `resources/roadmap/index.html` and ChatGPT-only context are GPT-authored: OpenCode only checks integration/metadata and flags pending updates. Follow `docs/harness/WORKFLOW-EFFICIENCY.md` to avoid duplicate reads/full QA tests. Owner-facing chat es-CL and normally exactly `OK`; full evidence remains in GitHub.
 
-1. Validar `status: APPROVED` en `docs/work/features/$ARGUMENTS.md` y activo en `docs/work/CURRENT.md`. Ante DRAFT/VERIFIED-otro/inactivo, detenerse sin cambios (p. ej. BRAND-001 DRAFT se rechaza, no se implementa).
-2. Delegación Task a `stockflash-implementer` → gates `py -3 scripts/sf_verify.py $ARGUMENTS` → `stockflash-reviewer` independiente → `stockflash-publisher` (operación A **automática** tras `GATES_PASS` y QA `APROBADO` del mismo estado). La aprobación de la feature cubre Git commit/push, sin permiso adicional. `AUTO_GIT` es default también si falta el campo; solo `OWNER_GATE` expresamente definido impide publicar. Orquestador nunca implementa, revisa, publica por sí mismo ni declara VERIFIED.
-3. Reintentos automáticos ante defectos corregibles en alcance: máximo 3 ciclos implementador→gates→review; al exceder, diagnóstico + pendientes con trabajo conservado.
-4. Checkpoints `docs/work/.run/$ARGUMENTS.json` (ignorado en Git) con fingerprints `git hash-object`; al reanudar, revalidar y repetir desde el último stage válido.
-5. Después del push: **registrar** SHA+URL, gate, QA y CI verificada por SHA (`SUCCESS`/`FAILURE`/`PENDING`) en evidencia persistente y SFH1. **No volcarlos al chat por rutina**: aplicar salida mínima según regla 24 de `AGENTS.md`. CI pendiente no significa éxito. Error de CI o `.md` de revisión ChatGPT -> corregir dentro de la misma feature al siguiente `ok`, repetir gates+QA y publicar nuevo SHA automáticamente. Revertir solo mediante commit selectivo revisado, sin force. Detener ante nuevas decisiones contractuales/de seguridad fuera de alcance, permisos, despliegue o BD remota. VERIFIED es decisión técnica externa de ChatGPT según la aceptación, gates, QA y CI; la autorización original basta y OpenCode no se autoaprueba.
-
-Respetar permisos `deny` administrativos con bloqueo + parche. Autorización del propietario 2026-10-16: sin aprobaciones `ask`; ejecutar directo.
-
-**Higiene de permisos:** priorizar herramientas nativas de archivo y comandos únicos; evitar pipelines PowerShell que disparan aprobaciones por subcomando. Checkpoints mediante edición permitida, nunca borrado destructivo. No invocar auto-approve con credenciales o secretos accesibles.
-
-**Handoff de manual HTML (automático al final del ciclo):** consultar `docs/harness/GUIA-HTML-USUARIO.md` y `docs/work/GUIA-HTML-ESTADO.md`. Al terminar de implementar/publicar una feature con cambios visibles al usuario, comprobar cobertura de `public/docs/index.html`. Si falta contenido redactado por ChatGPT, incluir `GUIA_PENDIENTE_CHATGPT` en el cierre con SHA, nuevas pantallas/campos y referencias para el propietario. OpenCode NO genera los textos del manual. No detener la publicación de código por depender de un mensaje humano a ChatGPT.
-
-
-**Contexto para nueva sesión del propietario:** `docs/harness/CONTEXTO-CHATGPT.md` pertenece exclusivamente a ChatGPT. OpenCode puede leerlo, no editarlo. Al terminar, suministrar los hechos nuevos en el handoff para su actualización por ChatGPT cuando el propietario comparta el informe.
-
-**Seguimiento roadmap al cierre:** consultar `docs/harness/ROADMAP-HTML-PROYECTO.md` y `docs/work/ROADMAP-HTML-ESTADO.md`. Si la feature cambia hitos, capacidades listas o la ruta al primer lanzamiento, incluir `ROADMAP_PENDIENTE_CHATGPT` (SHA, QA/CI, Feature Packet, cambio verificable). OpenCode no edita `resources/roadmap/index.html`; es de ChatGPT. No bloquear entrega de código por esta actualización editorial externa.
-
-**Salida visible:** tras una interacción ordinaria completada sin necesidad de acción humana, escribir solo `OK` (exactamente esas dos letras). Cuando una feature termina y se necesita transferirla a ChatGPT, una línea de estado real + una de siguiente acción; ante bloqueo o decisión genuina, mensaje concreto de 1–3 líneas. Esto **no** modifica gates, QA, documentación, handoff SFH1 ni publicación. No generar texto de "trabajo realizado" fuera del repositorio.
+**After changing .opencode command definitions, do not assume an already running OpenCode session reloaded the file.** If stale behavior is proven, restart the CLI once on a clean checkpoint; do not force/lose work.

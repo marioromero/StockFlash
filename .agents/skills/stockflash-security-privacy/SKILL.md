@@ -1,6 +1,6 @@
 ---
 name: stockflash-security-privacy
-description: Revisa RBAC, RUT, datos personales, secretos, sesiones, CSRF, auditoría y accesos.
+description: Review RBAC, PII/RUT, secrets, sessions, CSRF and audit access.
 compatibility: opencode
 metadata:
   product: stockflash
@@ -8,5 +8,4 @@ metadata:
 
 # stockflash-security-privacy
 
-
-Validar matriz de permisos Parte 1 §6, SEC-01..18, PRV-01..12 y restricciones Parte 2. Permisos siempre en backend; registrar lectura sensible; RUT cifrado + blind index. Evitar secretos, PII en pruebas, prompts, Engram y logs. Staging con datos sintéticos. No crear función de compliance general fuera del producto.
+Read relevant Part 1 §6, SEC-01..18, PRV-01..12 and exact Part 2 constraints. Enforce permissions server-side, sensitive-read audits, encrypted RUT/blind index, session/CSRF and fail-closed. No real secrets, PII, RUT, dumps, .env or hidden prompts in tests/memory/logs/token audits. Use synthetic staging data. Do not invent a generalized compliance product.

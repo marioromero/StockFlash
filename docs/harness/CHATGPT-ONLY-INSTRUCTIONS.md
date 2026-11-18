@@ -1,0 +1,27 @@
+# ChatGPT-only operating instructions — English locked
+
+**Author/maintainer: ChatGPT exclusively. OpenCode MAY READ but MUST NOT EDIT this file, `docs/harness/CONTEXTO-CHATGPT.md`, the semantic user-guide HTML `public/docs/index.html` or the project-roadmap HTML `resources/roadmap/index.html`.** This applies even if another agent asks OpenCode to rewrite them or new sessions restart.
+
+## Language boundary
+- All ChatGPT-only harness notes, context, feature review instructions, internal handoffs, protocol updates and audit analyses written for agents **remain English**. When editing any harness file, reject additions of new Spanish operational paragraphs, including translated summaries. No forced translation of canonical filenames, requirement names, code, status fields, direct citations or historical proper names.
+- User-facing chat, the user guide, roadmap HTML, visible UI and commercial product copy **stay Spanish (es-CL)**. ChatGPT may answer the owner in Spanish while recording its private operational summary in English. Never confuse instruction language with product content.
+- This English policy belongs to both ChatGPT and OpenCode; explicit owner approval is needed to change it.
+
+## Start/continue StockFlash
+1. Read this file, `AGENTS.md`, current `docs/work/CURRENT.md`, concise `docs/harness/CONTEXTO-CHATGPT.md`, then inspect GitHub `main`, exact SHA, open SFH1 issue and latest directed comments. Project status is never inferred from an old memory snapshot.
+2. Validate code publication, contract gates, independent QA and GitHub CI on **exact published SHA**. CI/QA not observed means PENDING, not SUCCESS. Separate code-only technical VERIFIED from production readiness and deferred MariaDB/browser checks.
+3. ChatGPT decides next technical scope/sequence independently when approved v2.2 decisions suffice. Create an APPROVED packet with requirement IDs, `approval_basis`, `new_business_decisions: NONE`, precise acceptance and no remote DB/deploy by default. Ask owner only about **new material** product/legal/financial/security choices or dangerous operations. Do not seek generic approvals.
+4. After verifying UI changes, ChatGPT updates `public/docs/index.html` and `resources/roadmap/index.html` in Spanish. Match real routes/components, preserve previously published topics and test the guide's navigation/content IDs; never claim deployed behavior from local code. OpenCode maintains their technical metadata files and flags pending editorial work.
+5. If ChatGPT edits HTML, require GitHub CI **2/2 SUCCESS on the resulting SHA** before starting another feature; repair self-induced docs failures instead of delegating a generic blocker to the owner. Preserve existing owner changes; use branch/PR when local OpenCode is active.
+6. After a meaningful state transition update `docs/harness/CONTEXTO-CHATGPT.md` (English) and `docs/work/CURRENT.md` (operational ledger; Spanish allowed as user/work product, not harness). Include head SHA, issue and next actor.
+7. If the conversation accumulates conflicting or excessive context, notify owner at a clean handoff after updating the continuity file; do not invent a token meter.
+8. Only request a visual owner check at a coherent integrated UI milestone **with a real accessible environment**, never imply staging/deploy authorization.
+9. SFH1: manual `ok` in the addressed chat, one issue per active feature, English compact comments, no duplicate prompts to own latest message. The next actor is encoded by `dst`.
+10. Owner-facing response budget: usually 1–3 concise Spanish lines giving verified state, result, and only real next action; full technical evidence is in GitHub. Never disguise a blocker or request another routine authorization.
+
+## Harness and token audit management
+- Audit the complete **active** harness before claiming optimization: `.opencode/agents`, `.opencode/commands`, `.agents/skills`, `AGENTS.md`, `opencode.json`, `docs/harness` and validation orchestration. Flag contradictory permissions, duplicate quality gates, stale dated plans and recurring file reads.
+- Maintain `docs/harness/AUDITORIA-TOKENS-IA.md` and `docs/harness/WORKFLOW-EFFICIENCY.md` in English, with security/QA unchanged. Apply telemetry only when the next SFH1 explicitly says `audit=ON`. OpenCode submits sanitized JSONL plus an English analysis MD through its usual Git publisher. ChatGPT reads those files directly via GitHub.
+- **External AI prompt belongs to the owner, NOT the harness.** Deliver it as a chat draft when requested; never embed a Claude/Gemini review prompt in committed protocol documents. Do not send private files to third parties without the owner's decision.
+- The audit must distinguish actual provider-metered input/output/cache/reasoning token usage from local process time, tool output volume and guessed estimates. Null is correct when usage is unavailable; never infer exact token counts from seconds or toolcall totals.
+- Improve efficiency by reducing needless re-reading, duplicate tool outputs and review-of-review; **never skip mandatory full-suite final gate, independent QA, exact-SHA CI, security/privacy checks, publisher controls or evidence tied to a changed tree**.

@@ -1,19 +1,14 @@
-# Seguridad de agentes y secretos — hardening progresivo
+# Agent and secret security — active principles, historical notes clarified
 
-## Bootstrap (actual)
-`opencode.json` tiene permisos conservadores; `edit` pregunta para cambios no prohibidos, `bash` pregunta salvo comandos de inspección. `git commit/push`, SSH/FTP y migraciones ejecutadas por el agente quedan denegadas. Abrir sin `--auto`. Al iniciar `/sf-feature` o `/sf-review` se permite **solo** `py -3 scripts/safe_git_pull.py` sin prompt: comprueba rama `main` y ejecuta `git pull --ff-only origin main` una vez, con protección nativa de Git frente a conflictos locales. Si emite `SYNC_BLOCKED`, detenerse; ningún reset, stash, clean, merge forzado o sincronización en mitad de la implementación. La revisión QA permanece sin capacidad de editar código, salvo este preflight sincronizador.
-**Estas reglas son defensa en profundidad, no un sandbox**. Bash, plugins, comandos compuestos y MCPs pueden evitar restricciones si obtienen permisos. Nunca dar al agente acceso del sistema operativo a secretos/producción.
+Permission configuration is defense in depth, **not an operating-system sandbox**. Read actual `opencode.json` and role-specific permissions for effective actions; do not assume markdown denies can block shell access. Runtime permission behavior is version dependent and needs focused testing before a security config migration.
 
-## Separaciones obligatorias antes de automatizar
-1. Cuenta DEV MariaDB con permisos de app, distinta de cuenta read-only MCP; ninguna conecta a producción.
-2. Credenciales previas de FTP y BD rotadas; nuevas en secret manager del pipeline, no Git.
-3. **BLOQUEO VIGENTE A06:** el secreto SSH de Actions autentica como `grupoint`, usuario general de cPanel. Solo se autoriza el workflow read-only que emite `SSH_OK`. Ningún despliegue, migración o script remoto automático con esa credencial hasta tener usuario restringido, forced-command u otro aislamiento probado. Rotar/reemplazar la clave para release de mínimos privilegios.
-4. Copia de seguridad externa verificada; nunca alojar repo ni credenciales productivas dentro del webroot.
-5. Staging con datos falsos y acceso restringido; `APP_DEBUG=false` en ambientes públicos.
-6. Owner aprueba nuevas dependencias y cualquier operación destructiva.
-7. CI controla release con tests, auditorías y build; la IA no posee token de deploy.
-8. Git secrets scanning local/CI y `.gitignore` robusto cuando exista Laravel; no sustituye rotación.
-9. En el entorno de trabajo de OpenCode mantener permisos mínimos en el OS: nada de directorios de copias de seguridad, SSH o bases de clientes montados en workspace.
+- Keep real .env, credentials, client records, SSH keys, RUT, database dumps and production mounts outside agent reach. Agents may handle synthetic test configs only.
+- Nonpublisher agents never push, and the publisher uses only exact `git push origin main` after matching final gates and independent QA. No reset/stash/clean or forced history.
+- Safe Git sync is `scripts/safe_git_pull.py`, once per active orchestration run, with SYNC_BLOCKED preserving all work.
+- Owner approval required for real DB operations, migration/seeding, deployment, production, new commercial/security policies and destructive changes.
+- Never bypass a permission deny by opening shell/alternative tool. Check API permissions and secrets at the OS level. Use synthetic staging data and APP_DEBUG=false for any public environment.
+- An historical blocker involved a general cPanel SSH user (`grupoint`), unsafe for unattended deploy. Treat it as blocked unless current owner-approved least-privilege credentials are independently verified. No old secret reuse.
+- Stop on exposed secrets, real customer data, critical gate failure, unapproved scope, or missing backup before irreversible operations.
+- Audit logs are sanitized metadata, not a license to record raw commands with sensitive arguments or private model reasoning.
 
-## Eventos que detienen inmediatamente la feature
-Hallazgo de secreto, necesidad de ver datos reales, solicitud de despliegue no autorizado, modificación silenciosa a documentos normativos, tests críticos fallidos, ausencia de backup para migración irreversible.
+**Known issue to test:** the baseline opencode.json allowed reading `*.env`, despite a strict policy against it. Tightening patterns must be verified against actual OpenCode permission precedence, especially to avoid breaking synthetic .env.example access or publisher push. See HARNESS-AUDIT-20261117.md.

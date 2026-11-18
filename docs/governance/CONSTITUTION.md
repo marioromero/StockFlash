@@ -1,19 +1,22 @@
-# Constitución de desarrollo StockFlash v1.1
+# StockFlash Development Constitution v1.2 — English agent policy
 
-## Precedencia obligatoria
-1. **Contrato de trabajo v2.2** Parte 1 (negocio) → Parte 2 (persistencia) → Anexo (integración) de `docs/product/`.
-2. `docs/product/StockFlash-Control-SPEC-v0.1.md` rige exclusivamente la aplicación central, subordinado a restricciones v2.2 y seguridad.
-3. ADR aprobados posteriores pueden corregir puntual y expresamente v2.2, nunca de manera tácita.
-4. Feature Packets aprobados ejecutan el contrato, no pueden modificarlo.
-5. v2.1 en `docs/product/historico-v2.1/` es referencia histórica; **no prevalece sobre v2.2**. `MEMORY.md` y Engram son solo ayuda de contexto.
-6. Las secciones marcadas **ABIERTAS** en v2.2 requieren ADR. No completar silenciosamente alcance, semántica de límites o política fiscal.
+## Precedence
+1. Approved v2.2 contracts: Part 1 business, Part 2 persistence, Annex integrations in `docs/product/`.
+2. `docs/product/StockFlash-Control-SPEC-v0.1.md` governs only the independent central Control application and remains subordinate to v2.2/security.
+3. Subsequently approved ADRs can explicitly override a narrow v2.2 rule; never do so implicitly.
+4. Active APPROVED Feature Packets implement contracts; they do not change them.
+5. v2.1 archives, Engram, prior handoffs and MEMORY are historical/contextual only.
+6. Sections marked ABIERTAS and `docs/governance/DECISIONES-ABIERTAS-v2.2.md` require owner decisions. Unspecified limit semantics, fiscal rules and commercial access cannot be inferred.
 
-## Invariantes
-- Una instalación independiente por cliente, un único esquema operacional por instalación; Control central tiene esquema separado y jamás accede directamente a ventas individuales.
-- Los productos comerciales se contratan por separado; sus dependencias técnicas se resuelven sin compra forzada de otro producto. Servidor verifica entitlements comerciales, RBAC, activación y estado operativo.
-- Kardex físico consistente, reservas independientes, eventos idempotentes, concurrencia controlada y DTE solo por autoridad fiscal integrada cuando está habilitada. En modo externo el comprobante interno no es documento tributario.
-- Demo Vitrina reseteable y sintética; Gratis Persistente no reseteable, con datos reales y límites locales.
-- No alterar privacy/security/licencia con telemetría comercial adicional; LIC-02 conserva lista blanca exacta. Sin secretos en prompts, agentes ni logs.
-- Diseño corporativo constante y accesible, uso del PNG oficial StockFlash y etiqueta activa. Owner+ChatGPT gobiernan diseño y producto, OpenCode implementa y prueba.
-- No modificar contratos consolidados, esquemas adicionales ni dependencias críticas sin nueva revisión y ADR. Implementación por Feature Packet pequeño y validación independiente.
-- Staging/producción separados; CI comprueba diffs, pruebas y seguridad antes de desplegar. Producción requiere respaldo y aprobación humana. Publicación Git solo por `stockflash-publisher` tras gates+review, sin force; nada de deploy autónomo por agente. Publicar no es VERIFIED.
+## Product invariants
+- One independent operational schema per customer installation. Central Control uses a separate database and never directly queries individual sales.
+- Commercial products can be licensed independently; shared technical dependencies are not forced purchases. Enforce entitlements + activated capacity + RBAC and operating state on the server.
+- Physical Kardex, stock reservations, cash/payment effects, idempotence, locks and integration boundaries must be transactional and auditable. Integrated DTE occurs only with fiscal authority/configuration. An external-mode receipt is not a tax document.
+- Demo Vitrina is synthetic/resettable. Gratis Persistente holds real non-resettable data, with approved limits but still-open counting/exhaustion semantics.
+- Sensitive information, blind indexes, license allowlists and privacy/security controls are not loosened for analytics, logs or token audits.
+- Consistent accessible corporate design; only official approved brand assets. The owner and ChatGPT govern content; OpenCode implements and tests.
+- No unapproved schema/contract/dependency changes. Independent QA, deterministic gates and exact-SHA CI before technical VERIFIED.
+- Git publication only via authorized publisher after gate+review. Staging and production deployment require separate owner approval, backup/restore readiness and rollback. Git push never implies VERIFIED or deploy.
+
+## Instruction language
+The internal harness, including this Constitution and ChatGPT-only files, stays English. Spanish remains mandatory for owner-facing text, product UI and user/roadmap content. Do not translate exact file paths or machine status values.

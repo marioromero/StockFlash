@@ -1,39 +1,13 @@
-# Releases — política objetivo, no automatización ya instalada
+# Release and CI boundaries — no automatic deployment
 
-## 1. Reglas permanentes (desarrollo local-first)
+**The historical "CI not installed" line from 2026-10-12 is obsolete.** Current GitHub CI PHP/Node/smoke/contracts exists; verify actual runs by exact SHA. This is the governing release boundary, not permission to deploy.
 
-- Todo desarrollo de funcionalidades se ejecuta localmente. La BD DEV remota sigue autorizada bajo sus condiciones vigentes.
-- GitHub (`origin/main`) es el repositorio de código, no el servidor de ejecución de la aplicación.
-- Los commits y el push NO autorizan despliegue. Staging se actualiza exclusivamente cuando el propietario solicita `/sf-deploy-staging`.
-- No ejecutar migraciones ni desplegar sin instrucción expresa del propietario.
+- Local approved feature development: code/tests/QA with no automatic remote DB changes.
+- Git publishing: `stockflash-publisher` alone selects files and commits/pushes `origin/main` after GATES_PASS + independent APROBADO.
+- CI: GitHub Actions tests code and documentation on pushed SHA; does not deploy, migrate or seed.
+- Staging deployment: **only upon explicit owner instruction** through the separately controlled `/sf-deploy-staging` pipeline and staging packet. Never inferred from the word "publish". No use of old general SSH credential.
+- Production deployment: independent owner approval, backup/restore verified, rollout window, minimal privileges, health checks and rollback path. Automated Git push is not production approval.
+- Keep Laravel private application files outside the public document root; expose only `public/`. Protect .env, binaries, backups and secrets. Node build occurs in CI/local, not necessarily cPanel.
+- Do not infer PHP/MariaDB runtime validation from SQLite CI, or fiscal/legal readiness from a UI mock.
 
-## 2. Capas distinguidas
-
-| Capa | Qué hace | Cómo se activa | Automatización vigente |
-|------|----------|----------------|------------------------|
-| Desarrollo local | Code, tests, gates, seeds en BD DEV remota | Cada prompt del propietario | Scripts locales (`sf_verify.py`, `sf_db.py`) |
-| Publicación Git | `git add` selectivo, `git commit`, `git push origin main` sin force | `/sf-publish` tras gates + review | `stockflash-publisher` (operación A) |
-| CI GitHub Actions | Verificación de especificaciones, índice y hashes (`contract-check.yml`); huella SSH manual (`staging-ssh-check.yml`) | Push a `main` | `.github/workflows/*` (no es pipeline de deploy) |
-| Despliegue opcional a staging | ZIP único vía API de cPanel hacia `/home/grupoint/stockflash-dev-app` | Solo `/sf-deploy-staging` por instrucción del propietario | `scripts/sf_deploy_staging.py` (manual, no automático) |
-
-## 3. Estado verificado (2026-10-12)
-
-Existen `.github/workflows/staging-ssh-check.yml` (manual: huella SSH + `echo SSH_OK`) y `.github/workflows/contract-check.yml` (verifica especificaciones, índice y hashes). NO existe CI de Laravel, build Vue, deploy ni rollback automatizado. La clave de Actions se autentica como el usuario general `grupoint`; no autorizar despliegues con ella hasta aislar sus privilegios. Se crearán pipelines después del bootstrap.
-
-## 4. Flujo objetivo por feature
-
-Feature aprobada -> tests locales -> reviewer -> commit/push por pipeline/script de release aprobado -> CI GitHub Actions (o runner local seguro) -> build -> migraciones controladas -> deploy STAGING (solo si el propietario lo ordena) -> health/smoke -> registrar release.
-
-Producción: tag/release revisado, autorización owner, respaldo+restore comprobado, ventana y rollback según RN-73; nunca automática por cada feature.
-
-## 5. Gates mínimos
-
-Código verificado, lint, suite PHPUnit/Pest elegida y JS, pruebas de migraciones completas contra MariaDB 10.6+, integridad ARQ-13, secretos y auditorías de dependencias, contraste UI accesible, smoke pruebas al abrir/cerrar caja, venta/idempotencia, integraciones diferidas cuando existan.
-
-## 6. Límites de GitHub Actions
-
-Repositorios privados tienen límites variables de plan/minutos; consultar uso disponible antes de decidir ciclos. No alojar secretos en variables hardcodeadas ni builds descargables públicamente.
-
-## 7. Nota cPanel
-
-cPanel Domains restringe normalmente document root dentro de `public_html/`; para Laravel, mantener app privada fuera del webroot y disponer solo de archivos públicos en la carpeta web; verificar primero compatibilidad de paths, rewrites y CLI. NO copiar `.env`/vendor ni `app/` a `public_html`.
+The approved core targets: PHP 8.3+, Laravel 13, Vue 3/Inertia/TypeScript/Vite, MariaDB 10.6+ with ARQ-13 predeploy validation, one scheduler cron per minute and bounded database workers. See STACK-Y-COMPATIBILIDAD.md.

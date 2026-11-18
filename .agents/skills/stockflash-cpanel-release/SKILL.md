@@ -1,6 +1,6 @@
 ---
 name: stockflash-cpanel-release
-description: Guía de compatibilidad cPanel, staging y controles de release sin exponer credenciales.
+description: Check hosting and staged-release compatibility without revealing credentials.
 compatibility: opencode
 metadata:
   product: stockflash
@@ -8,5 +8,4 @@ metadata:
 
 # stockflash-cpanel-release
 
-
-Consultar `docs/setup/CPANEL-PASO-A-PASO.md` y `docs/harness/RELEASE-CI-CD-PLAN.md`. El agente sólo describe/verifica, no toca cPanel. PHP web puede ser distinto a CLI; Laravel debe servir sólo `public/`, con `.env` privado. Cron único cada minuto + worker acotado en base a Anexo. Deploy automatizado sólo vía pipeline sin acceso del modelo a credenciales, tras gates. Producción requiere decisión explícita.
+Read docs/setup/CPANEL-PASO-A-PASO.md and the live release policy only for an explicitly authorized deployment review. PHP web and CLI may differ; only public/ may be served. One cron every minute with bounded database queue workers. Never touch cPanel, run migrations/deploy or read credentials without separate explicit owner authorization. Git publication alone is not deploy permission.
