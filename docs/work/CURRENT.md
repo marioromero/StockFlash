@@ -1,7 +1,7 @@
 # Estado operativo — StockFlash
 
 ## Feature activa
-- **HOBS-001 — Harness runtime + audit tokens: APPROVED / ACTIVO**, packet `docs/work/features/HOBS-001.md`, solicitud explícita del propietario 17-11-2026. Verificar el harness en inglés y comenzar captura JSONL sanitizada de procesos/agentes/subagentes (`audit=ON`) conforme `docs/harness/AUDITORIA-TOKENS-IA.md`. Solo código, pruebas y diagnóstico local. Antes de ejecutar, verificar CI GitHub 2/2 SUCCESS del SHA base exacto, sin tocar BD remota, .env real, instalador, cPanel ni deploy.
+- **HOBS-001 — Auditoría de tokens, FASE 0 (APPROVED / ACTIVA)**. Packet `docs/work/features/HOBS-001.md`; `audit=ON;phase=0`. Únicamente diagnóstico local **de lectura**: estadísticas nativas OpenCode y hasta 2–3 sesiones anteriores comparables. Resultado: comentario SFH1 en issue #29. **Sin parser nuevo, JSONL, implementación, QA de producto, publisher, commits ni despliegue.** Las fases 1 y 2 requieren un nuevo packet técnico aprobado después de revisar los resultados. Comprobar primero CI 2/2 SUCCESS del HEAD base exacto; no acceder a secretos ni BD remota.
 
 ## Estados por feature
 - BOOT-001: VERIFIED (2026-10-14), Laravel 13.35.0 + Vue 3/Inertia/TS; `bcbf16f`.
@@ -20,7 +20,7 @@
 - **SETUP-001: VERIFIED técnico** (2026-11-17), código `13cdd6a`, gates 19/19, QA independiente APROBADO, 529 pruebas / 4665 aserciones y CI 2/2 SUCCESS. Guía 26 temas y roadmap actualizados por ChatGPT; cierre `docs/work/SETUP-001-CLOSURE-20261117.md`. Producción no demo bloqueada por BKP-08 P1★; instalador CORE-17 implementado/verificado solo en código; ejecución real, MariaDB/browser y BKP-08 pendientes.
 
 ## Trabajo documental del harness
-- Auditoría estática y refactor de todo el harness integrado en `main` por [PR #28](https://github.com/marioromero/StockFlash/pull/28), squash SHA `3fecc0a303a939c87814664c22ac4a06fb2189db`; CI en ese SHA **2/2 SUCCESS** (PHP/Node/smoke `44216504674`, contratos `44216504605`). Instrucciones internas en inglés, interfaz y documentos de usuario en español. Ver `docs/harness/HARNESS-AUDIT-20261117.md`, `WORKFLOW-EFFICIENCY.md`, `AUDITORIA-TOKENS-IA.md`, `CHATGPT-ONLY-INSTRUCTIONS.md`. Auditoría real de eventos pendiente para HOBS-001: los tokens no se infieren.
+- Auditoría estática y refactor de todo el harness integrado en `main` por [PR #28](https://github.com/marioromero/StockFlash/pull/28), squash SHA `3fecc0a303a939c87814664c22ac4a06fb2189db`; CI en ese SHA **2/2 SUCCESS** (PHP/Node/smoke `44216504674`, contratos `44216504605`). Instrucciones internas en inglés, interfaz y documentos de usuario en español. Ver `docs/harness/HARNESS-AUDIT-20261117.md`, `WORKFLOW-EFFICIENCY.md`, `AUDITORIA-TOKENS-IA.md`, `CHATGPT-ONLY-INSTRUCTIONS.md`. HOBS-001 fase 0 solo recopila métricas históricas nativas de lectura; la instrumentación de eventos futura requiere fase 1/2 aprobadas. Los tokens no se infieren.
 
 ## Pendientes y bloqueos reales
 - HOBS-001 solo puede arrancar si **la CI PHP/Node/smoke + contratos del HEAD final posterior a estos cambios** está 2/2 SUCCESS; de lo contrario STOP y diagnóstico. Captura de uso real de tokens solo cuando OpenCode/proveedor la ofrece.
