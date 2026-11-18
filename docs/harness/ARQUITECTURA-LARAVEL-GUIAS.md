@@ -1,13 +1,7 @@
-# Directrices técnicas (no código) — confirmadas/propuestas
+# Laravel architecture guidance — approved v2.2 mapping
 
-## Base técnica heredada por v2.2
-Laravel + Vue 3 + Inertia, MariaDB InnoDB, aplicación modular por registro, API pública externa sólo para callbacks y webhooks concretos; sin API general innecesaria. Contratos desacoplados Woo y Fiscal, jobs idempotentes, colas database y scheduler cPanel, UTC interno / America/Santiago para reportes, seguridad RBAC propia y PII protegida.
+Stack: PHP 8.3+ / Laravel 13, Vue 3, Inertia 3, TypeScript/Vite, MariaDB InnoDB. Register modules, avoid generic public API; expose only necessary authenticated routes/webhooks. WooCommerce and Fiscal integrate through decoupled contracts, idempotent jobs and bounded database queue/scheduler on cPanel. UTC storage and America/Santiago display where specified. RBAC/PII controls are server-side.
 
-## Decisiones de organización para OpenCode
-- `app/Domain/<Modulo>` y `app/Integrations/<Adaptador>` según Parte 1 §4.5; no inventar otra estructura que contradiga documentación.
-- UI usa componentes compartidos, tokens de estilo, un shell backoffice y otro shell POS; evitar CSS duplicado y dependencias UI voluminosas sin autorización.
-- Dependencias oficiales/mantenidas y lockfiles. PHP web/CLI cPanel 8.3 ya comprobado; fijar versión Laravel estable compatible al ejecutar BOOT-001. Vue 3 + Inertia + TypeScript aprobado; compilación de assets en CI Node 24, sin exigir Node moderno en cPanel. Ver `docs/harness/STACK-Y-COMPATIBILIDAD.md`.
-- Preferencia por mecanismos nativos de Laravel/Vue antes que paquetes externos para auth/RBAC/cola.
-- No generar código nuevo ni tablas antes del Feature Packet aprobado; no crear 80 migraciones en un solo prompt.
-- Mantener pruebas unitarias y feature pertinentes, y contratos MariaDB 10.6+ conforme ARQ-13 desde infraestructura CI.
-- Toda nueva dependencia debe anotarse como solicitud estructurada: propósito, alternativas sin dependencias, licencia, tamaño, mantenimiento, seguridad, compatibilidad cPanel.
+Use approved `app/Domain/<Module>` and `app/Integrations/<Adapter>` patterns where present; do not forcibly refactor working code. Shared backoffice and POS shells with approved brand tokens; no heavy unapproved UI dependencies or duplicated styles. Prefer Laravel/Vue built-ins to new packages. Lock dependencies with Composer/npm lockfiles, validate support for cPanel PHP 8.3 and local/CI Node; no server-side Node build requirement.
+
+New dependencies require specific justification (purpose, alternatives, license, maintenance, security and hosting compatibility). No extra database columns/tables absent a packet/contract/ADR. Run tests and validate MariaDB 10.6+ / ARQ-13 before production as separate authorized work.
