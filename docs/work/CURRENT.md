@@ -1,7 +1,7 @@
 # Estado operativo — StockFlash
 
 ## Feature activa
-- **HOBS-001 — Harness runtime + audit tokens: APPROVED / ACTIVO**, packet `docs/work/features/HOBS-001.md`, solicitud explícita del propietario 17-11-2026. Verificar el harness en inglés y comenzar captura JSONL sanitizada de procesos/agentes/subagentes (`audit=ON`) conforme `docs/harness/AUDITORIA-TOKENS-IA.md`. Solo código, pruebas y diagnóstico local. Antes de ejecutar, verificar CI GitHub 2/2 SUCCESS del SHA base exacto, sin tocar BD remota, .env real, instalador, cPanel ni deploy.
+- **HOBS-001 — Auditoría de tokens, FASE 0 (APPROVED / ACTIVA)**. Packet `docs/work/features/HOBS-001.md`; `audit=ON;phase=0`. Únicamente diagnóstico local **de lectura**: estadísticas nativas OpenCode y hasta 2–3 sesiones anteriores comparables. Resultado: comentario SFH1 en issue #29. **Sin parser nuevo, JSONL, implementación, QA de producto, publisher, commits ni despliegue.** Las fases 1 y 2 requieren un nuevo packet técnico aprobado después de revisar los resultados. Comprobar primero CI 2/2 SUCCESS del HEAD base exacto; no acceder a secretos ni BD remota.
 
 ## Estados por feature
 - BOOT-001: VERIFIED (2026-10-14), Laravel 13.35.0 + Vue 3/Inertia/TS; `bcbf16f`.
