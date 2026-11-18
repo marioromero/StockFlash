@@ -10,7 +10,7 @@ Reviewed the active governance and workflow surfaces: `AGENTS.md`, `LEEME-PRIMER
 | H02 | HIGH | Reviewer R1 INSTALL-001 used 103 toolcalls / 9m 2s; reviewer reruns typecheck/build after full 32-gate verification (owner-provided local transcript) | Diff/finding-first QA; reuse fingerprinted deterministic evidence; independent targeted adversarial tests remain |
 | H03 | MEDIUM | INSTALL/SETUP gate definitions run focused test folders AND complete PHP suite; separate reviewer reruns some commands | Retain existing mandatory gates; future packets should avoid duplicate test commands by design, never silently skip contracted gates |
 | H04 | MEDIUM | Broad scans of 206 files and repeated accented-character searches examined valid Spanish Unicode as if suspicious | Restrict encoding scans to changed files; detect U+FFFD/invalid UTF-8 and mojibake, not ordinary accented letters |
-| H05 | HIGH | `opencode.json` explicitly permits reading `*.env` / `*.env.*`, despite AGENTS disallowing reading real env | Safeguard in policy; config hardening requires compatible pattern precedence check and independent safety test (not an excuse to read secrets) |
+| H05 | HIGH | `opencode.json` explicitly permits reading `*.env` / `*.env.*`, despite AGENTS disallowing reading real env | Changed `opencode.json` read rules to deny actual .env/.env.* with explicit example-file exception; effective local client permission precedence still requires a targeted runtime test |
 | H06 | MEDIUM | `opencode.json` has broad bash allow / git push* allow at top-level while subagents attempt narrower deny; privilege semantics matter | Preserve proven publisher's exact `git push origin main`; test effective configuration before tightening generic patterns, never assume Markdown denies enforce sandbox |
 | H07 | MEDIUM | Historical docs `HANDOFF-CHAT-02`, `SEGURIDAD-DE-AGENTES`, `RELEASE-CI-CD-PLAN` still describe BOOT as uncommitted / ask-only / CI absent, contradicting live CURRENT | Mark historical status explicitly, rewrite agent-facing material English, use CURRENT and current CI as truth |
 | H08 | MEDIUM | Spanish text repeated across AGENTS, commands, skills, GPT context; large startup reads cost context | English-only concise operational instructions; short reading map and GPT-only language-lock file; preserve Spanish UI and product contracts |
@@ -22,6 +22,9 @@ Reviewed the active governance and workflow surfaces: `AGENTS.md`, `LEEME-PRIMER
 
 ## Protections deliberately retained
 Approved packet and delegated owner boundaries; explicit commercial ADR gate; privacy/PII/secret redaction; RBAC, CSRF, locking and inventory invariants; independent read-only reviewer; mandatory final deterministic gates; scope-bound publisher with SHA fingerprints and fast-forward sync; GitHub CI 2/2 exact SHA; GPT-only guide/roadmap content ownership; remote DB/deploy/production restrictions; no destructive reset/stash/clean.
+
+## Test coupling repaired
+- First PR CI exposed stale checks: `scripts/check_contracts.py` expected a Spanish BOOT scaffold phrase and historic CI workflow naming; `DocsIntegrationTest` expected Spanish AGENTS/sf-run/sf-publish paragraphs. They were updated to assert the **current English safety and ownership contracts**, without skipping any feature test or final CI gate. This is a concrete example of documentation test brittleness that caused unnecessary rework.
 
 ## Open matters requiring runtime evidence
 - True per-agent token usage is **UNKNOWN** until OpenCode/provider exposes metered usage. 125 toolcalls and 103 toolcalls are not tokens.
