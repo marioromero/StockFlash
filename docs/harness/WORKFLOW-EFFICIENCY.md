@@ -19,8 +19,8 @@
 12. Treat time-consuming local commands and model token consumption separately. Do not claim savings until native metered counts or a controlled A/B with explicit limitations exists.
 
 ## Instrumentation and privacy
-13. When `audit=ON`, obey `docs/harness/AUDITORIA-TOKENS-IA.md`. Capture visible tool/subagent activity via low-overhead instrumentation or stage batches; do not create another LLM tool call for every observation. Include null for unavailable token usage and coverage flags for hidden subagent calls.
-14. Never put secret-bearing stdout, actual .env, RUT/PII, raw hidden reasoning, complete prompts, or extensive source code in audit files. Commit a sanitized event log and concise analysis only after standard QA and publication authorization.
+13. With `audit=ON`, obey `docs/harness/AUDITORIA-TOKENS-IA.md` **v2**: start with existing OpenCode native project/session statistics and at most 2–3 comparable historical completed feature sessions. Agent-authored manual stage/event logs are prohibited; use a low-cost deterministic parser or verified native hook only for missing signals. Collect first-turn context overhead of spawned subagents and input/cache context growth when metered; unknowns null. Avoid extra model calls per observation.
+14. Write transient audit data only in a permitted local temporary location or ignored `docs/work/.run/audits/`, explicitly outside functional fingerprints. Once the safe allowlist aggregator has finished, QA-review and publish only sanitized metrics, never raw exports, tool stdout, .env, RUT/PII, prompts, hidden reasoning or customer paths. Treat retrospective n=1 as descriptive, not causal A/B evidence.
 
 ## Do not optimize away
 RBAC and entitlement checks, CSRF/session/bootstrap guards, transaction/locking tests, privacy and security adversarial review, exact-SHA CI, safe Git, separate read-only QA, owner decisions for deployment/remote DB, and completeness of the final release gates.
