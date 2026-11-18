@@ -1,34 +1,32 @@
-# HOBS-001 — Read-only OpenCode historical token baseline (Phase 0)
+# HOBS-001 — OpenCode token baseline, Phase 0 ONLY
 
 status: APPROVED
-approval_basis: explicit_owner_request_2026-11-17; owner_followup_review_2026-11-18
-new_business_decisions: NONE
+approval_basis: explicit_owner_request_2026-11-17; refined_2026-11-18
+execution_mode: READ_ONLY
 publication_mode: NO_GIT_PHASE0
-execution_mode: DIAGNOSTIC_READ_ONLY
-stage: HARNESS
-active: docs/work/CURRENT.md
 audit: ON
 audit_phase: 0
+next: GPT
 
-## Purpose
+**This file is the complete Phase 0 instruction. Do not read `docs/harness/AUDITORIA-TOKENS-IA.md` (ChatGPT's future-phase design), invoke `/sf-run`, spawn subagents, create scripts/files, run gates/QA/CI, synchronize Git, commit or deploy.** There are no source changes, so no code-SHA/CI preflight is needed. Confirm the intended StockFlash repository via `git rev-parse --show-toplevel` only if necessary. Read the existing SFH1 issue #29 and this packet, not the entire harness.
 
-Before investing model tokens to build a collector, answer what existing OpenCode completed sessions can actually tell us: total token use, per-turn context growth, subagent startup cost, repetitive tools and critical-path latency. **Phase 0 is ONLY read-only diagnosis and an SFH1 issue comment**, not feature implementation, not a test-only synthetic run, and not a prerequisite to commit an audit file. `docs/harness/AUDITORIA-TOKENS-IA.md` v2.1 is authoritative. Next phases require a separate GPT-approved packet after reviewing the findings.
+## Read-only probe
 
-## Execute once, in order
+1. Check installed `opencode --version`, `opencode stats --help`, `opencode session --help` and (only if useful) `opencode debug --help`. Use **only confirmed read-only options** from this exact local version. Obtain StockFlash-scoped project/session aggregate usage and a list of completed sessions. Never replay a session or assume stats provide per-turn data.
+2. Examine **up to three** completed, reasonably comparable feature sessions. Compare only when provider + exact model and harness configuration match, feature class is similar, and file/LOC change size is broadly comparable (rough 0.5×–2× if already known). Report corrections/QA round count and gate footprint separately. If these attributes are not in safe metadata, mark `not_comparable`; **do not open code or scan diffs just to force a match**. One run is a case study, not a savings estimate.
+3. Determine whether these *actually exist* in safe accessible metadata: per-request input/output/cache tokens, per-turn context trend, first subagent request input, parent-child session IDs, request/tool timestamps, compactions and tool category/status. For each field report `available|not_exposed|not_checked`; unknown numbers remain null.
 
-1. Confirm latest `main` HEAD and GitHub PHP/Node/smoke + contract workflows **both SUCCESS at exact SHA**. If not, STOP/BLOCK. If code needs syncing, run `py -3 scripts/safe_git_pull.py` exactly once; on `SYNC_BLOCKED`, preserve all work and stop. Do not initiate `/sf-run` or delegate implementer/reviewer/publisher for a no-code diagnostic.
-2. Check installed `opencode --version`, `opencode stats --help`, `opencode session --help` and available *safe* read-only options. Do not assume the currently published CLI flags apply to this installed version. Check effective English harness/permission metadata only through safe introspection, never open real `.env`, credentials or protected content.
-3. Fetch **aggregate metered usage and session-list metadata** for the StockFlash project, using only approved read-only CLI commands. Select at most 2–3 **completed comparable feature sessions** if available: same provider/exact model and harness configuration; similar feature class, file count and changed LOC (rough heuristic 0.5×–2×); record differing gate footprint and QA correction rounds rather than masking them. If no matches, present cases separately and `baseline_not_comparable`. Never replay INSTALL-001 or a prior session.
-4. Establish whether available local usage metadata *actually exposes* request-level tokens/timestamps, parent-child session linkage, first request input tokens per subagent, cache inclusion, compaction events and tool timing. For each record `available|not_exposed|not_checked`. Do **not** assert that `stats` aggregated output supplies per-turn data. Only if a supported metadata-only read is verifiably safe, inspect exact permitted numeric/timestamp/link fields; no raw session export or message content into model, Git or chat. If a parser would be needed, **do NOT write it in Phase 0**; report the gap to GPT.
-5. Publish **one compact English `SFH1|kind=RESULT|phase=0` comment on issue #29** with CLI/version/commands, comparable session count, actual numeric totals where visible, per-metric coverage, time/critical-path limits, session privacy safeguards and Phase 1 recommendation. The issue comment is already on GitHub and serves as the baseline record. No audit JSONL/Markdown file in Phase 0; no Git commit, no publisher, no newly introduced gates, no synthetic new feature, no additional QA subprocess.
+## Optional local session DB probe — metadata ONLY
 
-## Expected Phase 0 result
+**Skip entirely if the installed version/storage type, access path, permissions or privacy cannot be verified safely.** If the format is SQLite and a read-only CLI exists, use its **true read-only open mode** (e.g. `sqlite3 -readonly <verified-local-db-path>`) AND `PRAGMA query_only=ON`. No creation, migration, `ATTACH`, exports, plugins, writes or service changes.
 
-- Attributable measurement with explicit `source=CLI_STATS|SESSION_METADATA|UNAVAILABLE`, `coverage=session|stage|event|unknown`, `tokens=MEASURED|PARTIAL|UNAVAILABLE`, never invented estimates or guessed percentages.
-- Report whether parent/child relationships, first subagent request, per-turn context and tool/CI wall-time exist in accessible metadata, even if unavailable.
-- If source content/raw transcript would be needed, skip it; describe privacy-safe gap and decide no continuation until GPT reviews.
-- State `scope=READ_ONLY_NATIVE_METADATA;parser=NOT_BUILT;code_changes=NO;commits=NO;next=GPT`. A no-code audit does not need a new functional gate/QA/publisher loop; all ordinary product gates/QA/CI remain mandatory for product code.
+- Schema discovery may inspect **table names and column names only** (bounded `sqlite_master` / `PRAGMA table_info`); no table rows/content for discovery. Verify identifiers before building a query.
+- For data, use explicit **allowlisted columns** and a project/session scope with `LIMIT` (max three sessions; max 200 metadata events per session). **Never `SELECT *`**, message JSON/body, raw prompt/completion, tool arguments, tool output, source, secrets, paths or arbitrary text.
+- Allowed output types: numeric token counts/durations, timestamps, anonymous parent/child links, exact model IDs, and **bounded categorical** tool **name/family**, agent role, event type and status. Tool names are useful to count read/search/shell calls; raw tool inputs are NOT allowed, so repeat-by-same-input remains `not_exposed`.
+- If safe column-level output cannot be guaranteed **without writing a parser**, stop and report the gap. Do not execute ad hoc code to decode raw session records.
 
-## Explicit prohibition
+## One SFH1 result, then STOP
 
-No modifying source, harness, .env, real database, installer, credentials, OpenCode global settings or project roles; no plugin installation, hooks, exports containing message text, new scripts, QA cycle, staging/deploy, cron, migrations, forced Git, git reset/stash/clean or touching GPT-authored Spanish HTML. Do not publish a raw session export or individual private message text. Keep owner chat succinct in Spanish and internal SFH1 English.
+Post **one concise English `SFH1|src=OC|dst=GPT|kind=RESULT|phase=0`** to existing issue #29, showing installed version/supported read-only commands, selected session count/comparability, real token and cost totals if metered, per-turn/subagent/tool/latency availability, gaps and a recommendation on whether a future parser is worth its overhead. Use `source=CLI_STATS|SAFE_DB_METADATA|UNAVAILABLE`, `coverage=session|event|unknown`; do not invent totals, critical paths, duplicate counts or savings.
+
+End with `scope=READ_ONLY;parser=NOT_BUILT;files=UNCHANGED;commits=NO;next=GPT`. Owner-facing reply stays brief in Spanish. No Phase 1/2 instructions, artifacts, publisher, additional handoffs or continued work until ChatGPT evaluates this result.
