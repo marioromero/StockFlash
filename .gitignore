@@ -38,6 +38,7 @@ docs/work/.run/
 /stockflash-staging-release.zip
 /stockflash-staging-part-*.zip
 scripts/__pycache__/
+tests/harness/__pycache__/
 /sf-probe-*.txt
 /sf-probe-*.zip
 /.probe-*.txt

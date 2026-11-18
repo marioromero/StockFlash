@@ -1213,6 +1213,40 @@ GATES_BY_PACKET: dict[str, list[dict]] = {
          "cmd": ["git", "diff", "--check", "HEAD"],
          "mandatory": True, "timeout_s": 60},
     ],
+    "HTIME-001": [
+        {"id": "T1-telemetry-tests", "kind": "shell",
+         "cmd": ["py", "-3", "-m", "unittest", "discover", "-s", "tests/harness", "-p", "test_*.py", "-v"],
+         "mandatory": True, "timeout_s": 180},
+        {"id": "T2-timeline-privacy-static", "kind": "shell",
+         "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\nt=(R/'scripts/sf_timeline.py').read_text(encoding='utf-8')\nv=(R/'scripts/sf_verify.py').read_text(encoding='utf-8')\nu=(R/'tests/harness/test_sf_timeline.py').read_text(encoding='utf-8')\nnet=['requests','urllib.request','socket','http://','https://']\nprivacy=['.env','prompt','transcript']\nok=('docs/work/.run/' in t and '^[A-Z0-9][A-Z0-9-]{2,63}$' in t and not any(x in t for x in net) and 'subprocess' not in t and not any(x in t for x in privacy) and 'sf_timeline' in v and 'record_gate' in v and '\"HTIME-001\"' in v and ('immut'+'able=1') not in t+u+v)\nsys.exit(0 if ok else 1)"],
+         "mandatory": True, "timeout_s": 120},
+        {"id": "T3-diff-check", "kind": "shell",
+         "cmd": ["git", "diff", "--check", "HEAD"],
+         "mandatory": True, "timeout_s": 120},
+        {"id": "T4-protected-intact", "kind": "shell",
+         "cmd": ["py", "-3", "-c", "import subprocess,sys\nr=subprocess.run(['git','diff','--quiet','HEAD','--','opencode.json','AGENTS.md','docs/governance','docs/product','docs/branding','public/docs/index.html','resources/roadmap/index.html'])\nsys.exit(0 if r.returncode==0 else 1)"],
+         "mandatory": True, "timeout_s": 120},
+        {"id": "T5-app-runtime-untouched", "kind": "shell",
+         "cmd": ["py", "-3", "-c", "import subprocess,sys\nr=subprocess.run(['git','status','--porcelain','--','app','routes','resources/js','public','database','config'],capture_output=True,text=True)\nsys.exit(0 if r.returncode==0 and not r.stdout.strip() else 1)"],
+         "mandatory": True, "timeout_s": 120},
+        {"id": "T6-composer-validate", "kind": "shell",
+         "cmd": ["composer", "validate", "--no-check-publish", "--no-check-all", "--strict"],
+         "mandatory": True, "timeout_s": 120},
+        {"id": "T7-php-tests", "kind": "shell",
+         "cmd": ["php", "artisan", "test"],
+         "mandatory": True, "timeout_s": 900},
+        {"id": "T8-node-typecheck", "kind": "shell",
+         "cmd": ["npm", "run", "typecheck"],
+         "mandatory": True, "timeout_s": 600},
+        {"id": "T9-node-build", "kind": "shell",
+         "cmd": ["npm", "run", "build"],
+         "mandatory": True, "timeout_s": 600},
+        {"id": "T10-http-root", "kind": "http_serve",
+         "mandatory": True, "timeout_s": 90},
+        {"id": "T11-harness-docs-wired", "kind": "shell",
+         "cmd": ["py", "-3", "-c", "import pathlib as P,sys\nR=P.Path('.')\nfiles=['.opencode/agents/stockflash-orchestrator.md','.opencode/agents/stockflash-implementer.md','.opencode/commands/sf-run.md','docs/harness/WORKFLOW-EFFICIENCY.md']\nok=all('sf_timeline.py' in (R/f).read_text(encoding='utf-8') for f in files) and ('Harness Python telemetry tests' in (R/'.github/workflows/ci.yml').read_text(encoding='utf-8'))\nsys.exit(0 if ok else 1)"],
+         "mandatory": True, "timeout_s": 120},
+    ],
 }
 
 
@@ -1380,6 +1414,17 @@ def write_report(packet: str, results: list[dict], verdict: str, guide: dict, ro
 
 
 def main() -> int:
+    # Telemetria local best-effort: nunca altera gates, exit codes ni reporte.
+    begin_span = end_span = record_gate = None
+    try:
+        sys.path.insert(0, str(ROOT / "scripts"))
+        from sf_timeline import begin_span as _begin_span
+        from sf_timeline import end_span as _end_span
+        from sf_timeline import record_gate as _record_gate
+        begin_span, end_span, record_gate = _begin_span, _end_span, _record_gate
+    except Exception:
+        begin_span = end_span = record_gate = None
+
     ap = argparse.ArgumentParser(description="Verificador determinista de gates StockFlash.")
     ap.add_argument("packet", help="ID de Feature Packet (p. ej. BOOT-001)")
     ap.add_argument("--port", type=int, default=18733)
@@ -1393,38 +1438,88 @@ def main() -> int:
     if packet != "BOOT-001":
         print(f"Nota: verificando {packet} con definicion declarativa correspondiente.")
 
-    results: list[dict] = []
-    for gate in GATES_BY_PACKET[packet]:
-        gid = gate["id"]
-        print(f"== {gid} :: {' '.join(gate['cmd']) if gate['kind']=='shell' else 'serve-temporal + GET ' + gate.get('path', '/')}")
-        if args.no_build and gid.startswith("G3-"):
-            results.append({"id": gid, "cmd": "npm run build (omitido por --no-build)",
-                            "exit": 99, "ok": False, "elapsed_s": 0.0,
-                            "stdout": "", "stderr": "omitido; gate obligatorio => FAIL"})
-            print(f"-- {gid} SKIP (tratado como FAIL por ser obligatorio)")
-            continue
-        if gate["kind"] == "shell":
-            r = run_shell(gate["cmd"], gate["timeout_s"])
-        elif gate["kind"] == "http_serve":
-            port = find_free_port(args.port)
-            if port != args.port:
-                print(f"-- puerto {args.port} ocupado, usando {port}")
-            r = gate_http_serve(
-                port,
-                gate["timeout_s"],
-                gate.get("path", "/"),
-                tuple(gate.get("expect", ("StockFlash",))),
+    def record_gate_result(gate_id: str, result: dict) -> None:
+        if record_gate is None:
+            return
+        try:
+            record_gate(
+                packet,
+                gate_id,
+                outcome="PASS" if result["ok"] else "FAIL",
+                duration_ms=int(round(float(result["elapsed_s"]) * 1000)),
             )
-        else:
-            r = {"cmd": gid, "exit": 99, "ok": False, "elapsed_s": 0.0,
-                 "stdout": "", "stderr": f"kind desconocido: {gate['kind']}"}
-        r["id"] = gid
-        r["mandatory"] = gate["mandatory"]
-        results.append(r)
-        print(f"-- {gid} {'PASS' if r['ok'] else 'FAIL'} (exit={r['exit']})")
+        except Exception:
+            pass
 
-    mandatory_fail = [r for r in results if r.get("mandatory") and not r["ok"]]
-    verdict = "GATES_PASS" if not mandatory_fail else "GATES_FAIL"
+    results: list[dict] = []
+    verdict = "GATES_FAIL"
+    telemetry_started = False
+    telemetry_closed = False
+    telemetry_span = None
+    try:
+        if begin_span is not None:
+            try:
+                started = begin_span(packet, "verification", "verifier", source="native_gate_runner")
+                telemetry_started = started is not None
+                if isinstance(started, dict):
+                    telemetry_span = started.get("span")
+            except Exception:
+                telemetry_started = False
+        for gate in GATES_BY_PACKET[packet]:
+            gid = gate["id"]
+            print(f"== {gid} :: {' '.join(gate['cmd']) if gate['kind']=='shell' else 'serve-temporal + GET ' + gate.get('path', '/')}")
+            if args.no_build and gid.startswith("G3-"):
+                skip = {"id": gid, "cmd": "npm run build (omitido por --no-build)",
+                        "exit": 99, "ok": False, "elapsed_s": 0.0,
+                        "stdout": "", "stderr": "omitido; gate obligatorio => FAIL"}
+                results.append(skip)
+                record_gate_result(gid, skip)
+                print(f"-- {gid} SKIP (tratado como FAIL por ser obligatorio)")
+                continue
+            if gate["kind"] == "shell":
+                r = run_shell(gate["cmd"], gate["timeout_s"])
+            elif gate["kind"] == "http_serve":
+                port = find_free_port(args.port)
+                if port != args.port:
+                    print(f"-- puerto {args.port} ocupado, usando {port}")
+                r = gate_http_serve(
+                    port,
+                    gate["timeout_s"],
+                    gate.get("path", "/"),
+                    tuple(gate.get("expect", ("StockFlash",))),
+                )
+            else:
+                r = {"cmd": gid, "exit": 99, "ok": False, "elapsed_s": 0.0,
+                     "stdout": "", "stderr": f"kind desconocido: {gate['kind']}"}
+            r["id"] = gid
+            r["mandatory"] = gate["mandatory"]
+            results.append(r)
+            record_gate_result(gid, r)
+            print(f"-- {gid} {'PASS' if r['ok'] else 'FAIL'} (exit={r['exit']})")
+
+        mandatory_fail = [r for r in results if r.get("mandatory") and not r["ok"]]
+        verdict = "GATES_PASS" if not mandatory_fail else "GATES_FAIL"
+    except BaseException:
+        if telemetry_started and end_span is not None:
+            try:
+                end_span(packet, "verification", "verifier", status="FAIL", span=telemetry_span, source="native_gate_runner")
+                telemetry_closed = True
+            except Exception:
+                pass
+        raise
+    finally:
+        if telemetry_started and not telemetry_closed and end_span is not None:
+            try:
+                end_span(
+                    packet,
+                    "verification",
+                    "verifier",
+                    status="PASS" if verdict == "GATES_PASS" else "FAIL",
+                    span=telemetry_span,
+                    source="native_gate_runner",
+                )
+            except Exception:
+                pass
     guide = guide_handoff(packet)
     roadmap = roadmap_handoff(packet)
     report = write_report(packet, results, verdict, guide, roadmap)
