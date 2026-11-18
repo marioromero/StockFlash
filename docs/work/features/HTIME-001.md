@@ -1,12 +1,12 @@
 # HTIME-001 — Low-overhead task timing and verification evidence
 
-status: APPROVED
+status: VERIFIED_TECH
 approval_basis: explicit_owner_authorization_2026-11-18_implement_task_tracking
 new_business_decisions: NONE
 publication_mode: AUTO_GIT
 execution_mode: IMPLEMENTATION
 owner_questions: NONE
-next: OC
+next: GPT
 
 ## Problem / evidenced baseline
 

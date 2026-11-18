@@ -1,7 +1,7 @@
 # Estado operativo — StockFlash
 
 ## Feature activa
-- **HTIME-001 — Registro de tiempos/progreso por feature (APPROVED / ACTIVA)**. Única instrucción OpenCode: `docs/work/features/HTIME-001.md`. Implementación real autorizada por propietario: script local determinista de etapas/roles/tiempos, checkpoint preservado, resumen legible, instrumentación no intrusiva de `sf_verify` para contar verificaciones completas y sus gates, ajustes para impedir repeticiones innecesarias. Sin otro agente, parser histórico, contenidos de conversaciones ni telemetría enviada a GitHub. Exigir pruebas Python en CI, gates, QA independiente, publisher y CI exact SHA; no despliegue. HOBS-001/002/003/004 cerradas (issues #29/#37/#40/#42). No cambiar subagent_depth/steps/slices ni reducir gates.
+- **Ninguna feature activa pendiente de ejecución.** **HTIME-001 — VERIFIED_TECH** en código SHA `fa92305703a6d810cbd59a17484b8f1adff619df`; gates 11/11, QA R2 APROBADO, CI exact-SHA 5/5 SUCCESS. Cierre: `docs/work/HTIME-001-CLOSURE-20261118.md`, issue #44. Mecanismo de tiempos local operativo por etapas y gates; límite conocido: posible pérdida ocasional de un evento bajo concurrencia, sin impacto en gates. Próxima feature se determina por secuencia técnica aprobada, no por reabrir HTIME-001.
 
 ## Estados por feature
 - BOOT-001: VERIFIED (2026-10-14), Laravel 13.35.0 + Vue 3/Inertia/TS; `bcbf16f`.
