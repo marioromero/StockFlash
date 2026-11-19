@@ -1,6 +1,6 @@
 # INVCORE-001 — Inventory ledger and branch stock foundation
 
-status: APPROVED
+status: VERIFIED
 approval_basis: existing_approved_contract_owner_delegation_2026-11-16
 new_business_decisions: NONE
 publication_mode: AUTO_GIT
@@ -24,3 +24,13 @@ Implement P0 INV-01, INV-02, INV-03 from Part 1 §8.3 and RN-19/RN-21; use Part 
 
 ## Hard limits
 No remote database, migrations against real DB, .env/secrets, install, deploy, cron, DTE, POS, sales, cash, Woo, stock transfers, CSV, counts, reservations lifecycle, user-facing stock adjustments or inventory costing policy changes. No modification of approved Part 1/2 contracts, ChatGPT-only files, public/docs/index.html or resources/roadmap/index.html. SQLite in-memory tests and CI only. Use safe_git_pull.py once before code changes; preserve local work on SYNC_BLOCKED. Maximum 3 correction rounds. Report evidence exact SHA and CI, never self-declare VERIFIED.
+
+## External technical closure — ChatGPT, 2026-11-18
+status: VERIFIED_TECH
+code_sha: `966b6850880106b2a672d48b89a780599b32aa3a`
+gates: 17/17 GATES_PASS
+qa: independent APROBADO; `docs/work/INVCORE-001-REVIEW-20261118-2205.md`
+php: 651 tests / 5985 assertions
+ci_exact_code_sha: 2/2 SUCCESS (runs 44434412331, 44434412292)
+limits: MariaDB concurrency NOT_RUN; browser UX NOT_RUN; remote DB UNTOUCHED; no deploy; reservation lifecycle pending.
+editorial_docs: public/docs/index.html#inventario-stock and resources/roadmap/index.html updated separately. Their final CI is checked against resulting editorial/state HEAD.
