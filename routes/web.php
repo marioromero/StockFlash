@@ -233,6 +233,13 @@ Route::middleware(['auth', 'password.change', 'verify.session'])->group(function
         ->middleware(['can.permission:inventory.view', 'branch.access'])
         ->name('inventory.kardex.index');
 
+    // INVREORDER-001 · reposición y panel de stock crítico. Lectura con
+    // `inventory.view`; la escritura de umbrales vive en la ruta PUT con
+    // `inventory.adjust`. La sucursal sale de `{branch}` y `branch.access`.
+    Route::get('/inventory/stock/{branch}/reorder', [\App\Http\Controllers\Inventory\ReorderController::class, 'index'])
+        ->middleware(['can.permission:inventory.view', 'branch.access'])
+        ->name('inventory.reorder.index');
+
     // INVWRITE-001 · escritura manual: solo carga inicial única y ajuste con
     // motivo. La sucursal sale de `{branch}` y `branch.access`; el resto del
     // contexto se resuelve en servidor.
@@ -243,6 +250,13 @@ Route::middleware(['auth', 'password.change', 'verify.session'])->group(function
     Route::post('/inventory/stock/{branch}/adjustment', [\App\Http\Controllers\Inventory\StockAdjustmentController::class, 'storeAdjustment'])
         ->middleware(['can.permission:inventory.adjust', 'branch.access'])
         ->name('inventory.stock.adjust');
+
+    // INVREORDER-001 · único endpoint de escritura de settings: solo
+    // `reorder_point`, `reorder_qty` y `max_stock`; sin balance, costo,
+    // safety_stock, location_label ni sucursal/usuario desde el cliente.
+    Route::put('/inventory/stock/{branch}/reorder/{variant}', [\App\Http\Controllers\Inventory\ReorderController::class, 'update'])
+        ->middleware(['can.permission:inventory.adjust', 'branch.access'])
+        ->name('inventory.reorder.update');
 
     // --- Administración global de sucursales (BRANCH-001 · CORE-05) ---
     // Es administración global: NO usa `branch.access`.

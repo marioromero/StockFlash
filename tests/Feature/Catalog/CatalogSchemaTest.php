@@ -56,13 +56,15 @@ class CatalogSchemaTest extends TestCase
     ];
 
     /**
-     * Tablas aprobadas de INVCORE-001 (Parte 2 7.2/7.4). Se declaran para
-     * mantener el invariante de conjunto exacto de tablas del esquema de
-     * pruebas; no pertenecen al catalogo ni cambian su comportamiento.
+     * Tablas aprobadas de inventario: INVCORE-001 (Parte 2 7.2/7.4) e
+     * INVREORDER-001 (Parte 2 7.1). Se declaran para mantener el invariante
+     * de conjunto exacto de tablas del esquema de pruebas; no pertenecen al
+     * catalogo ni cambian su comportamiento.
      */
     private const INVENTORY_TABLES = [
         'current_stock',
         'stock_movements',
+        'branch_variant_settings',
     ];
 
     /**

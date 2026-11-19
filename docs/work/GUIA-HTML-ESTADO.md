@@ -11,11 +11,11 @@ guide_status: INTEGRADA_EN_MAIN (2026-11-16)
 guide_content_last_written: 2026-11-19
 covered_features: AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED; ROADMAP-001 VERIFIED; USERS-001 VERIFIED; CFG-001/002/003 VERIFIED; CORELIC-001 VERIFIED; CATMAST-001 VERIFIED (9279d57); SETUP-001 VERIFIED (13cdd6a); INVCORE-001 VERIFIED (966b685); INVWRITE-001 VERIFIED_TECH (816fdc6); INVKARDEX-001 VERIFIED_TECH (317a61d; guía integrada)
 latest_covered_code_sha: `317a61d40d07c8601eead5f641b4b86fb46b3391` (INVKARDEX-001 and prior user-visible features; not a deployment claim)
-next_feature: INVREORDER-001 — Reorder settings and low-stock dashboard (pending implementation). INSTALL-001 — Instalador web CORE-17 (documentación editorial por reconciliar)
+next_feature: INVREORDER-001 — Reorder settings and low-stock dashboard (implementada en código/pruebas; gates 16/16 PASS y QA independiente APROBADO; publicación/CI pendientes). INSTALL-001 — Instalador web CORE-17 (documentación editorial por reconciliar)
 internal_only_features: CATDB-001 VERIFIED (11 tablas internas, sin UI ni página nueva); CORESEQ-001 VERIFIED (servicio interno invisible; sin entrada nueva en guía); COREMOD-001 VERIFIED técnico (servicio interno invisible de módulos; sin página nueva); COREPIN-001 VERIFIED (servicio interno invisible de autorización PIN; sin página nueva)
 last_guide_integration_sha: `00942ba798ba3f9d34424c14117b45efaf0a0e5e` (ChatGPT, guía INVKARDEX-001)
 last_guide_integration_date: 2026-11-19
-pending_docs: GUIA_PENDIENTE_CHATGPT — INSTALL-001 (reconciliación editorial del instalador técnico CORE-17); INVCORE-001 / INVWRITE-001 / INVKARDEX-001 integrados por ChatGPT el 2026-11-19
+pending_docs: GUIA_PENDIENTE_CHATGPT — INVREORDER-001 (panel de reposición y stock crítico; guía NO redactada); INSTALL-001 (reconciliación editorial del instalador técnico CORE-17); INVCORE-001 / INVWRITE-001 / INVKARDEX-001 integrados por ChatGPT el 2026-11-19
 
 ## Cómo mantener este archivo
 - OpenCode puede actualizar solamente los metadatos y el registro de pendientes aquí, no los textos para usuarios en `public/docs/index.html`.
@@ -116,4 +116,12 @@ pending_docs: GUIA_PENDIENTE_CHATGPT — INSTALL-001 (reconciliación editorial 
 - contenido a redactar por ChatGPT: lectura de movimientos físicos por sucursal con fecha/hora, tipo es-CL, cantidad con signo y saldo registrado; filtros por SKU/producto, variante y rango de fechas inclusivo; orden por ID de anexado y aclaración de que el saldo no se recalcula por fecha; reversas visibles con el movimiento corregido; estado vacío, paginación por cursor, licencia solo lectura que no bloquea la consulta; aclarar que no se muestran costos, precios, márgenes, usuarios, PIN ni PII, y que no hay CSV, edición ni borrado en esta ola.
 - fecha: 2026-11-19.
 - estado: implementado en código/pruebas SQLite :memory:; guía NO redactada todavía; `maria=NOT_RUN` y `remote_db=UNTOUCHED`; no VERIFIED.
+- OpenCode no edita `public/docs/index.html`; este registro es solo metadato técnico.
+
+## GUIA_PENDIENTE_CHATGPT - INVREORDER-001
+- feature: INVREORDER-001 - Punto de reposición, cantidad sugerida, máximo y panel de stock crítico por sucursal y variante (INV-07 P0).
+- pantalla: `/inventory/stock/{branch}/reorder` (enlace «Reposición» desde la pantalla de inventario de la sucursal, con `inventory.view`; configuración con `inventory.adjust`).
+- contenido a redactar por ChatGPT: diferencia entre punto de reposición, cantidad sugerida y máximo; el punto es obligatorio y no negativo, la cantidad sugerida y el máximo son opcionales; disponible = existencia − reservado; una variante es crítica solo cuando tiene configuración con punto mayor que 0 y disponible igual o menor al punto; un punto 0 o una variante sin configurar no genera alerta; filtros por SKU/producto y «Solo stock crítico», paginación acotada; filas históricas de variantes inactivas o eliminadas visibles solo lectura; licencia solo lectura permite consultar pero no guardar; aclarar que no se modifican existencias ni movimientos, que no se editan `safety_stock` ni ubicación en esta ola, y que no se muestran costos, precios, márgenes, PIN ni PII.
+- fecha: 2026-11-19.
+- estado: implementado en código/pruebas SQLite :memory:; 150 pruebas / 1804 aserciones de inventario y typecheck TS; gates 16/16 PASS y QA independiente APROBADO; publicación/CI pendientes; `maria=NOT_RUN`, `remote_db=UNTOUCHED`, navegador y confluencia MariaDB diferidos; no VERIFIED.
 - OpenCode no edita `public/docs/index.html`; este registro es solo metadato técnico.

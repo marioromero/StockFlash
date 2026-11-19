@@ -30,6 +30,12 @@
                     >
                         Ver Kardex
                     </Link>
+                    <Link
+                        :href="`/inventory/stock/${branch.id}/reorder`"
+                        class="sf-button sf-button-secondary"
+                    >
+                        Reposición
+                    </Link>
                 </div>
             </div>
 

@@ -196,8 +196,10 @@ class StockReadAuthorizationTest extends InventoryTestCase
             'inventory.entry',
             'inventory.stock.index',
             'inventory.kardex.index',
+            'inventory.reorder.index',
             'inventory.stock.initial',
             'inventory.stock.adjust',
+            'inventory.reorder.update',
         ], $routes);
     }
 }

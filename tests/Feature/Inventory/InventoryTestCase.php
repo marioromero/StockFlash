@@ -219,6 +219,26 @@ abstract class InventoryTestCase extends TestCase
         ]);
     }
 
+    protected function createReorderSettings(
+        int $branchId,
+        int $variantId,
+        string $reorderPoint = '0.000',
+        ?string $reorderQty = null,
+        ?string $maxStock = null,
+        string $safetyStock = '0.000',
+        ?string $locationLabel = null,
+    ): void {
+        DB::table('branch_variant_settings')->insert([
+            'branch_id' => $branchId,
+            'variant_id' => $variantId,
+            'reorder_point' => $reorderPoint,
+            'reorder_qty' => $reorderQty,
+            'max_stock' => $maxStock,
+            'safety_stock' => $safetyStock,
+            'location_label' => $locationLabel,
+        ]);
+    }
+
     protected function ledger(): StockLedger
     {
         return app(StockLedger::class);
