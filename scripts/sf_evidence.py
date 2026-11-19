@@ -45,6 +45,10 @@ def _report_name(feature: str, name: str, kind: str = "VERIFY") -> bool:
 
 
 def _exclude_evidence(feature: str, name: str) -> bool:
+    # Local proof/checkpoints are outputs, never part of the source candidate.
+    # Exclude even in temporary Git fixtures without the project .gitignore.
+    if name.startswith("docs/work/.run/"):
+        return True
     prefix = "docs/work/"
     if not name.startswith(prefix):
         return False
