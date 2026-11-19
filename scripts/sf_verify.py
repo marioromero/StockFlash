@@ -1657,8 +1657,10 @@ def main() -> int:
                 print("No gates executed now. Exact-tree proof is local, <=2h; QA and CI remain mandatory.")
                 return 0
             print(f"FULL_GATES_REQUIRED: {why}")
-        evidence_before = evidence.fingerprint(packet, ROOT)
+        # Always invalidate before computing the new fingerprint: a failed
+        # fingerprint must never leave a prior PASS proof eligible for reuse.
         evidence.invalidate(packet, ROOT)
+        evidence_before = evidence.fingerprint(packet, ROOT)
     except Exception:
         evidence_before = None  # Evidence is optional; gates still execute in full.
         print("EVIDENCE_UNAVAILABLE: executing all mandatory gates (fail closed).")
