@@ -1,7 +1,7 @@
 # Estado operativo — StockFlash
 
 ## Feature activa
-- **Ninguna feature activa pendiente de ejecución.** **HTIME-001 — VERIFIED_TECH** en código SHA `fa92305703a6d810cbd59a17484b8f1adff619df`; gates 11/11, QA R2 APROBADO, CI exact-SHA 5/5 SUCCESS. Cierre: `docs/work/HTIME-001-CLOSURE-20261118.md`, issue #44. Mecanismo de tiempos local operativo por etapas y gates; límite conocido: posible pérdida ocasional de un evento bajo concurrencia, sin impacto en gates. Próxima feature se determina por secuencia técnica aprobada, no por reabrir HTIME-001.
+- **INVCORE-001 — APPROVED**, inventory ledger and branch stock foundation (INV-01/02/03; RN-19/21). Packet: `docs/work/features/INVCORE-001.md`. ChatGPT delegated approved-contract technical implementation through SFH1; OpenCode to run safe sync, gates, independent QA, AUTO_GIT and exact-SHA CI. No remote DB/deploy; no VERIFIED before external review.
 
 ## Estados por feature
 - BOOT-001: VERIFIED (2026-10-14), Laravel 13.35.0 + Vue 3/Inertia/TS; `bcbf16f`.
