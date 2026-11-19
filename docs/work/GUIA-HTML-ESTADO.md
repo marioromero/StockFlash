@@ -9,13 +9,13 @@ guide_branch: `docs/guia-usuario-interactiva-20261110`
 guide_pr: https://github.com/marioromero/StockFlash/pull/2
 guide_status: INTEGRADA_EN_MAIN (2026-11-16)
 guide_content_last_written: 2026-11-19
-covered_features: AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED; ROADMAP-001 VERIFIED; USERS-001 VERIFIED; CFG-001/002/003 VERIFIED; CORELIC-001 VERIFIED; CATMAST-001 VERIFIED (9279d57); SETUP-001 VERIFIED (13cdd6a); INVCORE-001 VERIFIED (966b685); INVWRITE-001 VERIFIED_TECH (816fdc6; guía integrada)
-latest_covered_code_sha: `816fdc6cb2ab7f1757f648ce7d552c07256e3379` (INVWRITE-001 and prior user-visible features; not a deployment claim)
-next_feature: INVKARDEX-001 — Reporte Kardex filtrado por sucursal, variante y fechas (implementado en código/pruebas; guía aún no redactada). INSTALL-001 — Instalador web CORE-17 (documentación editorial por reconciliar)
+covered_features: AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED; ROADMAP-001 VERIFIED; USERS-001 VERIFIED; CFG-001/002/003 VERIFIED; CORELIC-001 VERIFIED; CATMAST-001 VERIFIED (9279d57); SETUP-001 VERIFIED (13cdd6a); INVCORE-001 VERIFIED (966b685); INVWRITE-001 VERIFIED_TECH (816fdc6); INVKARDEX-001 VERIFIED_TECH (317a61d; guía integrada)
+latest_covered_code_sha: `317a61d40d07c8601eead5f641b4b86fb46b3391` (INVKARDEX-001 and prior user-visible features; not a deployment claim)
+next_feature: INVREORDER-001 — Reorder settings and low-stock dashboard (pending implementation). INSTALL-001 — Instalador web CORE-17 (documentación editorial por reconciliar)
 internal_only_features: CATDB-001 VERIFIED (11 tablas internas, sin UI ni página nueva); CORESEQ-001 VERIFIED (servicio interno invisible; sin entrada nueva en guía); COREMOD-001 VERIFIED técnico (servicio interno invisible de módulos; sin página nueva); COREPIN-001 VERIFIED (servicio interno invisible de autorización PIN; sin página nueva)
-last_guide_integration_sha: `d43d45b82a6af82bf36db9d6929b9f0ad5f5ea39` (ChatGPT, guía INVCORE-001 + INVWRITE-001)
+last_guide_integration_sha: `00942ba798ba3f9d34424c14117b45efaf0a0e5e` (ChatGPT, guía INVKARDEX-001)
 last_guide_integration_date: 2026-11-19
-pending_docs: GUIA_PENDIENTE_CHATGPT — INSTALL-001 (reconciliación editorial de instalador técnico CORE-17, fuera del alcance INVWRITE-001); GUIA_PENDIENTE_CHATGPT — INVKARDEX-001 (reporte Kardex por sucursal, variante y fechas; guía no redactada); INVCORE-001 e INVWRITE-001 integrados por ChatGPT el 2026-11-19
+pending_docs: GUIA_PENDIENTE_CHATGPT — INSTALL-001 (reconciliación editorial del instalador técnico CORE-17); INVCORE-001 / INVWRITE-001 / INVKARDEX-001 integrados por ChatGPT el 2026-11-19
 
 ## Cómo mantener este archivo
 - OpenCode puede actualizar solamente los metadatos y el registro de pendientes aquí, no los textos para usuarios en `public/docs/index.html`.
