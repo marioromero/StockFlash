@@ -1,7 +1,7 @@
 # Estado operativo — StockFlash
 
 ## Feature activa
-- **INVCORE-001 — APPROVED**, inventory ledger and branch stock foundation (INV-01/02/03; RN-19/21). Packet: `docs/work/features/INVCORE-001.md`. ChatGPT delegated approved-contract technical implementation through SFH1; OpenCode to run safe sync, gates, independent QA, AUTO_GIT and exact-SHA CI. No remote DB/deploy; no VERIFIED before external review.
+- **Ninguna feature pendiente de ejecución.** INVCORE-001 VERIFIED_TECH at code SHA `966b6850880106b2a672d48b89a780599b32aa3a`: 17/17 gates, independent QA APROBADO, 651 PHP tests/5985 assertions, exact-code-SHA CI 2/2 SUCCESS. Guide/roadmap editorial updated separately. Next feature follows approved inventory requirements via new SFH1 packet.
 
 ## Estados por feature
 - BOOT-001: VERIFIED (2026-10-14), Laravel 13.35.0 + Vue 3/Inertia/TS; `bcbf16f`.
@@ -16,6 +16,7 @@
 - CORESEQ/CORELIC/COREMOD/COREPIN: VERIFIED técnico (2026-11-16), `ceb50e0`/`a2cc899`/`cd6d39d`/`5ea1b3b`; concurrencia MariaDB diferida.
 - CATDB-001: VERIFIED técnico (2026-11-17), `93fe5de`; 383 pruebas; sin MariaDB real.
 - CATMAST-001: VERIFIED técnico (2026-11-17), `9279d57`; 414/3423; UI real y MariaDB pendientes.
+- INVCORE-001: VERIFIED técnico (2026-11-18), `966b685`; 17/17 gates, QA APROBADO, CI 2/2 SUCCESS. Kardex físico y consulta de existencias por sucursal; MariaDB/browser pendientes.
 - CATPROD-001: VERIFIED técnico (2026-11-17), `c8e1338`; 476/4192; QA R2 N-01 pendiente antes de POS/Fiscal.
 - **SETUP-001: VERIFIED técnico** (2026-11-17), código `13cdd6a`, gates 19/19, QA independiente APROBADO, 529 pruebas / 4665 aserciones y CI 2/2 SUCCESS. Guía 26 temas y roadmap actualizados por ChatGPT; cierre `docs/work/SETUP-001-CLOSURE-20261117.md`. Producción no demo bloqueada por BKP-08 P1★; instalador CORE-17 implementado/verificado solo en código; ejecución real, MariaDB/browser y BKP-08 pendientes.
 
