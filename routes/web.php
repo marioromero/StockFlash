@@ -215,6 +215,18 @@ Route::middleware(['auth', 'password.change', 'verify.session'])->group(function
             ->name('catalog.products.barcodes.destroy');
     });
 
+    // --- Inventario físico por sucursal (INVCORE-001 · INV-01/02/03) ---
+    // Solo lectura en esta ola: no se exponen rutas de ajuste, venta ni reserva.
+    // El ámbito de sucursal proviene solo de `{branch}` y `branch.access`;
+    // `branch_id` de query/body nunca amplía la autorización.
+    Route::get('/inventory', [\App\Http\Controllers\Inventory\StockController::class, 'entry'])
+        ->middleware('can.permission:inventory.view')
+        ->name('inventory.entry');
+
+    Route::get('/inventory/stock/{branch}', [\App\Http\Controllers\Inventory\StockController::class, 'index'])
+        ->middleware(['can.permission:inventory.view', 'branch.access'])
+        ->name('inventory.stock.index');
+
     // --- Administración global de sucursales (BRANCH-001 · CORE-05) ---
     // Es administración global: NO usa `branch.access`.
     Route::middleware('can.permission:settings.manage')->group(function () {

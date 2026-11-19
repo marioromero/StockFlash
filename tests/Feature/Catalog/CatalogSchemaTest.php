@@ -56,6 +56,16 @@ class CatalogSchemaTest extends TestCase
     ];
 
     /**
+     * Tablas aprobadas de INVCORE-001 (Parte 2 7.2/7.4). Se declaran para
+     * mantener el invariante de conjunto exacto de tablas del esquema de
+     * pruebas; no pertenecen al catalogo ni cambian su comportamiento.
+     */
+    private const INVENTORY_TABLES = [
+        'current_stock',
+        'stock_movements',
+    ];
+
+    /**
      * @var array<string, list<string>>
      */
     private const EXPECTED_COLUMNS = [
@@ -92,11 +102,11 @@ class CatalogSchemaTest extends TestCase
             $this->assertTrue(in_array($table, $tables, true), "Falta la tabla {$table}.");
         }
 
-        $expected = array_merge(self::CATALOG_TABLES, self::CORE_TABLES, ['migrations']);
+        $expected = array_merge(self::CATALOG_TABLES, self::CORE_TABLES, self::INVENTORY_TABLES, ['migrations']);
         sort($expected);
         sort($tables);
 
-        $this->assertSame($expected, $tables, 'El conjunto de tablas no es exactamente CORE + las 11 de catalogo.');
+        $this->assertSame($expected, $tables, 'El conjunto de tablas no es exactamente CORE + catálogo + inventario.');
     }
 
     public function test_columnas_exactas_por_tabla_sin_columnas_inventadas(): void

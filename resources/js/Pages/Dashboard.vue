@@ -38,6 +38,9 @@
                     <Link v-if="canViewCatalog" href="/catalog/masters" class="sf-button sf-button-primary">
                         Maestros de catálogo
                     </Link>
+                    <Link v-if="canViewInventory" href="/inventory" class="sf-button sf-button-primary">
+                        Inventario
+                    </Link>
                     <Link v-if="canManageUsers" href="/users" class="sf-button sf-button-primary">
                         Usuarios
                     </Link>
@@ -105,6 +108,7 @@ interface LicenseNotice {
 const props = defineProps<{
     user_name?: string;
     license_notice?: LicenseNotice | null;
+    can_view_inventory?: boolean;
 }>();
 
 const licenseNotice = computed(() => props.license_notice ?? null);
@@ -120,6 +124,10 @@ const canViewCatalog = computed(() => {
 });
 const canManageUsers = computed(() =>
     (page.props.auth?.permissions ?? []).includes('users.manage')
+);
+const canViewInventory = computed(() =>
+    props.can_view_inventory === true
+    || (page.props.auth?.permissions ?? []).includes('inventory.view')
 );
 const canManageBranches = computed(() =>
     (page.props.auth?.permissions ?? []).includes('settings.manage')
