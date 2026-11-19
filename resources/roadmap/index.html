@@ -34,11 +34,11 @@
 <h1 id="main-title">Del desarrollo a la primera venta</h1>
 <p>Esta es la ruta de StockFlash. Muestra qué está comprobado, qué estamos preparando y qué falta para tener un producto básico que podamos ofrecer comercialmente.</p>
 <div class="summary">
-<div class="metric"><div class="label">Dónde estamos</div><strong>R3 · Núcleo administrativo</strong><p>Acceso, catálogo, /setup e instalador técnico /install verificados en código y pruebas. Instalación real y producción no demo pendientes por recuperación de secretos.</p></div>
-<div class="metric"><div class="label">Versión comercializable</div><strong>Todavía no</strong><p>Faltan inventario, POS, licenciamiento y validación de lanzamiento.</p></div>
+<div class="metric"><div class="label">Dónde estamos</div><strong>R3 · Núcleo administrativo</strong><p>Acceso, catálogo, núcleo de inventario y consulta de existencias por sucursal, /setup e instalador técnico /install verificados en código y pruebas. Instalación real y producción no demo pendientes por recuperación de secretos.</p></div>
+<div class="metric"><div class="label">Versión comercializable</div><strong>Todavía no</strong><p>Faltan operaciones completas de Bodega (ajustes, traspasos y reservas), POS y validación de lanzamiento.</p></div>
 <div class="metric"><div class="label">Primer lanzamiento previsto</div><strong>R7 · POS + Bodega</strong><p>Sin DTE integrado; la documentación tributaria será externa.</p></div>
 </div>
-<p class="meta">Corte de información: 17 de noviembre de 2026 · Código de referencia: <code>13cdd6a</code> · Sin fechas comprometidas ni porcentajes de esfuerzo.</p>
+<p class="meta">Corte de información: 18 de noviembre de 2026 · Código funcional de referencia: <code>966b685</code> · Sin fechas comprometidas ni porcentajes de esfuerzo.</p>
 <div class="notice"><strong>Lo importante:</strong> ya funciona la base del sistema, pero una pantalla lista no significa que exista una venta completa. El primer producto vendible requiere terminar los flujos de negocio y validarlos de principio a fin.</div>
 </section>
 <section id="lanzamiento" aria-labelledby="launch-title">
@@ -53,11 +53,11 @@
 </div>
 <div class="grid">
 <div class="block"><span class="status partial">Parcial</span><h3>1. Núcleo y usuarios</h3><p>Acceso, sucursales, usuarios, asistente /setup e instalador /install verificados técnicamente. Faltan la ejecución real del instalador, recuperación de secretos BKP-08 y validaciones de predespliegue.</p></div>
-<div class="block"><span class="status partial">Parcial</span><h3>2. Catálogo e inventario</h3><p>Productos, variantes, códigos de barras y maestros del catálogo verificados técnicamente. Pendientes las existencias reales, kardex, ajustes, traspasos y pruebas de integración.</p></div>
+<div class="block"><span class="status partial">Parcial</span><h3>2. Catálogo e inventario</h3><p>Productos, variantes, códigos de barras y maestros del catálogo verificados técnicamente. El registro técnico de movimientos físicos, Kardex y consulta de existencias por sucursal están verificados en código. Pendientes carga inicial, ajustes, traspasos, reservas y pruebas reales de integración y concurrencia.</p></div>
 <div class="block"><span class="status todo">Pendiente</span><h3>3. Punto de venta</h3><p>Ventas, pagos combinados, caja, devoluciones y ventas en pausa por estación, conectadas al stock.</p></div>
 <div class="block"><span class="status todo">Pendiente</span><h3>4. Licencias y planes</h3><p>Control comercial de instalaciones, planes, suscripciones, demo y acceso según lo contratado.</p></div>
 <div class="block"><span class="status todo">Pendiente</span><h3>5. Piloto y salida segura</h3><p>Pruebas integrales, respaldos y restauración, privacidad, seguridad y uso real antes de comercializar.</p></div>
-<div class="block"><span class="status done">Ya disponible</span><h3>La base sobre la que construiremos</h3><p>Proyecto Laravel/Vue con CI, login, permisos, sucursales, usuarios, configuración, catálogo, /setup y código del instalador /install probados. Aún no es una aplicación vendible.</p></div>
+<div class="block"><span class="status done">Ya disponible</span><h3>La base sobre la que construiremos</h3><p>Proyecto Laravel/Vue con CI, login, permisos, sucursales, usuarios, configuración, catálogo, consulta de inventario, /setup y código del instalador /install probados. Aún no es una aplicación vendible.</p></div>
 </div>
 </section>
 <section id="hitos" aria-labelledby="timeline-title">
