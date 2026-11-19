@@ -1,7 +1,7 @@
 # Estado operativo — StockFlash
 
 ## Feature activa
-- **Ninguna feature pendiente de ejecución.** INVCORE-001 VERIFIED_TECH at code SHA `966b6850880106b2a672d48b89a780599b32aa3a`: 17/17 gates, independent QA APROBADO, 651 PHP tests/5985 assertions, exact-code-SHA CI 2/2 SUCCESS. Guide/roadmap editorial updated separately. Next feature follows approved inventory requirements via new SFH1 packet.
+- **INVWRITE-001 — APPROVED** (R4 Bodega). Manual initial stock + controlled adjustments using existing StockLedger and COREPIN-001. Packet: `docs/work/features/INVWRITE-001.md`. SFH1 issue to direct OpenCode; required gates, independent QA, AUTO_GIT and exact-SHA CI. CSV for INV-05 remains deferred to separate later feature. No remote DB/deploy.
 
 ## Estados por feature
 - BOOT-001: VERIFIED (2026-10-14), Laravel 13.35.0 + Vue 3/Inertia/TS; `bcbf16f`.
