@@ -56,6 +56,41 @@ class StockReconciliationTest extends InventoryTestCase
         $this->assertSame($before, $this->snapshot(), 'La reconciliación no debe modificar datos.');
     }
 
+    public function test_usa_orden_de_anexado_cuando_occurred_at_esta_retrodatado(): void
+    {
+        $branch = $this->makeBranch();
+        [, $variantId] = $this->makeProductVariant('REC-BACKDATED');
+
+        $first = $this->recordMovement($branch->id, $variantId, 'initial', '5.000', [
+            'occurred_at' => '2026-01-02 10:00:00',
+        ]);
+        $second = $this->recordMovement($branch->id, $variantId, 'adjustment', '3.000', [
+            'occurred_at' => '2026-01-01 09:00:00',
+        ]);
+
+        $this->assertGreaterThan($first->id, $second->id, 'El segundo movimiento debe anexarse después.');
+
+        $stock = DB::table('current_stock')
+            ->where('branch_id', $branch->id)
+            ->where('variant_id', $variantId)
+            ->first();
+
+        $this->assertQuantity('8.000', $stock->on_hand);
+        $this->assertQuantity('8.000', $second->balance_after);
+
+        $before = $this->snapshot();
+
+        $exit = Artisan::call('inventory:reconcile', ['--json' => true]);
+        $output = Artisan::output();
+        $payload = json_decode($output, true);
+
+        $this->assertSame(0, $exit, $output);
+        $this->assertSame('CLEAN', $payload['result']);
+        $this->assertCount(0, $payload['mismatches']);
+        $this->assertStringNotContainsString('balance_mismatch', $output);
+        $this->assertSame($before, $this->snapshot(), 'La reconciliación no debe modificar datos.');
+    }
+
     public function test_detecta_existencia_sin_movimientos(): void
     {
         $branch = $this->makeBranch();

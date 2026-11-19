@@ -12,8 +12,9 @@ use Illuminate\Support\Facades\Schema;
  * Reconciliación determinista y estrictamente de solo lectura (INV-02).
  *
  * Detecta:
- * - current_stock.on_hand distinto del balance_after del último movimiento
- *   (occurred_at, id),
+ * - current_stock.on_hand distinto del balance_after del último movimiento en
+ *   orden de anexado (`id`), porque `balance_after` se encadena en ese orden
+ *   y `occurred_at` es tiempo de negocio que puede estar retrodatado,
  * - filas con on_hand != 0 sin ningún movimiento,
  * - movimientos originales con más de una reversa,
  * - reserved distinto de la suma de reservas activas cuando
@@ -53,7 +54,6 @@ class ReconcileInventoryCommand extends Command
             $latest = DB::table('stock_movements')
                 ->where('branch_id', $row->branch_id)
                 ->where('variant_id', $row->variant_id)
-                ->orderByDesc('occurred_at')
                 ->orderByDesc('id')
                 ->first(['id', 'balance_after']);
 

@@ -8,6 +8,7 @@ GUIA_PENDIENTE_CHATGPT
 - Date: 2026-11-18
 - Packet: `docs/work/features/INVCORE-001.md` (APPROVED, ONE_SMALL_WAVE).
 - Base SHA: `d6940dcdd0b6a88ff02171d6f465c67854bc1214`.
+- Correction base SHA (SFH1 i=003): `78a5f0fc1f40aeb12547b5fb1529aa06a051d2a7` (INVCORE-001 first publication).
 - Scope: INV-01/INV-02/INV-03 (Part 1 §8.3, RN-19/RN-21; Part 2 §7.2/§7.4). Internal ledger only; no user-exposed stock adjustments, sales, transfers, counts or reservation lifecycle.
 
 ## Tables created (one new migration)
@@ -43,7 +44,7 @@ Laravel's SQLite grammar created `available` as a real virtual generated column 
 - `GET /inventory/stock/{branch}` → `inventory.stock.index`, middleware `can.permission:inventory.view` + `branch.access`; branch resolved by id/code server-side; 403 if missing/inactive/module disabled.
 - No write, adjustment, sale, transfer, count or reservation routes.
 - Permission used: `inventory.view` (already seeded). No new permission was invented.
-- Module enforcement: `installation_modules` has no `inventory` commercial row in the approved seed (`core/pos/bodega/...`). The gate uses an explicit `inventory` row when present; otherwise inventory is available when `pos` or `bodega` is enabled. Missing rows fail closed. Documented deviation from a literal `installation_modules.inventory` requirement, which the approved schema does not contain.
+- Module enforcement: the approved `installation_modules` seed writes commercial product codes (`core`, `pos`, `bodega`, `syncwp`, `fiscal`, `compras`, `analitica`, `control`) and does not create a commercial `inventory` row, while `App\Support\Modules\ModuleCatalog` does define the technical module code `inventory` (which owns the `inventory.*` permissions). The gate stays fail-closed: an explicit `inventory` row wins when present; otherwise inventory is available when `pos` or `bodega` is enabled; no known rows -> disabled.
 - Dashboard: `can_view_inventory` prop plus an “Inventario” link only for users who can exercise `inventory.view` in an accessible branch.
 
 ## Reconciliation command
@@ -51,7 +52,7 @@ Laravel's SQLite grammar created `available` as a real virtual generated column 
 `app/Console/Commands/ReconcileInventoryCommand.php` — `inventory:reconcile` (auto-discovered, verified in `php artisan list`).
 
 - Strictly read-only, deterministic text or `--json`, supports `--branch`, `--chunk` (1..5000) and `--limit`.
-- Detects `current_stock.on_hand` vs latest movement `balance_after` (latest by `occurred_at, id`), `on_hand != 0` without movements, duplicate reversals, and `reserved` vs active `stock_reservations` only when that table exists.
+- Detects `current_stock.on_hand` vs latest movement `balance_after` selected by append order only (`id DESC`), because `balance_after` is chained in append order while `occurred_at` is business time and may be backdated. Also detects `on_hand != 0` without movements, duplicate reversals, and `reserved` vs active `stock_reservations` only when that table exists.
 - When `stock_reservations` is absent it reports `reserved_check=deferred`; it never emits a false PASS.
 - Exit 0 clean, non-zero on mismatches. No INSERT/UPDATE/DELETE, no silent rewrite, no secrets/PII. Tests snapshot both tables before/after and prove repeatability.
 
@@ -62,11 +63,18 @@ Laravel's SQLite grammar created `available` as a real virtual generated column 
 
 ## Tests and checks (targeted only)
 
-- `php artisan test tests/Feature/Inventory` → **48 passed / 364 assertions**.
+- `php artisan test tests/Feature/Inventory` → **49 passed / 374 assertions** (SFH1 i=003 correction run).
 - `php artisan test tests/Feature/Catalog` (regression) → **116 passed / 1810 assertions**.
-- `npm run typecheck` → pass.
+- `npm run typecheck` → pass (pre-correction run; no frontend changed by this correction).
 - `php artisan list` → `inventory:reconcile` registered.
 - Full `php artisan test` and `scripts/sf_verify.py INVCORE-001` intentionally NOT run here; they belong to the orchestrator.
+- Regression coverage for the ordering fix: `test_usa_orden_de_anexado_cuando_occurred_at_esta_retrodatado` posts two movements where the higher `id` has the earlier `occurred_at`, asserts `current_stock.on_hand` equals that movement's `balance_after`, and asserts `inventory:reconcile` returns `CLEAN` without writing.
+
+## Review NIT disposition (SFH1 i=003)
+
+- Reconcile ordering: **FIXED** — latest movement is selected by append order only (`orderByDesc('id')`), so backdated `occurred_at` cannot produce a false `balance_mismatch`. Output schema, exit codes and read-only behavior are unchanged.
+- Module gate wording: **CLARIFIED** — no behavior change, still fail-closed. Documentation now states that the approved `installation_modules` seed writes commercial codes (`core`, `pos`, `bodega`, `syncwp`, `fiscal`, `compras`, `analitica`, `control`), that `ModuleCatalog` defines the technical `inventory` code, and that an explicit `inventory` row wins when present, otherwise `pos` or `bodega`.
+- Other previously reported LOW items remain accepted and out of this correction: dashboard link scope, branch-code RBAC for non-branch users, inactive variant listing.
 
 ## Concurrency statement (SQLite only)
 
