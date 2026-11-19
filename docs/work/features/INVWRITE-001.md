@@ -1,6 +1,6 @@
 # INVWRITE-001 — Manual initial stock and controlled adjustments
 
-status: APPROVED
+status: VERIFIED
 approval_basis: existing_approved_contract_owner_delegation_2026-11-16
 new_business_decisions: NONE
 publication_mode: AUTO_GIT
@@ -29,3 +29,14 @@ Next functional inventory wave after INVCORE-001 VERIFIED_TECH. Owner-approved P
 
 ## Hard guards
 Do NOT alter approved schemas except if a required structure is explicitly in Part 2 and not already implemented; no arbitrary migrations/triggers/dependencies. No CSV batch import in this feature (INV-05 CSV deferred), no transfers, counting, reservations, sales, POS, DTE, Woo, purchase receipts, cost valuation or priced margin recalculation. No remote DB operations, migration/seeding against real database, real installation, credentials/.env, cron, deployment, changing plans or broadening business decisions. Code work starts with one safe_git_pull.py SYNC_OK, no reset/stash/clean. Max 3 correction rounds, deterministic gates + independent QA + exact-SHA CI. ChatGPT alone records VERIFIED.
+
+## External technical closure — ChatGPT, 2026-11-19
+status: VERIFIED_TECH
+code_sha: `816fdc6cb2ab7f1757f648ce7d552c07256e3379`
+gates: 18/18 GATES_PASS
+qa: independent APROBADO; `docs/work/INVWRITE-001-REVIEW-20261119-1535.md`
+php: 710 tests / 6502 assertions
+ci_exact_code_sha: 2/2 SUCCESS (PHP/Node run 44589236116; contracts run 44589236165)
+external_review: authorization PIN + ledger atomicity, locked initial-history invariant, self-authorization aligned to COREPIN, no-PIN TOCTOU authorization fix.
+limits: MariaDB concurrency/lock order/deadlocks NOT_RUN; real browser UX NOT_RUN; remote DB UNTOUCHED; no deploy; CSV portion of INV-05 still NOT_IMPLEMENTED.
+editorial_docs: `public/docs/index.html#inventario-stock` and `resources/roadmap/index.html` updated by ChatGPT. Docs-only CI must also pass at eventual handoff HEAD.
