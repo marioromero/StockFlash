@@ -120,5 +120,51 @@ class EvidenceReuseTest(unittest.TestCase):
             ev.fingerprint("../bad", self.root)
 
 
+    def test_real_verifier_cli_runs_once_then_reuses_only_unchanged_candidate(self):
+        """Integration: real main() gates, but one synthetic runner with no PHP/Node."""
+        import contextlib
+        import io
+        import os
+        from unittest import mock
+        import sf_verify
+
+        executions = []
+        gate = {"id": "Z1-synthetic", "kind": "shell",
+                "cmd": ["python", "-c", "pass"], "timeout_s": 10, "mandatory": True}
+
+        def fake_shell(_cmd, _timeout):
+            executions.append("gate")
+            return {"cmd": "synthetic", "exit": 0, "ok": True,
+                    "elapsed_s": 0.001, "stdout": "", "stderr": ""}
+
+        def fake_report(_feature, _results, verdict, _guide, _roadmap):
+            self.report.write_text("Veredicto: " + verdict + "\n", encoding="utf-8")
+            return self.report
+
+        guide = {"label": "GUIA", "status": "GUIA_ACTUALIZADA"}
+        roadmap = {"label": "ROADMAP", "status": "ROADMAP_ACTUALIZADA"}
+        with (mock.patch.object(sf_verify, "ROOT", self.root),
+              mock.patch.dict(sf_verify.GATES_BY_PACKET, {self.feature: [gate]}),
+              mock.patch.object(sf_verify, "run_shell", side_effect=fake_shell),
+              mock.patch.object(sf_verify, "write_report", side_effect=fake_report),
+              mock.patch.object(sf_verify, "guide_handoff", return_value=guide),
+              mock.patch.object(sf_verify, "roadmap_handoff", return_value=roadmap),
+              mock.patch.dict(os.environ, {
+                  "SF_TIMELINE_TEST": "1",
+                  "SF_TIMELINE_DIR": str(self.root / "docs" / "work" / ".run"),
+              }),
+              mock.patch.object(sys, "argv", ["sf_verify.py", self.feature, "--reuse-evidence"])):
+            output = io.StringIO()
+            with contextlib.redirect_stdout(output):
+                self.assertEqual(sf_verify.main(), 0)
+                self.assertEqual(sf_verify.main(), 0)
+            self.assertEqual(len(executions), 1)
+            self.assertIn("REUSED_PREVIOUS_EXECUTION", output.getvalue())
+            (self.root / "src" / "a.php").write_text("changed\n", encoding="utf-8")
+            with contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(sf_verify.main(), 0)
+            self.assertEqual(len(executions), 2)
+
+
 if __name__ == "__main__":
     unittest.main()
