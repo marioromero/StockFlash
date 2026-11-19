@@ -227,6 +227,12 @@ Route::middleware(['auth', 'password.change', 'verify.session'])->group(function
         ->middleware(['can.permission:inventory.view', 'branch.access'])
         ->name('inventory.stock.index');
 
+    // INVKARDEX-001 · reporte Kardex de solo lectura. La sucursal sale de
+    // `{branch}` y `branch.access`; no se acepta `branch_id` de query.
+    Route::get('/inventory/stock/{branch}/kardex', [\App\Http\Controllers\Inventory\KardexController::class, 'index'])
+        ->middleware(['can.permission:inventory.view', 'branch.access'])
+        ->name('inventory.kardex.index');
+
     // INVWRITE-001 · escritura manual: solo carga inicial única y ajuste con
     // motivo. La sucursal sale de `{branch}` y `branch.access`; el resto del
     // contexto se resuelve en servidor.

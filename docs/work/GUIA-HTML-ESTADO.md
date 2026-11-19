@@ -11,11 +11,11 @@ guide_status: INTEGRADA_EN_MAIN (2026-11-16)
 guide_content_last_written: 2026-11-19
 covered_features: AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED; ROADMAP-001 VERIFIED; USERS-001 VERIFIED; CFG-001/002/003 VERIFIED; CORELIC-001 VERIFIED; CATMAST-001 VERIFIED (9279d57); SETUP-001 VERIFIED (13cdd6a); INVCORE-001 VERIFIED (966b685); INVWRITE-001 VERIFIED_TECH (816fdc6; guía integrada)
 latest_covered_code_sha: `816fdc6cb2ab7f1757f648ce7d552c07256e3379` (INVWRITE-001 and prior user-visible features; not a deployment claim)
-next_feature: INVKARDEX-001 — Reporte Kardex filtrado por sucursal, variante y fechas (aún no implementado). INSTALL-001 — Instalador web CORE-17 (documentación editorial por reconciliar)
+next_feature: INVKARDEX-001 — Reporte Kardex filtrado por sucursal, variante y fechas (implementado en código/pruebas; guía aún no redactada). INSTALL-001 — Instalador web CORE-17 (documentación editorial por reconciliar)
 internal_only_features: CATDB-001 VERIFIED (11 tablas internas, sin UI ni página nueva); CORESEQ-001 VERIFIED (servicio interno invisible; sin entrada nueva en guía); COREMOD-001 VERIFIED técnico (servicio interno invisible de módulos; sin página nueva); COREPIN-001 VERIFIED (servicio interno invisible de autorización PIN; sin página nueva)
 last_guide_integration_sha: `d43d45b82a6af82bf36db9d6929b9f0ad5f5ea39` (ChatGPT, guía INVCORE-001 + INVWRITE-001)
 last_guide_integration_date: 2026-11-19
-pending_docs: GUIA_PENDIENTE_CHATGPT — INSTALL-001 (reconciliación editorial de instalador técnico CORE-17, fuera del alcance INVWRITE-001); INVCORE-001 e INVWRITE-001 integrados por ChatGPT el 2026-11-19
+pending_docs: GUIA_PENDIENTE_CHATGPT — INSTALL-001 (reconciliación editorial de instalador técnico CORE-17, fuera del alcance INVWRITE-001); GUIA_PENDIENTE_CHATGPT — INVKARDEX-001 (reporte Kardex por sucursal, variante y fechas; guía no redactada); INVCORE-001 e INVWRITE-001 integrados por ChatGPT el 2026-11-19
 
 ## Cómo mantener este archivo
 - OpenCode puede actualizar solamente los metadatos y el registro de pendientes aquí, no los textos para usuarios en `public/docs/index.html`.
@@ -108,4 +108,12 @@ pending_docs: GUIA_PENDIENTE_CHATGPT — INSTALL-001 (reconciliación editorial 
 - contenido a redactar por ChatGPT: diferencia entre carga inicial única y ajuste con motivo; existencia/reservado/disponible antes de enviar; cantidades decimales con signo en ajustes; motivo activo del ámbito `stock_adjustment` y nota obligatoria cuando el motivo la exige; umbral `stock_adjust_pin_value_threshold` (0 desactiva) evaluado sobre el valor a costo vigente, con autorizador distinto y PIN solo por encima del umbral; estados de permiso, módulo deshabilitado y licencia solo lectura; aclarar que el stock reservado no cambia con estas acciones, que no hay importación CSV en esta ola y que no se emiten documentos tributarios ni ventas.
 - fecha: 2026-11-19.
 - estado: implementado en código/pruebas SQLite :memory:; guía NO redactada todavía; `maria=NOT_RUN` y `remote_db=UNTOUCHED`.
+- OpenCode no edita `public/docs/index.html`; este registro es solo metadato técnico.
+
+## GUIA_PENDIENTE_CHATGPT - INVKARDEX-001
+- feature: INVKARDEX-001 - Reporte Kardex físico por sucursal, variante y fechas (INV-08 P0; RN-19/RN-21).
+- pantalla: `/inventory/stock/{branch}/kardex` (enlace «Ver Kardex» desde la pantalla de inventario de la sucursal, con `inventory.view`).
+- contenido a redactar por ChatGPT: lectura de movimientos físicos por sucursal con fecha/hora, tipo es-CL, cantidad con signo y saldo registrado; filtros por SKU/producto, variante y rango de fechas inclusivo; orden por ID de anexado y aclaración de que el saldo no se recalcula por fecha; reversas visibles con el movimiento corregido; estado vacío, paginación por cursor, licencia solo lectura que no bloquea la consulta; aclarar que no se muestran costos, precios, márgenes, usuarios, PIN ni PII, y que no hay CSV, edición ni borrado en esta ola.
+- fecha: 2026-11-19.
+- estado: implementado en código/pruebas SQLite :memory:; guía NO redactada todavía; `maria=NOT_RUN` y `remote_db=UNTOUCHED`; no VERIFIED.
 - OpenCode no edita `public/docs/index.html`; este registro es solo metadato técnico.

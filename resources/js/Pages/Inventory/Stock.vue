@@ -20,9 +20,17 @@
                         con motivo; el sistema valida permisos, licencia y autorización en el servidor.
                     </p>
                 </div>
-                <p class="sf-branch" aria-live="polite">
-                    Sucursal: <strong>{{ branch.name }}</strong> <span class="sf-text-muted">({{ branch.code }})</span>
-                </p>
+                <div class="sf-titlebar-side">
+                    <p class="sf-branch" aria-live="polite">
+                        Sucursal: <strong>{{ branch.name }}</strong> <span class="sf-text-muted">({{ branch.code }})</span>
+                    </p>
+                    <Link
+                        :href="`/inventory/stock/${branch.id}/kardex`"
+                        class="sf-button sf-button-secondary"
+                    >
+                        Ver Kardex
+                    </Link>
+                </div>
             </div>
 
             <div v-if="flash.success" class="sf-message sf-success" role="status">{{ flash.success }}</div>
@@ -569,6 +577,13 @@ function submit(): void {
     color: #1f2937;
 }
 
+.sf-titlebar-side {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
+}
+
 .sf-card {
     background: #ffffff;
     padding: 1.5rem;
@@ -861,6 +876,10 @@ textarea.sf-input {
 
     .sf-main {
         padding: 1rem;
+    }
+
+    .sf-titlebar-side {
+        align-items: flex-start;
     }
 
     .sf-card {
