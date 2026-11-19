@@ -35,6 +35,7 @@ final class StockWriteService
         private readonly StockLedger $ledger,
         private readonly InventoryWriteGuard $guard,
         private readonly PinAuthorizationService $pin,
+        private readonly StockAdjustmentPinPolicy $pinPolicy,
     ) {}
 
     public function loadInitial(
@@ -78,6 +79,22 @@ final class StockWriteService
         }
     }
 
+    /**
+     * Ajuste manual. Nunca decide el PIN con una lectura preliminar: la
+     * decisión autoritativa la toma `StockAdjustmentPinPolicy` dentro de la
+     * transacción y bajo los locks de licencia/variante/configuración. Un
+     * cambio de costo o umbral entre una eventual vista previa y el commit no
+     * puede habilitar una escritura sin el PIN que la configuración vigente
+     * exige.
+     *
+     * Orden de locks:
+     * - sin PIN: licencia -> variante/producto -> system_configs -> stock;
+     * - con PIN: usuarios/sucursal/roles (COREPIN) -> licencia ->
+     *   variante/producto -> system_configs -> stock.
+     *
+     * El orden de locks en MariaDB y sus deadlocks potenciales quedan NOT_RUN
+     * en esta ola: las pruebas usan SQLite, donde `lockForUpdate()` es no-op.
+     */
     public function adjust(
         int $branchId,
         int $variantId,
@@ -89,7 +106,7 @@ final class StockWriteService
         ?int $authorizerId,
         ?string $pin,
     ): StockMovement {
-        $variant = $this->eligibleVariant($variantId);
+        $this->eligibleVariant($variantId);
         $scaledQuantity = $this->signedQuantity($quantity);
         $reasonId = $this->positiveIdentifier($reasonCodeId, 'reason_code_id', 'El motivo es obligatorio.');
         $normalizedNote = $this->assertReason($reasonId, $note);
@@ -101,9 +118,6 @@ final class StockWriteService
                 'Este ajuste ya fue registrado con el mismo token; no se duplicó el movimiento.',
             );
         }
-
-        [$onHand, $resulting] = $this->balancePreview($branchId, $variantId, $scaledQuantity);
-        $unitCost = $this->unitCostBasis($variant);
 
         $movementPayload = [
             'branch_id' => $branchId,
@@ -118,13 +132,20 @@ final class StockWriteService
             'note' => $normalizedNote,
         ];
 
-        if ($this->requiresPin($scaledQuantity, $unitCost)) {
+        $pinSupplied = $authorizerId !== null
+            && $authorizerId > 0
+            && $pin !== null
+            && trim($pin) !== '';
+
+        if ($pinSupplied) {
             if ($this->guard->isReadOnly()) {
                 throw new StockWriteException(
                     'read_only',
                     'La licencia está suspendida fuera del período de gracia; el inventario está en modo solo lectura.',
                 );
             }
+
+            [$onHand, $resulting] = $this->balancePreview($branchId, $variantId, $scaledQuantity);
 
             /** @var StockMovement|null $approvedMovement */
             $approvedMovement = null;
@@ -137,21 +158,17 @@ final class StockWriteService
                 InventoryDecimal::formatQuantity($onHand),
                 InventoryDecimal::formatQuantity($resulting),
                 $normalizedNote,
-                function () use (&$approvedMovement, $movementPayload, $scaledQuantity, $branchId, $variantId): array {
-                    // Revalidación bajo la transacción de autorización: la
-                    // elegibilidad, el costo vigente y el umbral pudieron
-                    // cambiar entre la vista previa y este punto.
-                    $lockedVariant = $this->eligibleVariant($variantId, true);
-                    [$lockedThreshold, $lockedCostMethod] = $this->lockedStockConfigs();
-                    $lockedUnitCost = $this->costBasisFor($lockedVariant, $lockedCostMethod);
+                function () use (&$approvedMovement, $movementPayload, $scaledQuantity, $variantId): array {
+                    // Dentro de la transacción de autorización: primero se
+                    // adquiere el lock de licencia y luego la política relee y
+                    // bloquea variante/producto/configuración para decidir con
+                    // los valores que se confirmarán.
+                    $this->guard->assertWritable();
+                    $this->pinPolicy->requiresPinUnderLock($variantId, $scaledQuantity);
 
-                    if (! $this->valueRequiresPin($scaledQuantity, $lockedUnitCost, $lockedThreshold)) {
-                        throw new StockWriteException(
-                            'adjustment',
-                            'El valor ya no requiere PIN; vuelva a intentar sin autorización.',
-                        );
-                    }
-
+                    // La decisión puede ser `false` si el costo/umbral cambió
+                    // a la baja: no se rechaza una autorización ya suministrada
+                    // y válida por una prevalidación obsoleta.
                     try {
                         $approvedMovement = $this->ledger->recordMovement($movementPayload);
                     } catch (DuplicateStockMovementException) {
@@ -184,14 +201,30 @@ final class StockWriteService
         }
 
         try {
-            return $this->ledger->recordMovement($movementPayload);
+            return DB::transaction(function () use ($movementPayload, $variantId, $scaledQuantity): StockMovement {
+                // Primero el lock de licencia; después la política bloquea
+                // variante/producto/configuración y decide con los valores que
+                // la escritura confirmará en esta misma transacción.
+                $this->guard->assertWritable();
+
+                if ($this->pinPolicy->requiresPinUnderLock($variantId, $scaledQuantity)) {
+                    throw new StockWriteException(
+                        'pin',
+                        'Este ajuste ahora requiere autorización con PIN; vuelva a intentar con autorizador y PIN.',
+                    );
+                }
+
+                try {
+                    return $this->ledger->recordMovement($movementPayload);
+                } catch (InvalidArgumentException $exception) {
+                    throw new StockWriteException('quantity', $exception->getMessage());
+                }
+            });
         } catch (DuplicateStockMovementException) {
             throw new StockWriteException(
                 'request_token',
                 'Este ajuste ya fue registrado con el mismo token; no se duplicó el movimiento.',
             );
-        } catch (InvalidArgumentException $exception) {
-            throw new StockWriteException('quantity', $exception->getMessage());
         }
     }
 
@@ -313,9 +346,14 @@ final class StockWriteService
         return $sourceId;
     }
 
-    private function eligibleVariant(int $variantId, bool $lock = false): object
+    /**
+     * Elegibilidad temprana (sin lock) para rechazo rápido. La revalidación
+     * autoritativa bajo lock la realiza `StockAdjustmentPinPolicy` dentro de la
+     * transacción de escritura.
+     */
+    private function eligibleVariant(int $variantId): object
     {
-        $query = DB::table('product_variants as pv')
+        $variant = DB::table('product_variants as pv')
             ->join('products as p', 'p.id', '=', 'pv.product_id')
             ->where('pv.id', $variantId)
             ->whereNull('pv.deleted_at')
@@ -323,16 +361,8 @@ final class StockWriteService
             ->where('pv.is_active', 1)
             ->where('p.is_active', 1)
             ->where('p.tracks_stock', 1)
-            ->whereIn('p.type', ['simple', 'variable']);
-
-        // En MariaDB/InnoDB bloquea la fila de variante (y producto) para que
-        // costo/elegibilidad no cambien dentro de la autorización. En SQLite
-        // `lockForUpdate()` es no-op y la transacción de prueba serializa.
-        if ($lock) {
-            $query->lockForUpdate();
-        }
-
-        $variant = $query->first(['pv.id', 'pv.cost_price', 'pv.last_cost']);
+            ->whereIn('p.type', ['simple', 'variable'])
+            ->first(['pv.id']);
 
         if ($variant === null) {
             throw new StockWriteException(
@@ -435,105 +465,6 @@ final class StockWriteService
         }
 
         return [$onHand, $resulting];
-    }
-
-    private function unitCostBasis(object $variant): int
-    {
-        $method = DB::table('system_configs')
-            ->where('config_key', 'cost_method')
-            ->value('config_value');
-
-        return $this->costBasisFor($variant, is_string($method) ? $method : null);
-    }
-
-    private function costBasisFor(object $variant, ?string $method): int
-    {
-        $raw = ($method === 'last' && $variant->last_cost !== null)
-            ? $variant->last_cost
-            : $variant->cost_price;
-
-        return $raw === null ? 0 : (InventoryDecimal::costFromStorage($raw) ?? 0);
-    }
-
-    /**
-     * Relee umbral y método de costo bajo lock, en orden determinista
-     * (`config_key` ascendente) para no competir con otros writers.
-     *
-     * @return array{0: ?string, 1: ?string} Umbral normalizado y `cost_method`.
-     */
-    private function lockedStockConfigs(): array
-    {
-        $values = DB::table('system_configs')
-            ->whereIn('config_key', ['cost_method', 'stock_adjust_pin_value_threshold'])
-            ->orderBy('config_key')
-            ->lockForUpdate()
-            ->pluck('config_value', 'config_key')
-            ->all();
-
-        $method = $values['cost_method'] ?? null;
-        $method = is_string($method) ? trim($method) : null;
-
-        return [
-            $this->normalizeThreshold($values['stock_adjust_pin_value_threshold'] ?? null),
-            $method === '' ? null : $method,
-        ];
-    }
-
-    private function requiresPin(int $scaledQuantity, int $unitCost): bool
-    {
-        return $this->valueRequiresPin($scaledQuantity, $unitCost, $this->thresholdValue());
-    }
-
-    private function valueRequiresPin(int $scaledQuantity, int $unitCost, ?string $threshold): bool
-    {
-        if ($threshold === null) {
-            return false;
-        }
-
-        try {
-            return InventoryDecimal::compareProductToThreshold(abs($scaledQuantity), $unitCost, $threshold) > 0;
-        } catch (InvalidArgumentException) {
-            throw new StockWriteException(
-                'adjustment',
-                'La configuración del umbral de autorización no es válida; contacte al administrador.',
-            );
-        }
-    }
-
-    private function thresholdValue(): ?string
-    {
-        return $this->normalizeThreshold(
-            DB::table('system_configs')
-                ->where('config_key', 'stock_adjust_pin_value_threshold')
-                ->value('config_value'),
-        );
-    }
-
-    /**
-     * Umbral ausente, vacío o cero (incluido `0.0000000`) desactiva el PIN.
-     */
-    private function normalizeThreshold(mixed $value): ?string
-    {
-        if ($value === null) {
-            return null;
-        }
-
-        $value = trim((string) $value);
-
-        if ($value === '') {
-            return null;
-        }
-
-        try {
-            $isZero = InventoryDecimal::compareProductToThreshold(0, 0, $value) === 0;
-        } catch (InvalidArgumentException) {
-            throw new StockWriteException(
-                'adjustment',
-                'La configuración del umbral de autorización no es válida; contacte al administrador.',
-            );
-        }
-
-        return $isZero ? null : $value;
     }
 
     /**

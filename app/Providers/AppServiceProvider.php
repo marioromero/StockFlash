@@ -12,6 +12,8 @@ use App\Support\Install\Contracts\InstallSecretWriter;
 use App\Support\Install\DefaultInstallPreflightChecker;
 use App\Support\Install\PdoInstallConnectionTester;
 use App\Support\Install\RuntimeDatabaseConfigurator;
+use App\Support\Inventory\DatabaseStockAdjustmentPinPolicy;
+use App\Support\Inventory\StockAdjustmentPinPolicy;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -29,6 +31,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(InstallMigrator::class, ArtisanInstallMigrator::class);
         $this->app->singleton(InstallSecretWriter::class, AtomicEnvSecretWriter::class);
         $this->app->singleton(InstallDatabaseConfigurator::class, RuntimeDatabaseConfigurator::class);
+
+        // INVWRITE-001: decisión autoritativa de PIN bajo locks de inventario.
+        // Las pruebas pueden sustituir la instancia para forzar la decisión.
+        $this->app->bind(StockAdjustmentPinPolicy::class, DatabaseStockAdjustmentPinPolicy::class);
 
         // Tienda de instalación disponible también fuera del middleware (por
         // ejemplo, servicio invocado directamente en pruebas o CLI).

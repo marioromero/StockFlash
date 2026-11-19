@@ -3,6 +3,8 @@
 namespace Tests\Feature\Inventory;
 
 use App\Support\AuditLogger;
+use App\Support\Inventory\StockAdjustmentPinPolicy;
+use App\Support\Inventory\StockWriteException;
 use Illuminate\Database\Events\TransactionBeginning;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -51,7 +53,7 @@ class StockWritePinAuthorizationTest extends InventoryWriteTestCase
             'quantity' => '1.000',
             'reason_code_id' => $reason->id,
             'request_token' => $this->token(),
-        ])->assertSessionHasErrors('authorizer_id');
+        ])->assertSessionHasErrors('pin');
 
         $this->actingAs($this->admin)->post($this->adjustmentUrl($branch), [
             'variant_id' => $variantId,
@@ -265,7 +267,7 @@ class StockWritePinAuthorizationTest extends InventoryWriteTestCase
         );
     }
 
-    public function test_umbral_reevaluado_bajo_la_transaccion_falla_sin_ao_ni_movimiento(): void
+    public function test_umbral_que_cambia_bajo_la_transaccion_no_rechaza_el_pin_ya_suministrado(): void
     {
         $branch = $this->makeBranch();
         [, $variantId] = $this->makeProductVariant('PIN-004D');
@@ -274,9 +276,10 @@ class StockWritePinAuthorizationTest extends InventoryWriteTestCase
         $authorizer = $this->makeAuthorizer('supervisor', '4321');
         $this->setThreshold('499.999');
 
-        // Interleave de concurrencia: cuando la autorización ya superó la
-        // prevalidación y abre su transacción, otro actor sube el umbral. La
-        // revalidación bajo lock debe fallar cerrado.
+        // Interleave de concurrencia: al abrirse la transacción de
+        // autorización otro actor sube el umbral. La política autoritativa
+        // devuelve `false`, pero como ya se suministraron autorizador + PIN
+        // válidos no se rechaza la operación por una prevalidación obsoleta.
         $changed = false;
 
         Event::listen(TransactionBeginning::class, function () use (&$changed): void {
@@ -296,16 +299,221 @@ class StockWritePinAuthorizationTest extends InventoryWriteTestCase
                 'request_token' => $this->token(),
                 'authorizer_id' => $authorizer->id,
                 'pin' => '4321',
-            ])->assertSessionHasErrors('adjustment');
+            ])->assertSessionHasNoErrors();
         } finally {
             Event::forget(TransactionBeginning::class);
         }
 
         $this->assertTrue($changed);
+        $this->assertSame(1, DB::table('authorization_overrides')->count());
+        $this->assertSame(1, $this->movementCount($branch->id, $variantId));
+        $this->assertQuantity(
+            '2.000',
+            DB::table('current_stock')->where('branch_id', $branch->id)->where('variant_id', $variantId)->value('on_hand'),
+        );
+    }
+
+    public function test_decision_autoritativa_pin_sin_pin_falla_cerrado_si_cambia_el_umbral(): void
+    {
+        $branch = $this->makeBranch();
+        [, $variantId] = $this->makeProductVariant('PIN-TOCTOU-T');
+        $this->createStockRow($branch->id, $variantId, '2.000');
+        $reason = $this->reason('dano');
+
+        // Decisión preliminar obsoleta: el umbral está desactivado.
+        $this->setThreshold('0');
+
+        // Cambio privilegiado entre la eventual decisión preliminar y el
+        // commit: la política autoritativa ya exige PIN.
+        $this->bindPinPolicy(true, function (): void {
+            $this->setThreshold('1');
+        });
+
+        $this->actingAs($this->admin)->post($this->adjustmentUrl($branch), [
+            'variant_id' => $variantId,
+            'quantity' => '1.000',
+            'reason_code_id' => $reason->id,
+            'request_token' => $this->token(),
+        ])->assertSessionHasErrors('pin');
+
+        $this->assertSame(0, $this->movementCount($branch->id, $variantId));
+        $this->assertSame(0, DB::table('authorization_overrides')->count());
+        $this->assertSame(0, DB::table('audit_logs')
+            ->where('event', 'inventory.movement_recorded')
+            ->count());
+        $this->assertQuantity(
+            '2.000',
+            DB::table('current_stock')->where('branch_id', $branch->id)->where('variant_id', $variantId)->value('on_hand'),
+        );
+    }
+
+    public function test_decision_autoritativa_pin_sin_pin_falla_cerrado_si_cambia_el_costo(): void
+    {
+        $branch = $this->makeBranch();
+        [, $variantId] = $this->makeProductVariant('PIN-TOCTOU-C');
+        $this->createStockRow($branch->id, $variantId, '2.000');
+        $reason = $this->reason('dano');
+        $this->updateVariantCosts($variantId, '1.0000');
+        $this->setThreshold('100');
+
+        // El costo vigente cambia a uno que supera el umbral antes del commit.
+        $this->bindPinPolicy(true, function () use ($variantId): void {
+            $this->updateVariantCosts($variantId, '5000.0000');
+        });
+
+        $this->actingAs($this->admin)->post($this->adjustmentUrl($branch), [
+            'variant_id' => $variantId,
+            'quantity' => '1.000',
+            'reason_code_id' => $reason->id,
+            'request_token' => $this->token(),
+        ])->assertSessionHasErrors('pin');
+
+        $this->assertSame(0, $this->movementCount($branch->id, $variantId));
+        $this->assertSame(0, DB::table('authorization_overrides')->count());
+        $this->assertQuantity(
+            '2.000',
+            DB::table('current_stock')->where('branch_id', $branch->id)->where('variant_id', $variantId)->value('on_hand'),
+        );
+    }
+
+    public function test_decision_autoritativa_sin_pin_permite_escribir_si_ya_no_requiere_pin(): void
+    {
+        $branch = $this->makeBranch();
+        [, $variantId] = $this->makeProductVariant('PIN-TOCTOU-F');
+        $this->createStockRow($branch->id, $variantId, '1.000');
+        $reason = $this->reason('dano');
+        $this->updateVariantCosts($variantId, '500.0000');
+        $this->setThreshold('1');
+
+        // La configuración real sí exigiría PIN en este momento.
+        $this->assertTrue(DB::transaction(
+            fn (): bool => app(StockAdjustmentPinPolicy::class)
+                ->requiresPinUnderLock($variantId, 1000),
+        ));
+
+        // La decisión autoritativa real ya no lo exige (cambio a la baja).
+        $this->bindPinPolicy(false);
+
+        $this->actingAs($this->admin)->post($this->adjustmentUrl($branch), [
+            'variant_id' => $variantId,
+            'quantity' => '1.000',
+            'reason_code_id' => $reason->id,
+            'request_token' => $this->token(),
+        ])->assertSessionHasNoErrors();
+
+        $this->assertSame(1, $this->movementCount($branch->id, $variantId));
+        $this->assertSame(0, DB::table('authorization_overrides')->count());
+        $this->assertQuantity(
+            '2.000',
+            DB::table('current_stock')->where('branch_id', $branch->id)->where('variant_id', $variantId)->value('on_hand'),
+        );
+    }
+
+    public function test_decision_autoritativa_pin_con_autorizador_y_pin_autoriza_atomicamente(): void
+    {
+        $branch = $this->makeBranch();
+        [, $variantId] = $this->makeProductVariant('PIN-TOCTOU-A');
+        $this->createStockRow($branch->id, $variantId, '2.000');
+        $reason = $this->reason('dano');
+        $authorizer = $this->makeAuthorizer('supervisor', '4321');
+        $this->setThreshold('0');
+
+        // La política autoritativa exige PIN aunque la configuración real no lo
+        // haría: la autorización suministrada sigue siendo obligatoria.
+        $this->bindPinPolicy(true);
+
+        $this->actingAs($this->admin)->post($this->adjustmentUrl($branch), [
+            'variant_id' => $variantId,
+            'quantity' => '-1.000',
+            'reason_code_id' => $reason->id,
+            'request_token' => $this->token(),
+            'authorizer_id' => $authorizer->id,
+            'pin' => '4321',
+        ])->assertSessionHasNoErrors();
+
+        $this->assertSame(1, DB::table('authorization_overrides')->count());
+        $this->assertSame(1, $this->movementCount($branch->id, $variantId));
+        $this->assertQuantity(
+            '1.000',
+            DB::table('current_stock')->where('branch_id', $branch->id)->where('variant_id', $variantId)->value('on_hand'),
+        );
+    }
+
+    public function test_decision_autoritativa_sin_pin_no_rechaza_autorizacion_ya_suministrada(): void
+    {
+        $branch = $this->makeBranch();
+        [, $variantId] = $this->makeProductVariant('PIN-TOCTOU-B');
+        $this->createStockRow($branch->id, $variantId, '2.000');
+        $reason = $this->reason('dano');
+        $authorizer = $this->makeAuthorizer('supervisor', '4321');
+        $this->setThreshold('1');
+
+        // La decisión autoritativa da `false`; el autorizador/PIN ya
+        // suministrados y válidos se conservan sin rechazo obsoleto.
+        $this->bindPinPolicy(false);
+
+        $this->actingAs($this->admin)->post($this->adjustmentUrl($branch), [
+            'variant_id' => $variantId,
+            'quantity' => '-1.000',
+            'reason_code_id' => $reason->id,
+            'request_token' => $this->token(),
+            'authorizer_id' => $authorizer->id,
+            'pin' => '4321',
+        ])->assertSessionHasNoErrors();
+
+        $this->assertSame(1, DB::table('authorization_overrides')->count());
+        $this->assertSame(1, $this->movementCount($branch->id, $variantId));
+    }
+
+    public function test_politica_inelegible_con_pin_no_crea_ao_ni_movimiento(): void
+    {
+        $branch = $this->makeBranch();
+        [, $variantId] = $this->makeProductVariant('PIN-TOCTOU-NO');
+        $this->createStockRow($branch->id, $variantId, '2.000');
+        $reason = $this->reason('dano');
+        $authorizer = $this->makeAuthorizer('supervisor', '4321');
+        $this->setThreshold('1');
+
+        $this->bindPinPolicy(true, null, true);
+
+        $this->actingAs($this->admin)->post($this->adjustmentUrl($branch), [
+            'variant_id' => $variantId,
+            'quantity' => '-1.000',
+            'reason_code_id' => $reason->id,
+            'request_token' => $this->token(),
+            'authorizer_id' => $authorizer->id,
+            'pin' => '4321',
+        ])->assertSessionHasErrors('variant_id');
+
         $this->assertSame(0, DB::table('authorization_overrides')->count());
         $this->assertSame(0, $this->movementCount($branch->id, $variantId));
         $this->assertQuantity(
-            '1.000',
+            '2.000',
+            DB::table('current_stock')->where('branch_id', $branch->id)->where('variant_id', $variantId)->value('on_hand'),
+        );
+    }
+
+    public function test_politica_inelegible_sin_pin_no_mueve_stock(): void
+    {
+        $branch = $this->makeBranch();
+        [, $variantId] = $this->makeProductVariant('PIN-TOCTOU-NB');
+        $this->createStockRow($branch->id, $variantId, '2.000');
+        $reason = $this->reason('dano');
+        $this->setThreshold('0');
+
+        $this->bindPinPolicy(false, null, true);
+
+        $this->actingAs($this->admin)->post($this->adjustmentUrl($branch), [
+            'variant_id' => $variantId,
+            'quantity' => '-1.000',
+            'reason_code_id' => $reason->id,
+            'request_token' => $this->token(),
+        ])->assertSessionHasErrors('variant_id');
+
+        $this->assertSame(0, $this->movementCount($branch->id, $variantId));
+        $this->assertSame(0, DB::table('authorization_overrides')->count());
+        $this->assertQuantity(
+            '2.000',
             DB::table('current_stock')->where('branch_id', $branch->id)->where('variant_id', $variantId)->value('on_hand'),
         );
     }
@@ -434,7 +642,7 @@ class StockWritePinAuthorizationTest extends InventoryWriteTestCase
             'quantity' => '1.000',
             'reason_code_id' => $reason->id,
             'request_token' => $this->token(),
-        ])->assertSessionHasErrors('authorizer_id');
+        ])->assertSessionHasErrors('pin');
 
         $this->assertSame(1, $this->movementCount($branch->id, $variantId));
     }
@@ -581,5 +789,40 @@ class StockWritePinAuthorizationTest extends InventoryWriteTestCase
             'reason_code_id' => $this->reason('dano')->id,
             'request_token' => $this->token(),
         ])->assertForbidden();
+    }
+
+    /**
+     * Sustituye la política autoritativa por un doble que no depende de la
+     * configuración real. `$duringCheck` simula un cambio privilegiado entre
+     * una eventual decisión preliminar y el commit.
+     *
+     * @param  (callable(int, int): void)|null  $duringCheck
+     */
+    private function bindPinPolicy(
+        ?bool $requiresPin,
+        ?callable $duringCheck = null,
+        bool $unavailable = false,
+    ): void {
+        $this->app->instance(StockAdjustmentPinPolicy::class, new class($requiresPin, $duringCheck, $unavailable) implements StockAdjustmentPinPolicy
+        {
+            public function __construct(
+                private readonly ?bool $requiresPin,
+                private $duringCheck,
+                private readonly bool $unavailable,
+            ) {}
+
+            public function requiresPinUnderLock(int $variantId, int $scaledQuantity): bool
+            {
+                if ($this->duringCheck !== null) {
+                    ($this->duringCheck)($variantId, $scaledQuantity);
+                }
+
+                if ($this->unavailable) {
+                    throw new StockWriteException('variant_id', 'La variante no está disponible para ajuste.');
+                }
+
+                return $this->requiresPin ?? false;
+            }
+        });
     }
 }
