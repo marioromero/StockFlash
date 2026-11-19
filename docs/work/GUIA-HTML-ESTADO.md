@@ -9,13 +9,13 @@ guide_branch: `docs/guia-usuario-interactiva-20261110`
 guide_pr: https://github.com/marioromero/StockFlash/pull/2
 guide_status: INTEGRADA_EN_MAIN (2026-11-16)
 guide_content_last_written: 2026-11-17
-covered_features: AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED; ROADMAP-001 VERIFIED; USERS-001 VERIFIED; CFG-001/002/003 VERIFIED; CORELIC-001 VERIFIED; CATMAST-001 VERIFIED (9279d57); SETUP-001 VERIFIED (13cdd6a)
-latest_covered_code_sha: `13cdd6a6f1ae3a986884e8079f81fb34d5f259e4` (SETUP-001 y anteriores)
-next_feature: INVCORE-001 — Inventario por sucursal (INV-01/02/03; guía pendiente de redacción). INSTALL-001 — Instalador web CORE-17 (una instalación; guía pendiente de redacción)
+covered_features: AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED; ROADMAP-001 VERIFIED; USERS-001 VERIFIED; CFG-001/002/003 VERIFIED; CORELIC-001 VERIFIED; CATMAST-001 VERIFIED (9279d57); SETUP-001 VERIFIED (13cdd6a); INVCORE-001 VERIFIED (966b685; guía aún pendiente)
+latest_covered_code_sha: `13cdd6a6f1ae3a986884e8079f81fb34d5f259e4` (contenido de guía SETUP-001 y anteriores; INVCORE-001/INVWRITE-001 aún sin redacción)
+next_feature: INVWRITE-001 — Carga inicial y ajustes manuales de inventario (INV-04/INV-05 manual; guía pendiente de redacción). INSTALL-001 — Instalador web CORE-17 (una instalación; guía pendiente de redacción)
 internal_only_features: CATDB-001 VERIFIED (11 tablas internas, sin UI ni página nueva); CORESEQ-001 VERIFIED (servicio interno invisible; sin entrada nueva en guía); COREMOD-001 VERIFIED técnico (servicio interno invisible de módulos; sin página nueva); COREPIN-001 VERIFIED (servicio interno invisible de autorización PIN; sin página nueva)
 last_guide_integration_sha: `e09069c1179bc400495a6bb896fd557913b32ce4` (ChatGPT, guía SETUP-001)
 last_guide_integration_date: 2026-11-17
-pending_docs: GUIA_PENDIENTE_CHATGPT — INVCORE-001 (pantalla de inventario por sucursal; redacción pendiente); GUIA_PENDIENTE_CHATGPT — INSTALL-001 (instalador técnico CORE-17; pendiente de redacción)
+pending_docs: GUIA_PENDIENTE_CHATGPT — INVCORE-001 (pantalla de inventario por sucursal; redacción pendiente); GUIA_PENDIENTE_CHATGPT — INVWRITE-001 (carga inicial y ajustes manuales de inventario; redacción pendiente); GUIA_PENDIENTE_CHATGPT — INSTALL-001 (instalador técnico CORE-17; pendiente de redacción)
 
 ## Cómo mantener este archivo
 - OpenCode puede actualizar solamente los metadatos y el registro de pendientes aquí, no los textos para usuarios en `public/docs/index.html`.
@@ -99,5 +99,13 @@ pending_docs: GUIA_PENDIENTE_CHATGPT — INVCORE-001 (pantalla de inventario por
 - pantalla: `/inventory` (entrada con `inventory.view`; redirige a la sucursal por defecto o primera activa accesible).
 - contenido a redactar por ChatGPT: lectura de existencia física, reservado y disponible por variante; disponible = existencia - reservado calculado por el esquema; pantalla solo lectura en esta etapa; permisos `inventory.view` y alcance por sucursal; modo solo lectura de licencia no bloquea la consulta; aclarar que aún no existen ajustes manuales, ventas, traspasos, conteos ni ciclo de reservas, y que el kardex se corrige solo con movimientos de reversa.
 - fecha: 2026-11-18.
+- estado: implementado en código/pruebas SQLite :memory:; guía NO redactada todavía; `maria=NOT_RUN` y `remote_db=UNTOUCHED`.
+- OpenCode no edita `public/docs/index.html`; este registro es solo metadato técnico.
+
+## GUIA_PENDIENTE_CHATGPT - INVWRITE-001
+- feature: INVWRITE-001 - Carga inicial manual de existencias y ajustes controlados (INV-04 P0; INV-05 parte manual P0; RN-21).
+- pantalla: `/inventory` y `/inventory/stock/{branch}` (misma tabla de lectura; acciones «Cargar inicial» solo sin historial y «Ajustar» con `inventory.adjust`).
+- contenido a redactar por ChatGPT: diferencia entre carga inicial única y ajuste con motivo; existencia/reservado/disponible antes de enviar; cantidades decimales con signo en ajustes; motivo activo del ámbito `stock_adjustment` y nota obligatoria cuando el motivo la exige; umbral `stock_adjust_pin_value_threshold` (0 desactiva) evaluado sobre el valor a costo vigente, con autorizador distinto y PIN solo por encima del umbral; estados de permiso, módulo deshabilitado y licencia solo lectura; aclarar que el stock reservado no cambia con estas acciones, que no hay importación CSV en esta ola y que no se emiten documentos tributarios ni ventas.
+- fecha: 2026-11-19.
 - estado: implementado en código/pruebas SQLite :memory:; guía NO redactada todavía; `maria=NOT_RUN` y `remote_db=UNTOUCHED`.
 - OpenCode no edita `public/docs/index.html`; este registro es solo metadato técnico.

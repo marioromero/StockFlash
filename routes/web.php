@@ -227,6 +227,17 @@ Route::middleware(['auth', 'password.change', 'verify.session'])->group(function
         ->middleware(['can.permission:inventory.view', 'branch.access'])
         ->name('inventory.stock.index');
 
+    // INVWRITE-001 · escritura manual: solo carga inicial única y ajuste con
+    // motivo. La sucursal sale de `{branch}` y `branch.access`; el resto del
+    // contexto se resuelve en servidor.
+    Route::post('/inventory/stock/{branch}/initial', [\App\Http\Controllers\Inventory\StockAdjustmentController::class, 'storeInitial'])
+        ->middleware(['can.permission:inventory.adjust', 'branch.access'])
+        ->name('inventory.stock.initial');
+
+    Route::post('/inventory/stock/{branch}/adjustment', [\App\Http\Controllers\Inventory\StockAdjustmentController::class, 'storeAdjustment'])
+        ->middleware(['can.permission:inventory.adjust', 'branch.access'])
+        ->name('inventory.stock.adjust');
+
     // --- Administración global de sucursales (BRANCH-001 · CORE-05) ---
     // Es administración global: NO usa `branch.access`.
     Route::middleware('can.permission:settings.manage')->group(function () {

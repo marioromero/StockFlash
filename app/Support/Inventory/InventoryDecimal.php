@@ -33,6 +33,15 @@ final class InventoryDecimal
     /** DECIMAL(14,4): 10 digitos enteros y 4 decimales. */
     public const COST_MAX_ABS = 99_999_999_999_999;
 
+    /** Escala del producto cantidad (3) * costo (4). */
+    public const PRODUCT_SCALE = 7;
+
+    /** Maximo de decimales aceptado en el umbral de ajuste configurado. */
+    public const THRESHOLD_SCALE = 7;
+
+    /** Maximo de digitos enteros aceptado en el umbral configurado. */
+    public const THRESHOLD_INTEGER_DIGITS = 18;
+
     public static function quantity(mixed $value): int
     {
         return self::toScaled($value, self::QUANTITY_SCALE, self::QUANTITY_MAX_ABS, 'cantidad');
@@ -93,6 +102,153 @@ final class InventoryDecimal
         if ($scaled === 0) {
             throw new InvalidArgumentException('La cantidad del movimiento no puede ser cero.');
         }
+    }
+
+    /**
+     * Producto exacto `cantidad * costo` expresado con 7 decimales.
+     *
+     * Los argumentos deben venir ya escalados y no negativos (milésimas y
+     * diezmilésimas). La multiplicación se hace con dígitos enteros como texto
+     * para no desbordar enteros de 64 bits ni usar floats/bcmath.
+     *
+     * @return string Decimal con exactamente 7 decimales, por ejemplo "1001.0000000".
+     */
+    public static function multiplyQuantityByCost(int $quantityScaled, int $costScaled): string
+    {
+        if ($quantityScaled < 0 || $costScaled < 0) {
+            throw new InvalidArgumentException('El producto de cantidad y costo no admite valores negativos.');
+        }
+
+        $digits = self::multiplyUnsignedDigits((string) $quantityScaled, (string) $costScaled);
+
+        return self::formatUnsignedScaledDigits($digits, self::PRODUCT_SCALE);
+    }
+
+    /**
+     * Compara `abs(cantidad) * costo` (escala 7) contra un umbral decimal.
+     *
+     * Devuelve -1 si el producto es menor, 0 si es igual y 1 si es mayor. El
+     * umbral se valida como decimal no negativo estricto y se escala a 7
+     * decimales; un valor igual al umbral NO lo supera (comparación estricta
+     * se resuelve en el llamador con `> 0`).
+     */
+    public static function compareProductToThreshold(
+        int $quantityScaledAbs,
+        int $costScaled,
+        mixed $threshold,
+    ): int {
+        if ($quantityScaledAbs < 0 || $costScaled < 0) {
+            throw new InvalidArgumentException('La comparación de valor no admite cantidad ni costo negativos.');
+        }
+
+        $thresholdDigits = self::thresholdToScaledDigits($threshold);
+        $productDigits = self::multiplyUnsignedDigits((string) $quantityScaledAbs, (string) $costScaled);
+
+        return self::compareUnsignedDigits($productDigits, $thresholdDigits);
+    }
+
+    /**
+     * @return string Dígitos enteros sin ceros a la izquierda del umbral escalado a 7 decimales.
+     */
+    private static function thresholdToScaledDigits(mixed $value): string
+    {
+        if (is_int($value)) {
+            if ($value < 0) {
+                throw new InvalidArgumentException('El umbral configurado no puede ser negativo.');
+            }
+
+            $whole = (string) $value;
+            $fraction = '';
+        } elseif (is_string($value)) {
+            $raw = trim($value);
+            $pattern = '/^\d{1,'.self::THRESHOLD_INTEGER_DIGITS.'}(?:\.(\d{1,'.self::THRESHOLD_SCALE.'}))?$/';
+
+            if (preg_match($pattern, $raw, $matches) !== 1) {
+                throw new InvalidArgumentException('El umbral configurado no tiene un formato decimal válido.');
+            }
+
+            $parts = explode('.', $raw, 2);
+            $whole = $parts[0];
+            $fraction = $matches[1] ?? '';
+        } else {
+            throw new InvalidArgumentException('El umbral configurado debe enviarse como texto o entero.');
+        }
+
+        $scaled = ltrim(
+            $whole.str_pad($fraction, self::THRESHOLD_SCALE, '0'),
+            '0',
+        );
+
+        return $scaled === '' ? '0' : $scaled;
+    }
+
+    /**
+     * Multiplica dos enteros no negativos representados como texto.
+     */
+    private static function multiplyUnsignedDigits(string $left, string $right): string
+    {
+        $left = ltrim($left, '0');
+        $right = ltrim($right, '0');
+
+        if ($left === '' || $right === '') {
+            return '0';
+        }
+
+        $leftDigits = array_reverse(array_map('intval', str_split($left)));
+        $rightDigits = array_reverse(array_map('intval', str_split($right)));
+        $result = array_fill(0, count($leftDigits) + count($rightDigits), 0);
+
+        foreach ($leftDigits as $i => $leftDigit) {
+            foreach ($rightDigits as $j => $rightDigit) {
+                $result[$i + $j] += $leftDigit * $rightDigit;
+            }
+        }
+
+        $carry = 0;
+
+        foreach ($result as $index => $value) {
+            $total = $value + $carry;
+            $result[$index] = $total % 10;
+            $carry = intdiv($total, 10);
+        }
+
+        while ($carry > 0) {
+            $result[] = $carry % 10;
+            $carry = intdiv($carry, 10);
+        }
+
+        $digits = ltrim(implode('', array_reverse($result)), '0');
+
+        return $digits === '' ? '0' : $digits;
+    }
+
+    private static function compareUnsignedDigits(string $left, string $right): int
+    {
+        $left = ltrim($left, '0');
+        $right = ltrim($right, '0');
+        $left = $left === '' ? '0' : $left;
+        $right = $right === '' ? '0' : $right;
+
+        if (strlen($left) !== strlen($right)) {
+            return strlen($left) < strlen($right) ? -1 : 1;
+        }
+
+        $comparison = strcmp($left, $right);
+
+        return $comparison === 0 ? 0 : ($comparison < 0 ? -1 : 1);
+    }
+
+    private static function formatUnsignedScaledDigits(string $digits, int $scale): string
+    {
+        $digits = ltrim($digits, '0');
+        $digits = $digits === '' ? '0' : $digits;
+        $digits = str_pad($digits, $scale + 1, '0', STR_PAD_LEFT);
+
+        $whole = substr($digits, 0, -$scale);
+        $fraction = substr($digits, -$scale);
+        $whole = ltrim($whole, '0');
+
+        return ($whole === '' ? '0' : $whole).'.'.$fraction;
     }
 
     private static function toScaled(mixed $value, int $scale, int $maxAbs, string $label): int

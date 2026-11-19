@@ -1,0 +1,493 @@
+<?php
+
+namespace App\Support\Inventory;
+
+use App\Models\StockMovement;
+use App\Support\Authorization\PinAuthorizationService;
+use Illuminate\Support\Facades\DB;
+use InvalidArgumentException;
+
+/**
+ * API interna de escritura manual de existencias (INVWRITE-001 · INV-04/INV-05).
+ *
+ * Todas las mutaciones pasan por `StockLedger`: este servicio nunca escribe
+ * `current_stock` ni `stock_movements` directamente. La sucursal, el actor y
+ * los saldos se resuelven siempre en servidor; el cliente solo aporta variante,
+ * cantidad, motivo/nota y, cuando el umbral lo exige, autorizador y PIN.
+ *
+ * La carga inicial es única por `(branch_id, variant_id)`: se rechaza si ya
+ * existe cualquier movimiento previo para esa combinación y el propio ledger
+ * bloquea el reintento con la clave de origen `(source_type, source_id, ...)`.
+ *
+ * Los ajustes usan `source_type='inventory_adjustment'` y un `source_id`
+ * derivado de un token de página (ver `sourceIdFromToken`). Un token nuevo
+ * permite un ajuste nuevo; el mismo token no duplica el movimiento.
+ */
+final class StockWriteService
+{
+    private const INITIAL_SOURCE_TYPE = 'inventory_initial';
+
+    private const ADJUSTMENT_SOURCE_TYPE = 'inventory_adjustment';
+
+    private const DEFAULT_OVERRIDE_MIN_AUTHORITY = 50;
+
+    public function __construct(
+        private readonly StockLedger $ledger,
+        private readonly InventoryWriteGuard $guard,
+        private readonly PinAuthorizationService $pin,
+    ) {}
+
+    public function loadInitial(
+        int $branchId,
+        int $variantId,
+        mixed $quantity,
+        int $userId,
+    ): StockMovement {
+        $this->eligibleVariant($variantId);
+        $scaledQuantity = $this->positiveQuantity($quantity);
+
+        if ($this->hasAnyMovement($branchId, $variantId)) {
+            throw new StockWriteException(
+                'variant_id',
+                'Esta variante ya tiene historial de movimientos en la sucursal y no admite una carga inicial.',
+            );
+        }
+
+        try {
+            return $this->ledger->recordMovement([
+                'branch_id' => $branchId,
+                'variant_id' => $variantId,
+                'type' => 'initial',
+                'quantity' => InventoryDecimal::formatQuantity($scaledQuantity),
+                'unit_cost' => null,
+                'source_type' => self::INITIAL_SOURCE_TYPE,
+                'source_id' => $variantId,
+                'user_id' => $userId,
+            ]);
+        } catch (DuplicateStockMovementException) {
+            throw new StockWriteException(
+                'variant_id',
+                'La carga inicial de esta variante ya fue registrada; actualice la página para continuar.',
+            );
+        } catch (InvalidArgumentException $exception) {
+            throw new StockWriteException('quantity', $exception->getMessage());
+        }
+    }
+
+    public function adjust(
+        int $branchId,
+        int $variantId,
+        mixed $quantity,
+        mixed $reasonCodeId,
+        ?string $note,
+        string $requestToken,
+        int $userId,
+        ?int $authorizerId,
+        ?string $pin,
+    ): StockMovement {
+        $variant = $this->eligibleVariant($variantId);
+        $scaledQuantity = $this->signedQuantity($quantity);
+        $reasonId = $this->positiveIdentifier($reasonCodeId, 'reason_code_id', 'El motivo es obligatorio.');
+        $normalizedNote = $this->assertReason($reasonId, $note);
+        $sourceId = self::sourceIdFromToken($requestToken);
+
+        if ($this->movementExistsForSource($branchId, $variantId, $sourceId)) {
+            throw new StockWriteException(
+                'request_token',
+                'Este ajuste ya fue registrado con el mismo token; no se duplicó el movimiento.',
+            );
+        }
+
+        [$onHand, $resulting] = $this->balancePreview($branchId, $variantId, $scaledQuantity);
+        $unitCost = $this->unitCostBasis($variant);
+
+        if ($this->requiresPin($scaledQuantity, $unitCost)) {
+            if ($this->guard->isReadOnly()) {
+                throw new StockWriteException(
+                    'read_only',
+                    'La licencia está suspendida fuera del período de gracia; el inventario está en modo solo lectura.',
+                );
+            }
+
+            $this->authorizePin(
+                $branchId,
+                $variantId,
+                $userId,
+                $authorizerId,
+                $pin,
+                InventoryDecimal::formatQuantity($onHand),
+                InventoryDecimal::formatQuantity($resulting),
+                $normalizedNote,
+            );
+        }
+
+        try {
+            return $this->ledger->recordMovement([
+                'branch_id' => $branchId,
+                'variant_id' => $variantId,
+                'type' => 'adjustment',
+                'quantity' => InventoryDecimal::formatQuantity($scaledQuantity),
+                'unit_cost' => null,
+                'source_type' => self::ADJUSTMENT_SOURCE_TYPE,
+                'source_id' => $sourceId,
+                'user_id' => $userId,
+                'reason_code_id' => $reasonId,
+                'note' => $normalizedNote,
+            ]);
+        } catch (DuplicateStockMovementException) {
+            throw new StockWriteException(
+                'request_token',
+                'Este ajuste ya fue registrado con el mismo token; no se duplicó el movimiento.',
+            );
+        } catch (InvalidArgumentException $exception) {
+            throw new StockWriteException('quantity', $exception->getMessage());
+        }
+    }
+
+    /**
+     * @return list<array{id: int, label: string, requires_note: bool}>
+     */
+    public function reasonOptions(): array
+    {
+        return DB::table('reason_codes')
+            ->where('scope', 'stock_adjustment')
+            ->where('is_active', 1)
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->get(['id', 'label', 'requires_note'])
+            ->map(fn (object $row): array => [
+                'id' => (int) $row->id,
+                'label' => (string) $row->label,
+                'requires_note' => (int) $row->requires_note === 1,
+            ])
+            ->values()
+            ->all();
+    }
+
+    /**
+     * Autorizadores válidos para la sucursal: activos, no borrados, distintos
+     * del solicitante, con rol aplicable (global o de la sucursal) que expone
+     * `override.authorize` y autoridad suficiente. Solo se devuelven id y nombre.
+     *
+     * @return list<array{id: int, name: string}>
+     */
+    public function authorizerOptions(int $branchId, int $currentUserId): array
+    {
+        $permissionId = DB::table('permissions')->where('code', 'override.authorize')->value('id');
+
+        if ($permissionId === null) {
+            return [];
+        }
+
+        $minimumAuthority = $this->configInt(
+            'override_min_authority',
+            self::DEFAULT_OVERRIDE_MIN_AUTHORITY,
+        );
+
+        return DB::table('users as u')
+            ->leftJoin('branch_user as bu', function ($join) use ($branchId): void {
+                $join->on('bu.user_id', '=', 'u.id')
+                    ->where('bu.branch_id', '=', $branchId);
+            })
+            ->join('roles as r', function ($join): void {
+                $join->on('r.id', '=', DB::raw('COALESCE(u.global_role_id, bu.role_id)'));
+            })
+            ->where('u.is_active', 1)
+            ->whereNull('u.deleted_at')
+            ->where('u.id', '!=', $currentUserId)
+            ->where('r.authority_level', '>=', $minimumAuthority)
+            ->whereExists(function ($query) use ($permissionId): void {
+                $query->select(DB::raw(1))
+                    ->from('role_permissions')
+                    ->whereColumn('role_permissions.role_id', 'r.id')
+                    ->where('role_permissions.permission_id', (int) $permissionId);
+            })
+            ->orderBy('u.name')
+            ->orderBy('u.id')
+            ->limit(50)
+            ->get(['u.id', 'u.name'])
+            ->map(fn (object $row): array => [
+                'id' => (int) $row->id,
+                'name' => (string) $row->name,
+            ])
+            ->values()
+            ->all();
+    }
+
+    /**
+     * Rechazo temprano de reintentos con el mismo token antes de PIN/AO.
+     * El ledger conserva además su guarda de duplicados como defensa en profundidad.
+     */
+    private function movementExistsForSource(int $branchId, int $variantId, int $sourceId): bool
+    {
+        return DB::table('stock_movements')
+            ->where('source_type', self::ADJUSTMENT_SOURCE_TYPE)
+            ->where('source_id', $sourceId)
+            ->where('branch_id', $branchId)
+            ->where('variant_id', $variantId)
+            ->where('type', 'adjustment')
+            ->exists();
+    }
+
+    public function hasAnyMovement(int $branchId, int $variantId): bool
+    {
+        return DB::table('stock_movements')
+            ->where('branch_id', $branchId)
+            ->where('variant_id', $variantId)
+            ->exists();
+    }
+
+    /**
+     * `source_id` determinista y acotado a 60 bits a partir del token de página.
+     */
+    public static function sourceIdFromToken(string $requestToken): int
+    {
+        if (preg_match('/^[A-Za-z0-9_-]{16,64}$/', $requestToken) !== 1) {
+            throw new StockWriteException(
+                'request_token',
+                'El token de la solicitud no es válido; recargue la página e intente nuevamente.',
+            );
+        }
+
+        $sourceId = (int) hexdec(substr(hash('sha256', $requestToken), 0, 15));
+
+        if ($sourceId <= 0) {
+            throw new StockWriteException(
+                'request_token',
+                'El token de la solicitud no es válido; recargue la página e intente nuevamente.',
+            );
+        }
+
+        return $sourceId;
+    }
+
+    private function eligibleVariant(int $variantId): object
+    {
+        $variant = DB::table('product_variants as pv')
+            ->join('products as p', 'p.id', '=', 'pv.product_id')
+            ->where('pv.id', $variantId)
+            ->whereNull('pv.deleted_at')
+            ->whereNull('p.deleted_at')
+            ->where('pv.is_active', 1)
+            ->where('p.is_active', 1)
+            ->where('p.tracks_stock', 1)
+            ->whereIn('p.type', ['simple', 'variable'])
+            ->first(['pv.id', 'pv.cost_price', 'pv.last_cost']);
+
+        if ($variant === null) {
+            throw new StockWriteException(
+                'variant_id',
+                'La variante no existe, está inactiva o no controla existencias físicas.',
+            );
+        }
+
+        return $variant;
+    }
+
+    private function positiveQuantity(mixed $value): int
+    {
+        try {
+            $scaled = InventoryDecimal::quantity($value);
+        } catch (InvalidArgumentException $exception) {
+            throw new StockWriteException('quantity', $exception->getMessage());
+        }
+
+        if ($scaled <= 0) {
+            throw new StockWriteException('quantity', 'La cantidad inicial debe ser mayor que cero.');
+        }
+
+        return $scaled;
+    }
+
+    private function signedQuantity(mixed $value): int
+    {
+        try {
+            $scaled = InventoryDecimal::quantity($value);
+        } catch (InvalidArgumentException $exception) {
+            throw new StockWriteException('quantity', $exception->getMessage());
+        }
+
+        if ($scaled === 0) {
+            throw new StockWriteException('quantity', 'La cantidad del ajuste no puede ser cero.');
+        }
+
+        return $scaled;
+    }
+
+    private function positiveIdentifier(mixed $value, string $field, string $message): int
+    {
+        $id = filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+
+        if ($id === false) {
+            throw new StockWriteException($field, $message);
+        }
+
+        return (int) $id;
+    }
+
+    private function assertReason(int $reasonCodeId, ?string $note): ?string
+    {
+        $reason = DB::table('reason_codes')
+            ->where('id', $reasonCodeId)
+            ->first(['scope', 'is_active', 'requires_note']);
+
+        if (
+            $reason === null
+            || $reason->scope !== 'stock_adjustment'
+            || (int) $reason->is_active !== 1
+        ) {
+            throw new StockWriteException(
+                'reason_code_id',
+                'El motivo seleccionado no está activo o no corresponde a un ajuste de existencias.',
+            );
+        }
+
+        $normalizedNote = $note === null ? null : trim($note);
+        $normalizedNote = $normalizedNote === '' ? null : $normalizedNote;
+
+        if ($normalizedNote !== null && mb_strlen($normalizedNote) > 255) {
+            throw new StockWriteException('note', 'La nota no puede superar 255 caracteres.');
+        }
+
+        if ((int) $reason->requires_note === 1 && $normalizedNote === null) {
+            throw new StockWriteException('note', 'El motivo seleccionado exige una nota explicativa.');
+        }
+
+        return $normalizedNote;
+    }
+
+    /**
+     * @return array{0: int, 1: int} Existencia actual y resultante en milésimas.
+     */
+    private function balancePreview(int $branchId, int $variantId, int $scaledQuantity): array
+    {
+        $raw = DB::table('current_stock')
+            ->where('branch_id', $branchId)
+            ->where('variant_id', $variantId)
+            ->value('on_hand');
+
+        $onHand = $raw === null ? 0 : InventoryDecimal::quantityFromStorage($raw);
+
+        try {
+            $resulting = InventoryDecimal::addQuantity($onHand, $scaledQuantity);
+        } catch (InvalidArgumentException $exception) {
+            throw new StockWriteException('quantity', $exception->getMessage());
+        }
+
+        return [$onHand, $resulting];
+    }
+
+    private function unitCostBasis(object $variant): int
+    {
+        $method = DB::table('system_configs')
+            ->where('config_key', 'cost_method')
+            ->value('config_value');
+
+        $raw = ($method === 'last' && $variant->last_cost !== null)
+            ? $variant->last_cost
+            : $variant->cost_price;
+
+        return $raw === null ? 0 : InventoryDecimal::costFromStorage($raw);
+    }
+
+    private function requiresPin(int $scaledQuantity, int $unitCost): bool
+    {
+        $threshold = $this->thresholdValue();
+
+        if ($threshold === null) {
+            return false;
+        }
+
+        try {
+            return InventoryDecimal::compareProductToThreshold(abs($scaledQuantity), $unitCost, $threshold) > 0;
+        } catch (InvalidArgumentException) {
+            throw new StockWriteException(
+                'adjustment',
+                'La configuración del umbral de autorización no es válida; contacte al administrador.',
+            );
+        }
+    }
+
+    private function thresholdValue(): ?string
+    {
+        $value = DB::table('system_configs')
+            ->where('config_key', 'stock_adjust_pin_value_threshold')
+            ->value('config_value');
+
+        if ($value === null) {
+            return null;
+        }
+
+        $value = trim((string) $value);
+
+        if ($value === '') {
+            return null;
+        }
+
+        try {
+            $isZero = InventoryDecimal::compareProductToThreshold(0, 0, $value) === 0;
+        } catch (InvalidArgumentException) {
+            throw new StockWriteException(
+                'adjustment',
+                'La configuración del umbral de autorización no es válida; contacte al administrador.',
+            );
+        }
+
+        return $isZero ? null : $value;
+    }
+
+    private function authorizePin(
+        int $branchId,
+        int $variantId,
+        int $userId,
+        ?int $authorizerId,
+        ?string $pin,
+        string $oldValue,
+        string $newValue,
+        ?string $note,
+    ): void {
+        if ($authorizerId === null || $authorizerId <= 0) {
+            throw new StockWriteException(
+                'authorizer_id',
+                'El valor del ajuste exige un autorizador distinto del usuario actual.',
+            );
+        }
+
+        if ($authorizerId === $userId) {
+            throw new StockWriteException(
+                'authorizer_id',
+                'El autorizador debe ser un usuario distinto del usuario actual.',
+            );
+        }
+
+        if ($pin === null || trim($pin) === '') {
+            throw new StockWriteException('pin', 'Debe ingresar el PIN del autorizador.');
+        }
+
+        $this->pin->authorize(
+            type: 'stock_adjustment',
+            branchId: $branchId,
+            authorizer: $authorizerId,
+            pin: $pin,
+            referenceType: self::ADJUSTMENT_SOURCE_TYPE,
+            referenceId: $variantId,
+            oldValue: $oldValue,
+            newValue: $newValue,
+            reasonCodeId: null,
+            reason: $note,
+        );
+    }
+
+    private function configInt(string $key, int $fallback): int
+    {
+        $value = DB::table('system_configs')->where('config_key', $key)->value('config_value');
+
+        if ($value === null || $value === '') {
+            return $fallback;
+        }
+
+        $int = (int) $value;
+
+        return $int > 0 ? $int : $fallback;
+    }
+}

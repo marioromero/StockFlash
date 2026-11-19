@@ -184,7 +184,7 @@ class StockReadAuthorizationTest extends InventoryTestCase
             ->assertInertia(fn (Assert $page) => $page->where('can_view_inventory', false));
     }
 
-    public function test_no_existen_rutas_de_escritura_de_inventario(): void
+    public function test_solo_existen_las_rutas_de_lectura_y_escritura_manual_aprobadas(): void
     {
         $routes = collect(app('router')->getRoutes()->getRoutes())
             ->map(fn ($route): string => $route->getName() ?? '')
@@ -192,6 +192,11 @@ class StockReadAuthorizationTest extends InventoryTestCase
             ->values()
             ->all();
 
-        $this->assertSame(['inventory.entry', 'inventory.stock.index'], $routes);
+        $this->assertSame([
+            'inventory.entry',
+            'inventory.stock.index',
+            'inventory.stock.initial',
+            'inventory.stock.adjust',
+        ], $routes);
     }
 }

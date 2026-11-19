@@ -38,6 +38,13 @@ final class StockQueryService
                 DB::raw('COALESCE(cs.available, 0) as available'),
                 'cs.last_movement_at',
             ])
+            ->addSelect([
+                'initialized' => DB::table('stock_movements')
+                    ->selectRaw('1')
+                    ->whereColumn('stock_movements.variant_id', 'pv.id')
+                    ->where('stock_movements.branch_id', $branchId)
+                    ->limit(1),
+            ])
             ->orderBy('p.name')
             ->orderBy('pv.sku')
             ->orderBy('pv.id');
@@ -71,6 +78,7 @@ final class StockQueryService
                 'last_movement_at' => $row->last_movement_at === null
                     ? null
                     : (string) $row->last_movement_at,
+                'initialized' => $row->initialized !== null,
             ]),
         );
 

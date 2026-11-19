@@ -9,23 +9,27 @@ use App\Models\User;
 use App\Support\Inventory\InventoryModuleGate;
 use App\Support\Inventory\InventoryWriteGuard;
 use App\Support\Inventory\StockQueryService;
+use App\Support\Inventory\StockWriteService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
 /**
  * Consulta de inventario por sucursal (INVCORE-001 · INV-03).
  *
- * Solo lectura en esta ola. La sucursal se resuelve en servidor y el middleware
- * `branch.access` valida pertenencia; `can.permission:inventory.view` valida el
- * permiso en el ámbito de la ruta. La habilitacion técnica del módulo es una
- * comprobación adicional y fail-closed.
+ * La lectura de existencias permanece en esta pantalla; las dos escrituras
+ * manuales (carga inicial y ajuste) viven en `StockAdjustmentController` con
+ * autorización `inventory.adjust` y `branch.access` en la misma ruta base.
+ * La sucursal se resuelve en servidor y el middleware `branch.access` valida
+ * pertenencia; la habilitación técnica del módulo es fail-closed.
  */
 class StockController extends Controller
 {
     public function __construct(
         private readonly StockQueryService $query,
+        private readonly StockWriteService $writes,
         private readonly InventoryModuleGate $modules,
         private readonly InventoryWriteGuard $guard,
     ) {}
@@ -63,8 +67,10 @@ class StockController extends Controller
         $perPage = (int) $request->query('per_page', 25);
         $stock = $this->query->paginate((int) $branchModel->id, $search, $perPage);
         $user = $request->user();
+        $canAdjust = $user instanceof User
+            && CheckPermission::allows($user, 'inventory.adjust', $branchModel->id);
 
-        return Inertia::render('Inventory/Stock', [
+        $props = [
             'branch' => [
                 'id' => (int) $branchModel->id,
                 'code' => (string) $branchModel->code,
@@ -82,8 +88,22 @@ class StockController extends Controller
             'filters' => ['q' => mb_substr($search, 0, 100)],
             'can_view_inventory' => $user instanceof User
                 && CheckPermission::allows($user, 'inventory.view', $branchModel->id),
+            'can_adjust' => $canAdjust,
             'read_only' => $this->guard->isReadOnly(),
-        ]);
+        ];
+
+        // Solo se envían catálogos/token cuando el actor puede ajustar. La
+        // autorización real sigue siendo server-side en cada POST.
+        if ($canAdjust && $user instanceof User) {
+            $props['reasons'] = $this->writes->reasonOptions();
+            $props['authorizers'] = $this->writes->authorizerOptions(
+                (int) $branchModel->id,
+                (int) $user->id,
+            );
+            $props['adjustment_token'] = Str::random(48);
+        }
+
+        return Inertia::render('Inventory/Stock', $props);
     }
 
     private function abortIfModuleDisabled(): void
