@@ -65,6 +65,7 @@ details.accordion{border:1px solid var(--line);border-radius:9px;margin:9px 0;ba
       <li><a href="#catalogo-maestros">Maestros del Catálogo</a></li>
       <li><a href="#catalogo-productos">Productos y variantes</a></li>
     </ul></details>
+    <details class="navgroup" open><summary>Inventario</summary><ul><li><a href="#inventario-stock">Consultar existencias por sucursal</a></li></ul></details>
     <details class="navgroup" open><summary>Configuración</summary><ul>
       <li><a href="#comprobante">Ajustes de comprobante</a></li>
       <li><a href="#datos-comercio">Datos del comercio</a></li>
@@ -256,6 +257,15 @@ details.accordion{border:1px solid var(--line);border-radius:9px;margin:9px 0;ba
 <details class="accordion"><summary>¿Por qué todavía no veo las funciones POS o inventario?</summary><div class="answer">Esas funcionalidades comerciales se incorporarán en otras etapas. Esta guía distingue lo ya implementado de lo previsto.</div></details></section>
 <section class="topic" id="glosario" data-keywords="diccionario conceptos palabras glosario significado"><div class="kicker">Ayuda</div><h2>Palabras que debes conocer</h2>
 <ul><li><strong>Dashboard:</strong> pantalla principal de StockFlash.</li><li><strong>Rol:</strong> conjunto de permisos de un usuario.</li><li><strong>Sucursal:</strong> local, bodega u operación online registrada en el sistema.</li><li><strong>Activa:</strong> habilitada para nuevas operaciones.</li><li><strong>Heredar:</strong> tomar la configuración general sin sobrescribirla.</li><li><strong>Borrado lógico:</strong> ocultar y deshabilitar un registro sin eliminar su historial.</li><li><strong>JSON:</strong> formato de texto para ajustes avanzados; normalmente no necesitas utilizarlo.</li></ul></section>
+<section class="topic" id="inventario-stock" data-keywords="inventario stock existencias reservado disponible kardex sucursal bodega INVCORE-001">
+<div class="kicker">Inventario · INVCORE-001</div><h2>Consultar existencias por sucursal</h2>
+<p>La pantalla <strong>Inventario</strong> permite consultar las existencias de cada producto y variante en una sucursal, sin modificar cantidades. Abre <strong>Inventario</strong> desde el Dashboard o utiliza <code>/inventory</code>; el sistema te dirigirá a una sucursal activa a la que tengas acceso.</p>
+<ol class="steps"><li>Entra con un usuario que tenga el permiso <code>inventory.view</code> y acceso a la sucursal.</li><li>Abre <strong>Inventario</strong> y revisa la sucursal indicada en la parte superior.</li><li>Busca por nombre de producto o SKU y recorre los resultados paginados.</li><li>Consulta las columnas <strong>Existencia</strong> (unidades físicas registradas), <strong>Reservado</strong> (unidades comprometidas) y <strong>Disponible</strong> (existencia menos reservado), además del último movimiento cuando exista.</li></ol>
+<details class="accordion"><summary>¿Puedo ajustar cantidades desde esta pantalla?</summary><div class="answer">No. La consulta es de solo lectura. El núcleo técnico registra movimientos físicos en un Kardex inmutable, pero las pantallas de carga inicial, ajustes, traspasos, conteos y ventas todavía no están disponibles.</div></details>
+<details class="accordion"><summary>¿Por qué no aparece Inventario o no puedo abrir otra sucursal?</summary><div class="answer">La consulta requiere permisos, acceso a la sucursal y habilitación de POS o Bodega según la configuración de módulos. Si la sucursal está inactiva o no tienes acceso, el servidor impide abrirla. Solicita la revisión de permisos al administrador.</div></details>
+<details class="accordion"><summary>¿Por qué aparecen existencias en cero o no veo reservas?</summary><div class="answer">Una variante sin movimientos registrados muestra cero. El ciclo funcional de reservas todavía no está incorporado; no interpretes el valor reservado de esta etapa como una promesa de disponibilidad comercial ni como stock sincronizado con WooCommerce.</div></details>
+<div class="callout warn"><strong>Estado:</strong> funcionalidad verificada técnicamente mediante pruebas automatizadas; falta validación visual en navegador y concurrencia real en MariaDB. No se han migrado bases de datos remotas ni desplegado esta versión comercialmente.</div>
+</section>
 </main>
 <div id="empty-state" role="status"><strong>No encontramos ese tema.</strong><p>Prueba con otra palabra, por ejemplo «sucursal», «contraseña» o «caja».</p><button id="clear-search" type="button">Ver todos los temas</button></div>
 <footer class="footer">StockFlash · Guía de desarrollo · Administración, configuración y catálogo verificados técnicamente. Sin despliegue comercial.</footer>
