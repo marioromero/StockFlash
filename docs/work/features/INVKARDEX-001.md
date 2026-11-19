@@ -1,6 +1,6 @@
 # INVKARDEX-001 — Branch and variant physical Kardex report
 
-status: APPROVED
+status: VERIFIED
 approval_basis: existing_approved_contract_owner_delegation_2026-11-16
 new_business_decisions: NONE
 publication_mode: AUTO_GIT
@@ -29,3 +29,13 @@ Implement Part 1 §8.3 INV-08 (P0) read-only Kardex report by branch, variant an
 
 ## Hard guards / deferrals
 No bulk CSV (pending INV-05), initial adjustments changes (INVWRITE-001 already VERIFIED_TECH), transfers, reservations, inventory counts, purchase order/receipt, sales/POS, fiscal/DTE, Woo, cost valuation, exports or mutation endpoints. No new business decisions, contract edits, arbitrary migrations, secrets/.env, remote DB access/migrations/seeding, deployment, install, cron or new automation. Safe sync once, fail on SYNC_BLOCKED, max 3 correction rounds. SQLite tests only; real MariaDB concurrency/performance and browser UX deferred with explicit NOT_RUN. OpenCode cannot mark VERIFIED; only external ChatGPT after QA and exact-SHA CI.
+
+## External technical closure — ChatGPT, 2026-11-19
+status: VERIFIED_TECH
+code_sha: `317a61d40d07c8601eead5f641b4b86fb46b3391`
+gates: 15/15 GATES_PASS
+qa: independent APROBADO, correction K-01 closed; `docs/work/INVKARDEX-001-REVIEW-20261119-1615.md`
+php: 722 tests / 6887 assertions
+ci_exact_code_sha: 2/2 SUCCESS (PHP/Node 44596464392, contracts 44596464775)
+limits: MariaDB concurrency/performance NOT_RUN, browser UX NOT_RUN, remote DB UNTOUCHED, no deployment, CSV pending separate packet.
+editorial_docs: `public/docs/index.html#inventario-stock` and `resources/roadmap/index.html` updated by ChatGPT; final editorial HEAD CI independently pending verification.
