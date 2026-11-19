@@ -98,7 +98,6 @@ class StockController extends Controller
             $props['reasons'] = $this->writes->reasonOptions();
             $props['authorizers'] = $this->writes->authorizerOptions(
                 (int) $branchModel->id,
-                (int) $user->id,
             );
             $props['adjustment_token'] = Str::random(48);
         }

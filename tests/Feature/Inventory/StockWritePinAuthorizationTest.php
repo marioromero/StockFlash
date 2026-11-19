@@ -2,8 +2,13 @@
 
 namespace Tests\Feature\Inventory;
 
+use App\Support\AuditLogger;
+use Illuminate\Database\Events\TransactionBeginning;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Hash;
 use Inertia\Testing\AssertableInertia as Assert;
+use RuntimeException;
 
 /**
  * Umbral de valor y autorización PIN para ajustes (INVWRITE-001 · INV-04).
@@ -32,12 +37,13 @@ class StockWritePinAuthorizationTest extends InventoryWriteTestCase
         $this->assertSame(0, DB::table('authorization_overrides')->count());
     }
 
-    public function test_sobre_el_umbral_exige_autorizador_distinto_y_pin(): void
+    public function test_sobre_el_umbral_exige_autorizador_y_pin(): void
     {
         $branch = $this->makeBranch();
         [, $variantId] = $this->makeProductVariant('PIN-002');
         $this->createStockRow($branch->id, $variantId, '1.000');
         $reason = $this->reason('dano');
+        $authorizer = $this->makeAuthorizer('supervisor', '1234');
         $this->setThreshold('499.999');
 
         $this->actingAs($this->admin)->post($this->adjustmentUrl($branch), [
@@ -52,12 +58,55 @@ class StockWritePinAuthorizationTest extends InventoryWriteTestCase
             'quantity' => '1.000',
             'reason_code_id' => $reason->id,
             'request_token' => $this->token(),
-            'authorizer_id' => $this->admin->id,
-            'pin' => '1234',
-        ])->assertSessionHasErrors('authorizer_id');
+            'authorizer_id' => $authorizer->id,
+        ])->assertSessionHasErrors('pin');
 
         $this->assertSame(0, $this->movementCount($branch->id, $variantId));
         $this->assertSame(0, DB::table('authorization_overrides')->count());
+    }
+
+    public function test_autoautorizacion_permitida_con_permiso_autoridad_y_pin(): void
+    {
+        $branch = $this->makeBranch();
+        [, $variantId] = $this->makeProductVariant('PIN-002B');
+        $this->createStockRow($branch->id, $variantId, '1.000');
+        $reason = $this->reason('dano');
+        $this->setThreshold('499.999');
+
+        // El propio solicitante cumple la política: central_admin (autoridad
+        // 100 + override.authorize) con PIN configurado.
+        $selfAuthorizer = $this->makeUser([
+            'name' => 'Admin con PIN',
+            'global_role_id' => $this->adminRole->id,
+            'pin_hash' => Hash::make('1234'),
+            'pin_failed_attempts' => 0,
+            'pin_locked_until' => null,
+            'is_active' => true,
+        ]);
+
+        $props = $this->actingAs($selfAuthorizer)
+            ->get("/inventory/stock/{$branch->id}")
+            ->inertiaProps();
+
+        $authorizerIds = array_map(fn (array $row): int => (int) $row['id'], $props['authorizers']);
+        $this->assertContains((int) $selfAuthorizer->id, $authorizerIds);
+
+        $this->actingAs($selfAuthorizer)->post($this->adjustmentUrl($branch), [
+            'variant_id' => $variantId,
+            'quantity' => '-1.000',
+            'reason_code_id' => $reason->id,
+            'request_token' => $this->token(),
+            'authorizer_id' => $selfAuthorizer->id,
+            'pin' => '1234',
+        ])->assertSessionHasNoErrors();
+
+        $this->assertSame(1, DB::table('authorization_overrides')->count());
+        $this->assertSame(1, $this->movementCount($branch->id, $variantId));
+
+        $override = DB::table('authorization_overrides')->first();
+        $this->assertSame((int) $selfAuthorizer->id, (int) $override->requested_by_user_id);
+        $this->assertSame((int) $selfAuthorizer->id, (int) $override->authorized_by_user_id);
+        $this->assertQuantity('0.000', $override->new_value);
     }
 
     public function test_pin_incorrecto_persiste_intento_sin_mover_stock(): void
@@ -87,6 +136,13 @@ class StockWritePinAuthorizationTest extends InventoryWriteTestCase
         $this->assertSame(0, $this->movementCount($branch->id, $variantId));
         $this->assertSame(0, DB::table('authorization_overrides')->count());
         $this->assertSame(1, (int) $authorizer->fresh()->pin_failed_attempts);
+        $this->assertSame(1, DB::table('audit_logs')
+            ->where('event', 'authorization_override.pin_failed')
+            ->where('branch_id', $branch->id)
+            ->count());
+        $this->assertSame(0, DB::table('audit_logs')
+            ->where('event', 'inventory.movement_recorded')
+            ->count());
         $this->assertQuantity(
             '1.000',
             DB::table('current_stock')->where('branch_id', $branch->id)->where('variant_id', $variantId)->value('on_hand'),
@@ -135,6 +191,123 @@ class StockWritePinAuthorizationTest extends InventoryWriteTestCase
             ->where('event', 'inventory.movement_recorded')
             ->where('branch_id', $branch->id)
             ->count());
+    }
+
+    public function test_fallo_posterior_a_la_aprobacion_no_deja_ao_ni_movimiento(): void
+    {
+        $branch = $this->makeBranch();
+        [, $variantId] = $this->makeProductVariant('PIN-004C');
+        $this->createStockRow($branch->id, $variantId, '2.000');
+        $reason = $this->reason('dano');
+        $authorizer = $this->makeAuthorizer('supervisor', '4321');
+        $this->setThreshold('499.999');
+
+        // Falla SOLO la auditoría de aprobación, que se escribe después de
+        // insertar el AO. La auditoría del movimiento sí se registra, de modo
+        // que el fallo ocurre realmente después de la aprobación/escritura.
+        $this->app->instance(AuditLogger::class, new class extends AuditLogger
+        {
+            public function record(
+                string $event,
+                string $auditableType,
+                ?int $auditableId = null,
+                ?int $branchId = null,
+                ?array $old = null,
+                ?array $new = null,
+                string $moduleCode = 'core',
+                bool $isSecurityEvent = false,
+                bool $isPersonalDataAccess = false,
+            ): void {
+                if ($event === 'authorization_override.approved') {
+                    throw new RuntimeException('Auditoría de aprobación no disponible.');
+                }
+
+                parent::record(
+                    $event,
+                    $auditableType,
+                    $auditableId,
+                    $branchId,
+                    $old,
+                    $new,
+                    $moduleCode,
+                    $isSecurityEvent,
+                    $isPersonalDataAccess,
+                );
+            }
+        });
+
+        try {
+            $this->withoutExceptionHandling()->actingAs($this->admin)->post($this->adjustmentUrl($branch), [
+                'variant_id' => $variantId,
+                'quantity' => '-1.000',
+                'reason_code_id' => $reason->id,
+                'request_token' => $this->token(),
+                'authorizer_id' => $authorizer->id,
+                'pin' => '4321',
+            ]);
+
+            $this->fail('Se esperaba el fallo de auditoría de aprobación.');
+        } catch (RuntimeException $exception) {
+            $this->assertSame('Auditoría de aprobación no disponible.', $exception->getMessage());
+        }
+
+        $this->assertSame(0, DB::table('authorization_overrides')->count());
+        $this->assertSame(0, $this->movementCount($branch->id, $variantId));
+        $this->assertSame(0, DB::table('audit_logs')
+            ->where('event', 'inventory.movement_recorded')
+            ->count());
+        $this->assertSame(0, DB::table('audit_logs')
+            ->where('event', 'authorization_override.approved')
+            ->count());
+        $this->assertQuantity(
+            '2.000',
+            DB::table('current_stock')->where('branch_id', $branch->id)->where('variant_id', $variantId)->value('on_hand'),
+        );
+    }
+
+    public function test_umbral_reevaluado_bajo_la_transaccion_falla_sin_ao_ni_movimiento(): void
+    {
+        $branch = $this->makeBranch();
+        [, $variantId] = $this->makeProductVariant('PIN-004D');
+        $this->createStockRow($branch->id, $variantId, '1.000');
+        $reason = $this->reason('dano');
+        $authorizer = $this->makeAuthorizer('supervisor', '4321');
+        $this->setThreshold('499.999');
+
+        // Interleave de concurrencia: cuando la autorización ya superó la
+        // prevalidación y abre su transacción, otro actor sube el umbral. La
+        // revalidación bajo lock debe fallar cerrado.
+        $changed = false;
+
+        Event::listen(TransactionBeginning::class, function () use (&$changed): void {
+            if ($changed) {
+                return;
+            }
+
+            $changed = true;
+            $this->setThreshold('1000');
+        });
+
+        try {
+            $this->actingAs($this->admin)->post($this->adjustmentUrl($branch), [
+                'variant_id' => $variantId,
+                'quantity' => '1.000',
+                'reason_code_id' => $reason->id,
+                'request_token' => $this->token(),
+                'authorizer_id' => $authorizer->id,
+                'pin' => '4321',
+            ])->assertSessionHasErrors('adjustment');
+        } finally {
+            Event::forget(TransactionBeginning::class);
+        }
+
+        $this->assertTrue($changed);
+        $this->assertSame(0, DB::table('authorization_overrides')->count());
+        $this->assertSame(0, $this->movementCount($branch->id, $variantId));
+        $this->assertQuantity(
+            '1.000',
+            DB::table('current_stock')->where('branch_id', $branch->id)->where('variant_id', $variantId)->value('on_hand'),
+        );
     }
 
     public function test_reintento_con_mismo_token_no_crea_ao_ni_duplica_movimiento(): void
@@ -308,7 +481,8 @@ class StockWritePinAuthorizationTest extends InventoryWriteTestCase
         $props = $adminResponse->inertiaProps();
 
         $this->assertMatchesRegularExpression('/^[A-Za-z0-9_-]{16,64}$/', $props['adjustment_token']);
-        $this->assertCount(2, $props['authorizers']);
+        // Incluye al admin actual (global, con override.authorize y autoridad).
+        $this->assertCount(3, $props['authorizers']);
 
         foreach ($props['authorizers'] as $authorizer) {
             $this->assertSame(['id', 'name'], array_keys($authorizer));
@@ -367,26 +541,33 @@ class StockWritePinAuthorizationTest extends InventoryWriteTestCase
     public function test_autorizador_de_sucursal_sin_rol_override_no_aparece_en_la_lista(): void
     {
         $branch = $this->makeBranch();
-        $this->makeBranchAuthorizer($branch, 'cashier');
+        $cashier = $this->makeBranchAuthorizer($branch, 'cashier');
 
         $props = $this->actingAs($this->admin)
             ->get("/inventory/stock/{$branch->id}")
             ->inertiaProps();
 
-        $this->assertSame([], $props['authorizers']);
+        $authorizerIds = array_map(fn (array $row): int => (int) $row['id'], $props['authorizers']);
+
+        // Solo el admin actual cumple la política; el cajero no tiene override.
+        $this->assertSame([(int) $this->admin->id], $authorizerIds);
+        $this->assertNotContains((int) $cashier->id, $authorizerIds);
     }
 
     public function test_otra_sucursal_no_expone_autorizadores_de_esa_sucursal(): void
     {
         $own = $this->makeBranch();
         $other = $this->makeBranch();
-        $this->makeBranchAuthorizer($other, 'supervisor');
+        $otherAuthorizer = $this->makeBranchAuthorizer($other, 'supervisor');
 
         $props = $this->actingAs($this->admin)
             ->get("/inventory/stock/{$own->id}")
             ->inertiaProps();
 
-        $this->assertSame([], $props['authorizers']);
+        $authorizerIds = array_map(fn (array $row): int => (int) $row['id'], $props['authorizers']);
+
+        $this->assertSame([(int) $this->admin->id], $authorizerIds);
+        $this->assertNotContains((int) $otherAuthorizer->id, $authorizerIds);
     }
 
     public function test_sucursal_inactiva_no_permite_ajustar(): void

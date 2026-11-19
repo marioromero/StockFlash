@@ -46,13 +46,6 @@ final class StockWriteService
         $this->eligibleVariant($variantId);
         $scaledQuantity = $this->positiveQuantity($quantity);
 
-        if ($this->hasAnyMovement($branchId, $variantId)) {
-            throw new StockWriteException(
-                'variant_id',
-                'Esta variante ya tiene historial de movimientos en la sucursal y no admite una carga inicial.',
-            );
-        }
-
         try {
             return $this->ledger->recordMovement([
                 'branch_id' => $branchId,
@@ -63,7 +56,18 @@ final class StockWriteService
                 'source_type' => self::INITIAL_SOURCE_TYPE,
                 'source_id' => $variantId,
                 'user_id' => $userId,
-            ]);
+            ], function () use ($branchId, $variantId): void {
+                // Invariante autoritativa bajo el lock de la fila de stock:
+                // ninguna carga inicial puede convivir con historial previo
+                // (ajuste, reversa, venta, etc.), aunque otra escritura haya
+                // ganado la carrera después de la prevalidación.
+                if ($this->hasAnyMovement($branchId, $variantId)) {
+                    throw new StockWriteException(
+                        'variant_id',
+                        'Esta variante ya tiene historial de movimientos en la sucursal y no admite una carga inicial.',
+                    );
+                }
+            });
         } catch (DuplicateStockMovementException) {
             throw new StockWriteException(
                 'variant_id',
@@ -101,6 +105,19 @@ final class StockWriteService
         [$onHand, $resulting] = $this->balancePreview($branchId, $variantId, $scaledQuantity);
         $unitCost = $this->unitCostBasis($variant);
 
+        $movementPayload = [
+            'branch_id' => $branchId,
+            'variant_id' => $variantId,
+            'type' => 'adjustment',
+            'quantity' => InventoryDecimal::formatQuantity($scaledQuantity),
+            'unit_cost' => null,
+            'source_type' => self::ADJUSTMENT_SOURCE_TYPE,
+            'source_id' => $sourceId,
+            'user_id' => $userId,
+            'reason_code_id' => $reasonId,
+            'note' => $normalizedNote,
+        ];
+
         if ($this->requiresPin($scaledQuantity, $unitCost)) {
             if ($this->guard->isReadOnly()) {
                 throw new StockWriteException(
@@ -109,31 +126,65 @@ final class StockWriteService
                 );
             }
 
+            /** @var StockMovement|null $approvedMovement */
+            $approvedMovement = null;
+
             $this->authorizePin(
                 $branchId,
                 $variantId,
-                $userId,
                 $authorizerId,
                 $pin,
                 InventoryDecimal::formatQuantity($onHand),
                 InventoryDecimal::formatQuantity($resulting),
                 $normalizedNote,
+                function () use (&$approvedMovement, $movementPayload, $scaledQuantity, $branchId, $variantId): array {
+                    // Revalidación bajo la transacción de autorización: la
+                    // elegibilidad, el costo vigente y el umbral pudieron
+                    // cambiar entre la vista previa y este punto.
+                    $lockedVariant = $this->eligibleVariant($variantId, true);
+                    [$lockedThreshold, $lockedCostMethod] = $this->lockedStockConfigs();
+                    $lockedUnitCost = $this->costBasisFor($lockedVariant, $lockedCostMethod);
+
+                    if (! $this->valueRequiresPin($scaledQuantity, $lockedUnitCost, $lockedThreshold)) {
+                        throw new StockWriteException(
+                            'adjustment',
+                            'El valor ya no requiere PIN; vuelva a intentar sin autorización.',
+                        );
+                    }
+
+                    try {
+                        $approvedMovement = $this->ledger->recordMovement($movementPayload);
+                    } catch (DuplicateStockMovementException) {
+                        throw new StockWriteException(
+                            'request_token',
+                            'Este ajuste ya fue registrado con el mismo token; no se duplicó el movimiento.',
+                        );
+                    } catch (InvalidArgumentException $exception) {
+                        throw new StockWriteException('quantity', $exception->getMessage());
+                    }
+
+                    $balanceAfter = InventoryDecimal::quantityFromStorage($approvedMovement->balance_after);
+                    $authoritativeOnHand = InventoryDecimal::addQuantity($balanceAfter, -$scaledQuantity);
+
+                    return [
+                        'old_value' => InventoryDecimal::formatQuantity($authoritativeOnHand),
+                        'new_value' => InventoryDecimal::formatQuantity($balanceAfter),
+                    ];
+                },
             );
+
+            if (! $approvedMovement instanceof StockMovement) {
+                throw new StockWriteException(
+                    'adjustment',
+                    'No fue posible completar el ajuste autorizado; vuelva a intentar.',
+                );
+            }
+
+            return $approvedMovement;
         }
 
         try {
-            return $this->ledger->recordMovement([
-                'branch_id' => $branchId,
-                'variant_id' => $variantId,
-                'type' => 'adjustment',
-                'quantity' => InventoryDecimal::formatQuantity($scaledQuantity),
-                'unit_cost' => null,
-                'source_type' => self::ADJUSTMENT_SOURCE_TYPE,
-                'source_id' => $sourceId,
-                'user_id' => $userId,
-                'reason_code_id' => $reasonId,
-                'note' => $normalizedNote,
-            ]);
+            return $this->ledger->recordMovement($movementPayload);
         } catch (DuplicateStockMovementException) {
             throw new StockWriteException(
                 'request_token',
@@ -165,13 +216,15 @@ final class StockWriteService
     }
 
     /**
-     * Autorizadores válidos para la sucursal: activos, no borrados, distintos
-     * del solicitante, con rol aplicable (global o de la sucursal) que expone
-     * `override.authorize` y autoridad suficiente. Solo se devuelven id y nombre.
+     * Autorizadores válidos para la sucursal: activos, no borrados, con rol
+     * aplicable (global o de la sucursal) que expone `override.authorize` y
+     * autoridad suficiente. Incluye al usuario actual cuando cumple la
+     * política (COREPIN-001 no prohíbe la autoautorización). Solo se devuelven
+     * id y nombre.
      *
      * @return list<array{id: int, name: string}>
      */
-    public function authorizerOptions(int $branchId, int $currentUserId): array
+    public function authorizerOptions(int $branchId): array
     {
         $permissionId = DB::table('permissions')->where('code', 'override.authorize')->value('id');
 
@@ -194,7 +247,6 @@ final class StockWriteService
             })
             ->where('u.is_active', 1)
             ->whereNull('u.deleted_at')
-            ->where('u.id', '!=', $currentUserId)
             ->where('r.authority_level', '>=', $minimumAuthority)
             ->whereExists(function ($query) use ($permissionId): void {
                 $query->select(DB::raw(1))
@@ -261,9 +313,9 @@ final class StockWriteService
         return $sourceId;
     }
 
-    private function eligibleVariant(int $variantId): object
+    private function eligibleVariant(int $variantId, bool $lock = false): object
     {
-        $variant = DB::table('product_variants as pv')
+        $query = DB::table('product_variants as pv')
             ->join('products as p', 'p.id', '=', 'pv.product_id')
             ->where('pv.id', $variantId)
             ->whereNull('pv.deleted_at')
@@ -271,8 +323,16 @@ final class StockWriteService
             ->where('pv.is_active', 1)
             ->where('p.is_active', 1)
             ->where('p.tracks_stock', 1)
-            ->whereIn('p.type', ['simple', 'variable'])
-            ->first(['pv.id', 'pv.cost_price', 'pv.last_cost']);
+            ->whereIn('p.type', ['simple', 'variable']);
+
+        // En MariaDB/InnoDB bloquea la fila de variante (y producto) para que
+        // costo/elegibilidad no cambien dentro de la autorización. En SQLite
+        // `lockForUpdate()` es no-op y la transacción de prueba serializa.
+        if ($lock) {
+            $query->lockForUpdate();
+        }
+
+        $variant = $query->first(['pv.id', 'pv.cost_price', 'pv.last_cost']);
 
         if ($variant === null) {
             throw new StockWriteException(
@@ -383,17 +443,49 @@ final class StockWriteService
             ->where('config_key', 'cost_method')
             ->value('config_value');
 
+        return $this->costBasisFor($variant, is_string($method) ? $method : null);
+    }
+
+    private function costBasisFor(object $variant, ?string $method): int
+    {
         $raw = ($method === 'last' && $variant->last_cost !== null)
             ? $variant->last_cost
             : $variant->cost_price;
 
-        return $raw === null ? 0 : InventoryDecimal::costFromStorage($raw);
+        return $raw === null ? 0 : (InventoryDecimal::costFromStorage($raw) ?? 0);
+    }
+
+    /**
+     * Relee umbral y método de costo bajo lock, en orden determinista
+     * (`config_key` ascendente) para no competir con otros writers.
+     *
+     * @return array{0: ?string, 1: ?string} Umbral normalizado y `cost_method`.
+     */
+    private function lockedStockConfigs(): array
+    {
+        $values = DB::table('system_configs')
+            ->whereIn('config_key', ['cost_method', 'stock_adjust_pin_value_threshold'])
+            ->orderBy('config_key')
+            ->lockForUpdate()
+            ->pluck('config_value', 'config_key')
+            ->all();
+
+        $method = $values['cost_method'] ?? null;
+        $method = is_string($method) ? trim($method) : null;
+
+        return [
+            $this->normalizeThreshold($values['stock_adjust_pin_value_threshold'] ?? null),
+            $method === '' ? null : $method,
+        ];
     }
 
     private function requiresPin(int $scaledQuantity, int $unitCost): bool
     {
-        $threshold = $this->thresholdValue();
+        return $this->valueRequiresPin($scaledQuantity, $unitCost, $this->thresholdValue());
+    }
 
+    private function valueRequiresPin(int $scaledQuantity, int $unitCost, ?string $threshold): bool
+    {
         if ($threshold === null) {
             return false;
         }
@@ -410,10 +502,18 @@ final class StockWriteService
 
     private function thresholdValue(): ?string
     {
-        $value = DB::table('system_configs')
-            ->where('config_key', 'stock_adjust_pin_value_threshold')
-            ->value('config_value');
+        return $this->normalizeThreshold(
+            DB::table('system_configs')
+                ->where('config_key', 'stock_adjust_pin_value_threshold')
+                ->value('config_value'),
+        );
+    }
 
+    /**
+     * Umbral ausente, vacío o cero (incluido `0.0000000`) desactiva el PIN.
+     */
+    private function normalizeThreshold(mixed $value): ?string
+    {
         if ($value === null) {
             return null;
         }
@@ -436,27 +536,27 @@ final class StockWriteService
         return $isZero ? null : $value;
     }
 
+    /**
+     * Política de autorización: solo exige autorizador válido y PIN. Un
+     * solicitante con `override.authorize`, autoridad suficiente y PIN puede
+     * autorizar su propio ajuste (COREPIN-001 no prohíbe la autoautorización).
+     *
+     * @param  (callable(): array<string, mixed>)|null  $onApproved
+     */
     private function authorizePin(
         int $branchId,
         int $variantId,
-        int $userId,
         ?int $authorizerId,
         ?string $pin,
         string $oldValue,
         string $newValue,
         ?string $note,
+        ?callable $onApproved = null,
     ): void {
         if ($authorizerId === null || $authorizerId <= 0) {
             throw new StockWriteException(
                 'authorizer_id',
-                'El valor del ajuste exige un autorizador distinto del usuario actual.',
-            );
-        }
-
-        if ($authorizerId === $userId) {
-            throw new StockWriteException(
-                'authorizer_id',
-                'El autorizador debe ser un usuario distinto del usuario actual.',
+                'El valor del ajuste exige un autorizador con permiso de autorización.',
             );
         }
 
@@ -475,6 +575,7 @@ final class StockWriteService
             newValue: $newValue,
             reasonCodeId: null,
             reason: $note,
+            onApproved: $onApproved,
         );
     }
 

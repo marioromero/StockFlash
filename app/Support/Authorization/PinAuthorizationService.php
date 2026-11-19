@@ -26,6 +26,16 @@ use Illuminate\Support\Facades\Hash;
  * El servicio administra su propia transacción. No debe envolverse en una
  * transacción externa que revierta la solicitud: los intentos fallidos y su
  * auditoría deben persistir aunque el PIN sea rechazado.
+ *
+ * Hook atómico opcional (`$onApproved`): permite agrupar la escritura de
+ * negocio autorizada en la MISMA transacción que la aprobación. Se invoca
+ * únicamente tras verificar y reiniciar el PIN, antes de insertar el AO. Puede
+ * devolver un arreglo que sobreescriba `old_value`, `new_value`,
+ * `reason_code_id` y/o `reason`. Si lanza, se revierte la aprobación completa
+ * (AO, auditoría de aprobación y escritura anidada); las negativas por PIN
+ * ocurren antes y conservan su intento/bloqueo/auditoría. El callback no debe
+ * volver a bloquear usuarios, sucursales, roles ni asignaciones ya bloqueadas
+ * aquí (riesgo de deadlock): solo debe escribir el recurso de negocio.
  */
 final class PinAuthorizationService
 {
@@ -83,6 +93,7 @@ final class PinAuthorizationService
         ?string $newValue = null,
         ?int $reasonCodeId = null,
         ?string $reason = null,
+        ?callable $onApproved = null,
     ): array {
         $safeType = mb_substr($type, 0, self::MAX_REFERENCE_TYPE_LENGTH);
 
@@ -138,6 +149,7 @@ final class PinAuthorizationService
             $newValue,
             $reasonCodeId,
             $reason,
+            $onApproved,
         ): array {
             // Revalidación autoritativa desde filas bloqueadas. La prevalidación
             // previa solo sirve como rechazo temprano: la política que decide la
@@ -210,6 +222,35 @@ final class PinAuthorizationService
                 'updated_at' => now(),
             ]);
 
+            // Hook atómico opcional (INVWRITE-001): la escritura autorizada
+            // ocurre en esta misma transacción, antes del AO. Si lanza, se
+            // revierte todo (movimiento/auditoría anidados y el AO) sin dejar
+            // una aprobación huérfana. Las negativas por PIN retornan antes y
+            // conservan intentos/bloqueo/auditoría al confirmar.
+            if ($onApproved !== null) {
+                $override = $onApproved();
+
+                if (is_array($override)) {
+                    if (array_key_exists('old_value', $override)) {
+                        $oldValue = $override['old_value'] === null ? null : (string) $override['old_value'];
+                    }
+
+                    if (array_key_exists('new_value', $override)) {
+                        $newValue = $override['new_value'] === null ? null : (string) $override['new_value'];
+                    }
+
+                    if (array_key_exists('reason_code_id', $override)) {
+                        $reasonCodeId = $override['reason_code_id'] === null
+                            ? null
+                            : (int) $override['reason_code_id'];
+                    }
+
+                    if (array_key_exists('reason', $override)) {
+                        $reason = $override['reason'] === null ? null : (string) $override['reason'];
+                    }
+                }
+            }
+
             $authorizationOverrideId = (int) DB::table('authorization_overrides')->insertGetId([
                 'type' => $type,
                 'requested_by_user_id' => $requesterId,
@@ -269,6 +310,12 @@ final class PinAuthorizationService
      * exclusivamente con estas filas bloqueadas: si un permiso, rol, asignación
      * de sucursal, sucursal, estación o motivo cambió después de la
      * prevalidación, la transacción rechaza y audita sin crear AO.
+     *
+     * El hook opcional de `authorize()` corre después de estos locks y antes
+     * del AO. Por eso no debe volver a bloquear `users`, `branch_user`,
+     * `roles`, `permissions`, `branches`, `pos_stations` ni `reason_codes`
+     * (deadlock); solo el recurso de negocio autorizado, con su propio orden
+     * documentado.
      *
      * @return array{denied: string}|array{authorizer: object, pin_max_attempts: int}
      */

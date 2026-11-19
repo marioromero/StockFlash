@@ -205,7 +205,7 @@
                                                 <legend class="sf-label">Autorización por PIN (solo si el valor del ajuste supera el umbral)</legend>
                                                 <p class="sf-text-muted">
                                                     Complete autorizador y PIN solo cuando el sistema lo solicite por el valor a costo del ajuste.
-                                                    El autorizador debe ser un usuario distinto del actual con permiso de autorización en la sucursal.
+                                                    El autorizador debe tener el permiso override.authorize y autoridad suficiente en la sucursal; puede ser el mismo usuario actual si cumple la política.
                                                 </p>
                                                 <div class="sf-form-grid">
                                                     <div class="sf-field">

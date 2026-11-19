@@ -109,6 +109,27 @@ class InitialStockWriteTest extends InventoryWriteTestCase
         $this->assertSame(1, $this->movementCount($branch->id, $variantId));
     }
 
+    public function test_rechaza_reinicializar_tras_una_reversa(): void
+    {
+        $branch = $this->makeBranch();
+        [, $variantId] = $this->makeProductVariant('INIT-004B');
+
+        $adjustment = $this->recordMovement($branch->id, $variantId, 'adjustment', '2.000');
+        $this->ledger()->reverseMovement((int) $adjustment->id, (int) $this->admin->id);
+
+        $this->actingAs($this->admin)
+            ->post($this->initialUrl($branch), ['variant_id' => $variantId, 'quantity' => '9.000'])
+            ->assertSessionHasErrors('variant_id');
+
+        // adjustment + reversal, sin carga inicial.
+        $this->assertSame(2, $this->movementCount($branch->id, $variantId));
+        $this->assertSame(0, DB::table('stock_movements')
+            ->where('branch_id', $branch->id)
+            ->where('variant_id', $variantId)
+            ->where('type', 'initial')
+            ->count());
+    }
+
     public function test_variante_sin_control_de_stock_o_eliminada_es_rechazada(): void
     {
         $branch = $this->makeBranch();

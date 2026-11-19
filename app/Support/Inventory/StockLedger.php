@@ -17,6 +17,8 @@ use InvalidArgumentException;
  * 2. crea la fila `current_stock` si no existe (insertOrIgnore),
  * 3. bloquea esa fila (lockForUpdate; en SQLite es no-op y la transaccion
  *    serializa las escrituras de la conexion de prueba),
+ * 3b. si se informa `$underLock`, lo ejecuta tras la guarda de duplicados y
+ *    antes de calcular el saldo; si lanza, revierte toda la transaccion,
  * 4. calcula el nuevo `on_hand` exclusivamente desde la fila bloqueada,
  * 5. actualiza el cache y agrega el movimiento append-only con `balance_after`,
  * 6. registra auditoria no PII,
@@ -66,12 +68,13 @@ final class StockLedger
 
     /**
      * @param  array<string, mixed>  $data
+     * @param  (callable(): mixed)|null  $underLock
      */
-    public function recordMovement(array $data): StockMovement
+    public function recordMovement(array $data, ?callable $underLock = null): StockMovement
     {
         $movement = $this->normalizeRecordableMovement($data);
 
-        return DB::transaction(function () use ($movement): StockMovement {
+        return DB::transaction(function () use ($movement, $underLock): StockMovement {
             $this->guard->assertWritable();
 
             [$branchId, $variantId] = [$movement['branch_id'], $movement['variant_id']];
@@ -91,6 +94,14 @@ final class StockLedger
 
             if ($movement['source_type'] !== null) {
                 $this->assertSourceNotPosted($movement);
+            }
+
+            // Hook bajo el lock autoritativo de la fila de stock, antes de
+            // leer/escribir el saldo. Rechaza invariantes que dependen del
+            // historial (p. ej. "sin movimientos previos" para INITIAL); si
+            // lanza, toda la transaccion revierte.
+            if ($underLock !== null) {
+                $underLock();
             }
 
             $balance = InventoryDecimal::addQuantity(
