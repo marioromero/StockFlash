@@ -1635,6 +1635,7 @@ def main() -> int:
     ap.add_argument("packet", help="ID de Feature Packet (p. ej. BOOT-001)")
     ap.add_argument("--port", type=int, default=18733)
     ap.add_argument("--no-build", action="store_true", help="Omitir G3 (solo depuracion; el gate queda como SKIP=FAIL si es obligatorio)")
+    ap.add_argument("--reuse-evidence", action="store_true", help="Reutilizar PASS solo si la evidencia local y el fingerprint exacto siguen validos")
     args = ap.parse_args()
 
     packet = args.packet.strip().upper()
@@ -1643,6 +1644,24 @@ def main() -> int:
         return 1
     if packet != "BOOT-001":
         print(f"Nota: verificando {packet} con definicion declarativa correspondiente.")
+
+    # A deliberate opt-in: never silently bypass a full verification. Fail closed.
+    evidence = None
+    evidence_before = None
+    try:
+        import sf_evidence as evidence
+        if args.reuse_evidence and not args.no_build:
+            reusable, why, original = evidence.check(packet, ROOT)
+            if reusable:
+                print(f"GATES_PASS (REUSED_PREVIOUS_EXECUTION; original={original}; reason={why})")
+                print("No gates executed now. Exact-tree proof is local, <=2h; QA and CI remain mandatory.")
+                return 0
+            print(f"FULL_GATES_REQUIRED: {why}")
+        evidence_before = evidence.fingerprint(packet, ROOT)
+        evidence.invalidate(packet, ROOT)
+    except Exception:
+        evidence_before = None  # Evidence is optional; gates still execute in full.
+        print("EVIDENCE_UNAVAILABLE: executing all mandatory gates (fail closed).")
 
     def record_gate_result(gate_id: str, result: dict) -> None:
         if record_gate is None:
@@ -1729,6 +1748,13 @@ def main() -> int:
     guide = guide_handoff(packet)
     roadmap = roadmap_handoff(packet)
     report = write_report(packet, results, verdict, guide, roadmap)
+    if verdict == "GATES_PASS" and evidence is not None and evidence_before is not None:
+        try:
+            saved = evidence.record_success(packet, evidence_before, report, ROOT)
+            if not saved:
+                print("EVIDENCE_NOT_REUSABLE: source changed during verification.")
+        except Exception:
+            print("EVIDENCE_UNAVAILABLE: PASS remains valid; future run must verify again.")
     for doc in (guide, roadmap):
         print(f"Estado documental {doc['label']}: {doc['status']}")
         if doc["status"] in ("GUIA_PENDIENTE_CHATGPT", "ROADMAP_PENDIENTE_CHATGPT"):
