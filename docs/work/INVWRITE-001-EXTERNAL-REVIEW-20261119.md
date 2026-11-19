@@ -1,0 +1,18 @@
+# INVWRITE-001 — External review — 2026-11-19
+
+Verdict: CHANGES_REQUIRED (no technical VERIFIED).
+Code SHA examined: `2b25fa421f8d065da2a38a03529659a011323bfe`.
+Observed CI at exact SHA: PHP/Node `44580286089` SUCCESS, contracts `44580286015` SUCCESS. SFH1 #48 i=002 says 18/18 gates and independent QA APROBADO; repository includes gate report `docs/work/INVWRITE-001-VERIFY-20261119-143934.md`, but no published independently authored QA report specific to INVWRITE-001 in `docs/work/`. Preserve full deterministic gates/CI and publish reviewer artifact before acceptance.
+
+## Required corrections under existing approved v2.2 contract
+
+1. **HIGH — successful PIN approval and subsequent stock posting not atomic**. `app/Support/Inventory/StockWriteService.php::adjust()` calls `authorizePin()` before `StockLedger::recordMovement()`, with `PinAuthorizationService` committing its own successful AO transaction. The implementation notes explicitly concede that a later ledger/audit/DB failure leaves an orphan `authorization_overrides` approval with no movement. This violates the approved packet's conditional atomicity/rollback criterion and creates a misleading durable authorization. Provide a coherent same-operation atomic successful authorization + physical write, while retaining persistence of **failed** PIN attempts/lockout/security audit. No changes to immutable AO records and no schema or remote DB operations. The branch/variant/token context, cost/threshold and balance must remain transaction-consistent, including duplicate retries and changes between preview and write. Add regression tests injecting ledger/audit failure *after valid PIN*, and conflicting/duplicate submissions.
+
+2. **HIGH — initial stock history check races with competing stock writes**. `StockWriteService::loadInitial()` uses `hasAnyMovement()` before entering the ledger's row lock/transaction. Another adjustment can append between the check and the initial post; ledger's duplicate-origin guard prevents duplicate `initial` source, but not an initial after some other movement type. Enforce no-prior-history invariant while holding the authoritative branch/variant stock lock, not solely via precheck. Test the race semantics where feasible with SQLite sequential interleavings, and defer real MariaDB locking validation explicitly.
+
+3. **CONTRACT — unapproved self-authorization prohibition**. `StockWriteService::authorizePin()` rejects `authorizerId === userId` and `authorizerOptions()` excludes current user. Previously VERIFIED `docs/work/features/COREPIN-001.md` explicitly states `Do not invent a prohibition on self-authorization (contract does not specify one): always apply PIN and role policy`. Follow existing authorization contract; eligible user with proper authority/PIN is not arbitrarily excluded. No new owner decision required to restore approved behavior; add corresponding test.
+
+4. **EVIDENCE — independent QA report not published**. SFH1 i=002 claims QA APROBADO R1 with fingerprint and residual findings, but `docs/work` contains only `INVWRITE-001-NOTES-20261119.md` and `INVWRITE-001-VERIFY-20261119-143934.md`. Publish genuinely independent read-only QA artifact at corrected fingerprint and explicitly re-review the above cases, and report the exact evidence path.
+
+## Constraints
+No new business decisions/ADR, no protected contract edits, no POS, CSV, transfers, reservations, remote DB, deploy, secrets or schema changes. Respect `scripts/safe_git_pull.py`, limit correction cycles, preserve HTIME/HOBS closures. OpenCode reruns mandatory gates, independent read-only QA and publisher AUTO_GIT with exact-SHA CI; ChatGPT alone marks VERIFIED after external review. Existing code SHA remains unverified for this wave.
