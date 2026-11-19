@@ -1,0 +1,29 @@
+# INVREORDER-001 — Reorder settings and low-stock dashboard
+
+status: APPROVED
+approval_basis: existing_approved_contract_owner_delegation_2026-11-16
+new_business_decisions: NONE
+publication_mode: AUTO_GIT
+execution_mode: ONE_SMALL_WAVE
+stage: R4_BODEGA
+active: docs/work/CURRENT.md
+
+## Approved contract and task
+Implement Part 1 §8.3 `INV-07` (P0): per-branch and per-variant reorder point, recommended replenishment quantity and maximum stock, plus a critical-stock dashboard. Part 2 §7.1 explicitly approves `branch_variant_settings` composite PK `(branch_id,variant_id)` with `reorder_point DECIMAL(12,3) NOT NULL DEFAULT 0`, `reorder_qty DECIMAL(12,3) NULL`, `max_stock DECIMAL(12,3) NULL`, `safety_stock DECIMAL(12,3) NOT NULL DEFAULT 0` (P1 online only) and `location_label VARCHAR(50) NULL` (P2). Existing `current_stock` provides on_hand/reserved/available; INVCORE/INVWRITE/INVKARDEX are VERIFIED_TECH. Confirm physical migration inventory before implementation; implement only the minimal approved missing schema.
+
+## Scope
+1. Introduce the single approved `branch_variant_settings` table if absent, with exact columns/types/defaults/constraints/FKs/composite PK from canonical Part 2; no other tables, no invented keys/columns/triggers, no modifications to existing inventory migrations. Preserve `safety_stock` and `location_label` storage schema for future P1/P2 without adding current user-facing editing, publishing or POS effects.
+2. Authorized es-CL UI to configure `reorder_point`, `reorder_qty` and `max_stock` for a selected eligible branch/variant; read with `inventory.view`, write only with existing `inventory.adjust` + `branch.access` and enabled module/license. Use branch from trusted route and actor from authenticated session. No request-supplied branch override, balances, cost, safety-stock or location_label. Validate precise decimal scale/range without floats; nonnegative allowed as per contractual stock settings, nullable suggested qty/maximum preserved. Do not invent a new commercial rule constraining `max_stock` relative to `reorder_point` unless canonically required. Upsert safely under DB transaction/lock, audit changes atomically, no unnecessary physical stock movement.
+3. Provide bounded, filterable critical-stock panel per authorized branch with SKU/name, existing on_hand, reserved, available, reorder point, suggested replenishment quantity and max stock. Derive critical condition from explicitly positive reorder point with available <= reorder_point (exclude unconfigured default 0 from critical alerts to avoid claiming settings were configured). If Part 1 or Part 2 actually specifies alternative threshold semantics, use the authoritative contract and document discrepancy; do not introduce automated procurement or notifications. Never treat `safety_stock` as an extra POS deduction (Part 2 says never affects POS). No cost/margin/price/PII exposure.
+4. Authorized read-only license retains view, blocks configuration mutation. Module disabled / inactive branch / unauthorized role must fail closed server-side. Inactive/non-stock-tracked variants must not accept configuration changes; historic settings may remain in DB. Correct branch scoping in middleware and controller must agree; regression case for numeric-like branch codes (e.g. '1E0') from INVKARDEX QA; no cross-branch access. Stock movements and current_stock remain untouched on configuration writes.
+5. Tests: schema and uniqueness, two branches sharing variant, missing stock row, default/unconfigured threshold, boundary available=point, available below/above, reserved (without fabricating reservation lifecycle), negative stock, precision, malformed config, null suggestion/max, inactive variants/products, search/pagination >100 bounded, permissions, module/license, cross-branch forged route/query/identifier, audit rollback, no stock movement side effects, and existing inventory/kardex regressions.
+6. Register mandatory `scripts/sf_verify.py INVREORDER-001` gates with exact protected-file/schema assertions; contracts, full PHP suite, TS typecheck/Vite build, independent read-only QA on the exact fingerprint, AUTO_GIT fast-forward publication, GitHub Actions 2/2 exact-SHA CI. Report MariaDB concurrency/index QA and real browser visual UX NOT_RUN. Update technical work notes and GUIA/ROADMAP pending metadata; ChatGPT alone edits their semantic HTML.
+
+## EARS
+- WHEN an authorized stock manager saves thresholds for a branch/variant, the system MUST persist exactly the approved settings for that scope and audit, without creating or mutating a physical movement or reserved balance.
+- WHEN a user views critical stock for a branch, only configured reorder-point > 0 entries whose available stock is <= threshold are highlighted; filtering and bounded pagination MUST preserve server-verified branch scope.
+- WHEN an unauthorized, inactive or read-only user attempts a setting write, the system MUST fail without partial change or cross-branch leakage.
+- WHEN no real MariaDB/browser testing was performed, results MUST explicitly label it NOT_RUN.
+
+## Hard guards
+No CSV stock imports (INV-05 remaining), transfers (INV-06), reservations (INV-17/18), notifications (CORE-14), purchase order/purchase suggestions (PUR-05), valuation (INV-09), sales/POS, Woo, DTE, stock changes other than existing ledger, stock safety online publication (INV-19/20), location editing (INV-14), plan changes or new commercial business rules. No remote DB/migrations/seeding, live installation, deployment, credentials/.env, cron, webhooks, new dependencies, or edits to protected contracts, AGENTS.md, `public/docs/index.html`, `resources/roadmap/index.html`, or ChatGPT-only harness. Safe sync once, SYNC_BLOCKED fail closed, max three correction rounds; never self-declare VERIFIED.
