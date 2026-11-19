@@ -8,14 +8,14 @@ route: `/roadmap` (restringida a Admin Central / `settings.manage`)
 created_on: 2026-11-10
 baseline_code_sha: `13cdd6a6f1ae3a986884e8079f81fb34d5f259e4`
 roadmap_content_status: INTEGRADA_EN_MAIN (2026-11-16)
-roadmap_integration_sha: `e0f03953f28059de1f5c3329c7d3c330dc3eaf66` (ChatGPT incorporó INVCORE-001 e INVWRITE-001 a R4)
+roadmap_integration_sha: `1ebf0f23fb354e7b5387b24075cd1600ffa39755` (ChatGPT incorporó INVKARDEX-001 a R4)
 roadmap_integration_date: 2026-11-19
 roadmap_last_review: 2026-11-19
-covered_features: BOOT-001 VERIFIED; CI-001 VERIFIED; AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED; ROADMAP-001 VERIFIED; USERS-001 VERIFIED; CFG-001/002/003 VERIFIED; CORESEQ/CORELIC/COREMOD/COREPIN VERIFIED; CATDB-001 VERIFIED; CATMAST-001 VERIFIED (9279d57); SETUP-001 VERIFIED (13cdd6a); INVCORE-001 VERIFIED (966b685); INVWRITE-001 VERIFIED_TECH (816fdc6)
-in_progress: R4_BODEGA — INVKARDEX-001 implementado en código/pruebas, pendiente de guía y roadmap; INVWRITE-001 VERIFIED_TECH (carga inicial manual y ajustes de existencias); INSTALL-001 implementado en código/pruebas; producción no demo bloqueada por BKP-08 `NOT_READY_FOR_PRODUCTION`
+covered_features: BOOT-001 VERIFIED; CI-001 VERIFIED; AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED; ROADMAP-001 VERIFIED; USERS-001 VERIFIED; CFG-001/002/003 VERIFIED; CORESEQ/CORELIC/COREMOD/COREPIN VERIFIED; CATDB-001 VERIFIED; CATMAST-001 VERIFIED (9279d57); SETUP-001 VERIFIED (13cdd6a); INVCORE-001 VERIFIED (966b685); INVWRITE-001 VERIFIED_TECH (816fdc6); INVKARDEX-001 VERIFIED_TECH (317a61d)
+in_progress: R4_BODEGA — INVREORDER-001 pendiente de implementación; INVKARDEX-001 VERIFIED_TECH con informe por sucursal/variante/período; INSTALL-001 implementado en código/pruebas; producción no demo bloqueada por BKP-08 `NOT_READY_FOR_PRODUCTION`
 first_commercial_release: R7 — POS + Bodega sin emisión DTE integrada y con piloto/controles de salida
-pending: ROADMAP_PENDIENTE_CHATGPT — INSTALL-001 (reconciliación editorial de instalador web CORE-17, pendiente); ROADMAP_PENDIENTE_CHATGPT — INVKARDEX-001 (reporte Kardex por sucursal, variante y fechas, pendiente); INVCORE-001/INVWRITE-001 integrados en roadmap por ChatGPT, CSV diferido
-report_state: ROADMAP_PENDIENTE_CHATGPT (INVKARDEX-001); INSTALL-001 pendiente editorial
+pending: ROADMAP_PENDIENTE_CHATGPT — INSTALL-001 (reconciliación editorial de instalador CORE-17); INVCORE-001/INVWRITE-001/INVKARDEX-001 incorporados por ChatGPT el 2026-11-19; CSV diferido
+report_state: ROADMAP_ACTUALIZADO (INVKARDEX-001); INSTALL-001 pendiente editorial
 
 ## Mantenimiento por OpenCode
 
