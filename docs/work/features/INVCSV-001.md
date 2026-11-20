@@ -1,6 +1,6 @@
 # INVCSV-001 — Initial branch stock import from CSV
 
-status: APPROVED
+status: VERIFIED
 approval_basis: existing_approved_contract_owner_delegation_2026-11-16
 new_business_decisions: NONE
 publication_mode: AUTO_GIT
@@ -29,3 +29,15 @@ Complete the CSV half of approved Part 1 §8.3 `INV-05` (P0: initial stock manua
 
 ## Out of scope / hard guards
 Do not implement CAT-10 catalog CSV import/export, INVENTORY adjustments via CSV, transfers (INV-06), reservation lifecycle (INV-17/18), imports of price/cost/tax/products, purchases, sales/POS, channels, fiscal/DTE, online publication, business licensing limits, migration/schema changes, new background queue/cron, dependencies, remote DB/install/migrate/seed, deployment, .env/secrets, protected docs or contracts. New material business/legal/security choices require a concrete BLOCK only for that portion. Sync via safe_git_pull.py once and fail closed on SYNC_BLOCKED. Max 3 correction rounds, exact tree QA/gates/CI, ChatGPT alone declares VERIFIED.
+
+## External technical closure — ChatGPT, 2026-11-20
+status: VERIFIED_TECH
+code_sha: `f8565927d3724759e614b65f3cdf181b803c5d5b`
+gates: 17/17 GATES_PASS (HQAEFF full run, isolated SQLite)
+qa: independent APROBADO; `docs/work/INVCSV-001-REVIEW-20261120-1137.md`
+php: 779 tests / 7805 assertions
+ci_exact_code_sha: 2/2 SUCCESS (PHP/Node 44755780083; contracts 44755780157)
+scope: CSV initial stock preview+commit, all-or-nothing via existing StockLedger; no new schema or remote DB activity in implementation/resume phase.
+limits: MariaDB concurrency/locks NOT_RUN, real browser Inertia preview UX NOT_RUN, no deploy; known historical remote DB exception not cleaned or claimed untouched, owner declined additional incident work.
+pre_release_backlog: parser strict malformed quote edge F1, UTF-8 BOM plus fully-quoted header F2, POST Inertia preview refresh/navigation F6; independently QA-accepted non-blocking for technical code closure, must validate/correct before commercial release. Source QA report lists findings.
+editorial_docs: `public/docs/index.html#inventario-stock` and `resources/roadmap/index.html` integrated by ChatGPT, final editorial HEAD CI remains separate.
