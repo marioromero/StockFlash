@@ -57,7 +57,6 @@
                         Preferencias generales
                     </Link>
                     <a
-                        v-if="canViewRoadmap"
                         href="/roadmap"
                         class="sf-button sf-button-secondary"
                         target="_blank"
@@ -130,9 +129,6 @@ const canViewInventory = computed(() =>
     || (page.props.auth?.permissions ?? []).includes('inventory.view')
 );
 const canManageBranches = computed(() =>
-    (page.props.auth?.permissions ?? []).includes('settings.manage')
-);
-const canViewRoadmap = computed(() =>
     (page.props.auth?.permissions ?? []).includes('settings.manage')
 );
 const canManageSettings = computed(() =>
