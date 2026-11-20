@@ -25,3 +25,6 @@ Execute existing+new Python harness regressions and unchanged product CI at exac
 
 ## Following normal development
 After adoption, read actual gate reports for 2-3 new packets and compare same-scope command time against baseline. Missing targeted final gates alone do not demonstrate model token savings. Local HTIME stage summaries can be examined on demand without launching audit models.
+
+## Independent QA R1 remediation
+B1/B2: mandatory build must resolve to an exact reviewed `vite build` or `vue-tsc --noEmit && vite build` script; `npm run typecheck` is accepted only when its script is exactly `vue-tsc --noEmit`. No-op aliases and arbitrary shell expressions fail closed before any gates. B3: any XML `<exclude>` or non-PHP suite directory suffix invalidates proof that the full PHP suite discovers all tests. M1: known alternative PHPUnit and npx vue-tsc calls are rejected as redundant future final gates. All existing/approved packet definitions remain unchanged.

@@ -17,3 +17,6 @@ Evidence: INVCSV-001 50.3s and INVTRANSFER-001 45.0s focused Inventory tests the
 
 ## Release
 Independent read-only adversarial QA, exact-head 5/5 CI, merge only with QA APROBADO, exact-merged-SHA CI. No production/remote DB/deploy. This is not authorization to remove tests from previously approved packets or to claim token savings.
+
+## Independent QA R1 remediation
+QA R1 found future-coverage bypasses B1 (no-op build), B2 (no-op standalone typecheck), B3 (PHPUnit exclusions) and minor M1 (nonstandard duplicate commands). Corrected in scripts/sf_gate_policy.py with fail-closed exact-script checks, exclusion/suffix guards and targeted regressions. Independent R2 QA and exact-head CI remain required; this packet is not VERIFIED.

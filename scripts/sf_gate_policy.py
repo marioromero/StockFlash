@@ -28,6 +28,9 @@ SYNTHETIC_TEST_IDS = frozenset({"TEST-001", "DEMO-001"})
 FULL_PHP = ("php", "artisan", "test")
 NPM_BUILD = ("npm", "run", "build")
 NPM_TYPECHECK = ("npm", "run", "typecheck")
+TYPED_VITE_BUILD = "vue-tsc --noEmit && vite build"
+VITE_BUILD = "vite build"
+REAL_TYPECHECK = "vue-tsc --noEmit"
 
 
 def _required_command(gate: dict, cmd: tuple[str, ...]) -> bool:
@@ -39,30 +42,45 @@ def _phpunit_covers_all_feature_tests(root: Path) -> bool:
         tree = ET.parse(root / "phpunit.xml")
     except (OSError, ET.ParseError):
         return False
+    # No test suite exclusion is permitted: it may silently hide Inventory,
+    # security or other tests from an otherwise complete-looking suite.
+    if any(node.tag.rsplit("}", 1)[-1] == "exclude" for node in tree.iter()):
+        return False
+    roots = [
+        node for node in tree.findall(".//testsuite/directory")
+        if (node.text or "").strip().replace(chr(92), "/").rstrip("/")
+        in {"tests/Feature", "tests/Unit"}
+    ]
+    # A fake suffix can make an apparent test root discover no PHP tests.
+    if any(node.attrib and node.attrib != {"suffix": ".php"} for node in roots):
+        return False
     paths = {
-        (node.text or "").strip().replace("\\", "/").rstrip("/")
-        for node in tree.findall(".//testsuite/directory")
+        (node.text or "").strip().replace(chr(92), "/").rstrip("/")
+        for node in roots
     }
-    # The full php artisan test command uses the default phpunit.xml suite.
-    # Both roots are required. Inventory lives under tests/Feature.
     return {"tests/Feature", "tests/Unit"}.issubset(paths)
+
+def _npm_script_coverage(root: Path) -> tuple[bool, bool, bool]:
+    """Return (real Vite build, combined TS check, real standalone TS check).
+
+    Recognize only exact reviewed scripts. Never infer coverage from names.
+    """
+    try:
+        data = json.loads((root / "package.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError, TypeError):
+        return False, False, False
+    if not isinstance(data, dict) or not isinstance(data.get("scripts"), dict):
+        return False, False, False
+    scripts = data["scripts"]
+    build = scripts.get("build")
+    typed_build = build == TYPED_VITE_BUILD
+    valid_build = typed_build or build == VITE_BUILD
+    valid_standalone = scripts.get("typecheck") == REAL_TYPECHECK
+    return valid_build, typed_build, valid_standalone
 
 
 def _npm_build_includes_typecheck(root: Path) -> bool:
-    try:
-        scripts = json.loads((root / "package.json").read_text(encoding="utf-8"))["scripts"]
-    except (OSError, ValueError, TypeError, KeyError):
-        return False
-    if not isinstance(scripts, dict):
-        return False
-    separate = scripts.get("typecheck")
-    build = scripts.get("build")
-    if not isinstance(separate, str) or not isinstance(build, str):
-        return False
-    # Deliberately exact, fail-closed allowlist. If npm scripts change,
-    # the future packet must declare the standalone typecheck gate.
-    return separate.strip() == "vue-tsc --noEmit" and build.strip() == "vue-tsc --noEmit && vite build"
-
+    return _npm_script_coverage(root)[1]
 
 def check_final_plan(packet: str, gates: list[dict], root: Path) -> list[str]:
     """Return policy violations; empty means safe. Existing packets unchanged.
@@ -92,9 +110,13 @@ def check_final_plan(packet: str, gates: list[dict], root: Path) -> list[str]:
             if _required_command(gate, FULL_PHP):
                 full_php += 1
             else:
-                # This includes filtered/path-only tests and non-mandatory
-                # full suite lookalikes. No automatic silent dropping.
                 focused_php.append(gate.get("id", "UNKNOWN"))
+        elif (tokens and tokens[0] in ("vendor/bin/phpunit", "./vendor/bin/phpunit")
+              or tokens[:2] in (("php", "vendor/bin/phpunit"),
+                                ("php", "./vendor/bin/phpunit"))):
+            focused_php.append(gate.get("id", "UNKNOWN"))
+        if tokens[:2] == ("npx", "vue-tsc") and "--noEmit" in tokens:
+            problems.append("REDUNDANT_NONSTANDARD_TYPECHECK")
         if tokens == NPM_BUILD:
             if gate.get("mandatory") is True:
                 builds += 1
@@ -114,9 +136,15 @@ def check_final_plan(packet: str, gates: list[dict], root: Path) -> list[str]:
         problems.append("PHPUNIT_FEATURE_AND_UNIT_COVERAGE_UNVERIFIED")
     if builds != 1:
         problems.append("VITE_BUILD_REQUIRED_ONCE")
-    build_covers_ts = _npm_build_includes_typecheck(Path(root))
-    if build_covers_ts and typechecks:
-        problems.append("REDUNDANT_FINAL_TYPECHECK")
-    elif not build_covers_ts and typechecks != 1:
-        problems.append("STANDALONE_TYPECHECK_REQUIRED_IF_BUILD_UNPROVEN")
+    build_valid, build_covers_ts, standalone_valid = _npm_script_coverage(Path(root))
+    if not build_valid:
+        problems.append("BUILD_SCRIPT_UNVERIFIED")
+    if build_covers_ts:
+        if typechecks:
+            problems.append("REDUNDANT_FINAL_TYPECHECK")
+    else:
+        if typechecks != 1:
+            problems.append("STANDALONE_TYPECHECK_REQUIRED_IF_BUILD_UNPROVEN")
+        elif not standalone_valid:
+            problems.append("TYPECHECK_SCRIPT_UNVERIFIED")
     return problems
