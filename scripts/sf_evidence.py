@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import os
 import re
 import subprocess
@@ -42,6 +43,27 @@ def _report_name(feature: str, name: str, kind: str = "VERIFY") -> bool:
         re.escape(feature) + "-" + kind + r"-[0-9]{8}-[0-9]{6}\.md",
         name,
     ))
+
+
+def _report_is_pass(contents: bytes) -> bool:
+    """Require exactly one explicit PASS verdict, not a stray token mention."""
+    try:
+        report = contents.decode("utf-8")
+    except UnicodeDecodeError:
+        return False
+    verdicts = [
+        line.partition(":")[2].strip()
+        for line in report.splitlines()
+        if line.startswith("Veredicto:")
+    ]
+    if len(verdicts) != 1:
+        return False
+    verdict = verdicts[0]
+    return (
+        verdict in ("GATES_PASS", "**GATES_PASS**")
+        or verdict.startswith("**GATES_PASS** (")
+        or verdict.startswith("GATES_PASS (")
+    )
 
 
 def _exclude_evidence(feature: str, name: str) -> bool:
@@ -118,7 +140,7 @@ def record_success(feature: str, before: dict, report: Path, root: Path = ROOT) 
     if report.parent != (root / "docs" / "work") or not _report_name(feature, report.name):
         return False
     contents = report.read_bytes()
-    if b"GATES_PASS" not in contents:
+    if not _report_is_pass(contents):
         return False
     proof = {
         "version": CACHE_VERSION,
@@ -149,15 +171,24 @@ def check(feature: str, root: Path = ROOT, now: float | None = None) -> tuple[bo
     root = Path(root).resolve()
     path = _cache_path(feature, root)
     try:
+        if path.is_symlink():
+            return False, "PROOF_FILE_SYMLINK", None
         proof = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, ValueError):
         return False, "NO_VALID_PROOF", None
     if not isinstance(proof, dict) or proof.get("version") != CACHE_VERSION or proof.get("feature") != feature:
         return False, "PROOF_SCHEMA_MISMATCH", None
     created = proof.get("created_at")
-    if not isinstance(created, (int, float)) or isinstance(created, bool):
+    reference_now = time.time() if now is None else now
+    # Reject NaN/Infinity/huge integers before age comparisons, as NaN
+    # otherwise makes BOTH comparisons false and silently bypasses expiry.
+    for value in (created, reference_now):
+        if (type(value) not in (int, float) or
+                not (0 < value < 2 ** 53) or not math.isfinite(value)):
+            return False, "PROOF_TIME_INVALID", None
+    age = reference_now - created
+    if not math.isfinite(age):
         return False, "PROOF_TIME_INVALID", None
-    age = (time.time() if now is None else now) - created
     if age < -30 or age > MAX_AGE_SECONDS:
         return False, "PROOF_EXPIRED", None
     name = proof.get("report")
@@ -168,9 +199,12 @@ def check(feature: str, root: Path = ROOT, now: float | None = None) -> tuple[bo
         # Do not follow a substituted evidence symlink.
         if report.is_symlink():
             return False, "PROOF_REPORT_INVALID", None
-        actual = hashlib.sha256(report.read_bytes()).hexdigest()
+        contents = report.read_bytes()
     except OSError:
         return False, "PROOF_REPORT_MISSING", None
+    if not _report_is_pass(contents):
+        return False, "PROOF_REPORT_NOT_PASS", None
+    actual = hashlib.sha256(contents).hexdigest()
     if actual != proof.get("report_sha256"):
         return False, "PROOF_REPORT_CHANGED", None
     try:

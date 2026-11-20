@@ -8,13 +8,14 @@ INVREORDER-001 produced two complete 16-gate runs (194.9s and 195.1s) even thoug
 ## Executable safe reuse
 - Normal sf_verify.py <ID> always executes all declared gates; opt-in sf_verify.py <ID> --reuse-evidence is the orchestrator entry point.
 - No/corrupt/expired proof, modified source/tests/config, changed HEAD, altered/missing report, failed/interrupted prior attempt or any uncertainty: execute ALL gates.
-- Only a real GATES_PASS report from sf_verify with unchanged Git-visible files (tracked AND untracked), same HEAD, matching report checksum, and a proof no older than two hours may be reused. Print explicit REUSED_PREVIOUS_EXECUTION and original report; do not fabricate another test run or write another report.
+- Only a real GATES_PASS report from sf_verify with one explicitly validated PASS verdict line, unchanged Git-visible files (tracked AND untracked), same HEAD, matching report checksum, and a finite, valid proof timestamp no older than two hours may be reused. A report containing a GATES_FAIL verdict or merely mentioning GATES_PASS elsewhere is rejected. Print explicit REUSED_PREVIOUS_EXECUTION and original report; do not fabricate another test run or write another report.
 - Each real invocation invalidates any old proof at start, then writes one new proof atomically ONLY on genuine GATES_PASS and unchanged source across that invocation.
 - Generated same-feature VERIFY/REVIEW evidence is excluded from source fingerprint. All other Git-visible files are included conservatively. Never inspect .env or private keys, even for hashing.
 - Local proof lives in gitignored docs/work/.run/<ID>.gate-evidence.json. Contains only run ID, hashes, timestamp, HEAD and report basename. No secrets, prompts, session history, cost estimates or extra tool/LLM polling.
 
 ## Limits and mandatory safeguards
 - Short-lived local proof is not an unchanged runtime environment guarantee: changed PHP/Node toolchain, installed vendor/node_modules, test environment, external service, or suspicious failure requires unconditional full verification without reuse flag.
+- The proof is not authenticated: anyone with local write access to both the proof and report can forge a matching PASS. It is only a local efficiency hint, NOT a security boundary. Proof symlinks are rejected, but cannot replace OS filesystem permissions.
 - This is not a shared cross-machine build cache. Independent QA can reuse verified same-tree gate evidence but must still independently review and probe risks. Publisher still validates exact source and selects files; exact-SHA GitHub CI never skips.
 - Do not remove current packet gates, security/authorization checks, regression suite, independent reviewer, CI or privacy guards.
 

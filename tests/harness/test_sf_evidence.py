@@ -166,5 +166,62 @@ class EvidenceReuseTest(unittest.TestCase):
             self.assertEqual(len(executions), 2)
 
 
+    def test_nonfinite_proof_time_is_rejected(self):
+        self.stamp()
+        path = ev._cache_path(self.feature, self.root)
+        for bogus in [float("nan"), float("inf"), -float("inf"), 10**500, False]:
+            with self.subTest(bogus=repr(bogus)):
+                proof = json.loads(path.read_text())
+                proof["created_at"] = bogus
+                path.write_text(json.dumps(proof), encoding="utf-8")
+                self.assertFalse(self.check(now=time.time() + 10**9)[0])
+        self.assertEqual(self.check(now=float("nan"))[1], "PROOF_TIME_INVALID")
+
+    def test_forged_hash_of_failed_report_is_not_reusable(self):
+        import hashlib
+
+        self.stamp()
+        self.report.write_text(
+            "Veredicto: **GATES_FAIL** (GATES_PASS/GATES_FAIL; nunca VERIFIED).\n",
+            encoding="utf-8",
+        )
+        path = ev._cache_path(self.feature, self.root)
+        proof = json.loads(path.read_text())
+        proof["report_sha256"] = hashlib.sha256(self.report.read_bytes()).hexdigest()
+        path.write_text(json.dumps(proof), encoding="utf-8")
+        self.assertEqual(self.check()[1], "PROOF_REPORT_NOT_PASS")
+
+    def test_report_rejects_stray_pass_text_or_conflicting_verdict(self):
+        self.stamp()
+        path = ev._cache_path(self.feature, self.root)
+        for body in [
+            "Gate stdout: GATES_PASS\nVeredicto: GATES_FAIL\n",
+            "Veredicto: GATES_PASS\nVeredicto: GATES_FAIL\n",
+            "Veredicto: GATES_PASSED\n",
+        ]:
+            with self.subTest(body=body):
+                self.report.write_text(body, encoding="utf-8")
+                proof = json.loads(path.read_text())
+                import hashlib
+                proof["report_sha256"] = hashlib.sha256(self.report.read_bytes()).hexdigest()
+                path.write_text(json.dumps(proof), encoding="utf-8")
+                self.assertEqual(self.check()[1], "PROOF_REPORT_NOT_PASS")
+
+    def test_proof_symlink_is_never_read(self):
+        self.stamp()
+        proof_path = ev._cache_path(self.feature, self.root)
+        original = proof_path.read_text(encoding="utf-8")
+        proof_path.unlink()
+        target = self.root / ".env"
+        target.write_text("DO_NOT_READ=YES\n", encoding="utf-8")
+        try:
+            proof_path.symlink_to(target)
+        except (NotImplementedError, OSError):
+            self.skipTest("Symlink creation unavailable on this platform")
+        self.assertEqual(self.check()[1], "PROOF_FILE_SYMLINK")
+        proof_path.unlink()
+        proof_path.write_text(original, encoding="utf-8")
+
+
 if __name__ == "__main__":
     unittest.main()

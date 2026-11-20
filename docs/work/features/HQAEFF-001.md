@@ -16,4 +16,4 @@ scope: harness-only; no product/business decisions
 Code stays on an isolated PR until independent adversarial QA and all available CI jobs succeed on its exact head. Do not merge automatically while another product feature is active. The existing feature gates, publisher, QA and exact-SHA CI remain mandatory. No deploy or real DB operations.
 
 ## Acceptance
-No/cache-corrupted/stale/fake proof, changed tracked/untracked files, changed HEAD, changed/missing report or incomplete gate execution may authorize reuse. Unchanged short-term original PASS may be reused explicitly without new gate events. No prior proof may survive a new failing/interrupted full run. Test cases must be executed, not only documented.
+No/cache-corrupted/stale/fake proof, non-finite times (NaN/Infinity), missing PASS verdict or forged hash of FAIL, proof symlink, changed tracked/untracked files, changed HEAD, changed/missing report or incomplete gate execution may authorize reuse. Unchanged short-term original PASS may be reused explicitly without new gate events. No prior proof may survive a new failing/interrupted full run. Test cases must be executed, not only documented.
