@@ -23,6 +23,15 @@ use InvalidArgumentException;
  * Mientras el traspaso es borrador se usa un marcador interno unico
  * `DRAFT-` + 24 hexadecimales; nunca se acepta numero del cliente.
  *
+ * Politica de prefijo por codigo de sucursal: DocumentSequenceAllocator solo
+ * admite prefijos de hasta 10 caracteres, pero las sucursales permiten codigos
+ * inmutables de hasta 30. Si el codigo de origen mide <= 10 se conserva la
+ * asignacion historica `allocate('transfer', origin)` sin override. Si supera
+ * 10 se usa un prefijo tecnico determinista de exactamente 10 caracteres
+ * derivado del id de la sucursal de origen (`T` + id con 9 digitos), sin
+ * truncar el codigo visible ni modificar la validacion/schema de sucursales.
+ * Las filas existentes de document_sequences conservan siempre su prefijo.
+ *
  * Diferencias de recepcion (`shipped_qty - received_qty`) quedan pendientes y
  * visibles: no se inventan ajustes, reversas, reclamos ni transiciones extra.
  * La comprobacion de existencia en el envio es acotada a traspasos: exige
@@ -204,8 +213,15 @@ final class StockTransferService
                 (int) $transfer->to_branch_id,
             ]);
 
+            $originCode = (string) DB::table('branches')
+                ->where('id', $originBranchId)
+                ->value('code');
+            $prefixOverride = strlen($originCode) > 10
+                ? $this->transferSequencePrefix($originBranchId)
+                : null;
+
             try {
-                $number = $this->sequences->allocate('transfer', $originBranchId);
+                $number = $this->sequences->allocate('transfer', $originBranchId, $prefixOverride);
             } catch (InvalidArgumentException|DomainException) {
                 throw new StockTransferException(
                     'transfer',
@@ -772,6 +788,24 @@ final class StockTransferService
         return self::DRAFT_PREFIX.strtoupper(bin2hex(random_bytes(12)));
     }
 
+    /**
+     * Prefijo tecnico de 10 caracteres para origenes con codigo > 10.
+     * DocumentSequenceAllocator solo lo usa al crear la fila; el ambito sigue
+     * siendo (transfer, branch, scope_id) y el numero visible se mantiene unico
+     * por sucursal de origen.
+     */
+    private function transferSequencePrefix(int $originBranchId): string
+    {
+        return 'T'.substr(str_pad((string) $originBranchId, 9, '0', STR_PAD_LEFT), -9);
+    }
+
+    /**
+     * Expone el numero canonico solo fuera de borrador y oculta el marcador
+     * interno exacto (`DRAFT-` + 24 hexadecimales) que puede sobrevivir en un
+     * borrador cancelado. Un numero canonico real puede empezar con `DRAFT-`
+     * cuando ese es el codigo de la sucursal; su longitud maxima (prefijo 10 +
+     * padding 6..18) nunca alcanza los 30 caracteres del marcador.
+     */
     private function publicNumber(object $transfer): ?string
     {
         if ((string) $transfer->status === 'draft') {
@@ -780,7 +814,7 @@ final class StockTransferService
 
         $number = (string) $transfer->number;
 
-        return str_starts_with($number, self::DRAFT_PREFIX) ? null : $number;
+        return preg_match('/^DRAFT-[0-9A-F]{24}$/', $number) === 1 ? null : $number;
     }
 
     /**

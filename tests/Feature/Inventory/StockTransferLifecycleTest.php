@@ -229,6 +229,112 @@ class StockTransferLifecycleTest extends StockTransferTestCase
         );
     }
 
+    public function test_codigos_de_origen_mayores_a_diez_caracteres_solicitan_y_envian_con_prefijo_tecnico(): void
+    {
+        $origin11 = $this->makeBranch(['code' => 'ABCDEFGHIJK']);
+        $origin30 = $this->makeBranch(['code' => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234']);
+        $destination = $this->makeBranch(['code' => 'DES-LONG']);
+        [, $variantId] = $this->makeProductVariant('TRF-LONG-CODE');
+        $this->createStockRow($origin11->id, $variantId, '5.000');
+        $this->createStockRow($origin30->id, $variantId, '5.000');
+
+        $draft11 = $this->draft($origin11, $destination, [['sku' => 'TRF-LONG-CODE', 'quantity' => '2.000']]);
+        $draft30 = $this->draft($origin30, $destination, [['sku' => 'TRF-LONG-CODE', 'quantity' => '2.000']]);
+
+        $this->assertSame(0, DB::table('stock_movements')->count());
+        $this->assertSame('5.000', $this->onHand((int) $origin11->id, $variantId));
+        $this->assertSame('5.000', $this->onHand((int) $origin30->id, $variantId));
+
+        $number11 = $this->service()->request($draft11, (int) $origin11->id, (int) $this->admin->id);
+        $number30 = $this->service()->request($draft30, (int) $origin30->id, (int) $this->admin->id);
+
+        $this->assertSame($this->transferPrefixFor($origin11).'000001', $number11);
+        $this->assertSame($this->transferPrefixFor($origin30).'000001', $number30);
+        $this->assertSame(16, strlen($number11));
+        $this->assertSame(16, strlen($number30));
+        $this->assertNotSame($number11, $number30);
+        $this->assertSame($number11, (string) $this->transferRow($draft11)->number);
+        $this->assertSame($number30, (string) $this->transferRow($draft30)->number);
+
+        $second11 = $this->draft($origin11, $destination, [['sku' => 'TRF-LONG-CODE', 'quantity' => '1.000']]);
+        $this->assertSame(
+            $this->transferPrefixFor($origin11).'000002',
+            $this->service()->request($second11, (int) $origin11->id, (int) $this->admin->id),
+        );
+
+        $this->assertSame(0, DB::table('stock_movements')->count());
+        $this->assertSame('5.000', $this->onHand((int) $origin11->id, $variantId));
+        $this->assertSame('5.000', $this->onHand((int) $origin30->id, $variantId));
+
+        $this->service()->dispatch($draft11, (int) $origin11->id, (int) $this->admin->id);
+        $this->service()->dispatch($draft30, (int) $origin30->id, (int) $this->admin->id);
+
+        $this->assertSame('in_transit', $this->transferRow($draft11)->status);
+        $this->assertSame('in_transit', $this->transferRow($draft30)->status);
+        $this->assertSame('3.000', $this->onHand((int) $origin11->id, $variantId));
+        $this->assertSame('3.000', $this->onHand((int) $origin30->id, $variantId));
+        $this->assertSame('0.000', $this->onHand((int) $destination->id, $variantId));
+        $this->assertSame(2, DB::table('stock_movements')->count());
+    }
+
+    public function test_fallo_de_auditoria_en_solicitud_conserva_borrador_y_no_consume_correlativo(): void
+    {
+        $origin = $this->makeBranch(['code' => 'ORI-RAUD']);
+        $destination = $this->makeBranch(['code' => 'DES-RAUD']);
+        [, $variantId] = $this->makeProductVariant('TRF-REQ-AUD');
+        $this->createStockRow($origin->id, $variantId, '4.000');
+
+        $transferId = $this->draft($origin, $destination, [
+            ['sku' => 'TRF-REQ-AUD', 'quantity' => '2.000'],
+        ]);
+
+        DB::statement(
+            "CREATE TRIGGER fail_transfer_request_audit BEFORE INSERT ON audit_logs "
+            ."WHEN NEW.event = 'inventory.transfer_requested' "
+            ."BEGIN SELECT RAISE(ABORT, 'audit failure'); END",
+        );
+
+        try {
+            $this->service()->request($transferId, (int) $origin->id, (int) $this->admin->id);
+            $this->fail('El fallo de auditoría debía revertir la solicitud.');
+        } catch (QueryException) {
+            $this->assertTrue(true);
+        } finally {
+            DB::statement('DROP TRIGGER IF EXISTS fail_transfer_request_audit');
+        }
+
+        $row = $this->transferRow($transferId);
+        $this->assertSame('draft', $row->status);
+        $this->assertMatchesRegularExpression('/^DRAFT-[0-9A-F]{24}$/', (string) $row->number);
+        $this->assertNull($row->requested_by_user_id);
+        $this->assertNull($row->requested_at);
+        $this->assertSame(0, DB::table('document_sequences')
+            ->where('doc_type', 'transfer')
+            ->where('scope_id', $origin->id)
+            ->count());
+        $this->assertSame('4.000', $this->onHand((int) $origin->id, $variantId));
+        $this->assertSame(0, DB::table('stock_movements')->count());
+        $this->assertSame(0, DB::table('audit_logs')
+            ->where('event', 'inventory.transfer_requested')
+            ->count());
+
+        $this->actingAs($this->admin)
+            ->get($this->transferUrl($origin, $transferId))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('transfer.number', null)
+                ->where('transfer.status', 'draft'));
+
+        $this->assertSame(
+            'ORI-RAUD000001',
+            $this->service()->request($transferId, (int) $origin->id, (int) $this->admin->id),
+        );
+        $this->assertSame(2, (int) DB::table('document_sequences')
+            ->where('doc_type', 'transfer')
+            ->where('scope_id', $origin->id)
+            ->value('next_number'));
+    }
+
     public function test_cancelar_borrador_o_solicitud_no_mueve_stock_y_no_permite_cancelar_enviado(): void
     {
         $origin = $this->makeBranch(['code' => 'ORI-CAN']);
@@ -638,6 +744,11 @@ class StockTransferLifecycleTest extends StockTransferTestCase
         $this->assertStringNotContainsString("DB::table('stock_movements')", $source);
         $this->assertStringContainsString("DB::table('current_stock')", $source);
         $this->assertStringContainsString('lockForUpdate()', $source);
+    }
+
+    private function transferPrefixFor(Branch $branch): string
+    {
+        return 'T'.substr(str_pad((string) $branch->id, 9, '0', STR_PAD_LEFT), -9);
     }
 
     /**

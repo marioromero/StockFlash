@@ -290,9 +290,15 @@ final class StockTransferQueryService
         return $aggregates;
     }
 
+    /**
+     * Oculta solo el borrador y el marcador interno exacto (`DRAFT-` + 24
+     * hexadecimales) que conserva un borrador cancelado. Un numero canonico
+     * real puede empezar con `DRAFT-` si ese es el codigo de la sucursal de
+     * origen: prefijo <= 10 + padding 6..18 nunca alcanza 30 caracteres.
+     */
     private function publicNumber(string $number, string $status): ?string
     {
-        if ($status === 'draft' || str_starts_with($number, 'DRAFT-')) {
+        if ($status === 'draft' || preg_match('/^DRAFT-[0-9A-F]{24}$/', $number) === 1) {
             return null;
         }
 

@@ -69,6 +69,154 @@ class StockTransferQueryTest extends StockTransferTestCase
                 ->where('transfers.data.1.id', $draftId));
     }
 
+    public function test_origen_con_codigo_draft_muestra_numero_canonico_desde_solicitud(): void
+    {
+        $origin = $this->makeBranch(['code' => 'DRAFT-']);
+        $destination = $this->makeBranch(['code' => 'DES-DFT']);
+        [, $firstVariant] = $this->makeProductVariant('TRF-DRAFTCODE-001');
+        [, $secondVariant] = $this->makeProductVariant('TRF-DRAFTCODE-002');
+        $this->createStockRow($origin->id, $firstVariant, '5.000');
+        $this->createStockRow($origin->id, $secondVariant, '5.000');
+
+        $transferId = $this->draft($origin, $destination, [
+            ['sku' => 'TRF-DRAFTCODE-001', 'quantity' => '2.000'],
+            ['sku' => 'TRF-DRAFTCODE-002', 'quantity' => '3.000'],
+        ]);
+        $this->assertMatchesRegularExpression('/^DRAFT-[0-9A-F]{24}$/', (string) $this->transferRow($transferId)->number);
+
+        $this->actingAs($this->admin)
+            ->get($this->transferUrl($origin, $transferId))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('transfer.number', null)
+                ->where('transfer.status', 'draft'));
+
+        $this->actingAs($this->admin)
+            ->get($this->transferUrl($origin))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('transfers.data.0.id', $transferId)
+                ->where('transfers.data.0.number', null));
+
+        $this->assertSame(
+            'DRAFT-000001',
+            $this->service()->request($transferId, (int) $origin->id, (int) $this->admin->id),
+        );
+
+        $this->actingAs($this->admin)
+            ->get($this->transferUrl($origin, $transferId))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('transfer.number', 'DRAFT-000001')
+                ->where('transfer.status', 'requested'));
+
+        $this->actingAs($this->admin)
+            ->get($this->transferUrl($origin))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('transfers.data.0.id', $transferId)
+                ->where('transfers.data.0.number', 'DRAFT-000001'));
+
+        $this->service()->dispatch($transferId, (int) $origin->id, (int) $this->admin->id);
+
+        $this->actingAs($this->admin)
+            ->get($this->transferUrl($origin, $transferId))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('transfer.number', 'DRAFT-000001')
+                ->where('transfer.status', 'in_transit'));
+
+        $this->actingAs($this->admin)
+            ->get($this->transferUrl($origin))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('transfers.data.0.number', 'DRAFT-000001'));
+
+        $itemIds = $this->itemIdsByVariant($transferId);
+        $this->service()->receive(
+            $transferId,
+            (int) $destination->id,
+            (int) $this->admin->id,
+            [
+                ['item_id' => $itemIds[$firstVariant], 'received_qty' => '1.000'],
+                ['item_id' => $itemIds[$secondVariant], 'received_qty' => '2.000'],
+            ],
+        );
+
+        $this->actingAs($this->admin)
+            ->get($this->transferUrl($origin, $transferId))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('transfer.number', 'DRAFT-000001')
+                ->where('transfer.status', 'partially_received'));
+
+        $this->actingAs($this->admin)
+            ->get($this->transferUrl($origin))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('transfers.data.0.number', 'DRAFT-000001'));
+    }
+
+    public function test_origen_con_codigo_draft_conserva_numero_al_recibir_y_borrador_cancelado_oculta_placeholder(): void
+    {
+        $origin = $this->makeBranch(['code' => 'DRAFT-']);
+        $destination = $this->makeBranch(['code' => 'DES-DF2']);
+        [, $variantId] = $this->makeProductVariant('TRF-DRAFTCODE-003');
+        $this->createStockRow($origin->id, $variantId, '3.000');
+
+        $transferId = $this->draft($origin, $destination, [
+            ['sku' => 'TRF-DRAFTCODE-003', 'quantity' => '2.000'],
+        ]);
+        $this->assertSame(
+            'DRAFT-000001',
+            $this->service()->request($transferId, (int) $origin->id, (int) $this->admin->id),
+        );
+        $this->service()->dispatch($transferId, (int) $origin->id, (int) $this->admin->id);
+        $this->service()->receive(
+            $transferId,
+            (int) $destination->id,
+            (int) $this->admin->id,
+            [['item_id' => $this->itemIdsByVariant($transferId)[$variantId], 'received_qty' => '2.000']],
+        );
+
+        $this->assertSame('received', $this->transferRow($transferId)->status);
+        $this->actingAs($this->admin)
+            ->get($this->transferUrl($origin, $transferId))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('transfer.number', 'DRAFT-000001')
+                ->where('transfer.status', 'received'));
+
+        $cancelledId = $this->draft($origin, $destination, [
+            ['sku' => 'TRF-DRAFTCODE-003', 'quantity' => '1.000'],
+        ]);
+        $this->assertMatchesRegularExpression(
+            '/^DRAFT-[0-9A-F]{24}$/',
+            (string) $this->transferRow($cancelledId)->number,
+        );
+        $this->service()->cancel($cancelledId, (int) $origin->id, (int) $this->admin->id);
+
+        $cancelled = $this->transferRow($cancelledId);
+        $this->assertSame('cancelled', $cancelled->status);
+        $this->assertMatchesRegularExpression('/^DRAFT-[0-9A-F]{24}$/', (string) $cancelled->number);
+
+        $this->actingAs($this->admin)
+            ->get($this->transferUrl($origin, $cancelledId))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('transfer.number', null)
+                ->where('transfer.status', 'cancelled'));
+
+        $this->actingAs($this->admin)
+            ->get($this->transferUrl($origin))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('transfers.data.0.id', $cancelledId)
+                ->where('transfers.data.0.number', null)
+                ->where('transfers.data.1.id', $transferId)
+                ->where('transfers.data.1.number', 'DRAFT-000001'));
+    }
+
     public function test_paginacion_es_acotada_y_deterministica(): void
     {
         $origin = $this->makeBranch(['code' => 'ORI-PAGE']);
