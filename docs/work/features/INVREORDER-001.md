@@ -1,6 +1,6 @@
 # INVREORDER-001 — Reorder settings and low-stock dashboard
 
-status: APPROVED
+status: VERIFIED
 approval_basis: existing_approved_contract_owner_delegation_2026-11-16
 new_business_decisions: NONE
 publication_mode: AUTO_GIT
@@ -27,3 +27,14 @@ Implement Part 1 §8.3 `INV-07` (P0): per-branch and per-variant reorder point, 
 
 ## Hard guards
 No CSV stock imports (INV-05 remaining), transfers (INV-06), reservations (INV-17/18), notifications (CORE-14), purchase order/purchase suggestions (PUR-05), valuation (INV-09), sales/POS, Woo, DTE, stock changes other than existing ledger, stock safety online publication (INV-19/20), location editing (INV-14), plan changes or new commercial business rules. No remote DB/migrations/seeding, live installation, deployment, credentials/.env, cron, webhooks, new dependencies, or edits to protected contracts, AGENTS.md, `public/docs/index.html`, `resources/roadmap/index.html`, or ChatGPT-only harness. Safe sync once, SYNC_BLOCKED fail closed, max three correction rounds; never self-declare VERIFIED.
+
+## External technical closure — ChatGPT, 2026-11-19
+status: VERIFIED_TECH
+code_sha: `679e85852f128260a34e0c128fa2e9cc7b623216`
+gates: 16/16 GATES_PASS
+qa: independent APROBADO; `docs/work/INVREORDER-001-REVIEW-20261119-1725.md`
+php: 752 tests / 7415 assertions
+ci_exact_code_sha: 2/2 SUCCESS (PHP/Node 44608872118, contracts 44608871998)
+merge_context: later unrelated HQAEFF-001 PR #51 merge SHA `59fcef5609f812bd9f3f6d05672a3aa0a75fc4c5` also has CI 2/2 SUCCESS; no reopened harness audit.
+limits: MariaDB real migration/lock/performance NOT_RUN, real browser UX NOT_RUN, remote DB UNTOUCHED, no deploy; CSV, transfers, reservations still pending.
+editorial_docs: guide and roadmap updated by ChatGPT, with their later editorial HEAD CI checked separately. Inactive/deleted configured variants retained as read-only historical entries and may be included in critical counts; document as non-blocking usability consideration.
