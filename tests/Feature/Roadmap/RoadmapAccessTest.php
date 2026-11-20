@@ -33,7 +33,8 @@ class RoadmapAccessTest extends TestCase
         $this->get('/roadmap')
             ->assertOk()
             ->assertSee('Avance del proyecto | StockFlash', false)
-            ->assertSee('Catálogo detallado de funcionalidades', false);
+            ->assertSee('id="traceability"', false)
+            ->assertSee('id="overall-progress"', false);
     }
 
     public function test_authenticated_user_without_settings_manage_can_read_public_roadmap(): void
@@ -57,16 +58,16 @@ class RoadmapAccessTest extends TestCase
             (string) $response->headers->get('content-type')
         );
         $response->assertSee('Avance del proyecto | StockFlash', false);
-        $response->assertSee('id="expand"', false);
-        $response->assertSee('id="collapse"', false);
-        $response->assertSee('details class="step"', false);
+        $response->assertSee('class="stats"', false);
+        $response->assertSee('details class="stage', false);
+        $response->assertSee('details class="module"', false);
+        $response->assertSee('details class="req"', false);
 
-        foreach (range(0, 10) as $stage) {
-            $response->assertSee('R'.$stage, false);
+        foreach (range(3, 10) as $stage) {
+            $response->assertSee('id="r'.$stage.'"', false);
         }
 
-        $response->assertSee('R7', false);
-        $response->assertSee('Primera versión vendible', false);
+        $response->assertDontSee('Catálogo detallado de funcionalidades', false);
     }
 
     public function test_roadmap_html_is_not_publicly_served(): void
@@ -81,19 +82,29 @@ class RoadmapAccessTest extends TestCase
 
         $this->assertStringContainsString('lang="es-CL"', $html);
         $this->assertStringContainsString('Avance del proyecto | StockFlash', $html);
-        $this->assertStringContainsString('details class="step"', $html);
-        $this->assertStringContainsString('id="feature-catalog"', $html);
-        $this->assertStringContainsString('details class="module-details"', $html);
-        $this->assertStringContainsString('id="feature-status-filter"', $html);
-        $this->assertStringContainsString('id="feature-search"', $html);
-        $this->assertStringContainsString('id="expand"', $html);
-        $this->assertStringContainsString('id="collapse"', $html);
+        $this->assertStringContainsString('id="overall-progress"', $html);
+        $this->assertStringContainsString('id="traceability"', $html);
+        $this->assertStringContainsString('class="stats"', $html);
+        $this->assertStringContainsString('details class="stage', $html);
+        $this->assertStringContainsString('details class="module"', $html);
+        $this->assertStringContainsString('details class="req"', $html);
         $this->assertStringContainsString('@media(max-width:640px)', $html);
+        $this->assertStringNotContainsString('id="feature-catalog"', $html);
+        $this->assertStringNotContainsString('id="feature-search"', $html);
+        $this->assertStringNotContainsString('class="metric"', $html);
+        $this->assertStringNotContainsString('class="block"', $html);
         $this->assertStringContainsString('prefers-reduced-motion', $html);
 
-        foreach (range(0, 10) as $stage) {
-            $this->assertStringContainsString('R'.$stage, $html);
+        foreach (range(3, 10) as $stage) {
+            $this->assertStringContainsString('id="r'.$stage.'"', $html);
         }
+
+        preg_match_all('/data-code="([A-Z]+-[0-9]+)"/', $html, $ids);
+        preg_match_all('/class="req" data-code="[A-Z]+-[0-9]+" data-state="done"/', $html, $done);
+        $this->assertSame(265, count($ids[1]));
+        $this->assertSame(count($ids[1]), count(array_unique($ids[1])));
+        $this->assertSame(19, count($done[0]));
+        $this->assertStringContainsString('aria-valuenow="19" aria-valuemin="0" aria-valuemax="265"', $html);
 
         $this->assertStringNotContainsString('<script src=', $html);
         $this->assertStringNotContainsString('fetch(', $html);
