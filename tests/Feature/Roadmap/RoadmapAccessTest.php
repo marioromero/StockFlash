@@ -115,6 +115,14 @@ class RoadmapAccessTest extends TestCase
         $this->assertStringContainsString('aria-label="Abrir el avance del proyecto en una nueva pestaña"', $dashboard);
     }
 
+    public function test_home_page_links_to_public_roadmap_and_manual(): void
+    {
+        $this->get('/')->assertOk();
+        $home = (string) file_get_contents(resource_path('js/Pages/Home.vue'));
+        $this->assertStringContainsString('href="/roadmap"', $home);
+        $this->assertStringContainsString('href="/docs/"', $home);
+    }
+
     public function test_roadmap_route_is_public_and_setup_remains_guarded(): void
     {
         $routes = (string) file_get_contents(base_path('routes/web.php'));
