@@ -37,7 +37,7 @@ class InstallGuardRegressionTest extends InstallTestCase
         );
 
         $this->get('/dashboard')->assertStatus(503);
-        $this->get('/roadmap')->assertStatus(503);
+        $this->get('/roadmap')->assertOk();
         $this->get('/docs/')->assertOk();
 
         $login = $this->post('/login', [
@@ -47,11 +47,11 @@ class InstallGuardRegressionTest extends InstallTestCase
         $this->assertNotSame(503, $login->getStatusCode());
     }
 
-    public function test_roadmap_sigue_exigiendo_autenticacion_cuando_el_esquema_esta_listo(): void
+    public function test_roadmap_publico_no_exige_autenticacion_cuando_el_esquema_esta_listo(): void
     {
         $this->markSetupCompleted();
 
-        $this->get('/roadmap')->assertRedirect(route('login'));
+        $this->get('/roadmap')->assertOk()->assertSee('Avance del proyecto | StockFlash', false);
     }
 
     public function test_rutas_del_instalador_tienen_metodos_esperados_y_csrf(): void
