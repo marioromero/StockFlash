@@ -25,6 +25,8 @@
 
                 <div class="sf-actions">
                     <a href="/login" class="sf-button sf-button-secondary">Ir al ingreso</a>
+                    <a href="/roadmap" class="sf-button sf-button-secondary">Ver avance del proyecto</a>
+                    <a href="/docs/" class="sf-button sf-button-secondary">Abrir guía de usuario</a>
                 </div>
             </section>
         </main>
@@ -118,6 +120,9 @@ defineProps<{
 
 .sf-actions {
     margin-top: 1.25rem;
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
 }
 
 .sf-button {
