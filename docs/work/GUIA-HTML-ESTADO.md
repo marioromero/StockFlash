@@ -9,13 +9,13 @@ guide_branch: `docs/guia-usuario-interactiva-20261110`
 guide_pr: https://github.com/marioromero/StockFlash/pull/2
 guide_status: INTEGRADA_EN_MAIN (2026-11-16)
 guide_content_last_written: 2026-11-20
-covered_features: AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED; ROADMAP-001 VERIFIED; USERS-001 VERIFIED; CFG-001/002/003 VERIFIED; CORELIC-001 VERIFIED; CATMAST-001 VERIFIED (9279d57); SETUP-001 VERIFIED (13cdd6a); INVCORE-001 VERIFIED (966b685); INVWRITE-001 VERIFIED_TECH (816fdc6); INVKARDEX-001 VERIFIED_TECH (317a61d); INVREORDER-001 VERIFIED_TECH (679e858); INVCSV-001 VERIFIED_TECH (f856592; guía integrada)
-latest_covered_code_sha: `f8565927d3724759e614b65f3cdf181b803c5d5b` (INVCSV-001 and prior user-visible features; not a deployment claim)
-next_feature: INVTRANSFER-001 — Interbranch stock transfer lifecycle (implementación SQLite en curso; gates/QA/CI pendientes). INSTALL-001 — Instalador web CORE-17 (documentación editorial por reconciliar)
+covered_features: AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED; ROADMAP-001 VERIFIED; USERS-001 VERIFIED; CFG-001/002/003 VERIFIED; CORELIC-001 VERIFIED; CATMAST-001 VERIFIED (9279d57); SETUP-001 VERIFIED (13cdd6a); INVCORE-001 VERIFIED (966b685); INVWRITE-001 VERIFIED_TECH (816fdc6); INVKARDEX-001 VERIFIED_TECH (317a61d); INVREORDER-001 VERIFIED_TECH (679e858); INVCSV-001 VERIFIED_TECH (f856592); INVTRANSFER-001 VERIFIED_TECH (3072f54; guía integrada)
+latest_covered_code_sha: `3072f546f096a61e8ce16f3bf9255d25a5765aa7` (INVTRANSFER-001 and prior user-visible features; not a deployment claim)
+next_feature: NEXT_R4 — Reservas operativas de inventario o cierre del núcleo de Bodega (sujeto a packet aprobado); INSTALL-001 — Instalador web CORE-17 (documentación editorial por reconciliar)
 internal_only_features: CATDB-001 VERIFIED (11 tablas internas, sin UI ni página nueva); CORESEQ-001 VERIFIED (servicio interno invisible; sin entrada nueva en guía); COREMOD-001 VERIFIED técnico (servicio interno invisible de módulos; sin página nueva); COREPIN-001 VERIFIED (servicio interno invisible de autorización PIN; sin página nueva)
-last_guide_integration_sha: `358ba6ae479342a5e2dd2053017cc0251caf87f8` (ChatGPT, guía INVCSV-001)
+last_guide_integration_sha: `564b0a583e07355962c2a8a00c5837a645038d34` (ChatGPT, guía INVTRANSFER-001 + enlace al roadmap público, PR #55)
 last_guide_integration_date: 2026-11-20
-pending_docs: GUIA_PENDIENTE_CHATGPT — INVTRANSFER-001 (traspasos entre sucursales; implementación SQLite, gates/QA/CI pendientes), INSTALL-001 (reconciliación editorial del instalador técnico CORE-17); INVCSV-001 integrado por ChatGPT el 2026-11-20
+pending_docs: GUIA_PENDIENTE_CHATGPT — INSTALL-001 (reconciliación editorial del instalador técnico CORE-17); INVCSV-001 e INVTRANSFER-001 integrados por ChatGPT el 2026-11-20; /docs/ público y enlazado con /roadmap
 
 ## Cómo mantener este archivo
 - OpenCode puede actualizar solamente los metadatos y el registro de pendientes aquí, no los textos para usuarios en `public/docs/index.html`.
