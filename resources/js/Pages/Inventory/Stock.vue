@@ -36,6 +36,13 @@
                     >
                         Reposición
                     </Link>
+                    <Link
+                        v-if="canAdjust"
+                        :href="`/inventory/stock/${branch.id}/import`"
+                        class="sf-button sf-button-secondary"
+                    >
+                        Importar CSV
+                    </Link>
                 </div>
             </div>
 

@@ -195,6 +195,10 @@ class StockReadAuthorizationTest extends InventoryTestCase
         $this->assertSame([
             'inventory.entry',
             'inventory.stock.index',
+            'inventory.import.index',
+            'inventory.import.template',
+            'inventory.import.preview',
+            'inventory.import.commit',
             'inventory.kardex.index',
             'inventory.reorder.index',
             'inventory.stock.initial',

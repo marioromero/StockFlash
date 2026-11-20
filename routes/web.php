@@ -227,6 +227,26 @@ Route::middleware(['auth', 'password.change', 'verify.session'])->group(function
         ->middleware(['can.permission:inventory.view', 'branch.access'])
         ->name('inventory.stock.index');
 
+    // INVCSV-001 · carga inicial de existencias desde CSV. La sucursal sale
+    // solo de `{branch}` y `branch.access`; el actor, el tipo, el origen y los
+    // saldos se resuelven en servidor. Lectura/plantilla con `inventory.view`;
+    // vista previa y commit con `inventory.adjust`.
+    Route::get('/inventory/stock/{branch}/import', [\App\Http\Controllers\Inventory\InitialStockImportController::class, 'index'])
+        ->middleware(['can.permission:inventory.view', 'branch.access'])
+        ->name('inventory.import.index');
+
+    Route::get('/inventory/stock/{branch}/import/template', [\App\Http\Controllers\Inventory\InitialStockImportController::class, 'template'])
+        ->middleware(['can.permission:inventory.view', 'branch.access'])
+        ->name('inventory.import.template');
+
+    Route::post('/inventory/stock/{branch}/import/preview', [\App\Http\Controllers\Inventory\InitialStockImportController::class, 'preview'])
+        ->middleware(['can.permission:inventory.adjust', 'branch.access'])
+        ->name('inventory.import.preview');
+
+    Route::post('/inventory/stock/{branch}/import/commit', [\App\Http\Controllers\Inventory\InitialStockImportController::class, 'commit'])
+        ->middleware(['can.permission:inventory.adjust', 'branch.access'])
+        ->name('inventory.import.commit');
+
     // INVKARDEX-001 · reporte Kardex de solo lectura. La sucursal sale de
     // `{branch}` y `branch.access`; no se acepta `branch_id` de query.
     Route::get('/inventory/stock/{branch}/kardex', [\App\Http\Controllers\Inventory\KardexController::class, 'index'])

@@ -11,11 +11,11 @@ guide_status: INTEGRADA_EN_MAIN (2026-11-16)
 guide_content_last_written: 2026-11-19
 covered_features: AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED; ROADMAP-001 VERIFIED; USERS-001 VERIFIED; CFG-001/002/003 VERIFIED; CORELIC-001 VERIFIED; CATMAST-001 VERIFIED (9279d57); SETUP-001 VERIFIED (13cdd6a); INVCORE-001 VERIFIED (966b685); INVWRITE-001 VERIFIED_TECH (816fdc6); INVKARDEX-001 VERIFIED_TECH (317a61d); INVREORDER-001 VERIFIED_TECH (679e858; guía integrada)
 latest_covered_code_sha: `679e85852f128260a34e0c128fa2e9cc7b623216` (INVREORDER-001 and prior user-visible features; not a deployment claim)
-next_feature: INVCSV-001 — Importación CSV de carga inicial de existencias (pendiente de implementación; INV-05 CSV). INSTALL-001 — Instalador web CORE-17 (documentación editorial por reconciliar)
+next_feature: INVCSV-001 — Importación CSV de carga inicial de existencias (implementada en código/pruebas; gates, QA y CI pendientes; INV-05 CSV). INSTALL-001 — Instalador web CORE-17 (documentación editorial por reconciliar)
 internal_only_features: CATDB-001 VERIFIED (11 tablas internas, sin UI ni página nueva); CORESEQ-001 VERIFIED (servicio interno invisible; sin entrada nueva en guía); COREMOD-001 VERIFIED técnico (servicio interno invisible de módulos; sin página nueva); COREPIN-001 VERIFIED (servicio interno invisible de autorización PIN; sin página nueva)
 last_guide_integration_sha: `52ef9cbe81436a5bea180a0918a2628827656254` (ChatGPT, guía INVREORDER-001)
 last_guide_integration_date: 2026-11-19
-pending_docs: GUIA_PENDIENTE_CHATGPT — INSTALL-001 (reconciliación editorial del instalador técnico CORE-17); INVCORE-001 / INVWRITE-001 / INVKARDEX-001 / INVREORDER-001 integrados por ChatGPT el 2026-11-19
+pending_docs: GUIA_PENDIENTE_CHATGPT — INVCSV-001 (importación CSV de carga inicial; guía NO redactada); GUIA_PENDIENTE_CHATGPT — INSTALL-001 (reconciliación editorial del instalador técnico CORE-17); INVCORE-001 / INVWRITE-001 / INVKARDEX-001 / INVREORDER-001 integrados por ChatGPT el 2026-11-19
 
 ## Cómo mantener este archivo
 - OpenCode puede actualizar solamente los metadatos y el registro de pendientes aquí, no los textos para usuarios en `public/docs/index.html`.
