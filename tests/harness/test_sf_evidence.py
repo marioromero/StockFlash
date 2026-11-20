@@ -77,7 +77,8 @@ class EvidenceReuseTest(unittest.TestCase):
 
     def test_report_tampering_invalidates(self):
         self.stamp()
-        self.report.write_text("Veredicto: GATES_FAIL\n", encoding="utf-8")
+        # Keep PASS verdict to prove the *hash* check detects changes too.
+        self.report.write_text("Veredicto: GATES_PASS\nUnreviewed change\n", encoding="utf-8")
         self.assertEqual(self.check()[1], "PROOF_REPORT_CHANGED")
 
     def test_missing_report_invalidates(self):
