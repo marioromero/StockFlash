@@ -1751,6 +1751,22 @@ def main() -> int:
     if packet not in GATES_BY_PACKET:
         print(f"FAIL: packet sin gates definidos: {packet}. Definir en GATES_BY_PACKET antes de verificar.")
         return 1
+
+    # Phase B: enforce complete test coverage and remove future redundant
+    # FINAL-gate plans. This validates first; it NEVER silently skips a gate.
+    # Historic approved packets remain byte-for-byte unchanged.
+    try:
+        from sf_gate_policy import check_final_plan
+        plan_errors = check_final_plan(packet, GATES_BY_PACKET[packet], ROOT)
+    except Exception:
+        print("FAIL: PHASE_B_GATE_PLAN_UNVERIFIABLE; no gates were skipped.")
+        return 1
+    if plan_errors:
+        print("FAIL: PHASE_B_FINAL_GATE_PLAN: " + ", ".join(plan_errors))
+        print("Keep targeted tests during implementation; final candidates require "
+              "one complete PHP suite and proven TS+Vite build.")
+        return 1
+
     if packet != "BOOT-001":
         print(f"Nota: verificando {packet} con definicion declarativa correspondiente.")
 
