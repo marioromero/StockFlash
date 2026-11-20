@@ -82,14 +82,12 @@ class SetupGuardTest extends SetupTestCase
         $this->assertFalse(Schema::hasTable('system_configs'));
     }
 
-    public function test_schema_no_preparado_bloquea_roadmap_con_503_controlado(): void
+    public function test_schema_no_preparado_no_bloquea_roadmap_publico(): void
     {
         Schema::drop('system_configs');
 
-        $response = $this->get('/roadmap');
-
-        $response->assertStatus(503);
-        $response->assertSee('El esquema de la base de datos no está preparado', false);
+        $this->get('/roadmap')->assertOk()->assertSee('Avance del proyecto | StockFlash', false);
+        $this->get('/docs/')->assertOk();
         $this->assertFalse(Schema::hasTable('system_configs'));
     }
 }
