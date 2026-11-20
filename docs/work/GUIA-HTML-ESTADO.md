@@ -11,11 +11,11 @@ guide_status: INTEGRADA_EN_MAIN (2026-11-16)
 guide_content_last_written: 2026-11-20
 covered_features: AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED; ROADMAP-001 VERIFIED; USERS-001 VERIFIED; CFG-001/002/003 VERIFIED; CORELIC-001 VERIFIED; CATMAST-001 VERIFIED (9279d57); SETUP-001 VERIFIED (13cdd6a); INVCORE-001 VERIFIED (966b685); INVWRITE-001 VERIFIED_TECH (816fdc6); INVKARDEX-001 VERIFIED_TECH (317a61d); INVREORDER-001 VERIFIED_TECH (679e858); INVCSV-001 VERIFIED_TECH (f856592; guía integrada)
 latest_covered_code_sha: `f8565927d3724759e614b65f3cdf181b803c5d5b` (INVCSV-001 and prior user-visible features; not a deployment claim)
-next_feature: INVTRANSFER-001 — Interbranch stock transfer lifecycle (next approved packet). INSTALL-001 — Instalador web CORE-17 (documentación editorial por reconciliar)
+next_feature: INVTRANSFER-001 — Interbranch stock transfer lifecycle (implementación SQLite en curso; gates/QA/CI pendientes). INSTALL-001 — Instalador web CORE-17 (documentación editorial por reconciliar)
 internal_only_features: CATDB-001 VERIFIED (11 tablas internas, sin UI ni página nueva); CORESEQ-001 VERIFIED (servicio interno invisible; sin entrada nueva en guía); COREMOD-001 VERIFIED técnico (servicio interno invisible de módulos; sin página nueva); COREPIN-001 VERIFIED (servicio interno invisible de autorización PIN; sin página nueva)
 last_guide_integration_sha: `358ba6ae479342a5e2dd2053017cc0251caf87f8` (ChatGPT, guía INVCSV-001)
 last_guide_integration_date: 2026-11-20
-pending_docs: GUIA_PENDIENTE_CHATGPT — INSTALL-001 (reconciliación editorial del instalador técnico CORE-17); INVCSV-001 integrado por ChatGPT el 2026-11-20
+pending_docs: GUIA_PENDIENTE_CHATGPT — INVTRANSFER-001 (traspasos entre sucursales; implementación SQLite, gates/QA/CI pendientes), INSTALL-001 (reconciliación editorial del instalador técnico CORE-17); INVCSV-001 integrado por ChatGPT el 2026-11-20
 
 ## Cómo mantener este archivo
 - OpenCode puede actualizar solamente los metadatos y el registro de pendientes aquí, no los textos para usuarios en `public/docs/index.html`.
@@ -124,4 +124,12 @@ pending_docs: GUIA_PENDIENTE_CHATGPT — INSTALL-001 (reconciliación editorial 
 - contenido a redactar por ChatGPT: diferencia entre punto de reposición, cantidad sugerida y máximo; el punto es obligatorio y no negativo, la cantidad sugerida y el máximo son opcionales; disponible = existencia − reservado; una variante es crítica solo cuando tiene configuración con punto mayor que 0 y disponible igual o menor al punto; un punto 0 o una variante sin configurar no genera alerta; filtros por SKU/producto y «Solo stock crítico», paginación acotada; filas históricas de variantes inactivas o eliminadas visibles solo lectura; licencia solo lectura permite consultar pero no guardar; aclarar que no se modifican existencias ni movimientos, que no se editan `safety_stock` ni ubicación en esta ola, y que no se muestran costos, precios, márgenes, PIN ni PII.
 - fecha: 2026-11-19.
 - estado: implementado en código/pruebas SQLite :memory:; 150 pruebas / 1804 aserciones de inventario y typecheck TS; gates 16/16 PASS y QA independiente APROBADO; publicación/CI pendientes; `maria=NOT_RUN`, `remote_db=UNTOUCHED`, navegador y confluencia MariaDB diferidos; no VERIFIED.
+- OpenCode no edita `public/docs/index.html`; este registro es solo metadato técnico.
+
+## GUIA_PENDIENTE_CHATGPT — INVTRANSFER-001
+- feature: INVTRANSFER-001 — Traspasos entre sucursales con envío, recepción y diferencias parciales (INV-06 P0; RN-26).
+- pantalla: `/inventory/stock/{branch}/transfers` (listado, filtros y borrador con `inventory.adjust`) y `/inventory/stock/{branch}/transfers/{id}` (detalle y transiciones); enlace «Traspasos» desde la pantalla de inventario de la sucursal.
+- contenido a redactar por ChatGPT: origen y destino distintos y activos; borrador sin número visible hasta solicitar; número asignado por sucursal de origen al solicitar; envío descuenta solo el origen y recepción suma solo el destino; cantidades solicitadas/enviadas/recibidas/pendientes; recepción parcial deja diferencia pendiente visible sin ajustes, compensaciones, reversas ni reclamos automáticos; acciones según estado y sucursal; permisos `inventory.view`/`inventory.adjust`; módulo deshabilitado y licencia solo lectura; productos históricos inactivos siguen visibles; aclarar que no se muestran costos, precios, márgenes ni PII y que no hay reservas, ventas, POS, fiscal ni CSV en esta pantalla.
+- fecha: 2026-11-20.
+- estado: implementado en código/pruebas SQLite :memory:; gates/QA/CI pendientes; guía NO redactada todavía; `maria=NOT_RUN`, `remote_db=KNOWN_HISTORICAL_EXCEPTION_NOT_UNTOUCHED`, navegador y deploy diferidos; no VERIFIED.
 - OpenCode no edita `public/docs/index.html`; este registro es solo metadato técnico.

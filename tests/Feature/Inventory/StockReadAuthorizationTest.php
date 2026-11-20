@@ -204,6 +204,13 @@ class StockReadAuthorizationTest extends InventoryTestCase
             'inventory.stock.initial',
             'inventory.stock.adjust',
             'inventory.reorder.update',
+            'inventory.transfers.index',
+            'inventory.transfers.store',
+            'inventory.transfers.show',
+            'inventory.transfers.request',
+            'inventory.transfers.dispatch',
+            'inventory.transfers.cancel',
+            'inventory.transfers.receive',
         ], $routes);
     }
 }

@@ -278,6 +278,37 @@ Route::middleware(['auth', 'password.change', 'verify.session'])->group(function
         ->middleware(['can.permission:inventory.adjust', 'branch.access'])
         ->name('inventory.reorder.update');
 
+    // INVTRANSFER-001 — traspasos entre sucursales. Lectura con
+    // `inventory.view`; crear/solicitar/enviar/cancelar/recibir con
+    // `inventory.adjust`. La sucursal sale de `{branch}` y `branch.access`.
+    Route::get('/inventory/stock/{branch}/transfers', [\App\Http\Controllers\Inventory\StockTransferController::class, 'index'])
+        ->middleware(['can.permission:inventory.view', 'branch.access'])
+        ->name('inventory.transfers.index');
+
+    Route::post('/inventory/stock/{branch}/transfers', [\App\Http\Controllers\Inventory\StockTransferController::class, 'store'])
+        ->middleware(['can.permission:inventory.adjust', 'branch.access'])
+        ->name('inventory.transfers.store');
+
+    Route::get('/inventory/stock/{branch}/transfers/{transfer}', [\App\Http\Controllers\Inventory\StockTransferController::class, 'show'])
+        ->middleware(['can.permission:inventory.view', 'branch.access'])
+        ->name('inventory.transfers.show');
+
+    Route::post('/inventory/stock/{branch}/transfers/{transfer}/request', [\App\Http\Controllers\Inventory\StockTransferController::class, 'request'])
+        ->middleware(['can.permission:inventory.adjust', 'branch.access'])
+        ->name('inventory.transfers.request');
+
+    Route::post('/inventory/stock/{branch}/transfers/{transfer}/dispatch', [\App\Http\Controllers\Inventory\StockTransferController::class, 'dispatch'])
+        ->middleware(['can.permission:inventory.adjust', 'branch.access'])
+        ->name('inventory.transfers.dispatch');
+
+    Route::post('/inventory/stock/{branch}/transfers/{transfer}/cancel', [\App\Http\Controllers\Inventory\StockTransferController::class, 'cancel'])
+        ->middleware(['can.permission:inventory.adjust', 'branch.access'])
+        ->name('inventory.transfers.cancel');
+
+    Route::post('/inventory/stock/{branch}/transfers/{transfer}/receive', [\App\Http\Controllers\Inventory\StockTransferController::class, 'receive'])
+        ->middleware(['can.permission:inventory.adjust', 'branch.access'])
+        ->name('inventory.transfers.receive');
+
     // --- Administración global de sucursales (BRANCH-001 · CORE-05) ---
     // Es administración global: NO usa `branch.access`.
     Route::middleware('can.permission:settings.manage')->group(function () {

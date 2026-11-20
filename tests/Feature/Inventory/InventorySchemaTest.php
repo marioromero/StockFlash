@@ -17,6 +17,8 @@ class InventorySchemaTest extends InventoryTestCase
         $this->assertTrue(Schema::hasTable('current_stock'));
         $this->assertTrue(Schema::hasTable('stock_movements'));
         $this->assertTrue(Schema::hasTable('branch_variant_settings'));
+        $this->assertTrue(Schema::hasTable('stock_transfers'));
+        $this->assertTrue(Schema::hasTable('stock_transfer_items'));
         // Reservas permanecen fuera de esta ola.
         $this->assertFalse(Schema::hasTable('stock_reservations'));
     }
@@ -128,6 +130,7 @@ class InventorySchemaTest extends InventoryTestCase
             '2026_11_16_000021_create_catalog_p0_tables.php',
             '2026_11_18_000022_create_inventory_core_tables.php',
             '2026_11_19_000023_create_branch_variant_settings_table.php',
+            '2026_11_20_000024_create_stock_transfer_tables.php',
         ];
 
         $actual = array_map(

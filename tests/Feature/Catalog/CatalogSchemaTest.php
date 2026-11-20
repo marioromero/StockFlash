@@ -65,6 +65,8 @@ class CatalogSchemaTest extends TestCase
         'current_stock',
         'stock_movements',
         'branch_variant_settings',
+        'stock_transfers',
+        'stock_transfer_items',
     ];
 
     /**

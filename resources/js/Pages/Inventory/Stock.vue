@@ -31,6 +31,12 @@
                         Ver Kardex
                     </Link>
                     <Link
+                        :href="`/inventory/stock/${branch.id}/transfers`"
+                        class="sf-button sf-button-secondary"
+                    >
+                        Traspasos
+                    </Link>
+                    <Link
                         :href="`/inventory/stock/${branch.id}/reorder`"
                         class="sf-button sf-button-secondary"
                     >
