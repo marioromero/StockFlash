@@ -1,7 +1,7 @@
 # Estado operativo — StockFlash
 
 ## Feature activa
-- **INVREORDER-001 — APPROVED** (R4 Bodega). Reorder point, suggested quantity, max stock and critical-stock dashboard per branch/variant, using approved `branch_variant_settings`. Packet: `docs/work/features/INVREORDER-001.md`. SFH1 pending new issue; gates, independent QA, AUTO_GIT and exact-SHA CI. No remote DB/deploy.
+- **INVCSV-001 — APPROVED** (R4 Bodega). Bounded, all-or-nothing CSV upload for initial branch stock using existing StockLedger/INVWRITE authorization; completes the CSV half of INV-05. Packet: `docs/work/features/INVCSV-001.md`. SFH1 directed issue to follow; mandatory gates, independent QA and exact-SHA CI; remote DB/deploy prohibited.
 
 ## Estados por feature
 - BOOT-001: VERIFIED (2026-10-14), Laravel 13.35.0 + Vue 3/Inertia/TS; `bcbf16f`.
@@ -19,6 +19,7 @@
 - INVCORE-001: VERIFIED técnico (2026-11-18), `966b685`; 17/17 gates, QA APROBADO, CI 2/2 SUCCESS. Kardex físico y consulta de existencias por sucursal; MariaDB/browser pendientes.
 - INVWRITE-001: VERIFIED técnico (2026-11-19), `816fdc6`; 18/18 gates, QA APROBADO, 710 PHP tests / 6502 assertions, CI 2/2 SUCCESS. Carga inicial y ajustes manuales con PIN según umbral; CSV y MariaDB/browser pendientes.
 - INVKARDEX-001: VERIFIED técnico (2026-11-19), `317a61d`; 15/15 gates, QA APROBADO (K-01 corregido), 722 PHP tests / 6887 assertions, CI 2/2 SUCCESS. Informe Kardex por sucursal/variante/período; MariaDB/browser pendientes.
+- INVREORDER-001: VERIFIED técnico (2026-11-19), `679e858`; 16/16 gates, QA independiente APROBADO, 752 PHP tests / 7415 assertions, CI 2/2 SUCCESS. Umbrales y panel de stock crítico; MariaDB/browser pendientes.
 - CATPROD-001: VERIFIED técnico (2026-11-17), `c8e1338`; 476/4192; QA R2 N-01 pendiente antes de POS/Fiscal.
 - **SETUP-001: VERIFIED técnico** (2026-11-17), código `13cdd6a`, gates 19/19, QA independiente APROBADO, 529 pruebas / 4665 aserciones y CI 2/2 SUCCESS. Guía 26 temas y roadmap actualizados por ChatGPT; cierre `docs/work/SETUP-001-CLOSURE-20261117.md`. Producción no demo bloqueada por BKP-08 P1★; instalador CORE-17 implementado/verificado solo en código; ejecución real, MariaDB/browser y BKP-08 pendientes.
 
