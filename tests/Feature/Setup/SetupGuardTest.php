@@ -37,10 +37,11 @@ class SetupGuardTest extends SetupTestCase
         $this->assertFalse($response->isRedirect(route('setup.show')));
     }
 
-    public function test_home_y_docs_siguen_disponibles_antes_del_setup(): void
+    public function test_home_docs_y_roadmap_siguen_disponibles_antes_del_setup(): void
     {
         $this->get('/')->assertOk();
         $this->get('/docs/')->assertOk();
+        $this->get('/roadmap')->assertOk();
     }
 
     public function test_no_hay_bypass_por_query_ni_por_cabeceras(): void
