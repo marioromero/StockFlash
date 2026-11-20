@@ -7,7 +7,7 @@ Owner superseding layout decision (2026-11-20): show ONLY a minimal metrics stri
 ## Access and validation
 - **Owner superseding decision (2026-11-20): GET /roadmap is public read-only**, no login or `settings.manage` gate. Keep the source in `resources/roadmap/index.html` and expose through the exact public GET route only. No stateful/API/private/admin data may enter the HTML.
 - `/docs/` remains independently public as already implemented. `/setup` is a one-time installation assistant and MUST remain protected against reopening after data exists; its unavailable page may link to the public roadmap/manual.
-- Validate unauthenticated 200 + content type on /roadmap and /docs/, server route outside auth middleware, R0–R10, R7 commercial target, accessible nested expand/collapse and filters, mobile readability, no secrets/PII or external resources. No false production/verified claim.
+- Validate unauthenticated 200 + content type on /roadmap and /docs/, server route outside auth middleware, public metadata and R3–R10 hierarchical native details, precise ID counts/verified-ratio math, R7 pilot goal, mobile readability, no secrets/PII or external resources. No false production/verified claim.
 
 ## Closing a feature
 1. OpenCode compares feature SHA and changes against `docs/work/ROADMAP-HTML-ESTADO.md`; if milestones/capabilities changed, flag `ROADMAP_PENDIENTE_CHATGPT` with actual SHA, gate/QA/CI state and verifiable changes. Do not touch roadmap HTML.
