@@ -1,7 +1,7 @@
 # Estado operativo — StockFlash
 
 ## Feature activa
-- **INVTRANSFER-001 — APPROVED** (R4 Bodega). Interbranch transfer lifecycle `draft → requested → in_transit → received/partially_received/cancelled` with atomic send and receive ledger postings. Packet: `docs/work/features/INVTRANSFER-001.md`. SFH1 issue pending; mandatory gates, independent QA and exact-SHA CI. SQLite only; no remote DB/deploy.
+- **Ninguna feature de negocio activa**; INVTRANSFER-001 está VERIFIED_TECH. PR #55: roadmap detallado y público, guía accesible sin login (trabajo documental GPT, separado del ciclo de OpenCode). Próxima feature R4 se seleccionará tras integrar esta revisión, sin exigir decisión técnica al propietario.
 
 ## Estados por feature
 - BOOT-001: VERIFIED (2026-10-14), Laravel 13.35.0 + Vue 3/Inertia/TS; `bcbf16f`.
@@ -21,6 +21,7 @@
 - INVKARDEX-001: VERIFIED técnico (2026-11-19), `317a61d`; 15/15 gates, QA APROBADO (K-01 corregido), 722 PHP tests / 6887 assertions, CI 2/2 SUCCESS. Informe Kardex por sucursal/variante/período; MariaDB/browser pendientes.
 - INVREORDER-001: VERIFIED técnico (2026-11-19), `679e858`; 16/16 gates, QA independiente APROBADO, 752 PHP tests / 7415 assertions, CI 2/2 SUCCESS. Umbrales y panel de stock crítico; MariaDB/browser pendientes.
 - INVCSV-001: VERIFIED técnico (2026-11-20), `f856592`; 17/17 gates HQAEFF, QA independiente APROBADO, 779 PHP tests / 7805 assertions, CI 2/2 SUCCESS. Importación inicial CSV all-or-nothing; parser F1/F2 e Inertia preview F6 backlog pre-release, MariaDB/browser diferidos.
+- INVTRANSFER-001: VERIFIED técnico (2026-11-20), corregido `3072f54`; 18/18 gates, QA independiente APROBADO, 819 PHP tests / 8610 assertions, CI 2/2 SUCCESS. Solicitud, envío, recepción completa/parcial y diferencias pendientes; MariaDB/browser y valorización diferidos.
 - CATPROD-001: VERIFIED técnico (2026-11-17), `c8e1338`; 476/4192; QA R2 N-01 pendiente antes de POS/Fiscal.
 - **SETUP-001: VERIFIED técnico** (2026-11-17), código `13cdd6a`, gates 19/19, QA independiente APROBADO, 529 pruebas / 4665 aserciones y CI 2/2 SUCCESS. Guía 26 temas y roadmap actualizados por ChatGPT; cierre `docs/work/SETUP-001-CLOSURE-20261117.md`. Producción no demo bloqueada por BKP-08 P1★; instalador CORE-17 implementado/verificado solo en código; ejecución real, MariaDB/browser y BKP-08 pendientes.
 
