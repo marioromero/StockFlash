@@ -23,6 +23,11 @@ class VerifySession
 {
     public function handle(Request $request, Closure $next): Response
     {
+        // Public HTML must not require or mutate an authenticated session.
+        if ($request->routeIs('roadmap.index', 'docs.index')) {
+            return $next($request);
+        }
+
         $user = Auth::user();
 
         if (! $user) {
