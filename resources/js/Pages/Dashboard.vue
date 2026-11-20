@@ -41,6 +41,9 @@
                     <Link v-if="canViewInventory" href="/inventory" class="sf-button sf-button-primary">
                         Inventario
                     </Link>
+                    <Link v-if="canViewCustomers" href="/customers" class="sf-button sf-button-primary">
+                        Clientes
+                    </Link>
                     <Link v-if="canManageUsers" href="/users" class="sf-button sf-button-primary">
                         Usuarios
                     </Link>
@@ -108,6 +111,7 @@ const props = defineProps<{
     user_name?: string;
     license_notice?: LicenseNotice | null;
     can_view_inventory?: boolean;
+    can_view_customers?: boolean;
 }>();
 
 const licenseNotice = computed(() => props.license_notice ?? null);
@@ -127,6 +131,10 @@ const canManageUsers = computed(() =>
 const canViewInventory = computed(() =>
     props.can_view_inventory === true
     || (page.props.auth?.permissions ?? []).includes('inventory.view')
+);
+const canViewCustomers = computed(() =>
+    props.can_view_customers
+    ?? (page.props.auth?.permissions ?? []).includes('customers.view')
 );
 const canManageBranches = computed(() =>
     (page.props.auth?.permissions ?? []).includes('settings.manage')

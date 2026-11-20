@@ -1,7 +1,7 @@
 # Estado operativo — StockFlash
 
 ## Feature activa
-- **CUSCORE-001 — APPROVED** (R6 POS prerequisite). Registro de clientes personas/empresas, grupos, descuentos y RUT cifrado/índice ciego (P0 CUS-01/02/03), with UI and authorization. Packet: `docs/work/features/CUSCORE-001.md`. SFH1 dispatch pending; isolated SQLite, gates, independent QA, AUTO_GIT exact-SHA CI. No remote DB/deploy.
+- **CUSCORE-001 — APPROVED** (R6 POS prerequisite). Registro de clientes personas/empresas, grupos, descuentos y RUT cifrado/índice ciego (P0 CUS-01/02/03), with UI and authorization. Packet: `docs/work/features/CUSCORE-001.md`. Implementado en código/pruebas SQLite el 2026-11-20 (`docs/work/CUSCORE-001-NOTES-20261120.md`); gates/QA independiente/CI pendientes; sin VERIFIED. No remote DB/deploy.
 
 ## Estados por feature
 - BOOT-001: VERIFIED (2026-10-14), Laravel 13.35.0 + Vue 3/Inertia/TS; `bcbf16f`.

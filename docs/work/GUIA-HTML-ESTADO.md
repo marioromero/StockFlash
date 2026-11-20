@@ -11,11 +11,11 @@ guide_status: INTEGRADA_EN_MAIN (2026-11-16)
 guide_content_last_written: 2026-11-20
 covered_features: AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED; ROADMAP-001 VERIFIED; USERS-001 VERIFIED; CFG-001/002/003 VERIFIED; CORELIC-001 VERIFIED; CATMAST-001 VERIFIED (9279d57); SETUP-001 VERIFIED (13cdd6a); INVCORE-001 VERIFIED (966b685); INVWRITE-001 VERIFIED_TECH (816fdc6); INVKARDEX-001 VERIFIED_TECH (317a61d); INVREORDER-001 VERIFIED_TECH (679e858); INVCSV-001 VERIFIED_TECH (f856592); INVTRANSFER-001 VERIFIED_TECH (3072f54; guía integrada)
 latest_covered_code_sha: `3072f546f096a61e8ce16f3bf9255d25a5765aa7` (INVTRANSFER-001 and prior user-visible features; not a deployment claim)
-next_feature: NEXT_R4 — Reservas operativas de inventario o cierre del núcleo de Bodega (sujeto a packet aprobado); INSTALL-001 — Instalador web CORE-17 (documentación editorial por reconciliar)
+next_feature: CUSCORE-001 — Registro de clientes, grupos y descuentos (CUS-01/02/03; implementado en código/SQLite, gates/QA/CI pendientes); NEXT_R4 — Reservas operativas de inventario o cierre del núcleo de Bodega (sujeto a packet aprobado); INSTALL-001 — Instalador web CORE-17 (documentación editorial por reconciliar)
 internal_only_features: CATDB-001 VERIFIED (11 tablas internas, sin UI ni página nueva); CORESEQ-001 VERIFIED (servicio interno invisible; sin entrada nueva en guía); COREMOD-001 VERIFIED técnico (servicio interno invisible de módulos; sin página nueva); COREPIN-001 VERIFIED (servicio interno invisible de autorización PIN; sin página nueva)
 last_guide_integration_sha: `564b0a583e07355962c2a8a00c5837a645038d34` (ChatGPT, guía INVTRANSFER-001 + enlace al roadmap público, PR #55)
 last_guide_integration_date: 2026-11-20
-pending_docs: GUIA_PENDIENTE_CHATGPT — INSTALL-001 (reconciliación editorial del instalador técnico CORE-17); INVCSV-001 e INVTRANSFER-001 integrados por ChatGPT el 2026-11-20; /docs/ público y enlazado con /roadmap
+pending_docs: GUIA_PENDIENTE_CHATGPT — CUSCORE-001 (clientes, grupos, descuentos y revelado auditado; guía NO redactada); GUIA_PENDIENTE_CHATGPT — INSTALL-001 (reconciliación editorial del instalador técnico CORE-17); INVCSV-001 e INVTRANSFER-001 integrados por ChatGPT el 2026-11-20; /docs/ público y enlazado con /roadmap
 
 ## Cómo mantener este archivo
 - OpenCode puede actualizar solamente los metadatos y el registro de pendientes aquí, no los textos para usuarios en `public/docs/index.html`.
@@ -132,4 +132,12 @@ pending_docs: GUIA_PENDIENTE_CHATGPT — INSTALL-001 (reconciliación editorial 
 - contenido a redactar por ChatGPT: origen y destino distintos y activos; borrador sin número visible hasta solicitar; número asignado por sucursal de origen al solicitar; envío descuenta solo el origen y recepción suma solo el destino; cantidades solicitadas/enviadas/recibidas/pendientes; recepción parcial deja diferencia pendiente visible sin ajustes, compensaciones, reversas ni reclamos automáticos; acciones según estado y sucursal; permisos `inventory.view`/`inventory.adjust`; módulo deshabilitado y licencia solo lectura; productos históricos inactivos siguen visibles; aclarar que no se muestran costos, precios, márgenes ni PII y que no hay reservas, ventas, POS, fiscal ni CSV en esta pantalla.
 - fecha: 2026-11-20.
 - estado: implementado en código/pruebas SQLite :memory:; gates/QA/CI pendientes; guía NO redactada todavía; `maria=NOT_RUN`, `remote_db=KNOWN_HISTORICAL_EXCEPTION_NOT_UNTOUCHED`, navegador y deploy diferidos; no VERIFIED.
+- OpenCode no edita `public/docs/index.html`; este registro es solo metadato técnico.
+
+## GUIA_PENDIENTE_CHATGPT — CUSCORE-001
+- feature: CUSCORE-001 — Registro de clientes persona/empresa, grupos, descuentos y RUT cifrado con índice ciego (CUS-01/02/03; RN-58/61/64; S3).
+- pantallas: `/customers` (listado, filtros y alta con `customers.view`/`customers.manage`), `/customers/{id}` (ficha enmascarada, edición y revelado con `customers.view_sensitive`) y `/customers/groups` (grupos y descuentos).
+- contenido a redactar por ChatGPT: diferencia persona/empresa; RUT opcional validado con módulo 11, cifrado e índice ciego, sin mostrarse en claro; máscaras de RUT y contacto por defecto; botón de revelado solo con permiso de datos sensibles y lectura auditada; campos sensibles en blanco conservan el valor; grupos con descuento por defecto obligatorio y tope opcional; descuento/tope propio nulo hereda del grupo; estados activo/inactivo, bloqueo y anonimización; módulo de clientes dependiente de POS; licencia solo lectura; aclarar que no hay ventas, reservas, stock, consentimientos, direcciones ni emisión fiscal en esta pantalla.
+- fecha: 2026-11-20.
+- estado: implementado en código/pruebas SQLite :memory:; 273 pruebas dirigidas / 3872 aserciones (Clientes + Inventario), typecheck PASS; gates/QA/CI pendientes; guía NO redactada todavía; `maria=NOT_RUN`, `remote_db=UNKNOWN_HISTORICAL_EXCEPTION`, navegador/deploy diferidos; no VERIFIED.
 - OpenCode no edita `public/docs/index.html`; este registro es solo metadato técnico.

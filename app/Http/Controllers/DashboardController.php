@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Middleware\CheckPermission;
 use App\Models\User;
+use App\Support\Customers\CustomerModuleGate;
 use App\Support\License\LicenseStateResolver;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -16,7 +17,10 @@ use Inertia\Response;
  */
 class DashboardController extends Controller
 {
-    public function __construct(private readonly LicenseStateResolver $licenseStateResolver) {}
+    public function __construct(
+        private readonly LicenseStateResolver $licenseStateResolver,
+        private readonly CustomerModuleGate $customerModules,
+    ) {}
 
     public function index(): Response
     {
@@ -25,6 +29,12 @@ class DashboardController extends Controller
         return Inertia::render('Dashboard', [
             'license_notice' => $this->licenseStateResolver->dashboardNotice(),
             'can_view_inventory' => $user instanceof User && $this->canViewInventory($user),
+            // Las rutas de clientes son globales (sin `{branch}`), por lo que
+            // CheckPermission evalúa el mismo ámbito que usará la ruta: el rol
+            // global o la sucursal por defecto del usuario.
+            'can_view_customers' => $user instanceof User
+                && $this->customerModules->isEnabled()
+                && CheckPermission::allows($user, 'customers.view'),
         ]);
     }
 

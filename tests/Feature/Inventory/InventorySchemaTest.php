@@ -131,6 +131,7 @@ class InventorySchemaTest extends InventoryTestCase
             '2026_11_18_000022_create_inventory_core_tables.php',
             '2026_11_19_000023_create_branch_variant_settings_table.php',
             '2026_11_20_000024_create_stock_transfer_tables.php',
+            '2026_11_20_000025_create_customer_core_tables.php',
         ];
 
         $actual = array_map(

@@ -31,6 +31,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'branch.access' => \App\Http\Middleware\EnsureBranchAccess::class,
             'can.permission' => \App\Http\Middleware\CheckPermission::class,
+            'customers.module' => \App\Http\Middleware\EnsureCustomerModuleEnabled::class,
             'password.change' => \App\Http\Middleware\RequirePasswordChange::class,
             'verify.session' => \App\Http\Middleware\VerifySession::class,
         ]);
@@ -58,5 +59,8 @@ return Application::configure(basePath: dirname(__DIR__))
             // se conservan en old input/flash tras un error de validación.
             'bootstrap_token',
             'db_password',
+            // CUSCORE-001: el RUT es PII y no debe quedar en old input/flash
+            // tras un error de validación o búsqueda.
+            'rut',
         ]);
     })->create();

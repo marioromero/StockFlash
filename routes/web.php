@@ -311,6 +311,63 @@ Route::middleware(['auth', 'password.change', 'verify.session'])->group(function
         ->middleware(['can.permission:inventory.adjust', 'branch.access'])
         ->name('inventory.transfers.receive');
 
+    // --- Clientes y grupos (CUSCORE-001 · CUS-01/02/03 · RN-58/61/64) ---
+    // Catálogo común a la instalación: NO usa `branch.access`. La lectura exige
+    // `customers.view`; cada mutación exige `customers.manage`; el revelado de
+    // datos personales exige `customers.view_sensitive` y se audita. El gate de
+    // módulo es fail-closed y cubre todas estas rutas.
+    Route::middleware('customers.module')->group(function (): void {
+        Route::middleware('can.permission:customers.view')->group(function (): void {
+            Route::get('/customers', [\App\Http\Controllers\Customers\CustomerController::class, 'index'])
+                ->name('customers.index');
+            // La búsqueda por RUT usa POST y solo persiste el índice ciego en
+            // sesión; el RUT nunca viaja por query string ni en props Inertia.
+            Route::post('/customers/rut-search', [\App\Http\Controllers\Customers\CustomerController::class, 'searchByRut'])
+                ->name('customers.rut-search');
+            Route::post('/customers/rut-search/clear', [\App\Http\Controllers\Customers\CustomerController::class, 'clearRutSearch'])
+                ->name('customers.clear-rut');
+            Route::get('/customers/groups', [\App\Http\Controllers\Customers\CustomerGroupController::class, 'index'])
+                ->name('customers.groups.index');
+            Route::get('/customers/groups/{group}', [\App\Http\Controllers\Customers\CustomerGroupController::class, 'show'])
+                ->whereNumber('group')
+                ->name('customers.groups.show');
+            Route::get('/customers/{customer}', [\App\Http\Controllers\Customers\CustomerController::class, 'show'])
+                ->whereNumber('customer')
+                ->name('customers.show');
+        });
+
+        Route::middleware('can.permission:customers.manage')->group(function (): void {
+            Route::post('/customers', [\App\Http\Controllers\Customers\CustomerController::class, 'store'])
+                ->name('customers.store');
+            Route::patch('/customers/{customer}', [\App\Http\Controllers\Customers\CustomerController::class, 'update'])
+                ->whereNumber('customer')
+                ->name('customers.update');
+            Route::post('/customers/{customer}/activate', [\App\Http\Controllers\Customers\CustomerController::class, 'activate'])
+                ->whereNumber('customer')
+                ->name('customers.activate');
+            Route::post('/customers/{customer}/deactivate', [\App\Http\Controllers\Customers\CustomerController::class, 'deactivate'])
+                ->whereNumber('customer')
+                ->name('customers.deactivate');
+
+            Route::post('/customers/groups', [\App\Http\Controllers\Customers\CustomerGroupController::class, 'store'])
+                ->name('customers.groups.store');
+            Route::patch('/customers/groups/{group}', [\App\Http\Controllers\Customers\CustomerGroupController::class, 'update'])
+                ->whereNumber('group')
+                ->name('customers.groups.update');
+            Route::post('/customers/groups/{group}/activate', [\App\Http\Controllers\Customers\CustomerGroupController::class, 'activate'])
+                ->whereNumber('group')
+                ->name('customers.groups.activate');
+            Route::post('/customers/groups/{group}/deactivate', [\App\Http\Controllers\Customers\CustomerGroupController::class, 'deactivate'])
+                ->whereNumber('group')
+                ->name('customers.groups.deactivate');
+        });
+
+        Route::get('/customers/{customer}/reveal', [\App\Http\Controllers\Customers\CustomerController::class, 'reveal'])
+            ->whereNumber('customer')
+            ->middleware('can.permission:customers.view_sensitive')
+            ->name('customers.reveal');
+    });
+
     // --- Administración global de sucursales (BRANCH-001 · CORE-05) ---
     // Es administración global: NO usa `branch.access`.
     Route::middleware('can.permission:settings.manage')->group(function () {
