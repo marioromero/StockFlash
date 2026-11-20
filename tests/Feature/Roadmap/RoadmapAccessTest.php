@@ -33,7 +33,8 @@ class RoadmapAccessTest extends TestCase
         $this->get('/roadmap')
             ->assertOk()
             ->assertSee('Avance del proyecto | StockFlash', false)
-            ->assertSee('Catálogo detallado de funcionalidades', false);
+            ->assertSee('id="traceability"', false)
+            ->assertSee('id="overall-progress"', false);
     }
 
     public function test_authenticated_user_without_settings_manage_can_read_public_roadmap(): void
@@ -57,16 +58,16 @@ class RoadmapAccessTest extends TestCase
             (string) $response->headers->get('content-type')
         );
         $response->assertSee('Avance del proyecto | StockFlash', false);
-        $response->assertSee('id="expand"', false);
-        $response->assertSee('id="collapse"', false);
-        $response->assertSee('details class="step"', false);
+        $response->assertSee('class="stats"', false);
+        $response->assertSee('details class="stage', false);
+        $response->assertSee('details class="module"', false);
+        $response->assertSee('details class="req"', false);
 
-        foreach (range(0, 10) as $stage) {
-            $response->assertSee('R'.$stage, false);
+        foreach (range(3, 10) as $stage) {
+            $response->assertSee('id="r'.$stage.'"', false);
         }
 
-        $response->assertSee('R7', false);
-        $response->assertSee('Primera versión vendible', false);
+        $response->assertDontSee('Catálogo detallado de funcionalidades', false);
     }
 
     public function test_roadmap_html_is_not_publicly_served(): void
@@ -81,19 +82,53 @@ class RoadmapAccessTest extends TestCase
 
         $this->assertStringContainsString('lang="es-CL"', $html);
         $this->assertStringContainsString('Avance del proyecto | StockFlash', $html);
-        $this->assertStringContainsString('details class="step"', $html);
-        $this->assertStringContainsString('id="feature-catalog"', $html);
-        $this->assertStringContainsString('details class="module-details"', $html);
-        $this->assertStringContainsString('id="feature-status-filter"', $html);
-        $this->assertStringContainsString('id="feature-search"', $html);
-        $this->assertStringContainsString('id="expand"', $html);
-        $this->assertStringContainsString('id="collapse"', $html);
+        $this->assertStringContainsString('id="overall-progress"', $html);
+        $this->assertStringContainsString('id="traceability"', $html);
+        $this->assertStringContainsString('class="stats"', $html);
+        $this->assertStringContainsString('details class="stage', $html);
+        $this->assertStringContainsString('details class="module"', $html);
+        $this->assertStringContainsString('details class="req"', $html);
         $this->assertStringContainsString('@media(max-width:640px)', $html);
+        $this->assertStringNotContainsString('id="feature-catalog"', $html);
+        $this->assertStringNotContainsString('id="feature-search"', $html);
+        $this->assertStringNotContainsString('class="metric"', $html);
+        $this->assertStringNotContainsString('class="block"', $html);
         $this->assertStringContainsString('prefers-reduced-motion', $html);
 
-        foreach (range(0, 10) as $stage) {
-            $this->assertStringContainsString('R'.$stage, $html);
+        foreach (range(3, 10) as $stage) {
+            $this->assertStringContainsString('id="r'.$stage.'"', $html);
         }
+
+        preg_match_all('/data-code="([A-Z]+-[0-9]+)"/', $html, $ids);
+        preg_match_all('/class="req" data-code="[A-Z]+-[0-9]+" data-state="done"/', $html, $done);
+        $this->assertSame(265, count($ids[1]));
+        $this->assertSame(count($ids[1]), count(array_unique($ids[1])));
+        $this->assertSame(19, count($done[0]));
+        $this->assertStringContainsString('aria-valuenow="19" aria-valuemin="0" aria-valuemax="169"', $html);
+
+        // Default to R7 commercial MVP: approved P0/P1/P1★ through R7,
+        // except channel/online-only and integrated-fiscal-only requirements.
+        $this->assertStringContainsString('id="progress-scope"', $html);
+        $this->assertStringContainsString('<option value="r7" selected>', $html);
+        $this->assertStringContainsString('<option value="all">', $html);
+        $this->assertStringContainsString('id="scope-percentage">11,2</span>', $html);
+        $this->assertStringContainsString('id="scope-total">169</span>', $html);
+        $this->assertStringContainsString('id="scope-p0-total">104</span>', $html);
+        $this->assertStringContainsString("selector.addEventListener('change', render)", $html);
+
+        preg_match_all('/class="req" data-code="([A-Z]+-[0-9]+)" data-state="([^"]+)" data-priority="([^"]+)" data-r7="([01])"/', $html, $scoped, PREG_SET_ORDER);
+        $this->assertCount(265, $scoped);
+        $r7 = array_values(array_filter($scoped, fn (array $match): bool => $match[4] === '1'));
+        $this->assertCount(169, $r7);
+        $this->assertCount(19, array_filter($r7, fn (array $match): bool => $match[2] === 'done'));
+        $this->assertCount(104, array_filter($r7, fn (array $match): bool => $match[3] === 'P0'));
+        foreach (['INV-19', 'INV-20', 'SAL-16', 'SAL-20', 'SAL-21', 'SAL-22', 'SEC-18', 'BKP-09', 'BKP-10', 'BKP-11'] as $excluded) {
+            $matches = array_values(array_filter($scoped, fn (array $match): bool => $match[1] === $excluded));
+            $this->assertCount(1, $matches);
+            $this->assertSame('0', $matches[0][4]);
+        }
+        // Both modes are read-only calculations. No Ajax, data mutation or remote calls.
+
 
         $this->assertStringNotContainsString('<script src=', $html);
         $this->assertStringNotContainsString('fetch(', $html);

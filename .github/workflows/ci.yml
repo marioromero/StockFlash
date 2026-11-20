@@ -138,11 +138,11 @@ jobs:
             echo "Smoke FAIL: /roadmap publico HTTP $ROADMAP_STATUS (esperado 200)"
             exit 1
           fi
-          if ! grep -q 'id="feature-catalog"' /tmp/sf-roadmap.html || ! grep -q 'id="feature-search"' /tmp/sf-roadmap.html; then
-            echo "Smoke FAIL: /roadmap sin catalogo detallado o filtro"
+          if ! grep -q 'id="traceability"' /tmp/sf-roadmap.html || ! grep -q 'id="overall-progress"' /tmp/sf-roadmap.html || ! grep -q 'id="progress-scope"' /tmp/sf-roadmap.html; then
+            echo "Smoke FAIL: /roadmap sin trazabilidad o selector de porcentaje"
             exit 1
           fi
-          echo "Smoke OK: HTTP 200 + lang es-CL + /docs/ 200 + /roadmap publico 200 con catalogo detallado"
+          echo "Smoke OK: HTTP 200 + lang es-CL + /docs/ 200 + /roadmap publico 200 con selector R7/completo"
 
   harness:
     name: Harness Python telemetry tests
