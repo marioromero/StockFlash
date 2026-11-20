@@ -42,6 +42,7 @@ class EnsureSetupCompleted
         'password.change',
         'password.update',
         'docs.index',
+        'roadmap.index',
         'home',
     ];
 
