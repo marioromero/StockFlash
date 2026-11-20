@@ -17,6 +17,19 @@ Route::get('/docs/', fn () => response(
     ['Content-Type' => 'text/html; charset=UTF-8']
 ))->name('docs.index');
 
+// --- Public project roadmap (owner decision 2026-11-20) ---
+// Public, read-only HTML maintained exclusively by ChatGPT; no authenticated
+// data, secrets, personal information or application state is served.
+Route::get('/roadmap', fn () => response(
+    file_get_contents(resource_path('roadmap/index.html')),
+    200,
+    [
+        'Content-Type' => 'text/html; charset=UTF-8',
+        'Cache-Control' => 'no-store',
+        'X-Content-Type-Options' => 'nosniff',
+    ]
+))->name('roadmap.index');
+
 // --- Instalador técnico (INSTALL-001 · CORE-17) ---
 // Fail-closed: cerrado por defecto en `config/install.php`; solo se abre con
 // un token de arranque presentado fuera de la app pública. Ningún GET migra.
@@ -65,17 +78,6 @@ Route::middleware(['auth', 'password.change', 'verify.session'])->group(function
     Route::get('/dashboard/branch/{branch}', function (string $branch) {
         return response()->json(['ok' => true, 'sucursal' => $branch]);
     })->middleware('branch.access')->name('dashboard.branch');
-
-    // --- Roadmap del propietario (ROADMAP-001) ---
-    // HTML de autoría exclusiva de ChatGPT, fuera de `public/`.
-    Route::get('/roadmap', fn () => response(
-        file_get_contents(resource_path('roadmap/index.html')),
-        200,
-        [
-            'Content-Type' => 'text/html; charset=UTF-8',
-            'Cache-Control' => 'no-store',
-        ]
-    ))->middleware('can.permission:settings.manage')->name('roadmap.index');
 
     // --- Administración global de usuarios (USERS-001 · CORE-03) ---
     // Es administración global: NO usa `branch.access`.
