@@ -5,9 +5,9 @@
 The roadmap visualizes evidence-based R0–R10 states, what is implemented/verified, what remains, and the first commercial R7 POS+Bodega release without integrated DTE. Do not invent completion percentages, dates, costs or commitments. A feature VERIFIED technically is NOT by itself sold/deployed.
 
 ## Access and validation
-- HTML source outside `public/` because the route is **private**. `GET /roadmap` requires auth, password-change/session checks and server-side `settings.manage` permission. Unauthorized users must not access it as a static file.
-- Dashboard link is shown only to users with access. `/docs/` remains public and independent.
-- Validate GET authorization/redirect/403, R0–R10, R7 commercial target, accessible expand/collapse, mobile readability, no externally loaded secrets/resources.
+- **Owner superseding decision (2026-11-20): GET /roadmap is public read-only**, no login or `settings.manage` gate. Keep the source in `resources/roadmap/index.html` and expose through the exact public GET route only. No stateful/API/private/admin data may enter the HTML.
+- `/docs/` remains independently public as already implemented. `/setup` is a one-time installation assistant and MUST remain protected against reopening after data exists; its unavailable page may link to the public roadmap/manual.
+- Validate unauthenticated 200 + content type on /roadmap and /docs/, server route outside auth middleware, R0–R10, R7 commercial target, accessible nested expand/collapse and filters, mobile readability, no secrets/PII or external resources. No false production/verified claim.
 
 ## Closing a feature
 1. OpenCode compares feature SHA and changes against `docs/work/ROADMAP-HTML-ESTADO.md`; if milestones/capabilities changed, flag `ROADMAP_PENDIENTE_CHATGPT` with actual SHA, gate/QA/CI state and verifiable changes. Do not touch roadmap HTML.

@@ -17,6 +17,11 @@ class RequirePasswordChange
 {
     public function handle(Request $request, Closure $next): Response
     {
+        // Public, read-only documentation is available even during password reset.
+        if ($request->routeIs('roadmap.index', 'docs.index')) {
+            return $next($request);
+        }
+
         if (
             Auth::check()
             && Auth::user()->mustChangePassword()
