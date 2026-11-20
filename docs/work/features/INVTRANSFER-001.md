@@ -1,6 +1,6 @@
 # INVTRANSFER-001 — Interbranch stock transfers (send, receive, partial differences)
 
-status: APPROVED
+status: VERIFIED
 approval_basis: existing_approved_contract_owner_delegation_2026-11-16
 new_business_decisions: NONE
 publication_mode: AUTO_GIT
@@ -31,3 +31,14 @@ Part 1 §7.4 RN-26 and §8.3 INV-06 (P0): sending deducts physical stock at orig
 
 ## Hard guards
 No INV-10 counting, INV-17/18 reservation, POS/checkout, fiscal/DTE, Woo, stock valuation/cost recalculation, purchase documents, online channels, arbitrary second-receipt or reversal of shipment, remote DB or schema migration execution, installation/deploy/cron, secrets, changes to approved contracts, broad permission or licensing policy. Only canonical transfer schema new. If a truly material business ambiguity blocks only a subcase, report a concrete BLOCK with alternatives while implementing independent approved cases. Sync safely once, no destructive git reset/stash, max 3 correction rounds. Owner does not choose routine engineering or ordering.
+
+## External technical closure — ChatGPT, 2026-11-20
+status: VERIFIED_TECH
+initial_sha: `ccf64fbd452bdce7488115ca640db472844b49a5`
+corrected_sha: `3072f546f096a61e8ce16f3bf9255d25a5765aa7`
+gates: 18/18 GATES_PASS, corrected tree
+qa: independent APROBADO, 0 blockers; `docs/work/INVTRANSFER-001-REVIEW-20261120-1515.md`
+php: 819 tests / 8610 assertions
+ci_exact_corrected_sha: 2/2 SUCCESS (PHP/Node 44791435932, contracts 44791435611)
+fixed: long valid origin branch codes (11–30 chars) receive deterministic origin-scoped prefix override; valid canonical codes beginning DRAFT- display correctly; request audit rollback regression added.
+remaining: MariaDB concurrency/locking/index/performance NOT_RUN; real browser UX NOT_RUN; no remote DB operations or deployment; transfer unit_cost_snapshot valuation deferred under INV-09. Public user-guide/roadmap editorial update in separate PR #55, to integrate after PR CI.
