@@ -42,6 +42,12 @@ def _phpunit_covers_all_feature_tests(root: Path) -> bool:
         tree = ET.parse(root / "phpunit.xml")
     except (OSError, ET.ParseError):
         return False
+    # PHPUnit's defaultTestSuite selects only a subset even when both
+    # Feature and Unit directories are declared. php artisan test does not
+    # override it with --testsuite, so any nonblank selector is unsafe.
+    # Fail closed rather than guessing whether the named suite is complete.
+    if (tree.getroot().get("defaultTestSuite") or "").strip():
+        return False
     # No test suite exclusion is permitted: it may silently hide Inventory,
     # security or other tests from an otherwise complete-looking suite.
     if any(node.tag.rsplit("}", 1)[-1] == "exclude" for node in tree.iter()):

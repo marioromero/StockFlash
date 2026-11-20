@@ -20,3 +20,6 @@ Independent read-only adversarial QA, exact-head 5/5 CI, merge only with QA APRO
 
 ## Independent QA R1 remediation
 QA R1 found future-coverage bypasses B1 (no-op build), B2 (no-op standalone typecheck), B3 (PHPUnit exclusions) and minor M1 (nonstandard duplicate commands). Corrected in scripts/sf_gate_policy.py with fail-closed exact-script checks, exclusion/suffix guards and targeted regressions. Independent R2 QA and exact-head CI remain required; this packet is not VERIFIED.
+
+## Independent QA R2 remediation
+Final B3 finding: a nonblank PHPUnit `defaultTestSuite` restricts `php artisan test` without changing the Unit/Feature roots. Reject this attribute in new plans and cover it with synthetic regression tests. Independent R3 QA and exact-head CI remain mandatory. PR still DRAFT.

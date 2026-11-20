@@ -200,6 +200,38 @@ class GatePlanTest(unittest.TestCase):
         )
         self.assertIn("PHPUNIT_FEATURE_AND_UNIT_COVERAGE_UNVERIFIED", self.verify(self.plan()))
 
+    def test_phpunit_default_test_suite_cannot_omit_feature_or_unit(self):
+        # Both test directories are present, but PHPUnit would select only
+        # one declared suite when a defaultTestSuite is configured.
+        for chosen in ("Unit", "Feature", " Unit ", "Custom"):
+            with self.subTest(defaultTestSuite=chosen):
+                self.xml.write_text(
+                    '<phpunit defaultTestSuite="' + chosen + '">'
+                    '<testsuites><testsuite name="Unit">'
+                    '<directory>tests/Unit</directory></testsuite>'
+                    '<testsuite name="Feature">'
+                    '<directory>tests/Feature</directory></testsuite>'
+                    '</testsuites></phpunit>', encoding="utf-8"
+                )
+                self.assertIn("PHPUNIT_FEATURE_AND_UNIT_COVERAGE_UNVERIFIED",
+                              self.verify(self.plan()))
+
+    def test_phpunit_without_default_test_suite_remains_accepted(self):
+        self.xml.write_text(
+            '<phpunit><testsuites><testsuite name="Unit">'
+            '<directory>tests/Unit</directory></testsuite>'
+            '<testsuite name="Feature"><directory>tests/Feature</directory>'
+            '</testsuite></testsuites></phpunit>', encoding="utf-8"
+        )
+        self.assertEqual(self.verify(self.plan()), [])
+        self.xml.write_text(
+            '<phpunit defaultTestSuite="  "><testsuites><testsuite name="Unit">'
+            '<directory>tests/Unit</directory></testsuite>'
+            '<testsuite name="Feature"><directory>tests/Feature</directory>'
+            '</testsuite></testsuites></phpunit>', encoding="utf-8"
+        )
+        self.assertEqual(self.verify(self.plan()), [])
+
     def test_phpunit_standard_php_suffix_still_accepted(self):
         self.xml.write_text(
             '<phpunit><testsuites><testsuite><directory suffix=".php">tests/Feature</directory>'

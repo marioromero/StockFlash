@@ -28,3 +28,6 @@ After adoption, read actual gate reports for 2-3 new packets and compare same-sc
 
 ## Independent QA R1 remediation
 B1/B2: mandatory build must resolve to an exact reviewed `vite build` or `vue-tsc --noEmit && vite build` script; `npm run typecheck` is accepted only when its script is exactly `vue-tsc --noEmit`. No-op aliases and arbitrary shell expressions fail closed before any gates. B3: any XML `<exclude>` or non-PHP suite directory suffix invalidates proof that the full PHP suite discovers all tests. M1: known alternative PHPUnit and npx vue-tsc calls are rejected as redundant future final gates. All existing/approved packet definitions remain unchanged.
+
+## Independent QA R2 remediation
+PHPUnit `defaultTestSuite` can restrict an otherwise complete-looking configuration to Unit or Feature. For new final gate plans, any nonblank `defaultTestSuite` attribute fails closed before verification, preserving the mandatory unfiltered full-suite coverage. Regression tests cover Unit, Feature, whitespace, and no-selector cases. Existing historic gates remain grandfathered; no automatic test skipping.
