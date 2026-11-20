@@ -104,7 +104,31 @@ class RoadmapAccessTest extends TestCase
         $this->assertSame(265, count($ids[1]));
         $this->assertSame(count($ids[1]), count(array_unique($ids[1])));
         $this->assertSame(19, count($done[0]));
-        $this->assertStringContainsString('aria-valuenow="19" aria-valuemin="0" aria-valuemax="265"', $html);
+        $this->assertStringContainsString('aria-valuenow="19" aria-valuemin="0" aria-valuemax="169"', $html);
+
+        // Default to R7 commercial MVP: approved P0/P1/P1★ through R7,
+        // except channel/online-only and integrated-fiscal-only requirements.
+        $this->assertStringContainsString('id="progress-scope"', $html);
+        $this->assertStringContainsString('<option value="r7" selected>', $html);
+        $this->assertStringContainsString('<option value="all">', $html);
+        $this->assertStringContainsString('id="scope-percentage">11,2</span>', $html);
+        $this->assertStringContainsString('id="scope-total">169</span>', $html);
+        $this->assertStringContainsString('id="scope-p0-total">104</span>', $html);
+        $this->assertStringContainsString("selector.addEventListener('change', render)", $html);
+
+        preg_match_all('/class="req" data-code="([A-Z]+-[0-9]+)" data-state="([^"]+)" data-priority="([^"]+)" data-r7="([01])"/', $html, $scoped, PREG_SET_ORDER);
+        $this->assertCount(265, $scoped);
+        $r7 = array_values(array_filter($scoped, fn (array $match): bool => $match[4] === '1'));
+        $this->assertCount(169, $r7);
+        $this->assertCount(19, array_filter($r7, fn (array $match): bool => $match[2] === 'done'));
+        $this->assertCount(104, array_filter($r7, fn (array $match): bool => $match[3] === 'P0'));
+        foreach (['INV-19', 'INV-20', 'SAL-16', 'SAL-20', 'SAL-21', 'SAL-22', 'SEC-18', 'BKP-09', 'BKP-10', 'BKP-11'] as $excluded) {
+            $matches = array_values(array_filter($scoped, fn (array $match): bool => $match[1] === $excluded));
+            $this->assertCount(1, $matches);
+            $this->assertSame('0', $matches[0][4]);
+        }
+        // Both modes are read-only calculations. No Ajax, data mutation or remote calls.
+
 
         $this->assertStringNotContainsString('<script src=', $html);
         $this->assertStringNotContainsString('fetch(', $html);
