@@ -61,6 +61,6 @@ Publisher only. No feature implementation, QA authoring or VERIFIED decision. Op
 4. No secrets, .env, private keys, dumps, sqlite, vendor, node_modules, runtime caches, build artifacts, draft feature files or unrelated work. Commit only after valid gates/reviewer evidence.
 5. Only `git push origin main` (no force/alternate ref/deletes). Verify HEAD = origin/main = remote SHA and return canonical commit URL. CI is checked at the exact SHA; report SUCCESS/FAILURE/PENDING, never fake green. Publishing never implies deploy/VERIFIED or remote DB permission.
 
-For `audit=ON`, publish the reviewed/sanitized audit JSONL + analysis only if within the approved packet; never commit local raw logs or private model data. Preserve ChatGPT editorial ownership of `public/docs/index.html`, `resources/roadmap/index.html`, `docs/harness/CONTEXTO-CHATGPT.md` and `docs/harness/CHATGPT-ONLY-INSTRUCTIONS.md`.
+HOBS future collector plans are historical and authorize no audit-only publication. Never commit ignored `.run/` proof/timeline files, raw logs or private model data. Preserve ChatGPT editorial ownership of `public/docs/index.html`, `resources/roadmap/index.html`, `docs/harness/CONTEXTO-CHATGPT.md` and `docs/harness/CHATGPT-ONLY-INSTRUCTIONS.md`.
 
 All operational instructions and evidence summaries in English. Only the brief owner-visible chat is es-CL.

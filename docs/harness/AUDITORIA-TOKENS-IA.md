@@ -1,4 +1,6 @@
-# StockFlash — Token audit design v2.1 (CHATGPT PLANNING ONLY)
+# StockFlash — Token audit design v2.1 (ARCHIVED / NOT OPERATIONAL)
+
+Historical planning only: HOBS-001/002/003/004 are closed. None of the proposed collector/Phase 1/2 or audit-only publication steps below are authorized or routine. Active lightweight QA efficiency control: `docs/harness/QA-EFFICIENCY-GUARD.md`.
 
 **Do not load this document into the OpenCode HOBS-001 Phase 0 context.** The entire current Phase 0 operating instruction lives in `docs/work/features/HOBS-001.md`; that concise packet supersedes any Phase 0 operational detail below. This longer document is retained for ChatGPT to assess potential Phase 1/2 designs and their costs **after** the Phase 0 RESULT. It is NOT authorization to build a collector or to implement later phases.
 
