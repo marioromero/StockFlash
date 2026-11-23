@@ -1,6 +1,6 @@
 # CUSCORE-001 — Customer register, groups and discounts (P0 POS prerequisite)
 
-status: APPROVED
+status: VERIFIED
 approval_basis: existing_approved_contract_owner_delegation_2026-11-16
 new_business_decisions: NONE
 publication_mode: AUTO_GIT
@@ -32,3 +32,15 @@ Implement exactly Part 1 §8.8 `CUS-01/02/03` (P0), §7.9 RN-58/RN-61/RN-64 and 
 
 ## Hard guards
 No physical stock writes, sales tables, tickets, reservation rows, payment/cash/receipt/POS checkout, discount application to a sale, catalogs of external addresses/consents, P1 marketing consent, customer merging, data export/anon flows (separate PRV P1), Woo, fiscal/DTE, cross-client synchronization, new dependencies, remote DB/network calls, migration/seeding/install/deploy/cron, credentials/.env, or changes to product contracts, harness, GPT-authored HTML. Isolated SQLite only; preserve local candidate and use safe_git_pull once (fail closed on SYNC_BLOCKED); max 3 correction rounds; no new owner decisions unless strictly material commercial ambiguity.
+
+## External technical closure — GPT, 2026-11-23
+status: VERIFIED_TECH
+feature_commit: `fee3be10b6dec5ec6051d50fe1a1a0eb822e9225`
+published_evidence_sha: `5bfa1a64163da87cff4293e8a5a8142f646f918f`
+validated_exact_sha: `b89ed4722eef07f004a7aec85cab044324256717`
+gates: 15/15 GATES_PASS bound to `66a9bef` + feature blob hashes unchanged
+qa: independent APROBADO (P1/P3 closed; postmerge delta APROBADO); `docs/work/CUSCORE-001-REVIEW-20261120-1745.md`, `docs/work/CUSCORE-001-REVIEW-20261120-1756.md`
+php: 883 tests / 9694 assertions in full gate. Exact-head GitHub PHP/Node/smoke/harness CI run `45241808376` SUCCESS and contracts `45241808659` SUCCESS.
+harness_correction: PR #59 merged `b89ed472`, fixes inverted historical/future test; independent GPT QA APROBADO, original grandfather baseline unchanged, new feature plans still strict. No app code change.
+deferred: real MariaDB/concurrency, real-browser UX, deploy and installation NOT_RUN. No remote DB operations. Prior accidental remote DB exception not claimed cleaned.
+editorial: ChatGPT public user guide and roadmap pending separate update; `/docs/` and `/roadmap` remain public.
