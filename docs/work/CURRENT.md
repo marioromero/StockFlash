@@ -1,7 +1,7 @@
 # Estado operativo — StockFlash
 
 ## Feature activa
-- **Ninguna activa;** CUSCORE-001 ya VERIFIED_TECH. Preparar SELLERS-001 (P0 vendedores, prerequisito POS), sin interrumpir otra feature ni modificar base de datos remota.
+- **SELLERS-001 — APPROVED** (R6 prerequisito POS). Registro de vendedores SEL-01 con código único no reutilizable, usuario vinculado opcional, sucursales y comisión configurada sin cálculo, permisos/auditoría. Packet: `docs/work/features/SELLERS-001.md`. SFH1 pendiente de apertura, SQLite aislada, gates, QA independiente y exact-SHA CI obligatorios. Sin base remota ni despliegue.
 
 ## Estados por feature
 - BOOT-001: VERIFIED (2026-10-14), Laravel 13.35.0 + Vue 3/Inertia/TS; `bcbf16f`.
