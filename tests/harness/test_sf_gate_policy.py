@@ -141,12 +141,27 @@ class GatePlanTest(unittest.TestCase):
                 self.assertEqual(sf_verify.main(), 1)
         self.assertIn("REDUNDANT_FINAL_PHP_TARGETED_TESTS", output.getvalue())
 
-    def test_all_existing_real_packets_remain_grandfathered(self):
+    def test_historical_packet_baseline_remains_grandfathered(self):
         import sf_verify
 
-        self.assertTrue(set(sf_verify.GATES_BY_PACKET).issubset(gp.HISTORICAL_PACKETS))
-        for packet, existing_gates in sf_verify.GATES_BY_PACKET.items():
-            self.assertEqual(gp.check_final_plan(packet, existing_gates, self.root), [])
+        # Historic IDs are a frozen subset, not an upper bound on all
+        # GATES_BY_PACKET entries. Adding new features must stay possible.
+        self.assertTrue(gp.HISTORICAL_PACKETS.issubset(sf_verify.GATES_BY_PACKET))
+        for packet in gp.HISTORICAL_PACKETS:
+            self.assertEqual(
+                gp.check_final_plan(packet, sf_verify.GATES_BY_PACKET[packet], self.root), []
+            )
+
+    def test_new_real_packets_must_pass_final_coverage_policy(self):
+        import sf_verify
+
+        # Future IDs must NOT be silently grandfathered into the old list:
+        # check every newly registered real packet against current repo scripts.
+        for packet in sorted(set(sf_verify.GATES_BY_PACKET) - gp.HISTORICAL_PACKETS):
+            with self.subTest(packet=packet):
+                self.assertEqual(
+                    gp.check_final_plan(packet, sf_verify.GATES_BY_PACKET[packet], ROOT), []
+                )
 
 
     def test_noop_build_and_noop_typecheck_never_authorize_coverage(self):
