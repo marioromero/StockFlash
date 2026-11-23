@@ -61,6 +61,43 @@ class EvidenceReuseTest(unittest.TestCase):
         review.write_text("Independent review\n", encoding="utf-8")
         self.assertTrue(self.check()[0])
 
+    def test_four_and_six_digit_review_reports_do_not_invalidate_proof(self):
+        before = self.stamp()
+        for clock in ("1745", "174500"):
+            with self.subTest(clock=clock):
+                review = self.root / "docs" / "work" / f"DEMO-001-REVIEW-20261120-{clock}.md"
+                review.write_text("Independent QA notes\\n", encoding="utf-8")
+                self.assertEqual(ev.fingerprint(self.feature, self.root), before)
+                self.assertEqual(self.check(), (True, "REUSE_VALID", self.report.name))
+
+    def test_review_exclusion_never_authorizes_gate_evidence(self):
+        before = self.stamp()
+        review = self.root / "docs" / "work" / "DEMO-001-REVIEW-20261120-1745.md"
+        review.write_text("Veredicto: GATES_PASS\\n", encoding="utf-8")
+        self.assertFalse(ev.record_success(self.feature, before, review, self.root))
+        proof_path = ev._cache_path(self.feature, self.root)
+        proof = json.loads(proof_path.read_text(encoding="utf-8"))
+        proof["report"] = review.name
+        proof_path.write_text(json.dumps(proof), encoding="utf-8")
+        self.assertEqual(self.check()[1], "PROOF_REPORT_INVALID")
+
+    def test_other_feature_and_malformed_review_names_still_invalidate(self):
+        before = self.stamp()
+        for name in (
+            "OTHER-001-REVIEW-20261120-1745.md",
+            "OTHER-001-REVIEW-20261120-174500.md",
+            "DEMO-001-REVIEW-20261120-174.md",
+            "DEMO-001-REVIEW-20261120-174500-extra.md",
+            "DEMO-001-REVIEW-20261120-1745.txt",
+        ):
+            with self.subTest(name=name):
+                path = self.root / "docs" / "work" / name
+                path.write_text("Unexpected source-visible artifact\\n", encoding="utf-8")
+                self.assertEqual(self.check()[1], "SOURCE_CHANGED")
+                path.unlink()
+                self.assertEqual(ev.fingerprint(self.feature, self.root), before)
+                self.assertEqual(self.check()[1], "REUSE_VALID")
+
     def test_changed_code_or_untracked_test_invalidates(self):
         self.stamp()
         (self.root / "src" / "a.php").write_text("second\n", encoding="utf-8")
