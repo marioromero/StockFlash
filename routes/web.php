@@ -368,6 +368,30 @@ Route::middleware(['auth', 'password.change', 'verify.session'])->group(function
             ->name('customers.reveal');
     });
 
+    // --- Vendedores (SELLERS-001 · SEL-01 · RN-13/RN-14) ---
+    // Rutas globales sin `{branch}`: el permiso `sellers.manage` se evalúa en
+    // cualquier sucursal asignada mediante `sellers.manage`; el alcance fino
+    // de sucursales se filtra en servidor. El módulo es fail-closed: fila
+    // explícita `sellers` o, en su defecto, `pos` habilitado.
+    Route::middleware(['sellers.module', 'sellers.manage'])->group(function (): void {
+        Route::get('/sellers', [\App\Http\Controllers\Sellers\SellerController::class, 'index'])
+            ->name('sellers.index');
+        Route::post('/sellers', [\App\Http\Controllers\Sellers\SellerController::class, 'store'])
+            ->name('sellers.store');
+        Route::get('/sellers/{seller}', [\App\Http\Controllers\Sellers\SellerController::class, 'show'])
+            ->whereNumber('seller')
+            ->name('sellers.show');
+        Route::patch('/sellers/{seller}', [\App\Http\Controllers\Sellers\SellerController::class, 'update'])
+            ->whereNumber('seller')
+            ->name('sellers.update');
+        Route::post('/sellers/{seller}/activate', [\App\Http\Controllers\Sellers\SellerController::class, 'activate'])
+            ->whereNumber('seller')
+            ->name('sellers.activate');
+        Route::post('/sellers/{seller}/deactivate', [\App\Http\Controllers\Sellers\SellerController::class, 'deactivate'])
+            ->whereNumber('seller')
+            ->name('sellers.deactivate');
+    });
+
     // --- Administración global de sucursales (BRANCH-001 · CORE-05) ---
     // Es administración global: NO usa `branch.access`.
     Route::middleware('can.permission:settings.manage')->group(function () {

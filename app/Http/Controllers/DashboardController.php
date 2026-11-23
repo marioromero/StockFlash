@@ -6,6 +6,8 @@ use App\Http\Middleware\CheckPermission;
 use App\Models\User;
 use App\Support\Customers\CustomerModuleGate;
 use App\Support\License\LicenseStateResolver;
+use App\Support\Sellers\SellerAccessService;
+use App\Support\Sellers\SellerModuleGate;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -20,6 +22,8 @@ class DashboardController extends Controller
     public function __construct(
         private readonly LicenseStateResolver $licenseStateResolver,
         private readonly CustomerModuleGate $customerModules,
+        private readonly SellerModuleGate $sellerModules,
+        private readonly SellerAccessService $sellerAccess,
     ) {}
 
     public function index(): Response
@@ -35,6 +39,12 @@ class DashboardController extends Controller
             'can_view_customers' => $user instanceof User
                 && $this->customerModules->isEnabled()
                 && CheckPermission::allows($user, 'customers.view'),
+            // Vendedores usa rutas globales y permiso en cualquier sucursal
+            // asignada; el enlace solo se muestra cuando el módulo está
+            // habilitado y el usuario puede administrar al menos una sucursal.
+            'can_view_sellers' => $user instanceof User
+                && $this->sellerModules->isEnabled()
+                && $this->sellerAccess->canManageAnyBranch($user),
         ]);
     }
 

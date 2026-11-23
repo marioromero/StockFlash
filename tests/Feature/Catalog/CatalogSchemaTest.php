@@ -81,6 +81,17 @@ class CatalogSchemaTest extends TestCase
     ];
 
     /**
+     * Tablas de vendedores (SELLERS-001 / Parte 2 §6.5) presentes en el
+     * conjunto exacto de esquema de pruebas; no son catálogo.
+     *
+     * @var list<string>
+     */
+    private const SELLERS_TABLES = [
+        'sellers',
+        'branch_seller',
+    ];
+
+    /**
      * @var array<string, list<string>>
      */
     private const EXPECTED_COLUMNS = [
@@ -117,7 +128,7 @@ class CatalogSchemaTest extends TestCase
             $this->assertTrue(in_array($table, $tables, true), "Falta la tabla {$table}.");
         }
 
-        $expected = array_merge(self::CATALOG_TABLES, self::CORE_TABLES, self::INVENTORY_TABLES, self::CUSTOMERS_TABLES, ['migrations']);
+        $expected = array_merge(self::CATALOG_TABLES, self::CORE_TABLES, self::INVENTORY_TABLES, self::CUSTOMERS_TABLES, self::SELLERS_TABLES, ['migrations']);
         sort($expected);
         sort($tables);
 

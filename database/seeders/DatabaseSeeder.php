@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             SystemConfigsSeeder::class,
             PlanDefinitionsSeeder::class,
             ReasonCodesSeeder::class,
+            SellerSeeder::class,
         ]);
     }
 }

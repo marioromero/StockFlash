@@ -12,10 +12,10 @@ roadmap_integration_sha: `1798380616e79c33b9f929226827377fe062c533` (ChatGPT int
 roadmap_integration_date: 2026-11-23
 roadmap_last_review: 2026-11-23
 covered_features: BOOT-001 VERIFIED; CI-001 VERIFIED; AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED; ROADMAP-001 VERIFIED; USERS-001 VERIFIED; CFG-001/002/003 VERIFIED; CORESEQ/CORELIC/COREMOD/COREPIN VERIFIED; CATDB-001 VERIFIED; CATMAST-001 VERIFIED (9279d57); SETUP-001 VERIFIED (13cdd6a); INVCORE-001 VERIFIED (966b685); INVWRITE-001 VERIFIED_TECH (816fdc6); INVKARDEX-001 VERIFIED_TECH (317a61d); INVREORDER-001 VERIFIED_TECH (679e858); INVCSV-001 VERIFIED_TECH (f856592); INVTRANSFER-001 VERIFIED_TECH (3072f54); CUSCORE-001 VERIFIED_TECH (b89ed47)
-in_progress: R6_POS_PREREQUISITE — CUSCORE-001 VERIFIED_TECH; SELLERS-001 siguiente P0 (registro de vendedores); R4_BODEGA transfer/CSV VERIFIED_TECH, reservas ligadas a ventas pendientes; producción no demo bloqueada por BKP-08 `NOT_READY_FOR_PRODUCTION`
+in_progress: R6_POS_PREREQUISITE — CUSCORE-001 VERIFIED_TECH; SELLERS-001 IMPLEMENTED_TECH_PENDING_GATES_QA_CI (registro de vendedores, base `5d983bb`); R4_BODEGA transfer/CSV VERIFIED_TECH, reservas ligadas a ventas pendientes; producción no demo bloqueada por BKP-08 `NOT_READY_FOR_PRODUCTION`
 first_commercial_release: R7 — POS + Bodega sin emisión DTE integrada y con piloto/controles de salida
-pending: ROADMAP_PENDIENTE_CHATGPT — INSTALL-001 (reconciliación editorial CORE-17); CUSCORE-001 integrado 2026-11-23 en R6 y porcentajes; 265 requisitos detallados conservados
-report_state: ROADMAP_ACTUALIZADO (PR #60, PUBLIC_READ_ONLY, default R7/full selector, CUSCORE VERIFIED_TECH and ratios updated); INSTALL-001 pendiente editorial
+pending: ROADMAP_PENDIENTE_CHATGPT — INSTALL-001 (reconciliación editorial CORE-17); SELLERS-001 (SEL-01 implementado técnicamente, pendiente gates/QA/CI y cobertura editorial); CUSCORE-001 integrado 2026-11-23 en R6 y porcentajes; 265 requisitos detallados conservados
+report_state: ROADMAP_ACTUALIZADO (PR #60, PUBLIC_READ_ONLY, default R7/full selector, CUSCORE VERIFIED_TECH and ratios updated); INSTALL-001 pendiente editorial; SELLERS-001 implementado técnicamente sin actualizar HTML ni porcentajes
 
 ## Mantenimiento por OpenCode
 

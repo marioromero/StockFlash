@@ -11,11 +11,11 @@ guide_status: INTEGRADA_EN_MAIN (2026-11-16)
 guide_content_last_written: 2026-11-23
 covered_features: AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED; ROADMAP-001 VERIFIED; USERS-001 VERIFIED; CFG-001/002/003 VERIFIED; CORELIC-001 VERIFIED; CATMAST-001 VERIFIED (9279d57); SETUP-001 VERIFIED (13cdd6a); INVCORE-001 VERIFIED (966b685); INVWRITE-001 VERIFIED_TECH (816fdc6); INVKARDEX-001 VERIFIED_TECH (317a61d); INVREORDER-001 VERIFIED_TECH (679e858); INVCSV-001 VERIFIED_TECH (f856592); INVTRANSFER-001 VERIFIED_TECH (3072f54; guía integrada); CUSCORE-001 VERIFIED_TECH (b89ed47; guía integrada, 28 temas)
 latest_covered_code_sha: `b89ed4722eef07f004a7aec85cab044324256717` (CUSCORE-001 and prior user-visible features; not a deployment claim)
-next_feature: SELLERS-001 — Registro de vendedores y asignación por sucursal (P0 SEL-01; packet pendiente). INSTALL-001 — Instalador web CORE-17 (documentación editorial por reconciliar)
+next_feature: SELLERS-001 — Registro de vendedores y asignación por sucursal (P0 SEL-01; implementado técnicamente, gates/QA/CI pendientes). INSTALL-001 — Instalador web CORE-17 (documentación editorial por reconciliar)
 internal_only_features: CATDB-001 VERIFIED (11 tablas internas, sin UI ni página nueva); CORESEQ-001 VERIFIED (servicio interno invisible; sin entrada nueva en guía); COREMOD-001 VERIFIED técnico (servicio interno invisible de módulos; sin página nueva); COREPIN-001 VERIFIED (servicio interno invisible de autorización PIN; sin página nueva)
 last_guide_integration_sha: `1798380616e79c33b9f929226827377fe062c533` (ChatGPT, guía CUSCORE-001 + roadmap R7, PR #60)
 last_guide_integration_date: 2026-11-23
-pending_docs: GUIA_PENDIENTE_CHATGPT — INSTALL-001 (reconciliación editorial instalador CORE-17); CUSCORE-001 integrado por ChatGPT el 2026-11-23 con navegación, registro/grupos y privacidad; /docs/ público y enlazado a /roadmap
+pending_docs: GUIA_PENDIENTE_CHATGPT — INSTALL-001 (reconciliación editorial instalador CORE-17); SELLERS-001 (nueva pantalla `/sellers`, pendiente de redacción); CUSCORE-001 integrado por ChatGPT el 2026-11-23 con navegación, registro/grupos y privacidad; /docs/ público y enlazado a /roadmap
 
 ## Cómo mantener este archivo
 - OpenCode puede actualizar solamente los metadatos y el registro de pendientes aquí, no los textos para usuarios en `public/docs/index.html`.
@@ -132,6 +132,14 @@ pending_docs: GUIA_PENDIENTE_CHATGPT — INSTALL-001 (reconciliación editorial 
 - contenido a redactar por ChatGPT: origen y destino distintos y activos; borrador sin número visible hasta solicitar; número asignado por sucursal de origen al solicitar; envío descuenta solo el origen y recepción suma solo el destino; cantidades solicitadas/enviadas/recibidas/pendientes; recepción parcial deja diferencia pendiente visible sin ajustes, compensaciones, reversas ni reclamos automáticos; acciones según estado y sucursal; permisos `inventory.view`/`inventory.adjust`; módulo deshabilitado y licencia solo lectura; productos históricos inactivos siguen visibles; aclarar que no se muestran costos, precios, márgenes ni PII y que no hay reservas, ventas, POS, fiscal ni CSV en esta pantalla.
 - fecha: 2026-11-20.
 - estado: implementado en código/pruebas SQLite :memory:; gates/QA/CI pendientes; guía NO redactada todavía; `maria=NOT_RUN`, `remote_db=KNOWN_HISTORICAL_EXCEPTION_NOT_UNTOUCHED`, navegador y deploy diferidos; no VERIFIED.
+- OpenCode no edita `public/docs/index.html`; este registro es solo metadato técnico.
+
+## GUIA_PENDIENTE_CHATGPT — SELLERS-001
+- feature: SELLERS-001 — Registro de vendedores y asignación por sucursal (SEL-01 P0; RN-11/RN-13/RN-14).
+- pantallas: `/sellers` (listado, búsqueda por nombre/código, filtro de sucursales permitidas, alta y edición) y `/sellers/{id}` (detalle, edición y activar/desactivar).
+- contenido a redactar por ChatGPT: código único normalizado en mayúsculas e inmutable, identificador no credencial; fila reservada «Sin asignar» (`NONE`) oculta y no editable; usuario vinculado opcional con acceso a todas las sucursales finales; comisión configurada 0–100 con dos decimales sin cálculo de comisiones ganadas; asignación a una o más sucursales activas; alcance global o por sucursal según `sellers.manage`; `sellers.view_reports` no concede administración; módulo fallback POS; licencia solo lectura; activar/desactivar sin borrar ni reutilizar código; auditoría sin copiar nombre, código ni PII del usuario; aclarar que no hay ventas, tickets, reportes ni liquidación de comisiones en esta pantalla.
+- fecha: 2026-11-23.
+- estado: implementado en código/pruebas SQLite :memory:; 57 pruebas dirigidas / 636 aserciones; gates/QA/CI pendientes; guía NO redactada todavía; `maria=NOT_RUN`, `remote_db=NOT_TOUCHED`, navegador/deploy diferidos; no VERIFIED.
 - OpenCode no edita `public/docs/index.html`; este registro es solo metadato técnico.
 
 ## GUIA_PENDIENTE_CHATGPT — CUSCORE-001
