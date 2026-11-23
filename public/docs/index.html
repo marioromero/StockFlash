@@ -66,6 +66,7 @@ details.accordion{border:1px solid var(--line);border-radius:9px;margin:9px 0;ba
       <li><a href="#catalogo-productos">Productos y variantes</a></li>
     </ul></details>
     <details class="navgroup" open><summary>Inventario</summary><ul><li><a href="#inventario-stock">Consultar existencias por sucursal</a></li></ul></details>
+    <details class="navgroup" open><summary>Clientes</summary><ul><li><a href="#clientes-gestion">Registrar y administrar clientes</a></li></ul></details>
     <details class="navgroup" open><summary>Configuración</summary><ul>
       <li><a href="#comprobante">Ajustes de comprobante</a></li>
       <li><a href="#datos-comercio">Datos del comercio</a></li>
@@ -86,7 +87,7 @@ details.accordion{border:1px solid var(--line);border-radius:9px;margin:9px 0;ba
 <div class="hero"><div class="eyebrow">Aprende a tu ritmo</div><h1>Tu guía para usar StockFlash</h1>
 <p>Todo lo que necesitas para comenzar, explicado sin términos complicados. Elige un tema en el menú izquierdo o escribe lo que buscas. Abre las preguntas de cada sección para ver los detalles.</p>
 <div class="meta"><span class="pill verified">Acceso y sucursales verificados</span><span class="pill">Usuarios verificados técnicamente</span><span class="pill">Actualizada: 19-11-2026</span></div>
-<p id="search-status" role="status" aria-live="polite">27 temas disponibles.</p></div>
+<p id="search-status" role="status" aria-live="polite">28 temas disponibles.</p></div>
 <main id="manual">
 <section class="topic" id="bienvenida" data-keywords="introduccion comienzo que es stockflash primer uso ayuda"><div class="kicker">Primeros pasos</div><h2>¿Qué es StockFlash?</h2>
 <p>Es el sistema con el que podrás administrar las operaciones de tu negocio. Incluye una zona de administración y, a medida que se vayan incorporando funciones, módulos como punto de venta e inventario.</p>
@@ -273,6 +274,21 @@ details.accordion{border:1px solid var(--line);border-radius:9px;margin:9px 0;ba
 <details class="accordion"><summary>¿Se puede recibir menos mercadería que la enviada?</summary><div class="answer">Sí. En la sucursal de destino se indica la cantidad efectivamente recibida por producto. Si es menor que la despachada, el traspaso queda como <strong>parcialmente recibido</strong> y la diferencia permanece pendiente, sin aumentar el inventario de ninguna sucursal ni generar una devolución automática.</div></details>
 <details class="accordion"><summary>¿Qué operaciones de Bodega faltan?</summary><div class="answer">El ciclo de traspasos ya está verificado técnicamente, pero aún faltan las reservas comerciales, los conteos de inventario y otras operaciones de versiones posteriores. El valor reservado todavía no representa una reserva comercial operativa.</div></details>
 <div class="callout warn"><strong>Estado:</strong> cargas iniciales manuales y CSV, ajustes autorizados, consulta de existencias, Kardex, traspasos y reposición/stock crítico verificados técnicamente mediante pruebas automatizadas. Faltan validación visual real en navegador y concurrencia en MariaDB; no existe despliegue comercial de estas funciones.</div>
+</section>
+<section class="topic" id="clientes-gestion" data-keywords="clientes CUSCORE-001 CUS-01 CUS-02 CUS-03 persona empresa rut cifrado contacto grupos descuentos límite tope bloqueo datos personales revelar modulo POS">
+<div class="kicker">Clientes · CUSCORE-001</div><h2>Registrar clientes y administrar descuentos</h2>
+<p>El módulo <strong>Clientes</strong> permite mantener un registro común de personas y empresas para las futuras ventas del POS. Está disponible desde el Dashboard si tienes permiso y el módulo correspondiente se encuentra habilitado, o en <code>/customers</code>. Por ahora no muestra compras realizadas, porque las ventas todavía no están implementadas.</p>
+<ol class="steps">
+<li>Con permiso <code>customers.view</code>, abre <strong>Clientes</strong>, busca por nombre o filtra por grupo y estado. La lista muestra nombre, tipo, grupo, estado y datos de contacto enmascarados.</li>
+<li>Si tienes <code>customers.manage</code>, crea un cliente indicando si es <strong>persona</strong> o <strong>empresa</strong>. El RUT es opcional, pero si lo ingresas el sistema valida su dígito verificador y evita duplicados, incluso si se escribió con o sin puntos y guion.</li>
+<li>Para buscar un RUT exacto, usa la búsqueda dedicada dentro de Clientes. El RUT no se agrega a la dirección del navegador y no aparece en el historial de búsqueda de la página.</li>
+<li>Abre la ficha de un cliente para editar su información o cambiar su estado. Al modificar un dato personal, un campo sensible vacío conserva el valor anterior. No se permite reactivar desde aquí un cliente bloqueado ni modificar uno anonimizado.</li>
+<li>En <strong>Grupos de clientes</strong>, configura el descuento predeterminado y su tope. Un cliente puede tener descuentos propios; si deja un descuento sin definir, hereda el valor correspondiente de su grupo. Los descuentos se almacenan, pero todavía no se aplican en una venta POS.</li>
+</ol>
+<details class="accordion"><summary>¿Por qué no aparece completo el RUT o el correo?</summary><div class="answer">Por privacidad, el listado y la ficha muestran máscaras en lugar del RUT, correo, teléfono y datos tributarios. Solo una persona con permiso especial <code>customers.view_sensitive</code> puede usar la opción de revelar los datos, acción que queda registrada en la auditoría. El permiso para editar clientes no concede automáticamente permiso para revelar sus datos.</div></details>
+<details class="accordion"><summary>¿Qué sucede si no puedo agregar o editar clientes?</summary><div class="answer">Revisa que tengas <code>customers.manage</code> y que el módulo Clientes/POS esté habilitado. Una licencia en modo solo lectura permite consultar, pero impide crear o modificar. Si falta la clave privada requerida para proteger los RUT, solo se bloquean las operaciones que necesitan procesar un RUT: aún se pueden registrar clientes sin él.</div></details>
+<details class="accordion"><summary>¿Qué diferencia hay entre desactivar y eliminar?</summary><div class="answer">En esta etapa se permite desactivar y reactivar clientes; no se eliminan físicamente los registros ni se borra su historial. El bloqueo y la anonimización tienen reglas propias y no se levantan automáticamente al activar.</div></details>
+<div class="callout warn"><strong>Estado:</strong> CUSCORE-001 verificado técnicamente mediante pruebas automatizadas (15/15 controles, QA independiente y CI aprobados). Sin validación visual real en navegador, concurrencia MariaDB ni despliegue comercial; las ventas, el historial de compras y los descuentos efectivos en caja pertenecen a etapas posteriores.</div>
 </section>
 </main>
 <div id="empty-state" role="status"><strong>No encontramos ese tema.</strong><p>Prueba con otra palabra, por ejemplo «sucursal», «contraseña» o «caja».</p><button id="clear-search" type="button">Ver todos los temas</button></div>

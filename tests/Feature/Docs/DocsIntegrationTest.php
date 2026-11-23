@@ -208,6 +208,20 @@ class DocsIntegrationTest extends TestCase
         $this->assertStringContainsString('sin despliegue comercial', $html);
     }
 
+    public function test_cuscore_001_customer_guide_is_accessible_and_respects_rut_privacy(): void
+    {
+        $html = $this->manual();
+
+        $this->assertStringContainsString('id="clientes-gestion"', $html);
+        $this->assertStringContainsString('href="#clientes-gestion"', $html);
+        $this->assertStringContainsString('CUSCORE-001', $html);
+        $this->assertStringContainsString('customers.view', $html);
+        $this->assertStringContainsString('customers.manage', $html);
+        $this->assertStringContainsString('customers.view_sensitive', $html);
+        $this->assertStringContainsString('RUT no se agrega a la dirección del navegador', $html);
+        $this->assertStringContainsString('28 temas disponibles.', $html);
+    }
+
     private function manual(): string
     {
         return $this->file('public/docs/index.html');
