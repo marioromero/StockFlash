@@ -1,7 +1,7 @@
 # Estado operativo — StockFlash
 
 ## Feature activa
-- **CUSCORE-001 — APPROVED** (R6 POS prerequisite). Registro de clientes personas/empresas, grupos, descuentos y RUT cifrado/índice ciego (P0 CUS-01/02/03), with UI and authorization. Packet: `docs/work/features/CUSCORE-001.md`. Implementado en código/pruebas SQLite el 2026-11-20 (`docs/work/CUSCORE-001-NOTES-20261120.md`); gates/QA independiente/CI pendientes; sin VERIFIED. No remote DB/deploy.
+- **Ninguna activa;** CUSCORE-001 ya VERIFIED_TECH. Preparar SELLERS-001 (P0 vendedores, prerequisito POS), sin interrumpir otra feature ni modificar base de datos remota.
 
 ## Estados por feature
 - BOOT-001: VERIFIED (2026-10-14), Laravel 13.35.0 + Vue 3/Inertia/TS; `bcbf16f`.
@@ -22,6 +22,7 @@
 - INVREORDER-001: VERIFIED técnico (2026-11-19), `679e858`; 16/16 gates, QA independiente APROBADO, 752 PHP tests / 7415 assertions, CI 2/2 SUCCESS. Umbrales y panel de stock crítico; MariaDB/browser pendientes.
 - INVCSV-001: VERIFIED técnico (2026-11-20), `f856592`; 17/17 gates HQAEFF, QA independiente APROBADO, 779 PHP tests / 7805 assertions, CI 2/2 SUCCESS. Importación inicial CSV all-or-nothing; parser F1/F2 e Inertia preview F6 backlog pre-release, MariaDB/browser diferidos.
 - INVTRANSFER-001: VERIFIED técnico (2026-11-20), corregido `3072f54`; 18/18 gates, QA independiente APROBADO, 819 PHP tests / 8610 assertions, CI 2/2 SUCCESS. Solicitud, envío, recepción completa/parcial y diferencias pendientes; MariaDB/browser y valorización diferidos.
+- CUSCORE-001: VERIFIED técnico (2026-11-23), `b89ed47` (feature `fee3be1`), 15/15 gates, QA independiente APROBADO (P1/P3 cerrados), 883 PHP tests / 9694 assertions; CI exact-SHA 2/2 SUCCESS (45241808376 + 45241808659). Clientes persona/empresa, RUT HMAC y cifrado, grupos y descuentos, revelado auditado. MariaDB/browser diferidos; guía/roadmap pendientes de integración editorial.
 - CATPROD-001: VERIFIED técnico (2026-11-17), `c8e1338`; 476/4192; QA R2 N-01 pendiente antes de POS/Fiscal.
 - **SETUP-001: VERIFIED técnico** (2026-11-17), código `13cdd6a`, gates 19/19, QA independiente APROBADO, 529 pruebas / 4665 aserciones y CI 2/2 SUCCESS. Guía 26 temas y roadmap actualizados por ChatGPT; cierre `docs/work/SETUP-001-CLOSURE-20261117.md`. Producción no demo bloqueada por BKP-08 P1★; instalador CORE-17 implementado/verificado solo en código; ejecución real, MariaDB/browser y BKP-08 pendientes.
 
