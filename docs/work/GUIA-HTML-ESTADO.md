@@ -9,13 +9,13 @@ guide_branch: `docs/guia-usuario-interactiva-20261110`
 guide_pr: https://github.com/marioromero/StockFlash/pull/2
 guide_status: INTEGRADA_EN_MAIN (2026-11-16)
 guide_content_last_written: 2026-11-23
-covered_features: AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED; ROADMAP-001 VERIFIED; USERS-001 VERIFIED; CFG-001/002/003 VERIFIED; CORELIC-001 VERIFIED; CATMAST-001 VERIFIED (9279d57); SETUP-001 VERIFIED (13cdd6a); INVCORE-001 VERIFIED (966b685); INVWRITE-001 VERIFIED_TECH (816fdc6); INVKARDEX-001 VERIFIED_TECH (317a61d); INVREORDER-001 VERIFIED_TECH (679e858); INVCSV-001 VERIFIED_TECH (f856592); INVTRANSFER-001 VERIFIED_TECH (3072f54; guía integrada); CUSCORE-001 VERIFIED_TECH (b89ed47; guía integrada, 28 temas)
-latest_covered_code_sha: `b89ed4722eef07f004a7aec85cab044324256717` (CUSCORE-001 and prior user-visible features; not a deployment claim)
-next_feature: SELLERS-001 — Registro de vendedores y asignación por sucursal (P0 SEL-01; implementado técnicamente, gates/QA/CI pendientes). INSTALL-001 — Instalador web CORE-17 (documentación editorial por reconciliar)
+covered_features: AUTH-001 VERIFIED; BRANCH-001 VERIFIED; DOCS-001 VERIFIED; ROADMAP-001 VERIFIED; USERS-001 VERIFIED; CFG-001/002/003 VERIFIED; CORELIC-001 VERIFIED; CATMAST-001 VERIFIED (9279d57); SETUP-001 VERIFIED (13cdd6a); INVCORE-001 VERIFIED (966b685); INVWRITE-001 VERIFIED_TECH (816fdc6); INVKARDEX-001 VERIFIED_TECH (317a61d); INVREORDER-001 VERIFIED_TECH (679e858); INVCSV-001 VERIFIED_TECH (f856592); INVTRANSFER-001 VERIFIED_TECH (3072f54; guía integrada); CUSCORE-001 VERIFIED_TECH (b89ed47; guía integrada, 28 temas); SELLERS-001 VERIFIED_TECH (e46f25f; guía integrada, 29 temas)
+latest_covered_code_sha: `e46f25f14b9c0114abbd2964c893d4d6960d655d` (SELLERS-001 and prior user-visible features; not a deployment claim)
+next_feature: POSSTATION-001 — Estaciones POS y vinculación de dispositivo (P0 CSH-02/POS-02; packet aprobado, implementación pendiente). INSTALL-001 — Instalador CORE-17 (reconciliación editorial pendiente)
 internal_only_features: CATDB-001 VERIFIED (11 tablas internas, sin UI ni página nueva); CORESEQ-001 VERIFIED (servicio interno invisible; sin entrada nueva en guía); COREMOD-001 VERIFIED técnico (servicio interno invisible de módulos; sin página nueva); COREPIN-001 VERIFIED (servicio interno invisible de autorización PIN; sin página nueva)
-last_guide_integration_sha: `1798380616e79c33b9f929226827377fe062c533` (ChatGPT, guía CUSCORE-001 + roadmap R7, PR #60)
+last_guide_integration_sha: `56c90b49839b69f0c5cad6d160bf7d9cd900d8d3` (ChatGPT, guía SELLERS-001 + roadmap, PR #64)
 last_guide_integration_date: 2026-11-23
-pending_docs: GUIA_PENDIENTE_CHATGPT — INSTALL-001 (reconciliación editorial instalador CORE-17); SELLERS-001 (nueva pantalla `/sellers`, pendiente de redacción); CUSCORE-001 integrado por ChatGPT el 2026-11-23 con navegación, registro/grupos y privacidad; /docs/ público y enlazado a /roadmap
+pending_docs: GUIA_PENDIENTE_CHATGPT — INSTALL-001 (reconciliación editorial instalador CORE-17); SELLERS-001 integrado por ChatGPT en PR #64 con nueva sección de vendedores; próxima guía POSSTATION-001 solo tras publicación técnica
 
 ## Cómo mantener este archivo
 - OpenCode puede actualizar solamente los metadatos y el registro de pendientes aquí, no los textos para usuarios en `public/docs/index.html`.

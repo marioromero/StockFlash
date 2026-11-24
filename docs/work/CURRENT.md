@@ -1,7 +1,7 @@
 # Estado operativo — StockFlash
 
 ## Feature activa
-- **Ninguna feature comercial activa.** SELLERS-001 VERIFIED_TECH; QA externa de la corrección mínima del fingerprint en PR #62 pendiente. Próxima implementación POS tras cerrar ese PR. Sin base remota ni despliegue.
+- **POSSTATION-001 — APPROVED**, R6 P0 CSH-02 + POS-02: administración de estaciones POS y vinculación de navegador por token aleatorio, solo con permisos existentes, sin crear ventas ni caja. Packet: `docs/work/features/POSSTATION-001.md`. SQLite aislada, QA independiente, gates y CI exact-SHA obligatorios. PR #62 corrección fingerprint cerrada y verificada. Sin BD remota ni despliegue.
 
 ## Estados por feature
 - BOOT-001: VERIFIED (2026-10-14), Laravel 13.35.0 + Vue 3/Inertia/TS; `bcbf16f`.
