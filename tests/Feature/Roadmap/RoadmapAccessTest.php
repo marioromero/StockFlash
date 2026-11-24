@@ -103,15 +103,15 @@ class RoadmapAccessTest extends TestCase
         preg_match_all('/class="req" data-code="[A-Z]+-[0-9]+" data-state="done"/', $html, $done);
         $this->assertSame(265, count($ids[1]));
         $this->assertSame(count($ids[1]), count(array_unique($ids[1])));
-        $this->assertSame(22, count($done[0]));
-        $this->assertStringContainsString('aria-valuenow="22" aria-valuemin="0" aria-valuemax="169"', $html);
+        $this->assertSame(23, count($done[0]));
+        $this->assertStringContainsString('aria-valuenow="23" aria-valuemin="0" aria-valuemax="169"', $html);
 
         // Default to R7 commercial MVP: approved P0/P1/P1★ through R7,
         // except channel/online-only and integrated-fiscal-only requirements.
         $this->assertStringContainsString('id="progress-scope"', $html);
         $this->assertStringContainsString('<option value="r7" selected>', $html);
         $this->assertStringContainsString('<option value="all">', $html);
-        $this->assertStringContainsString('id="scope-percentage">13,0</span>', $html);
+        $this->assertStringContainsString('id="scope-percentage">13,6</span>', $html);
         $this->assertStringContainsString('id="scope-total">169</span>', $html);
         $this->assertStringContainsString('id="scope-p0-total">104</span>', $html);
         $this->assertStringContainsString("selector.addEventListener('change', render)", $html);
@@ -120,7 +120,7 @@ class RoadmapAccessTest extends TestCase
         $this->assertCount(265, $scoped);
         $r7 = array_values(array_filter($scoped, fn (array $match): bool => $match[4] === '1'));
         $this->assertCount(169, $r7);
-        $this->assertCount(22, array_filter($r7, fn (array $match): bool => $match[2] === 'done'));
+        $this->assertCount(23, array_filter($r7, fn (array $match): bool => $match[2] === 'done'));
         $this->assertCount(104, array_filter($r7, fn (array $match): bool => $match[3] === 'P0'));
         foreach (['CUS-01', 'CUS-02', 'CUS-03'] as $verifiedCustomer) {
             $matches = array_values(array_filter($scoped, fn (array $match): bool => $match[1] === $verifiedCustomer));
@@ -128,6 +128,11 @@ class RoadmapAccessTest extends TestCase
             $this->assertSame('done', $matches[0][2]);
             $this->assertSame('1', $matches[0][4]);
         }
+        $sellerMatches = array_values(array_filter($scoped, fn (array $match): bool => $match[1] === 'SEL-01'));
+        $this->assertCount(1, $sellerMatches);
+        $this->assertSame('done', $sellerMatches[0][2]);
+        $this->assertSame('1', $sellerMatches[0][4]);
+
         foreach (['INV-19', 'INV-20', 'SAL-16', 'SAL-20', 'SAL-21', 'SAL-22', 'SEC-18', 'BKP-09', 'BKP-10', 'BKP-11'] as $excluded) {
             $matches = array_values(array_filter($scoped, fn (array $match): bool => $match[1] === $excluded));
             $this->assertCount(1, $matches);
