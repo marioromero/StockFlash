@@ -67,6 +67,7 @@ details.accordion{border:1px solid var(--line);border-radius:9px;margin:9px 0;ba
     </ul></details>
     <details class="navgroup" open><summary>Inventario</summary><ul><li><a href="#inventario-stock">Consultar existencias por sucursal</a></li></ul></details>
     <details class="navgroup" open><summary>Clientes</summary><ul><li><a href="#clientes-gestion">Registrar y administrar clientes</a></li></ul></details>
+    <details class="navgroup" open><summary>Vendedores</summary><ul><li><a href="#vendedores-gestion">Registrar y asignar vendedores</a></li></ul></details>
     <details class="navgroup" open><summary>Configuración</summary><ul>
       <li><a href="#comprobante">Ajustes de comprobante</a></li>
       <li><a href="#datos-comercio">Datos del comercio</a></li>
@@ -87,7 +88,7 @@ details.accordion{border:1px solid var(--line);border-radius:9px;margin:9px 0;ba
 <div class="hero"><div class="eyebrow">Aprende a tu ritmo</div><h1>Tu guía para usar StockFlash</h1>
 <p>Todo lo que necesitas para comenzar, explicado sin términos complicados. Elige un tema en el menú izquierdo o escribe lo que buscas. Abre las preguntas de cada sección para ver los detalles.</p>
 <div class="meta"><span class="pill verified">Acceso y sucursales verificados</span><span class="pill">Usuarios verificados técnicamente</span><span class="pill">Actualizada: 19-11-2026</span></div>
-<p id="search-status" role="status" aria-live="polite">28 temas disponibles.</p></div>
+<p id="search-status" role="status" aria-live="polite">29 temas disponibles.</p></div>
 <main id="manual">
 <section class="topic" id="bienvenida" data-keywords="introduccion comienzo que es stockflash primer uso ayuda"><div class="kicker">Primeros pasos</div><h2>¿Qué es StockFlash?</h2>
 <p>Es el sistema con el que podrás administrar las operaciones de tu negocio. Incluye una zona de administración y, a medida que se vayan incorporando funciones, módulos como punto de venta e inventario.</p>
@@ -289,6 +290,21 @@ details.accordion{border:1px solid var(--line);border-radius:9px;margin:9px 0;ba
 <details class="accordion"><summary>¿Qué sucede si no puedo agregar o editar clientes?</summary><div class="answer">Revisa que tengas <code>customers.manage</code> y que el módulo Clientes/POS esté habilitado. Una licencia en modo solo lectura permite consultar, pero impide crear o modificar. Si falta la clave privada requerida para proteger los RUT, solo se bloquean las operaciones que necesitan procesar un RUT: aún se pueden registrar clientes sin él.</div></details>
 <details class="accordion"><summary>¿Qué diferencia hay entre desactivar y eliminar?</summary><div class="answer">En esta etapa se permite desactivar y reactivar clientes; no se eliminan físicamente los registros ni se borra su historial. El bloqueo y la anonimización tienen reglas propias y no se levantan automáticamente al activar.</div></details>
 <div class="callout warn"><strong>Estado:</strong> CUSCORE-001 verificado técnicamente mediante pruebas automatizadas (15/15 controles, QA independiente y CI aprobados). Sin validación visual real en navegador, concurrencia MariaDB ni despliegue comercial; las ventas, el historial de compras y los descuentos efectivos en caja pertenecen a etapas posteriores.</div>
+</section>
+<section class="topic" id="vendedores-gestion" data-keywords="SELLERS-001 SEL-01 vendedores vendedores codigo identificacion usuario relacionado vinculo sucursales asignar permisos comision porcentaje activar desactivar vendedores.manage">
+<div class="kicker">Vendedores · SELLERS-001</div><h2>Registrar vendedores y asignar sucursales</h2>
+<p>Desde el Dashboard, abre <strong>Vendedores</strong>, o ingresa a <code>/sellers</code>. Aquí registras a las personas que se identificarán como vendedores cuando esté disponible el flujo de ventas POS. Esta función <strong>no realiza ventas ni calcula comisiones</strong> todavía.</p>
+<ol class="steps">
+<li>Con permiso <code>sellers.manage</code> y el módulo habilitado, revisa el listado. Busca por nombre o código, filtra por sucursal permitida y consulta el estado. Usa <strong>Ver / editar</strong> para abrir una ficha.</li>
+<li>En <strong>Nuevo vendedor</strong>, ingresa un código único y un nombre. Puedes vincularlo a un usuario activo, definir el porcentaje de comisión y seleccionar una o más sucursales activas a las que tengas permiso de acceso.</li>
+<li>Al guardar, el código se normaliza a mayúsculas, identifica al vendedor y queda <strong>inalterable</strong>. No se reutiliza, aunque el vendedor sea desactivado; nunca sirve como contraseña ni PIN.</li>
+<li>En la ficha puedes actualizar el nombre, el usuario vinculado, el porcentaje y las sucursales autorizadas. No podrás modificar sucursales fuera de tu ámbito; el sistema conserva esas asignaciones sin exponer sus datos.</li>
+<li>Usa <strong>Activar</strong> o <strong>Desactivar</strong> para cambiar el estado. Los vendedores no se eliminan físicamente y un registro anonimizado no puede volver a activarse desde esta pantalla.</li>
+</ol>
+<details class="accordion"><summary>¿Qué significa «Sin asignar»?</summary><div class="answer">Es un registro especial reservado para indicar que una venta futura no tiene vendedor identificado. No se puede editar, desactivar, usar como credencial ni asignar a sucursales.</div></details>
+<details class="accordion"><summary>¿El porcentaje configurado genera comisiones?</summary><div class="answer">No. Actualmente solo se guarda el porcentaje, entre 0 y 100 con dos decimales. Los cálculos de comisión, la atribución de ventas, los reportes mensuales y las metas se implementarán junto con los módulos de venta y analítica.</div></details>
+<details class="accordion"><summary>¿Por qué no puedo ver o modificar ciertos vendedores?</summary><div class="answer">El acceso depende del permiso <code>sellers.manage</code>, del módulo habilitado, de las sucursales que tienes autorizadas y del estado de licencia. Los datos de otras sucursales no se muestran. En modo de licencia solo lectura puedes consultar, pero no crear ni modificar.</div></details>
+<div class="callout warn"><strong>Estado:</strong> SELLERS-001 técnicamente verificado: 15/15 controles, revisión independiente aprobada y CI 2/2. Quedan pendientes las pruebas reales de navegador y concurrencia MariaDB, además del sistema de ventas y los cálculos de comisiones. No implica despliegue comercial.</div>
 </section>
 </main>
 <div id="empty-state" role="status"><strong>No encontramos ese tema.</strong><p>Prueba con otra palabra, por ejemplo «sucursal», «contraseña» o «caja».</p><button id="clear-search" type="button">Ver todos los temas</button></div>
