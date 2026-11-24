@@ -222,6 +222,19 @@ class DocsIntegrationTest extends TestCase
         $this->assertStringContainsString('28 temas disponibles.', $html);
     }
 
+    public function test_sellers_001_guide_explains_branch_scope_and_no_earned_commissions(): void
+    {
+        $html = $this->manual();
+
+        $this->assertStringContainsString('id="vendedores-gestion"', $html);
+        $this->assertStringContainsString('href="#vendedores-gestion"', $html);
+        $this->assertStringContainsString('SELLERS-001', $html);
+        $this->assertStringContainsString('sellers.manage', $html);
+        $this->assertStringContainsString('Sin asignar', $html);
+        $this->assertStringContainsString('no realiza ventas ni calcula comisiones', $html);
+        $this->assertStringContainsString('29 temas disponibles.', $html);
+    }
+
     private function manual(): string
     {
         return $this->file('public/docs/index.html');
