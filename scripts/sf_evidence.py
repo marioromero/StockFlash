@@ -75,7 +75,16 @@ def _exclude_evidence(feature: str, name: str) -> bool:
     if not name.startswith(prefix):
         return False
     basename = name[len(prefix):]
-    return _report_name(feature, basename, "VERIFY") or _report_name(feature, basename, "REVIEW")
+    # REVIEW artifacts may use HHMM or HHMMSS. Exclude them ONLY from the
+    # source fingerprint; accepted VERIFY reports still require HHMMSS.
+    return (
+        _report_name(feature, basename, "VERIFY")
+        or _report_name(feature, basename, "REVIEW")
+        or bool(re.fullmatch(
+            re.escape(feature) + r"-REVIEW-[0-9]{8}-[0-9]{4}\.md",
+            basename,
+        ))
+    )
 
 
 def fingerprint(feature: str, root: Path = ROOT) -> dict:
