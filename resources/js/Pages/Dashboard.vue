@@ -47,6 +47,9 @@
                     <Link v-if="canViewSellers" href="/sellers" class="sf-button sf-button-primary">
                         Vendedores
                     </Link>
+                    <Link v-if="canViewPosStations" href="/settings/pos-stations" class="sf-button sf-button-primary">
+                        Estaciones POS
+                    </Link>
                     <Link v-if="canManageUsers" href="/users" class="sf-button sf-button-primary">
                         Usuarios
                     </Link>
@@ -116,6 +119,7 @@ const props = defineProps<{
     can_view_inventory?: boolean;
     can_view_customers?: boolean;
     can_view_sellers?: boolean;
+    can_view_pos_stations?: boolean;
 }>();
 
 const licenseNotice = computed(() => props.license_notice ?? null);
@@ -141,6 +145,7 @@ const canViewCustomers = computed(() =>
     ?? (page.props.auth?.permissions ?? []).includes('customers.view')
 );
 const canViewSellers = computed(() => props.can_view_sellers === true);
+const canViewPosStations = computed(() => props.can_view_pos_stations === true);
 const canManageBranches = computed(() =>
     (page.props.auth?.permissions ?? []).includes('settings.manage')
 );

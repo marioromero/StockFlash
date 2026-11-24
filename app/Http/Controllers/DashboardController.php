@@ -6,6 +6,8 @@ use App\Http\Middleware\CheckPermission;
 use App\Models\User;
 use App\Support\Customers\CustomerModuleGate;
 use App\Support\License\LicenseStateResolver;
+use App\Support\PosStations\PosStationAccessService;
+use App\Support\PosStations\PosStationModuleGate;
 use App\Support\Sellers\SellerAccessService;
 use App\Support\Sellers\SellerModuleGate;
 use Inertia\Inertia;
@@ -24,6 +26,8 @@ class DashboardController extends Controller
         private readonly CustomerModuleGate $customerModules,
         private readonly SellerModuleGate $sellerModules,
         private readonly SellerAccessService $sellerAccess,
+        private readonly PosStationModuleGate $posStationModules,
+        private readonly PosStationAccessService $posStationAccess,
     ) {}
 
     public function index(): Response
@@ -45,6 +49,11 @@ class DashboardController extends Controller
             'can_view_sellers' => $user instanceof User
                 && $this->sellerModules->isEnabled()
                 && $this->sellerAccess->canManageAnyBranch($user),
+            // Estaciones POS dependen del módulo `pos` y de `settings.manage`
+            // en el rol global o en alguna sucursal asignada.
+            'can_view_pos_stations' => $user instanceof User
+                && $this->posStationModules->isEnabled()
+                && $this->posStationAccess->canManageAnyBranch($user),
         ]);
     }
 

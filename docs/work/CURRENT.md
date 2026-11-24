@@ -1,7 +1,7 @@
 # Estado operativo — StockFlash
 
 ## Feature activa
-- **POSSTATION-001 — APPROVED**, R6 P0 CSH-02 + POS-02: administración de estaciones POS y vinculación de navegador por token aleatorio, solo con permisos existentes, sin crear ventas ni caja. Packet: `docs/work/features/POSSTATION-001.md`. SQLite aislada, QA independiente, gates y CI exact-SHA obligatorios. PR #62 corrección fingerprint cerrada y verificada. Sin BD remota ni despliegue.
+- **POSSTATION-001 — APPROVED**, R6 P0 CSH-02 + POS-02: administración de estaciones POS y vinculación de navegador por token aleatorio, solo con permisos existentes, sin crear ventas ni caja. Implementación técnica completada sobre esquema `pos_stations` existente; pendientes gates deterministas, QA independiente y CI exact-SHA. Sin BD remota ni despliegue; no VERIFIED. Notas: `docs/work/POSSTATION-001-NOTES-20261124.md`.
 
 ## Estados por feature
 - BOOT-001: VERIFIED (2026-10-14), Laravel 13.35.0 + Vue 3/Inertia/TS; `bcbf16f`.
@@ -24,6 +24,7 @@
 - INVTRANSFER-001: VERIFIED técnico (2026-11-20), corregido `3072f54`; 18/18 gates, QA independiente APROBADO, 819 PHP tests / 8610 assertions, CI 2/2 SUCCESS. Solicitud, envío, recepción completa/parcial y diferencias pendientes; MariaDB/browser y valorización diferidos.
 - CUSCORE-001: VERIFIED técnico (2026-11-23), `b89ed47` (feature `fee3be1`), 15/15 gates, QA independiente APROBADO (P1/P3 cerrados), 883 PHP tests / 9694 assertions; CI exact-SHA 2/2 SUCCESS (45241808376 + 45241808659). Clientes persona/empresa, RUT HMAC y cifrado, grupos y descuentos, revelado auditado. MariaDB/browser diferidos; guía/roadmap pendientes de integración editorial.
 - SELLERS-001: VERIFIED_TECH (2026-11-23), código `e46f25f`; 15/15 gates GATES_PASS, QA independiente APROBADO (`SELLERS-001-REVIEW-20261123-1630.md`; 57/636 independientes), PHP 941 tests / 10347 assertions; CI exact-SHA 2/2 SUCCESS (45249487071 / 45249487082). SEL-01 registro de vendedores, sucursales, código inmutable y seeder NONE; SEL-02/03/04/05 y MariaDB/browser/deploy pendientes. Guía/roadmap pendientes editoriales.
+- POSSTATION-001: IMPLEMENTADO_TECH (2026-11-24), pendiente gates/QA/CI; `pos_stations` existente reutilizada sin migraciones, `settings.manage` global/por sucursal, módulo `pos` fail-closed, licencia solo lectura y token de dispositivo SHA-256 en cookie HttpOnly/SameSite=Strict. Pruebas dirigidas 46/565 (PosStations) y 382/5234 (PosStations+Sellers+Customers+Inventory); typecheck PASS; `maria=NOT_RUN`, `remote_db=NOT_TOUCHED`, sin navegador real. No VERIFIED.
 - CATPROD-001: VERIFIED técnico (2026-11-17), `c8e1338`; 476/4192; QA R2 N-01 pendiente antes de POS/Fiscal.
 - **SETUP-001: VERIFIED técnico** (2026-11-17), código `13cdd6a`, gates 19/19, QA independiente APROBADO, 529 pruebas / 4665 aserciones y CI 2/2 SUCCESS. Guía 26 temas y roadmap actualizados por ChatGPT; cierre `docs/work/SETUP-001-CLOSURE-20261117.md`. Producción no demo bloqueada por BKP-08 P1★; instalador CORE-17 implementado/verificado solo en código; ejecución real, MariaDB/browser y BKP-08 pendientes.
 

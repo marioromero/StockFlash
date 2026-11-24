@@ -34,6 +34,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'customers.module' => \App\Http\Middleware\EnsureCustomerModuleEnabled::class,
             'sellers.module' => \App\Http\Middleware\EnsureSellerModuleEnabled::class,
             'sellers.manage' => \App\Http\Middleware\EnsureSellerManager::class,
+            'posstations.module' => \App\Http\Middleware\EnsurePosStationModuleEnabled::class,
+            'posstations.manage' => \App\Http\Middleware\EnsurePosStationManager::class,
             'password.change' => \App\Http\Middleware\RequirePasswordChange::class,
             'verify.session' => \App\Http\Middleware\VerifySession::class,
         ]);

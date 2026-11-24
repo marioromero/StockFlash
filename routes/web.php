@@ -392,6 +392,37 @@ Route::middleware(['auth', 'password.change', 'verify.session'])->group(function
             ->name('sellers.deactivate');
     });
 
+    // --- Estaciones POS (POSSTATION-001 · POS-02 / CSH-02 · §4.13) ---
+    // Rutas globales sin `{branch}`: el permiso `settings.manage` se evalúa en
+    // el rol global o en cualquier sucursal asignada; el alcance fino de
+    // sucursales se filtra en servidor. El módulo `pos` es fail-closed y no
+    // existe un permiso independiente de estaciones. El token de dispositivo
+    // solo se emite mediante POST explícito y viaja en cookie HttpOnly.
+    Route::middleware(['posstations.module', 'posstations.manage'])->group(function (): void {
+        Route::get('/settings/pos-stations', [\App\Http\Controllers\PosStations\PosStationController::class, 'index'])
+            ->name('settings.pos-stations.index');
+        Route::post('/settings/pos-stations', [\App\Http\Controllers\PosStations\PosStationController::class, 'store'])
+            ->name('settings.pos-stations.store');
+        Route::get('/settings/pos-stations/{station}', [\App\Http\Controllers\PosStations\PosStationController::class, 'show'])
+            ->whereNumber('station')
+            ->name('settings.pos-stations.show');
+        Route::patch('/settings/pos-stations/{station}', [\App\Http\Controllers\PosStations\PosStationController::class, 'update'])
+            ->whereNumber('station')
+            ->name('settings.pos-stations.update');
+        Route::post('/settings/pos-stations/{station}/activate', [\App\Http\Controllers\PosStations\PosStationController::class, 'activate'])
+            ->whereNumber('station')
+            ->name('settings.pos-stations.activate');
+        Route::post('/settings/pos-stations/{station}/deactivate', [\App\Http\Controllers\PosStations\PosStationController::class, 'deactivate'])
+            ->whereNumber('station')
+            ->name('settings.pos-stations.deactivate');
+        Route::post('/settings/pos-stations/{station}/bind', [\App\Http\Controllers\PosStations\PosStationController::class, 'bind'])
+            ->whereNumber('station')
+            ->name('settings.pos-stations.bind');
+        Route::post('/settings/pos-stations/{station}/revoke', [\App\Http\Controllers\PosStations\PosStationController::class, 'revoke'])
+            ->whereNumber('station')
+            ->name('settings.pos-stations.revoke');
+    });
+
     // --- Administración global de sucursales (BRANCH-001 · CORE-05) ---
     // Es administración global: NO usa `branch.access`.
     Route::middleware('can.permission:settings.manage')->group(function () {

@@ -39,6 +39,19 @@ class SensitiveKeyFilter
     ];
 
     /**
+     * Flags booleanos no secretos que la auditoría puede conservar aunque su
+     * nombre contenga `token`. Solo se preservan con valor booleano y nombre
+     * exacto; nunca se relaja `contains()` ni se admiten valores string.
+     *
+     * @var list<string>
+     */
+    private const NONSECRET_BOOLEAN_FLAGS = [
+        'token_rotated',
+        'token_revoked',
+        'token_invalidated',
+    ];
+
+    /**
      * Indica si algún valor de la estructura (incluidos los anidados) tiene
      * una clave sensible.
      *
@@ -72,6 +85,10 @@ class SensitiveKeyFilter
 
         foreach ($values as $key => $value) {
             if (is_string($key) && self::isSensitiveKey($key)) {
+                if (is_bool($value) && in_array(strtolower($key), self::NONSECRET_BOOLEAN_FLAGS, true)) {
+                    $filtered[$key] = $value;
+                }
+
                 continue;
             }
 
