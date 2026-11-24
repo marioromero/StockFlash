@@ -1,6 +1,6 @@
 # SELLERS-001 — Seller register and branch assignments (POS prerequisite)
 
-status: APPROVED
+status: VERIFIED
 approval_basis: existing_approved_contract_owner_delegation_2026-11-16
 new_business_decisions: NONE
 publication_mode: AUTO_GIT
@@ -31,3 +31,14 @@ First commercial release R7 requires POS+Bodega without integrated DTE. CUSCORE-
 
 ## Hard guards
 No POS checkout, sale tables, tickets, reservation documents, customer schema edits, return/report/commission calculations, loyalty, billing, DTE, Woo, fiscal, remote DB, credential reading, environment-based debug scripts, real DB migration/seeding, deploy/cron/install, unapproved schema or roles, modifications to approved product contracts, harness historical policy or ChatGPT-only semantic HTML. No speculative user business questions for routine code/ordering. Use safe sync once, preserve local edits, no git reset/force; max three corrective QA rounds. Report `RESULT` or concrete `BLOCK`, never self-declare VERIFIED.
+
+## External technical closure — GPT, 2026-11-23
+status: VERIFIED_TECH
+published_code_sha: `e46f25f14b9c0114abbd2964c893d4d6960d655d`
+qa: APROBADO independent read-only, `docs/work/SELLERS-001-REVIEW-20261123-1630.md`, 57 seller tests / 636 assertions independently reproduced on isolated SQLite.
+gates: 15/15 GATES_PASS on original candidate fingerprint, `docs/work/SELLERS-001-VERIFY-20261123-162335.md`.
+php: 941 tests / 10347 assertions, full gate execution.
+ci_exact_sha: 2/2 SUCCESS, contracts `45249487071`, PHP/Node/harness/smoke `45249487082`.
+scope: P0 SEL-01 seller registry, unique immutable codes, branch assignments, optional user, reserved NONE, commission percentage stored without calculation, auditable writes and access checks.
+not_delivered: SEL-02 sales attribution, SEL-03 sales report, SEL-04 earned commissions report, SEL-05 sales targets. MariaDB concurrency, real browser UX and deployment NOT_RUN. No remote database changes.
+editorial: `GUIA_PENDIENTE_CHATGPT`, `ROADMAP_PENDIENTE_CHATGPT`; avoid unrelated HTML changes while isolated harness PR #62 awaits independent QA.
