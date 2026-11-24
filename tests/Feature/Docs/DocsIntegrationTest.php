@@ -219,7 +219,7 @@ class DocsIntegrationTest extends TestCase
         $this->assertStringContainsString('customers.manage', $html);
         $this->assertStringContainsString('customers.view_sensitive', $html);
         $this->assertStringContainsString('RUT no se agrega a la dirección del navegador', $html);
-        $this->assertStringContainsString('28 temas disponibles.', $html);
+        $this->assertStringContainsString('29 temas disponibles.', $html);
     }
 
     public function test_sellers_001_guide_explains_branch_scope_and_no_earned_commissions(): void
